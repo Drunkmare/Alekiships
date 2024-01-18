@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.*;
+import com.alekiponi.alekiships.common.entity.CannonEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -18,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -161,8 +162,6 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         }
         //this.clampRotation(passenger);
     }
-
-
 
     @Override
     public double getPassengersRidingOffset() {
@@ -395,11 +394,19 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             }
 
             final AbstractCompartmentEntity compartmentEntity = compartmentType.get()
-                    .create(this.level(), heldStack.split(1));
-            assert compartmentEntity != null;
+                    .create(this.level(), heldStack.copy());
+            // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
+            if (null == compartmentEntity) {
+                if (!this.level().isClientSide && !this.canAddOnlyBLocks()) {
+                    return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+                }
+                return InteractionResult.FAIL;
+            }
+
+            heldStack.shrink(1);
+
             this.swapCompartments(compartmentEntity);
-            // TODO per type placement sounds
-            this.playSound(SoundEvents.WOOD_PLACE, 1, player.level().getRandom().nextFloat() * 0.1F + 0.9F);
+            compartmentEntity.onPlaced();
             this.gameEvent(GameEvent.EQUIP);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -455,6 +462,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         return super.getDismountLocationForPassenger(passenger);
     }
 
+    @Override
     public RidingPose getRidingPose(){
         // TODO fix, it not work
         if(this.getTrueVehicle() != null && vehiclePassengerIndex != -1){

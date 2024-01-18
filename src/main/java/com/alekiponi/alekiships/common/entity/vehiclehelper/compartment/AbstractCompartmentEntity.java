@@ -12,7 +12,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,6 +25,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -184,11 +185,13 @@ public abstract class AbstractCompartmentEntity extends Entity {
     }
 
     protected SoundEvent getHurtSound(final DamageSource damageSource) {
-        return SoundEvents.WOOD_HIT;
+        return this.getDisplayBlockState().getSoundType().getHitSound();
     }
 
     protected void playHurtSound(final DamageSource damageSource) {
-        this.playSound(this.getHurtSound(damageSource), 1, this.level().getRandom().nextFloat() * 0.05F + 0.35F);
+        final SoundType soundType = this.getDisplayBlockState().getSoundType();
+        this.playSound(this.getHurtSound(damageSource), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
+                soundType.getPitch() * 0.5F);
     }
 
     @Override
@@ -238,6 +241,19 @@ public abstract class AbstractCompartmentEntity extends Entity {
 
         this.discard();
         return true;
+    }
+
+    @Override
+    public void remove(final RemovalReason removalReason) {
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            final BlockState blockState = this.getDisplayBlockState();
+            if (!blockState.isAir()) {
+                final SoundEvent breakSound = blockState.getSoundType().getBreakSound();
+                this.playSound(breakSound, 1, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
+            }
+        }
+
+        super.remove(removalReason);
     }
 
     protected void destroy(final DamageSource damageSource) {
@@ -353,5 +369,23 @@ public abstract class AbstractCompartmentEntity extends Entity {
     @Override
     public ItemStack getPickResult() {
         return this.getDisplayBlockState().getBlock().asItem().getDefaultInstance();
+    }
+
+    /**
+     * Called after the compartment is placed into the world by {@link EmptyCompartmentEntity}.
+     * This is primarily for playing the placement sound, but I could imagine that there's other good uses
+     */
+    protected void onPlaced() {
+        if (!this.level().isClientSide()) {
+            final SoundType soundType = this.getDisplayBlockState().getSoundType();
+            final SoundEvent placeSound = soundType.getPlaceSound();
+            this.playSound(placeSound, SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+                    soundType.getPitch() * 0.8F);
+        }
+    }
+
+    public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
+            final float pitch) {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
     }
 }
