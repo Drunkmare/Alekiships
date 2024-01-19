@@ -62,7 +62,7 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<CompartmentType<ShulkerBoxCompartmentEntity>> SHULKER_BOX_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_shulker_box",
             CompartmentType.Builder.of(ShulkerBoxCompartmentEntity::new, ShulkerBoxCompartmentEntity::new,
-                    itemStack -> itemStack.is(AlekiShipsTags.Items.SHULKER_BOX), MobCategory.MISC));
+                    itemStack -> itemStack.is(AlekiShipsTags.Items.SHULKER_BOXES), MobCategory.MISC));
 
     public static final RegistryObject<CompartmentType<FurnaceCompartmentEntity>> FURNACE_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_furnace",
@@ -77,6 +77,12 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<CompartmentType<SmokerCompartmentEntity>> SMOKER_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_smoker", CompartmentType.Builder.of(SmokerCompartmentEntity::new, SmokerCompartmentEntity::new,
                     itemStack -> itemStack.is(Blocks.SMOKER.asItem()), MobCategory.MISC));
+
+    public static final RegistryObject<CompartmentType<WorkbenchCompartmentEntity>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_workbench",
+            CompartmentType.Builder.of(WorkbenchCompartmentEntity::new, WorkbenchCompartmentEntity::new,
+                    itemStack -> itemStack.is(AlekiShipsTags.Items.CRAFTING_TABLES), MobCategory.MISC));
+
     public static final RegistryObject<CompartmentType<StonecutterCompartmentEntity>> STONECUTTER_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_stonecutter",
             CompartmentType.Builder.of(StonecutterCompartmentEntity::new, StonecutterCompartmentEntity::new,
