@@ -19,6 +19,23 @@ TFC_WOODS: dict[str, str] = {"acacia": "Acacia",
                              "white_cedar": "White Cedar",
                              "willow": "Willow"}
 
+COLORS = ["white",
+          "orange",
+          "magenta",
+          "light_blue",
+          "yellow",
+          "lime",
+          "pink",
+          "gray",
+          "light_gray",
+          "cyan",
+          "purple",
+          "blue",
+          "brown",
+          "green",
+          "red",
+          "black"]
+
 FLORAE_WOODS: dict[str, str] = {"african_padauk": "African Padauk",
                                 "alder": "Alder",
                                 "angelim": "Angelim",
