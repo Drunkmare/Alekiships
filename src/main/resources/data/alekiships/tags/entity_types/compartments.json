@@ -2,7 +2,6 @@
   "__comment__": "This file was automatically created by mcresources",
   "replace": false,
   "values": [
-    "alekiships:compartment_anvil",
     "alekiships:compartment_barrel",
     "alekiships:compartment_blast_furnace",
     "alekiships:compartment_cartography_table",
@@ -16,7 +15,6 @@
     "alekiships:compartment_smithing_table",
     "alekiships:compartment_smoker",
     "alekiships:compartment_stonecutter",
-    "alekiships:compartment_tfcchest",
     "alekiships:compartment_workbench"
   ]
 }
