@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
+import com.alekiponi.alekiships.common.entity.vehicle.CanoeEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.TFCChestCompartmentEntity;
@@ -43,7 +44,11 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
         }
 
-        poseStack.scale(0.6875F, 0.6875F, 0.6875F);
+        if (compartmentEntity.getTrueVehicle() instanceof CanoeEntity) {
+            poseStack.scale(0.6F, 0.6F, 0.6F);
+        } else {
+            poseStack.scale(0.6875F, 0.6875F, 0.6875F);
+        }
 
         poseStack.translate(-0.5F, 0, -0.5F);
 

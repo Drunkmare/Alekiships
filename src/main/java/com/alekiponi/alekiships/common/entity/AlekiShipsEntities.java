@@ -27,9 +27,17 @@ public final class AlekiShipsEntities {
     public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
             MOD_ID);
 
+    public static final Map<RegistryWood, RegistryObject<EntityType<CanoeEntity>>> CANOES = AlekiShipsHelper.TFCWoodMap(
+            wood -> register("dugout_canoe/" + wood.getSerializedName(),
+                    EntityType.Builder.of(CanoeEntity::new, MobCategory.MISC).sized(1.125F, 0.625F)));
+
     public static final Map<RegistryWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.TFCWoodMap(
             wood -> register("rowboat/" + wood.getSerializedName(),
                     EntityType.Builder.of(RowboatEntity::new, MobCategory.MISC).sized(1.875F, 0.625F)));
+
+    public static final RegistryObject<EntityType<KayakEntity>> KAYAK_ENTITY = register("kayak",
+            EntityType.Builder.of(KayakEntity::new, MobCategory.MISC).sized(0.79F, 0.625F));
+
     public static final Map<RegistryWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.TFCWoodMap(
             wood -> register("sloop/" + wood.getSerializedName(),
                     EntityType.Builder.of(SloopEntity::new, MobCategory.MISC).sized(3F, 0.75F)

@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
-    //TODO support for killing the kayak it's riding
     protected static final EntityDataAccessor<Long> DATA_ID_PASSENGER_RIDE_TICK = SynchedEntityData.defineId(
             EmptyCompartmentEntity.class, EntityDataSerializers.LONG);
 
@@ -179,7 +178,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     public void tick() {
         if (this.getTrueVehicle() != null) {
             if (tickCount < 10 && this.getTrueVehicle()
-                    .getPilotVehiclePartAsEntity() != null) {
+                    .getPilotVehiclePartAsEntity() != null && !(this.getTrueVehicle() instanceof CanoeEntity)) {
                 canAddNonPlayers = !(this.getTrueVehicle().getPilotVehiclePartAsEntity() == this.getVehicle());
             }
             if (tickCount < 10 && this.isPassenger()) {
@@ -391,6 +390,9 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
 
         if (compartmentType.isPresent()) {
+            if((this.getRootVehicle() instanceof AbstractVehicle vehicle && !(vehicle instanceof CanoeEntity)) && vehicle.getControllingCompartment().is(this)){
+                return InteractionResult.FAIL;
+            }
 
             final AbstractCompartmentEntity compartmentEntity = compartmentType.get()
                     .create(this.level(), heldStack.split(1));
@@ -455,7 +457,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        return super.hurt(damageSource, amount);
+        return this.getTrueVehicle() instanceof KayakEntity && super.hurt(damageSource, amount);
     }
 
     @Nullable

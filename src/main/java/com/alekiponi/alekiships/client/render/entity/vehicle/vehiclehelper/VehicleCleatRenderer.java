@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.CleatKnotEntityModel;
 import com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.CanoeEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -57,7 +58,9 @@ public class VehicleCleatRenderer extends EntityRenderer<VehicleCleatEntity> {
             VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(CLEAT_KNOT));
             this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
                     1.0F, 1.0F);
-            // TODO support canoe cleat rendering change
+            if (!(pEntity.getVehicle().isPassenger() && pEntity.getVehicle().getVehicle() instanceof CanoeEntity)) {
+                model.getSides().render(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY);
+            }
             pPoseStack.popPose();
             AlekiShipsRenderHelper.renderRope(pEntity, pPartialTicks, pPoseStack, pBuffer, entity, this.getBlockLightLevel(pEntity,  BlockPos.containing(pEntity.getEyePosition(pPartialTicks))));
         }
