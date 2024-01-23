@@ -3,7 +3,7 @@ modLoader="javafml"
 loaderVersion="[40,)"
 license="MIT"
 [[mods]]
-modId="firmaciv"
+modId="alekiships"
 version="0.2.0-alpha"
 displayName="Firma: Civilization"
 logoFile="icon.png"
@@ -13,7 +13,7 @@ description='''
 Firma: Civilization is an addon/expansion for TerraFirmaCraft focusing on key, civilization-building technologies missing from the base mod.
 
 '''
-[[dependencies.firmaciv]]
+[[dependencies.alekiships]]
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
@@ -24,7 +24,7 @@ Firma: Civilization is an addon/expansion for TerraFirmaCraft focusing on key, c
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.firmaciv]]
+[[dependencies.alekiships]]
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
@@ -33,7 +33,7 @@ Firma: Civilization is an addon/expansion for TerraFirmaCraft focusing on key, c
     side="BOTH"
 
 
-[[dependencies.firmaciv]]
+[[dependencies.alekiships]]
     modId="tfc"
     mandatory=true
     versionRange="[0,)"
