@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.KayakEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.fluids.TFCFluids;
@@ -219,13 +218,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.ejectPassengers();
         if (!instantKill || this.hasCustomName()) {
             this.destroy(damageSource);
-        }
-
-        if (this.getRootVehicle() instanceof KayakEntity kayakEntity) {
-            kayakEntity.spawnAtLocation(kayakEntity.getDropItem());
-            kayakEntity.remove(RemovalReason.KILLED);
-            kayakEntity.kill();
-            this.getVehicle().kill();
         }
 
         this.discard();
