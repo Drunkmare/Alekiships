@@ -103,6 +103,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public abstract int[] getCanAddCannonsIndices();
 
+    public float renderSizeForCompartments(){
+        return 0.6875f;
+    }
+
     public ArrayList<AbstractCompartmentEntity> getCanAddCannons(){
         ArrayList<AbstractCompartmentEntity> list = new ArrayList<AbstractCompartmentEntity>();
         if(this.getPassengers().size() == this.getMaxPassengers()) {

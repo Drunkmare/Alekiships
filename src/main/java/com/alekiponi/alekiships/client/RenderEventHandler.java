@@ -1,8 +1,6 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.model.entity.CanoeEntityModel;
-import com.alekiponi.alekiships.client.model.entity.KayakEntityModel;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.entity.CannonRenderer;
 import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
@@ -21,16 +19,12 @@ public final class RenderEventHandler {
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(CanoeEntityModel.LAYER_LOCATION, CanoeEntityModel::createBodyLayer);
-        event.registerLayerDefinition(KayakEntityModel.LAYER_LOCATION, KayakEntityModel::createBodyLayer);
         event.registerLayerDefinition(RowboatEntityModel.LAYER_LOCATION, RowboatEntityModel::createBodyLayer);
     }
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         AlekiShipsHelper.forAllTFCWoods(wood -> {
-            event.registerEntityRenderer(AlekiShipsEntities.CANOES.get(wood).get(),
-                    context -> new CanoeRenderer(context, wood.getSerializedName()));
             event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(wood).get(),
                     context -> new RowboatRenderer(context, wood.getSerializedName()));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(wood).get(),
@@ -39,11 +33,7 @@ public final class RenderEventHandler {
                     context -> new SloopConstructionRenderer(context, wood.getSerializedName()));
         });
 
-        event.registerEntityRenderer(AlekiShipsEntities.KAYAK_ENTITY.get(), KayakRenderer::new);
-
         event.registerEntityRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(), NoopRenderer::new);
-        event.registerEntityRenderer(AlekiShipsEntities.TFC_CHEST_COMPARTMENT_ENTITY.get(),
-                BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.BARREL_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY.get(), ChestCompartmentRenderer::new);
 
@@ -58,8 +48,6 @@ public final class RenderEventHandler {
                 BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
 
-        event.registerEntityRenderer(AlekiShipsEntities.WORKBENCH_COMPARTMENT_ENTITY.get(),
-                BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.STONECUTTER_COMPARTMENT_ENTITY.get(),
                 BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CARTOGRAPHY_TABLE_COMPARTMENT_ENTITY.get(),
@@ -69,8 +57,6 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.GRINDSTONE_COMPARTMENT_ENTITY.get(),
                 BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.LOOM_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
-
-        event.registerEntityRenderer(AlekiShipsEntities.ANVIL_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
 
         event.registerEntityRenderer(AlekiShipsEntities.BOAT_VEHICLE_PART.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get(), NoopRenderer::new);

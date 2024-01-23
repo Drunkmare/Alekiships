@@ -10,28 +10,6 @@ def generate(rm: ResourceManager):
     def disableRecipe(name_parts: ResourceIdentifier):
         rm.recipe(name_parts, None, {}, conditions="forge:false")
 
-    # Disable TFC boat recipes
-    for woodType in constants.TFC_WOODS.keys():
-        disableRecipe(f"tfc:crafting/wood/{woodType}_boat")
-
-    # Disable vanilla boat recipes
-    for woodType in ["acacia", "birch", "cherry", "dark_oak", "jungle", "mangrove", "oak", "spruce"]:
-        disableRecipe(f"minecraft:{woodType}_boat")
-        disableRecipe(f"minecraft:{woodType}_chest_boat")
-    # Bamboo raft as well
-    disableRecipe("minecraft:bamboo_raft")
-
-    rm.crafting_shaped("minecraft:compass", ["X", "Y", "Z"], {
-        "X": {
-            "item": "tfc:lens"
-        },
-        "Y": {
-            "tag": "tfc:magnetic_rocks"
-        },
-        "Z": {
-            "item": "minecraft:bowl"
-        }}, "alekiships:alekiships_compass")
-
     rm.crafting_shaped("crafting/watercraft_frame_angled", [" LL", "LLL", "LL "], {"L": "#tfc:lumber"},
                        ("alekiships:watercraft_frame_angled")).with_advancement("alekiships:watercraft_frame_angled")
 
@@ -47,40 +25,6 @@ def generate(rm: ResourceManager):
     rm.crafting_shaped("crafting/watercraft_frame_angled_2", [" F", "F "], {"F": "alekiships:watercraft_frame_flat"},
                        (2, "alekiships:watercraft_frame_angled"))
 
-    # Boating items
-    rm.crafting_shapeless("crafting/barometer",
-                          ["alekiships:unfinished_barometer", "tfc:brass_mechanisms", "#tfc:glass_bottles",
-                           {"type": "tfc:fluid_item",
-                            "fluid_ingredient": {
-                                "ingredient": "minecraft:water",
-                                "amount": 100
-                            }}],
-                          "alekiships:barometer").with_advancement("alekiships:barometer")
-
-    rm.crafting_shapeless("crafting/nav_clock",
-                          ["alekiships:unfinished_nav_clock", *["tfc:lens" for _ in range(2)],
-                           *["tfc:brass_mechanisms" for _ in range(3)]],
-                          "alekiships:nav_clock").with_advancement("alekiships:nav_clock")
-
-    rm.crafting_shapeless("crafting/sextant", ["alekiships:unfinished_sextant", "tfc:lens", "tfc:brass_mechanisms"],
-                          "alekiships:sextant").with_advancement("alekiships:sextant")
-
-    rm.crafting_shaped("crafting/kayak", ["SSS", "HSH", "LLL"],
-                       {"S": "#forge:string", "H": "alekiships:large_waterproof_hide", "L": "#tfc:lumber"},
-                       "alekiships:kayak").with_advancement("alekiships:kayak")
-
-    rm.crafting_shapeless("crafting/large_waterproof_hide",
-                          ["tfc:large_prepared_hide", *["firmalife:beeswax" for _ in range(8)]],
-                          "alekiships:large_waterproof_hide",
-                          conditions={"type": "forge:mod_loaded", "modid": "firmalife"}).with_advancement(
-        "alekiships:large_waterproof_hide")
-
-    rm.crafting_shapeless("crafting/rope_coil",
-                          [*["tfc:jute_fiber" for _ in range(9)]],
-                          "alekiships:rope_coil").with_advancement(
-        "alekiships:rope_coil")
-
-    # Oar/paddles
     rm.crafting_shaped("crafting/oar", ["  S", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#tfc:lumber"},
                        "alekiships:oar").with_advancement("alekiships:oar")
     rm.crafting_shaped("crafting/kayak_paddle", ["  L", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#tfc:lumber"},
@@ -100,62 +44,9 @@ def generate(rm: ResourceManager):
                        {"W": "alekiships:small_triangular_sail", "S": "#forge:string"},
                        "alekiships:medium_triangular_sail").with_advancement("alekiships:medium_triangular_sail")
 
-
-    heat_recipe(rm, "barometer", "alekiships:barometer", 930, None, "200 tfc:metal/brass")
-    heat_recipe(rm, "copper_bolt", "alekiships:copper_bolt", 1080, None, "25 tfc:metal/copper")
-    heat_recipe(rm, "nav_clock", "alekiships:nav_clock", 930, None, "400 tfc:metal/brass")
-    heat_recipe(rm, "oarlock", "alekiships:oarlock", 1535, None, "200 tfc:metal/cast_iron")
-    heat_recipe(rm, "sextant", "alekiships:sextant", 930, None, "200 tfc:metal/brass")
-    heat_recipe(rm, "cannonball", "alekiships:cannonball", 1535, None, "200 tfc:metal/cast_iron")
-    heat_recipe(rm, "cannon_barrel", "alekiships:cannon_barrel", 1535, None, "400 tfc:metal/cast_iron")
-    heat_recipe(rm, "cannon", "alekiships:cannon", 1535, None, "1300 tfc:metal/cast_iron")
-    heat_recipe(rm, "anchor", "alekiships:anchor", 1540, None, "400 tfc:metal/steel")
-    heat_recipe(rm, "cleat", "alekiships:cleat", 1540, None, "200 tfc:metal/steel")
-    heat_recipe(rm, "unfinished_barometer", "alekiships:unfinished_barometer", 930, None, "200 tfc:metal/brass")
-    heat_recipe(rm, "unfinished_nav_clock", "alekiships:unfinished_nav_clock", 930, None, "400 tfc:metal/brass")
-    heat_recipe(rm, "unfinished_sextant", "alekiships:unfinished_sextant", 930, None, "200 tfc:metal/brass")
-
-    quern_recipe(rm, "amethyst", "tfc:gem/amethyst", "tfc:powder/amethyst", count=4)
-    quern_recipe(rm, "diamond", "tfc:gem/diamond", "tfc:powder/diamond", count=4)
-    quern_recipe(rm, "emerald", "tfc:gem/emerald", "tfc:powder/emerald", count=4)
-    quern_recipe(rm, "lapis_lazuli", "tfc:gem/lapis_lazuli", "tfc:powder/lapis_lazuli", count=4)
-    quern_recipe(rm, "opal", "tfc:gem/opal", "tfc:powder/opal", count=4)
-    quern_recipe(rm, "pyrite", "tfc:gem/pyrite", "tfc:powder/pyrite", count=4)
-    quern_recipe(rm, "ruby", "tfc:gem/ruby", "tfc:powder/ruby", count=4)
-    quern_recipe(rm, "sapphire", "tfc:gem/sapphire", "tfc:powder/sapphire", count=4)
-    quern_recipe(rm, "topaz", "tfc:gem/topaz", "tfc:powder/topaz", count=4)
-
-
-def heat_recipe(rm: ResourceManager, name_parts: ResourceIdentifier, ingredient: Json, temperature: float,
-                result_item: Optional[Union[str, Json]] = None, result_fluid: Optional[str] = None,
-                use_durability: Optional[bool] = None, chance: Optional[float] = None) -> RecipeContext:
-    """
-    Copied from tfc data gen
-    """
-    result_item = item_stack_provider(result_item) if isinstance(result_item, str) else result_item
-    result_fluid = None if result_fluid is None else fluid_stack(result_fluid)
-    return rm.recipe(('heating', name_parts), 'tfc:heating', {
-        'ingredient': utils.ingredient(ingredient),
-        'result_item': result_item,
-        'result_fluid': result_fluid,
-        'temperature': temperature,
-        'use_durability': use_durability if use_durability else None,
-        'chance': chance,
-    })
-
-
-def quern_recipe(rm: ResourceManager, name: ResourceIdentifier, item: str, result: str,
-                 count: int = 1) -> RecipeContext:
-    """
-    Copied from tfc data gen
-    """
-    result = result if not isinstance(result, str) else utils.item_stack((count, result))
-
-    return rm.recipe(('quern', name), 'tfc:quern', {
-        'ingredient': utils.ingredient(item),
-        'result': result
-    })
-
+    rm.crafting_shapeless("crafting/cannonball",
+                          ["minecraft:iron_ingot", "minecraft:paper", "minecraft:gunpowder",],
+                          "alekiships:cannonball").with_advancement("alekiships:cannonball")
 
 def fluid_stack(data_in: Json) -> Json:
     """

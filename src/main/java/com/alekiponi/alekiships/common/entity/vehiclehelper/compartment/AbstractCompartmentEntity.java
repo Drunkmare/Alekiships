@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.KayakEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.fluids.TFCFluids;
@@ -221,10 +221,11 @@ public abstract class AbstractCompartmentEntity extends Entity {
             this.destroy(damageSource);
         }
 
-        if (this.getRootVehicle() instanceof KayakEntity kayakEntity) {
-            kayakEntity.spawnAtLocation(kayakEntity.getDropItem());
-            kayakEntity.remove(RemovalReason.KILLED);
-            kayakEntity.kill();
+        if (this.getTrueVehicle() != null && this.getTrueVehicle().isTiny()) {
+            AbstractVehicle vehicle = this.getTrueVehicle();
+            vehicle.spawnAtLocation(vehicle.getDropItem());
+            vehicle.remove(RemovalReason.KILLED);
+            vehicle.kill();
             this.getVehicle().kill();
         }
 
@@ -312,9 +313,24 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.entityData.set(DATA_ID_HURT_DIR, pHurtDirection);
     }
 
+    public RidingPose getRidingPose(){
+        return RidingPose.STANDARD;
+    }
+
+    public static enum RidingPose{
+        ULTRA_COMPACT,
+        COMPACT,
+        STANDING,
+        STANDARD
+    }
+
     @Override
     public boolean isPickable() {
         return !this.isRemoved();
+    }
+
+    public boolean shouldFaceOtherWay(){
+        return false;
     }
 
     /**

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -71,7 +72,7 @@ public class SloopUnderConstructionEntity extends AbstractVehicleUnderConstructi
         this.mainsail = AlekiShipsItems.MEDIUM_TRIANGULAR_SAIL.get();
         this.jibsail = AlekiShipsItems.SMALL_TRIANGULAR_SAIL.get();
         this.anchor = AlekiShipsItems.ANCHOR.get();
-        this.rigging = AlekiShipsItems.ROPE_COIL.get();
+        this.rigging = Items.LEAD;
     }
 
     private static final EntityDataAccessor<ItemStack> DATA_ID_KEEL = SynchedEntityData.defineId(SloopUnderConstructionEntity.class,
@@ -626,6 +627,11 @@ public class SloopUnderConstructionEntity extends AbstractVehicleUnderConstructi
     @Override
     public int[] getCanAddOnlyBlocksIndices() {
         return new int[0];
+    }
+
+    @Override
+    public float renderSizeForCompartments() {
+        return 0;
     }
 
     @Override

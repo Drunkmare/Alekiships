@@ -305,7 +305,7 @@ public enum IngameOverlays {
                         entity = collider.getRootVehicle();
                     }
                     vehicle = (AbstractAlekiBoatEntity)entity;
-                    if(vehicle instanceof KayakEntity){
+                    if(vehicle.isTiny()){
                         stack.popPose();
                         return;
                     }
@@ -329,7 +329,7 @@ public enum IngameOverlays {
                         if (emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity().getFirstPassenger()
                                 .is(emptyCompartmentEntity)) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.HELM), 0, 9, 9);
-                            if (emptyCompartmentEntity.getTrueVehicle() instanceof CanoeEntity && player.getItemInHand(
+                            if (emptyCompartmentEntity.getTrueVehicle().pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
                                     player.getUsedItemHand()).is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
                                 graphics.blit(COMPARTMENT_ICONS, -12, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
                             }

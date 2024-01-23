@@ -128,6 +128,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         return COMPARTMENT_ROTATIONS;
     }
 
+    public float[] getDefaultColliderDimensions(){
+        return new float[]{1.5f,0.75f};
+    }
 
     @Override
     protected Vec3 positionRiderByIndex(int index) {

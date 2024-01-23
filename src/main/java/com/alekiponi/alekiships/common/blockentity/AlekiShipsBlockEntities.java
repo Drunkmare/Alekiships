@@ -13,19 +13,14 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static com.alekiponi.alekiships.common.block.AlekiShipsBlocks.CANOE_COMPONENT_BLOCKS;
 
 public class AlekiShipsBlockEntities {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES;
 
-    public static final RegistryObject<BlockEntityType<CanoeComponentBlockEntity>> CANOE_COMPONENT_BLOCK_ENTITY;
-
     static {
         BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, AlekiShips.MOD_ID);
 
-        CANOE_COMPONENT_BLOCK_ENTITY = register("canoe_component_block_entity", CanoeComponentBlockEntity::new,
-                CANOE_COMPONENT_BLOCKS.values().stream());
     }
 
     public AlekiShipsBlockEntities() {

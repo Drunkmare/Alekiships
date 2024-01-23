@@ -26,12 +26,12 @@ public class ServerConfig {
                         "Force creation of ships and rowboats from specified wood types. Turning this to false will make ships and rowboats craftable from any wood type.")
                 .define("shipWoodRestriction", true);
 
-        this.forceReducedDebugInfo = builder.apply("forceReducedDebugInfo").comment("Force reduceDebugInfo gamerule. Turn this to FALSE if you want coordinates bad.")
-                .define("forceReducedDebugInfo", true);
+        this.forceReducedDebugInfo = builder.apply("forceReducedDebugInfo").comment("Force reduceDebugInfo gamerule.")
+                .define("forceReducedDebugInfo", false);
 
         this.disableVanillaBoatFunctionality = builder.apply("disableVanillaBoatFunctionality")
-                .comment("Disables vanilla boats and base TFC boats from working.")
-                .define("disableVanillaBoatFunctionality", true);
+                .comment("Disables vanilla boats from working.")
+                .define("disableVanillaBoatFunctionality", false);
 
     }
 }

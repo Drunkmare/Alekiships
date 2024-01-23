@@ -113,6 +113,10 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         return InteractionResult.PASS;
     }
 
+    public boolean requireBolts(){
+        return false;
+    }
+
     @Override
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(final BlockGetter blockGetter, final BlockPos blockPos,

@@ -12,35 +12,6 @@ public class AlekiShipsItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, AlekiShips.MOD_ID);
 
-    public static final RegistryObject<Item> SEXTANT = ITEMS.register("sextant",
-            () -> new SextantItem(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> NAV_CLOCK = ITEMS.register("nav_clock",
-            () -> new NavClockItem(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> BAROMETER = ITEMS.register("barometer",
-            () -> new BarometerItem(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> UNFINISHED_SEXTANT = ITEMS.register("unfinished_sextant",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> UNFINISHED_NAV_CLOCK = ITEMS.register("unfinished_nav_clock",
-            () -> new Item(new Item.Properties().stacksTo(64)));
-
-    public static final RegistryObject<Item> UNFINISHED_BAROMETER = ITEMS.register("unfinished_barometer",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> ALEKISHIPS_COMPASS = ITEMS.register("alekiships_compass",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> LARGE_WATERPROOF_HIDE = ITEMS.register("large_waterproof_hide",
-            () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> KAYAK_PADDLE = ITEMS.register("kayak_paddle",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> CANOE_PADDLE = ITEMS.register("canoe_paddle",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
     public static final RegistryObject<Item> CANNONBALL = ITEMS.register("cannonball",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
@@ -50,13 +21,7 @@ public class AlekiShipsItems {
     public static final RegistryObject<Item> OAR = ITEMS.register("oar",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> COPPER_BOLT = ITEMS.register("copper_bolt",
-            () -> new Item(new Item.Properties().stacksTo(64)));
-
     public static final RegistryObject<Item> CANNON_BARREL = ITEMS.register("cannon_barrel",
-            () -> new Item(new Item.Properties().stacksTo(4)));
-
-    public static final RegistryObject<Item> ROPE_COIL = ITEMS.register("rope_coil",
             () -> new Item(new Item.Properties().stacksTo(4)));
 
     public static final RegistryObject<Item> LARGE_TRIANGULAR_SAIL = ITEMS.register("large_triangular_sail",
@@ -71,23 +36,9 @@ public class AlekiShipsItems {
     public static final RegistryObject<Item> ANCHOR = ITEMS.register("anchor",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> KAYAK = ITEMS.register("kayak",
-            () -> new KayakItem(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> KAYAK_WITH_PADDLE_ICON_ONLY = ITEMS.register("kayak_with_paddle_icon_only",
+    public static final RegistryObject<Item> COPPER_BOLT = ITEMS.register("copper_bolt",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> CANOE_ICON_ONLY = ITEMS.register("canoe_icon_only",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> CANOE_WITH_PADDLE_ICON_ONLY = ITEMS.register("canoe_with_paddle_icon_only",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> ROWBOAT_ICON_ONLY = ITEMS.register("rowboat_icon_only",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-
-    public static final RegistryObject<Item> SLOOP_ICON_ONLY = ITEMS.register("sloop_icon_only",
-            () -> new Item(new Item.Properties().stacksTo(1)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

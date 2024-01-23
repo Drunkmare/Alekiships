@@ -71,6 +71,7 @@ public abstract class AbstractVehicle extends Entity {
     protected final float PASSENGER_SIZE_LIMIT = 0.9F;
     protected final float DAMAGE_RECOVERY = 2.0f;
 
+    protected AbstractCompartmentEntity.RidingPose ridingPoses[];
     private final LinkedList<Double> speedOverTime;
     protected float invFriction;
     protected int lerpSteps;
@@ -91,6 +92,11 @@ public abstract class AbstractVehicle extends Entity {
         super(entityType, level);
         this.blocksBuilding = true;
         this.randomRotation = 0;
+        AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
+        for(AbstractCompartmentEntity.RidingPose pose : poses){
+            pose = AbstractCompartmentEntity.RidingPose.STANDARD;
+        }
+        this.ridingPoses = poses;
         this.speedOverTime = new LinkedList<Double>();
         for(int i = 0; i < 5; i ++){
             this.speedOverTime.add(0.0);
@@ -106,6 +112,28 @@ public abstract class AbstractVehicle extends Entity {
     public abstract int[] getConstructionIndices();
 
     public abstract int[] getCanAddOnlyBlocksIndices();
+
+    public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
+        return ridingPoses;
+    }
+
+    public abstract float renderSizeForCompartments();
+
+    public boolean isTiny(){
+        return false;
+    }
+
+    public boolean pilotCompartmentAcceptsNonPlayers(){
+        return false;
+    }
+
+    public boolean renderCleatKnotSides(){
+        return true;
+    }
+
+    public float[] getDefaultColliderDimensions(){
+        return new float[]{1,1};
+    }
 
     public ArrayList<VehicleCleatEntity> getCleats(){
         ArrayList<VehicleCleatEntity> list = new ArrayList<VehicleCleatEntity>();

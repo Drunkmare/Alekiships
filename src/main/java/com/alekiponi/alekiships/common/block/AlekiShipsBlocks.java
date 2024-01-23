@@ -23,30 +23,6 @@ import java.util.function.Supplier;
 public final class AlekiShipsBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
             AlekiShips.MOD_ID);
-
-    public static final Map<RegistryWood, RegistryObject<CanoeComponentBlock>> CANOE_COMPONENT_BLOCKS = AlekiShipsHelper.TFCWoodMap(
-            wood -> registerBlock("wood/canoe_component_block/" + wood.getSerializedName(),
-                    () -> new CanoeComponentBlock(
-                            BlockBehaviour.Properties.copy(wood.getBlock(Wood.BlockType.STRIPPED_LOG).get())
-                                    .mapColor(wood.woodColor()).noOcclusion(), wood)));
-
-    //TODO: swap between roofing types automatically on place
-    /*
-    public static final RegistryObject<Block> THATCH_ROOFING = registerBlockWithItem("thatch_roofing",
-            () -> new AngledRoofingBlock(BlockBehaviour.Properties.of().strength(0.6F, 0.4F).noOcclusion().isViewBlocking(TFCBlocks::never)
-                            .sound(TFCSounds.THATCH).noCollission()));
-
-    public static final RegistryObject<Block> THATCH_ROOFING_STAIRS = registerBlockWithItem("thatch_roofing_stairs",
-            () -> new StairBlock(Blocks.ACACIA_STAIRS.defaultBlockState(),
-                    BlockBehaviour.Properties.of().strength(0.6F, 0.4F).noOcclusion().isViewBlocking(TFCBlocks::never)
-                            .sound(TFCSounds.THATCH).noCollission()));
-
-    public static final RegistryObject<Block> THATCH_ROOFING_SLAB = registerBlockWithItem("thatch_roofing_slab",
-            () -> new SlabBlock(
-                    BlockBehaviour.Properties.of().strength(0.6F, 0.4F).noOcclusion().isViewBlocking(TFCBlocks::never)
-                            .sound(TFCSounds.THATCH).noCollission()));
-
-     */
     public static final RegistryObject<Block> BOAT_FRAME_ANGLED = registerBlockWithItem("watercraft_frame_angled",
             () -> new AngledBoatFrameBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).noOcclusion()));
 

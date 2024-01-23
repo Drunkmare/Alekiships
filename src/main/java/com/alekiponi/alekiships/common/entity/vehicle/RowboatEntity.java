@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatVariant;
 import net.minecraft.nbt.CompoundTag;
@@ -80,6 +81,15 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     public int[] getCanAddOnlyBlocksIndices() {
         return CAN_ADD_ONLY_BLOCKS;
+    }
+
+    public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
+        AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
+        for(AbstractCompartmentEntity.RidingPose pose : poses){
+            pose = AbstractCompartmentEntity.RidingPose.COMPACT;
+        }
+        poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
+        return poses;
     }
 
     protected Vec3 positionRiderByIndex(int index){

@@ -27,28 +27,14 @@ public final class AlekiShipsEntities {
     public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
             MOD_ID);
 
-    public static final Map<RegistryWood, RegistryObject<EntityType<CanoeEntity>>> CANOES = AlekiShipsHelper.TFCWoodMap(
-            wood -> register("dugout_canoe/" + wood.getSerializedName(),
-                    EntityType.Builder.of(CanoeEntity::new, MobCategory.MISC).sized(1.125F, 0.625F)));
-
     public static final Map<RegistryWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.TFCWoodMap(
             wood -> register("rowboat/" + wood.getSerializedName(),
                     EntityType.Builder.of(RowboatEntity::new, MobCategory.MISC).sized(1.875F, 0.625F)));
-
-    public static final RegistryObject<EntityType<KayakEntity>> KAYAK_ENTITY = register("kayak",
-            EntityType.Builder.of(KayakEntity::new, MobCategory.MISC).sized(0.79F, 0.625F));
 
     public static final Map<RegistryWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.TFCWoodMap(
             wood -> register("sloop/" + wood.getSerializedName(),
                     EntityType.Builder.of(SloopEntity::new, MobCategory.MISC).sized(3F, 0.75F)
                             .setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune()));
-
-    /*
-    public static final Map<BoatVariant, RegistryObject<EntityType<SloopConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = Helpers.mapOfKeys(
-            BoatVariant.class, variant -> register("sloop_construction/" + variant.getName(),
-                    EntityType.Builder.of(SloopConstructionEntity::new, MobCategory.MISC).sized(3F, 0.75F)
-                            .setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune()));
-     */
 
     public static final Map<RegistryWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.TFCWoodMap(
             wood -> register("sloop_construction/" + wood.getSerializedName(),
@@ -59,11 +45,6 @@ public final class AlekiShipsEntities {
             "compartment_empty",
             EntityType.Builder.of(EmptyCompartmentEntity::new, MobCategory.MISC).sized(0.6F, 0.7F).fireImmune()
                     .noSummon());
-
-    public static final RegistryObject<CompartmentType<TFCChestCompartmentEntity>> TFC_CHEST_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_tfcchest",
-            CompartmentType.Builder.of(TFCChestCompartmentEntity::new, TFCChestCompartmentEntity::new,
-                    itemStack -> itemStack.is(AlekiShipsTags.Items.CHESTS), MobCategory.MISC));
 
     public static final RegistryObject<CompartmentType<BarrelCompartmentEntity>> BARREL_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_barrel", CompartmentType.Builder.of(BarrelCompartmentEntity::new, BarrelCompartmentEntity::new,
@@ -96,12 +77,6 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<CompartmentType<SmokerCompartmentEntity>> SMOKER_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_smoker", CompartmentType.Builder.of(SmokerCompartmentEntity::new, SmokerCompartmentEntity::new,
                     itemStack -> itemStack.is(Blocks.SMOKER.asItem()), MobCategory.MISC));
-
-    public static final RegistryObject<CompartmentType<WorkbenchCompartmentEntity>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_workbench",
-            CompartmentType.Builder.of(WorkbenchCompartmentEntity::new, WorkbenchCompartmentEntity::new,
-                    itemStack -> itemStack.is(AlekiShipsTags.Items.WORKBENCHES), MobCategory.MISC));
-
     public static final RegistryObject<CompartmentType<StonecutterCompartmentEntity>> STONECUTTER_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_stonecutter",
             CompartmentType.Builder.of(StonecutterCompartmentEntity::new, StonecutterCompartmentEntity::new,
@@ -125,10 +100,6 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<CompartmentType<LoomCompartmentEntity>> LOOM_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_loom", CompartmentType.Builder.of(LoomCompartmentEntity::new, LoomCompartmentEntity::new,
                     itemStack -> itemStack.is(Blocks.LOOM.asItem()), MobCategory.MISC));
-
-    public static final RegistryObject<CompartmentType<AnvilCompartmentEntity>> ANVIL_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_anvil", CompartmentType.Builder.of(AnvilCompartmentEntity::new, AnvilCompartmentEntity::new,
-                    itemStack -> itemStack.is(AlekiShipsTags.Items.ANVILS), MobCategory.MISC));
 
     public static final RegistryObject<EntityType<BoatVehiclePart>> BOAT_VEHICLE_PART = register("vehicle_part_boat",
             EntityType.Builder.of(BoatVehiclePart::new, MobCategory.MISC).sized(0, 0)

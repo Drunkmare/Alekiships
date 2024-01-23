@@ -116,6 +116,10 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity {
         return 0.55;
     }
 
+    public RidingPose getRidingPose(){
+        return RidingPose.STANDING;
+    }
+
     @Override
     public BlockState getDisplayBlockState() {
         return this.isPassenger() ? super.getDisplayBlockState() : super.getDisplayBlockState()

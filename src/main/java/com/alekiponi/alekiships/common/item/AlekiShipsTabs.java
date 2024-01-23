@@ -16,12 +16,11 @@ public class AlekiShipsTabs {
 
 
     public static final RegistryObject<CreativeModeTab> ALEKISHIPS_TAB = CREATIVE_MODE_TABS.register("alekiships_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(AlekiShipsItems.SEXTANT.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(AlekiShipsItems.ANCHOR.get()))
                     .title(Component.translatable("creativetab.alekiships_tab")).displayItems((pParameters, pOutput) -> {
 
                         pOutput.accept(AlekiShipsItems.OAR.get());
                         pOutput.accept(AlekiShipsBlocks.OARLOCK.get());
-                        pOutput.accept(AlekiShipsItems.COPPER_BOLT.get());
                         pOutput.accept(AlekiShipsBlocks.CLEAT.get());
                         pOutput.accept(AlekiShipsItems.ANCHOR.get());
 

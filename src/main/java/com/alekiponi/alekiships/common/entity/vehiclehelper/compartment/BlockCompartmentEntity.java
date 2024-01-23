@@ -25,6 +25,8 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity {
         }
     }
 
+
+
     @Override
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide() && removalReason.shouldDestroy()) {

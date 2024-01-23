@@ -118,14 +118,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         float localY = (float) ((this.isRemoved() ? 0.01 : this.getPassengersRidingOffset()) + passenger.getMyRidingOffset());
         if (passenger instanceof Player) {
             localY = 0;
+            // TODO remove instance check and use abstraction / positionRiderByIndex()
             if (this.getTrueVehicle() instanceof RowboatEntity rowboatEntity) {
                 localY = 0.25f;
                 if (rowboatEntity.getPilotVehiclePartAsEntity() != ridingThisPart) {
                     localX = -0.25f;
                 }
-            }
-            if (this.getTrueVehicle() instanceof SloopEntity sloopEntity) {
-                localY += 0.0f;
             }
         }
 
@@ -137,6 +135,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         }
         if (passenger.getBbWidth() > 0.9f) {
             localX += 0.2f;
+            // TODO remove instance check and use abstraction
             if (this.getTrueVehicle() instanceof RowboatEntity) {
                 localX -= 0.6f;
             }
@@ -164,6 +163,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         //this.clampRotation(passenger);
     }
 
+
+
     @Override
     public double getPassengersRidingOffset() {
         return 0.6d * 0.75D;
@@ -178,7 +179,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     public void tick() {
         if (this.getTrueVehicle() != null) {
             if (tickCount < 10 && this.getTrueVehicle()
-                    .getPilotVehiclePartAsEntity() != null && !(this.getTrueVehicle() instanceof CanoeEntity)) {
+                    .getPilotVehiclePartAsEntity() != null && !this.getTrueVehicle().pilotCompartmentAcceptsNonPlayers()) {
                 canAddNonPlayers = !(this.getTrueVehicle().getPilotVehiclePartAsEntity() == this.getVehicle());
             }
             if (tickCount < 10 && this.isPassenger()) {
@@ -390,7 +391,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
 
         if (compartmentType.isPresent()) {
-            if((this.getRootVehicle() instanceof AbstractVehicle vehicle && !(vehicle instanceof CanoeEntity)) && vehicle.getControllingCompartment().is(this)){
+            if((this.getRootVehicle() instanceof AbstractVehicle vehicle && !vehicle.pilotCompartmentAcceptsNonPlayers()) && vehicle.getControllingCompartment().is(this)){
                 return InteractionResult.FAIL;
             }
 
@@ -455,9 +456,25 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         return super.getDismountLocationForPassenger(passenger);
     }
 
+
+
+    public RidingPose getRidingPose(){
+        if(this.getTrueVehicle() != null){
+            for(int i = 0; i < this.getTrueVehicle().getRidingPoses().length; i ++){
+                if(this.getTrueVehicle().getPassengers().indexOf(this) == i){
+                    return this.getTrueVehicle().getRidingPoses()[i];
+                }
+            }
+        }
+        return RidingPose.STANDARD;
+    }
+
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        return this.getTrueVehicle() instanceof KayakEntity && super.hurt(damageSource, amount);
+        if(this.getTrueVehicle() != null && this.getTrueVehicle().isTiny()){
+            return super.hurt(damageSource, amount);
+        }
+        return false;
     }
 
     @Nullable

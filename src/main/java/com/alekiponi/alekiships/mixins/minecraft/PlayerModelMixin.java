@@ -1,10 +1,6 @@
 package com.alekiponi.alekiships.mixins.minecraft;
 
-import com.alekiponi.alekiships.common.entity.vehicle.CanoeEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.KayakEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.BarrelCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -33,34 +29,33 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
 
     @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At(value = "TAIL"))
     void injectRidingPoseChange(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks,
-            float pNetHeadYaw, float pHeadPitch, CallbackInfo ci) {
-        // Players stand inside barrel compartments
-        if (pEntity.isPassenger() && pEntity.getVehicle() instanceof BarrelCompartmentEntity) {
-            if (this.riding) {
-                this.rightLeg.setPos(-1.9F, 12, 0);
-                this.leftLeg.setPos(01.9F, 12, 0);
-                this.rightPants.setPos(-1.9F, 12, 0);
-                this.leftPants.setPos(01.9F, 12, 0);
+                                float pNetHeadYaw, float pHeadPitch, CallbackInfo ci) {
 
-                this.rightLeg.xRot = 0;
-                this.rightLeg.yRot = 0;
-                this.rightLeg.zRot = 0;
+        if (this.riding) {
+            if (pEntity.getVehicle() instanceof AbstractCompartmentEntity compartment) {
+                if (compartment.getRidingPose() == AbstractCompartmentEntity.RidingPose.STANDING) {
+                    this.rightLeg.setPos(-1.9F, 12, 0);
+                    this.leftLeg.setPos(01.9F, 12, 0);
+                    this.rightPants.setPos(-1.9F, 12, 0);
+                    this.leftPants.setPos(01.9F, 12, 0);
 
-                this.leftLeg.xRot = 0;
-                this.leftLeg.yRot = 0;
-                this.leftLeg.zRot = 0;
+                    this.rightLeg.xRot = 0;
+                    this.rightLeg.yRot = 0;
+                    this.rightLeg.zRot = 0;
 
-                this.rightPants.xRot = 0;
-                this.rightPants.yRot = 0;
-                this.rightPants.zRot = 0;
+                    this.leftLeg.xRot = 0;
+                    this.leftLeg.yRot = 0;
+                    this.leftLeg.zRot = 0;
 
-                this.leftPants.xRot = 0;
-                this.leftPants.yRot = 0;
-                this.leftPants.zRot = 0;
-            }
-        } else if (pEntity.isPassenger() && pEntity.getVehicle() instanceof EmptyCompartmentEntity emptyCompartmentEntity) {
-            if ((emptyCompartmentEntity.getTrueVehicle() instanceof CanoeEntity) || (emptyCompartmentEntity.getTrueVehicle() instanceof RowboatEntity && emptyCompartmentEntity.canAddNonPlayers())) {
-                if (this.riding) {
+                    this.rightPants.xRot = 0;
+                    this.rightPants.yRot = 0;
+                    this.rightPants.zRot = 0;
+
+                    this.leftPants.xRot = 0;
+                    this.leftPants.yRot = 0;
+                    this.leftPants.zRot = 0;
+
+                } else if (compartment.getRidingPose() == AbstractCompartmentEntity.RidingPose.COMPACT) {
                     this.rightLeg.xRot = -1.570796F;
                     this.rightLeg.yRot = 0F;
                     this.rightLeg.zRot = 0F;
@@ -82,10 +77,7 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
 
                     this.rightPants.setPos(-1.9F, 11.6F, 0F);
                     this.leftPants.setPos(01.9F, 11.6F, 0F);
-                }
-
-            } else if (emptyCompartmentEntity.getTrueVehicle() instanceof KayakEntity) {
-                if (this.riding) {
+                } else if (compartment.getRidingPose() == AbstractCompartmentEntity.RidingPose.ULTRA_COMPACT) {
                     this.rightLeg.xRot = -1.570796F;
                     this.rightLeg.yRot = -0.1570796F;
                     this.rightLeg.zRot = 0F;
@@ -109,7 +101,6 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
                     this.leftPants.setPos(01.9F, 13.6F, 1F);
                 }
             }
-
         } else {
             this.rightLeg.setPos(-1.9F, 12.0F, 0.0F);
             this.leftLeg.setPos(01.9F, 12.0F, 0.0F);
@@ -127,6 +118,5 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
                 this.leftPants.y = 12.2F;
             }
         }
-
     }
 }

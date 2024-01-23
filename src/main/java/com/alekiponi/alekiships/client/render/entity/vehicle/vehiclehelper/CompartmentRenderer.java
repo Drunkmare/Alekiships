@@ -1,9 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehicle.CanoeEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.TFCChestCompartmentEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +22,7 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
     @Override
     public void render(final CompartmentType compartmentEntity, final float entityYaw, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
         super.render(compartmentEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
 
         if (compartmentEntity.tickCount < 2) {
@@ -40,15 +38,12 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(180 - rotation));
-        if(compartmentEntity instanceof TFCChestCompartmentEntity){
+        if (compartmentEntity.shouldFaceOtherWay()) {
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
         }
 
-        if (compartmentEntity.getTrueVehicle() instanceof CanoeEntity) {
-            poseStack.scale(0.6F, 0.6F, 0.6F);
-        } else {
-            poseStack.scale(0.6875F, 0.6875F, 0.6875F);
-        }
+        float renderSize = compartmentEntity.getTrueVehicle().renderSizeForCompartments();
+        poseStack.scale(renderSize, renderSize, renderSize);
 
         poseStack.translate(-0.5F, 0, -0.5F);
 
@@ -62,7 +57,7 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
      * Render the compartment contents. This is pre-scaled, rotated and translated for ease of use
      */
     protected abstract void renderCompartmentContents(final CompartmentType compartmentEntity, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight);
+                                                      final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight);
 
     @Override
     public ResourceLocation getTextureLocation(final CompartmentType compartmentEntity) {
