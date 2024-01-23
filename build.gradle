@@ -28,7 +28,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = 'FirmaCivilization-0.2.0-alpha-1.20.1'
+version = 'alekishipsilization-0.2.0-alpha-1.20.1'
 group = 'com.alekiponi.' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = ''
 
@@ -54,7 +54,7 @@ minecraft {
 
             property 'forge.enabledGameTestNamespaces', 'examplemod'
 
-            arg "-mixin.config=firmaciv.mixins.json"
+            arg "-mixin.config=alekiships.mixins.json"
 
             mods {
                 examplemod {
@@ -75,7 +75,7 @@ minecraft {
 
             property 'forge.enabledGameTestNamespaces', 'examplemod'
 
-            arg "-mixin.config=firmaciv.mixins.json"
+            arg "-mixin.config=alekiships.mixins.json"
 
             mods {
                 examplemod {
@@ -95,12 +95,12 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.enabledGameTestNamespaces', 'firmaciv'
+            property 'forge.enabledGameTestNamespaces', 'alekiships'
 
-            arg "-mixin.config=firmaciv.mixins.json"
+            arg "-mixin.config=alekiships.mixins.json"
 
             mods {
-                firmaciv {
+                alekiships {
                     source sourceSets.main
                 }
             }
@@ -118,12 +118,12 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'firmaciv', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'alekiships', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
-            arg "-mixin.config=firmaciv.mixins.json"
+            arg "-mixin.config=alekiships.mixins.json"
 
             mods {
-                firmaciv {
+                alekiships {
                     source sourceSets.main
                 }
             }
@@ -185,13 +185,13 @@ dependencies {
 
 mixin {
     // MixinGradle Settings
-    add sourceSets.main, 'firmaciv.refmap.json'
+    add sourceSets.main, 'alekiships.refmap.json'
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
     manifest {
-        attributes(["Specification-Title"     : "firmaciv",
+        attributes(["Specification-Title"     : "alekiships",
                     "Specification-Vendor"    : "alekiponi",
                     "Specification-Version"   : "1", // We are version 1 of ourselves
                     "Implementation-Title"    : project.name,
@@ -200,7 +200,7 @@ jar {
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                     "TweakClaass"             : "org.spongepowered.asm.launch.MixinTweaker",
                     "TweakOrder"              : 0,
-                    "MixinConfigs"            : "firmaciv.mixins.json"])
+                    "MixinConfigs"            : "alekiships.mixins.json"])
     }
 }
 

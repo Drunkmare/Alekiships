@@ -12,12 +12,12 @@ def generate(rm: ResourceManager):
             # Slab frame models
             rm.block_model(f"wood/watercraft_frame/flat/{woodType}/{progress}",
                            {"plank": f"tfc:block/wood/planks/{woodType}"},
-                           f"firmaciv:block/watercraft_frame/flat/template/{progress}")
+                           f"alekiships:block/watercraft_frame/flat/template/{progress}")
 
             for shape in ["straight", "inner", "outer"]:
                 rm.block_model(f"wood/watercraft_frame_angled/{woodType}/{shape}/{progress}",
                                {"plank": f"tfc:block/wood/planks/{woodType}"},
-                               f"firmaciv:block/watercraft_frame_angled/template/{shape}/{progress}")
+                               f"alekiships:block/watercraft_frame_angled/template/{shape}/{progress}")
 
         rm.blockstate_multipart(f"wood/watercraft_frame_flat/{woodType}",
                                 *blockStates.getWoodFrameFlatMultipart(woodType)).with_lang(
@@ -35,70 +35,70 @@ def generate(rm: ResourceManager):
         # Models that are shared by the end and middle states
         for n in range(8):
             rm.block_model(f"wood/canoe_component_block/{woodType}/all/{n}", canoe_component_textures,
-                           f"firmaciv:block/canoe_component_block/template/all/{n}")
+                           f"alekiships:block/canoe_component_block/template/all/{n}")
 
         # End and Middle only models
         for n in range(8, 13):
             rm.block_model(f"wood/canoe_component_block/{woodType}/end/{n}", canoe_component_textures,
-                           f"firmaciv:block/canoe_component_block/template/end/{n}")
+                           f"alekiships:block/canoe_component_block/template/end/{n}")
             rm.block_model(f"wood/canoe_component_block/{woodType}/middle/{n}", canoe_component_textures,
-                           f"firmaciv:block/canoe_component_block/template/middle/{n}")
+                           f"alekiships:block/canoe_component_block/template/middle/{n}")
             rm.blockstate(f"wood/canoe_component_block/{woodType}",
                           variants=blockStates.canoe_component(woodType)).with_lang(
                 f"{woodName} Canoe Component").with_block_loot(f"tfc:wood/lumber/{woodType}")
 
     # Basic frame
     rm.blockstate("watercraft_frame_angled", variants=blockStates.angledWaterCraftFrame).with_lang(
-        "Shipwright's Scaffolding").with_block_loot("firmaciv:watercraft_frame_angled")
+        "Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_angled")
 
     # Need to manually make the model
-    rm.item_model("watercraft_frame_angled", parent="firmaciv:block/watercraft_frame_angled/straight",
+    rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame_angled/straight",
                   no_textures=True)
 
     # Basic flat frame
-    rm.blockstate("watercraft_frame_flat", "firmaciv:block/watercraft_frame/flat/frame").with_lang(
-        "Flat Shipwright's Scaffolding").with_block_loot("firmaciv:watercraft_frame_flat")
+    rm.blockstate("watercraft_frame_flat", "alekiships:block/watercraft_frame/flat/frame").with_lang(
+        "Flat Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_flat")
 
     # Need to manually make the model
-    rm.item_model("watercraft_frame_flat", parent="firmaciv:block/watercraft_frame/flat/frame",
+    rm.item_model("watercraft_frame_flat", parent="alekiships:block/watercraft_frame/flat/frame",
                   no_textures=True)
 
     rm.blockstate("oarlock", variants={
         "facing=east": {
-            "model": "firmaciv:block/oarlock",
+            "model": "alekiships:block/oarlock",
             "y": 90
         },
         "facing=north": {
-            "model": "firmaciv:block/oarlock"
+            "model": "alekiships:block/oarlock"
         },
         "facing=south": {
-            "model": "firmaciv:block/oarlock",
+            "model": "alekiships:block/oarlock",
             "y": 180
         },
         "facing=west": {
-            "model": "firmaciv:block/oarlock",
+            "model": "alekiships:block/oarlock",
             "y": 270
         }
-    }).with_lang("Oarlock").with_block_loot("firmaciv:oarlock")
+    }).with_lang("Oarlock").with_block_loot("alekiships:oarlock")
     rm.item_model("oarlock")
 
     rm.blockstate("cleat", variants={
         "facing=east": {
-            "model": "firmaciv:block/cleat",
+            "model": "alekiships:block/cleat",
             "y": 90
         },
         "facing=north": {
-            "model": "firmaciv:block/cleat"
+            "model": "alekiships:block/cleat"
         },
         "facing=south": {
-            "model": "firmaciv:block/cleat",
+            "model": "alekiships:block/cleat",
             "y": 180
         },
         "facing=west": {
-            "model": "firmaciv:block/cleat",
+            "model": "alekiships:block/cleat",
             "y": 270
         }
-    }).with_lang("Cleat").with_block_loot("firmaciv:cleat")
+    }).with_lang("Cleat").with_block_loot("alekiships:cleat")
     rm.item_model("cleat")
 
     # Items with generated models
@@ -119,18 +119,3 @@ def generate(rm: ResourceManager):
     rm.item("canoe_with_paddle_icon_only").with_item_model().with_lang("ICON ONLY")
     rm.item("kayak_with_paddle_icon_only").with_item_model().with_lang("ICON ONLY")
     rm.item("rowboat_icon_only").with_item_model().with_lang("ICON ONLY")
-
-    rm.item("copper_bolt").with_item_model().with_lang("Copper Bolt")
-    rm.item("kayak").with_item_model().with_lang("Kayak")
-    rm.item("large_waterproof_hide").with_item_model().with_lang("Large Waterproof Hide")
-    rm.item("nav_toolkit").with_item_model().with_lang("Navigator's Toolkit")
-
-    # Items with custom models
-    rm.item("barometer").with_lang("Barometer")
-    rm.item("sextant").with_lang("Sextant")
-    rm.item("nav_clock").with_lang("Navigator's Timepiece")
-    rm.item("firmaciv_compass").with_lang("Compass (Declination: True North)")
-
-    rm.item("kayak_paddle").with_lang("Kayak Paddle")
-    rm.item("canoe_paddle").with_lang("Canoe Paddle")
-    rm.item("oar").with_lang("Oar")

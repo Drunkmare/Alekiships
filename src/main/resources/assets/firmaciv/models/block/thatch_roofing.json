@@ -1,8 +1,0 @@
-{
-    "parent": "firmaciv:block/roofing",
-    "textures": {
-        "bottom": "tfc:block/thatch",
-        "top": "tfc:block/thatch",
-        "side": "tfc:block/thatch"
-    }
-}

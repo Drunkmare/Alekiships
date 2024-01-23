@@ -7,7 +7,7 @@ import recipes
 
 
 def main():
-    resourceManager = mcresources.ResourceManager("firmaciv", "../src/main/resources",
+    resourceManager = mcresources.ResourceManager("alekiships", "../src/main/resources",
                                                   on_error=lambda file, e: print(f"Error writing {file}\n{e}"))
     print("Starting resource generation.")
     resourceManager.lang(constants.DEFAULT_LANG)

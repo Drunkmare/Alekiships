@@ -2,13 +2,13 @@
   "__comment__": "This file was automatically created by mcresources",
   "replace": false,
   "values": [
-    "firmaciv:cannonball",
-    "firmaciv:kayak",
-    "#firmaciv:dugout_canoes",
-    "#firmaciv:sloops",
-    "#firmaciv:rowboats",
-    "#firmaciv:vehicle_helpers",
-    "#firmaciv:compartments",
-    "firmaciv:sloop_construction/acacia/firmaciv:sloop_construction/ash/firmaciv:sloop_construction/aspen/firmaciv:sloop_construction/birch/firmaciv:sloop_construction/blackwood/firmaciv:sloop_construction/chestnut/firmaciv:sloop_construction/douglas_fir/firmaciv:sloop_construction/hickory/firmaciv:sloop_construction/kapok/firmaciv:sloop_construction/mangrove/firmaciv:sloop_construction/maple/firmaciv:sloop_construction/oak/firmaciv:sloop_construction/palm/firmaciv:sloop_construction/pine/firmaciv:sloop_construction/rosewood/firmaciv:sloop_construction/sequoia/firmaciv:sloop_construction/spruce/firmaciv:sloop_construction/sycamore/firmaciv:sloop_construction/white_cedar/firmaciv:sloop_construction/willow"
+    "alekiships:cannonball",
+    "alekiships:kayak",
+    "#alekiships:dugout_canoes",
+    "#alekiships:sloops",
+    "#alekiships:rowboats",
+    "#alekiships:vehicle_helpers",
+    "#alekiships:compartments",
+    "alekiships:sloop_construction/acacia/alekiships:sloop_construction/ash/alekiships:sloop_construction/aspen/alekiships:sloop_construction/birch/alekiships:sloop_construction/blackwood/alekiships:sloop_construction/chestnut/alekiships:sloop_construction/douglas_fir/alekiships:sloop_construction/hickory/alekiships:sloop_construction/kapok/alekiships:sloop_construction/mangrove/alekiships:sloop_construction/maple/alekiships:sloop_construction/oak/alekiships:sloop_construction/palm/alekiships:sloop_construction/pine/alekiships:sloop_construction/rosewood/alekiships:sloop_construction/sequoia/alekiships:sloop_construction/spruce/alekiships:sloop_construction/sycamore/alekiships:sloop_construction/white_cedar/alekiships:sloop_construction/willow"
   ]
 }

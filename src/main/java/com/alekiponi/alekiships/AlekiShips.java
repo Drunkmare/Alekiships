@@ -1,0 +1,61 @@
+package com.alekiponi.alekiships;
+
+import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
+import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.blockentity.AlekiShipsBlockEntities;
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
+import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
+import com.alekiponi.alekiships.util.AlekiShipsInteractionManager;
+import com.mojang.logging.LogUtils;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.slf4j.Logger;
+
+
+@Mod(AlekiShips.MOD_ID)
+public class AlekiShips {
+    public static final String MOD_ID = "alekiships";
+
+    // Directly reference a slf4j logger
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+    public AlekiShips() {
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        AlekiShipsTabs.register(eventBus);
+
+        AlekiShipsItems.register(eventBus);
+        AlekiShipsBlocks.register(eventBus);
+        AlekiShipsBlockEntities.register(eventBus);
+        AlekiShipsEntities.ENTITY_TYPES.register(eventBus);
+
+        eventBus.addListener(this::setup);
+        MinecraftForge.EVENT_BUS.register(this);
+        eventBus.addListener(this::addCreative);
+        AlekiShipsConfig.init();
+
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            AlekiShipsClientEvents.init();
+        }
+    }
+
+    private void setup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            AlekiShipsInteractionManager.init();
+        });
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+
+    }
+
+
+}

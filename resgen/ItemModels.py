@@ -2,7 +2,7 @@ def navClockBaseModel():
     templatefile = open("nav_clock.json", "r")
     tfdata = templatefile.read()
 
-    tfdata = tfdata.replace("item/clock", 'firmaciv:item/nav_clock/nav_clock')
+    tfdata = tfdata.replace("item/clock", 'alekiships:item/nav_clock/nav_clock')
 
     outfile = open("nav_clock.json", 'w')
 
@@ -31,7 +31,7 @@ def replaceTime():
     templatefile = open("nav_clock.json", "r")
     tfdata = templatefile.read()
 
-    tfdata = tfdata.replace("time", 'firmaciv:pm_time')
+    tfdata = tfdata.replace("time", 'alekiships:pm_time')
 
     outfile = open("nav_clock.json", 'w')
 
