@@ -456,11 +456,10 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         return super.getDismountLocationForPassenger(passenger);
     }
 
-
-
     public RidingPose getRidingPose(){
+        // TODO fix, it not work
         if(this.getTrueVehicle() != null){
-            for(int i = 0; i < this.getTrueVehicle().getRidingPoses().length; i ++){
+            for(int i = 0; i < this.getTrueVehicle().getMaxPassengers(); i ++){
                 if(this.getTrueVehicle().getPassengers().indexOf(this) == i){
                     return this.getTrueVehicle().getRidingPoses()[i];
                 }

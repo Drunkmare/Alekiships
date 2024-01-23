@@ -85,8 +85,8 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
 
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-        for(AbstractCompartmentEntity.RidingPose pose : poses){
-            pose = AbstractCompartmentEntity.RidingPose.COMPACT;
+        for(int i = 0; i < this.getMaxPassengers(); i ++){
+            poses[i] = AbstractCompartmentEntity.RidingPose.COMPACT;
         }
         poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
         return poses;

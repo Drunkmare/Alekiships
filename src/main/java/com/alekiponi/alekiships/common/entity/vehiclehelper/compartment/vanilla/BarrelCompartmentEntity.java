@@ -113,7 +113,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity {
     @Override
     public double getPassengersRidingOffset() {
         // Offset so players stand on us
-        return 0.55;
+        return 0.4;
     }
 
     public RidingPose getRidingPose(){

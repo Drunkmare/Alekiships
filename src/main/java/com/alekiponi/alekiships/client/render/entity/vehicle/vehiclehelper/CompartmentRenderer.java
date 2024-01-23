@@ -42,7 +42,12 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
             poseStack.mulPose(Axis.YP.rotationDegrees(180));
         }
 
-        float renderSize = compartmentEntity.getTrueVehicle().renderSizeForCompartments();
+
+        float renderSize = 0.6875f;
+        if(compartmentEntity.isPassenger() && compartmentEntity.getTrueVehicle() != null){
+            renderSize = compartmentEntity.getTrueVehicle().renderSizeForCompartments();
+        }
+
         poseStack.scale(renderSize, renderSize, renderSize);
 
         poseStack.translate(-0.5F, 0, -0.5F);

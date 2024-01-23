@@ -1,0 +1,26 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "replace": false,
+  "values": [
+    "alekiships:wood/canoe_component_block/acacia",
+    "alekiships:wood/canoe_component_block/ash",
+    "alekiships:wood/canoe_component_block/aspen",
+    "alekiships:wood/canoe_component_block/birch",
+    "alekiships:wood/canoe_component_block/blackwood",
+    "alekiships:wood/canoe_component_block/chestnut",
+    "alekiships:wood/canoe_component_block/douglas_fir",
+    "alekiships:wood/canoe_component_block/hickory",
+    "alekiships:wood/canoe_component_block/kapok",
+    "alekiships:wood/canoe_component_block/mangrove",
+    "alekiships:wood/canoe_component_block/maple",
+    "alekiships:wood/canoe_component_block/oak",
+    "alekiships:wood/canoe_component_block/palm",
+    "alekiships:wood/canoe_component_block/pine",
+    "alekiships:wood/canoe_component_block/rosewood",
+    "alekiships:wood/canoe_component_block/sequoia",
+    "alekiships:wood/canoe_component_block/spruce",
+    "alekiships:wood/canoe_component_block/sycamore",
+    "alekiships:wood/canoe_component_block/white_cedar",
+    "alekiships:wood/canoe_component_block/willow"
+  ]
+}

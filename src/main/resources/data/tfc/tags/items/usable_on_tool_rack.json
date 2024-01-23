@@ -1,0 +1,13 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "replace": false,
+  "values": [
+    "alekiships:canoe_paddle",
+    "alekiships:kayak_paddle",
+    "alekiships:oar",
+    "alekiships:kayak",
+    "alekiships:nav_clock",
+    "alekiships:sextant",
+    "alekiships:barometer"
+  ]
+}

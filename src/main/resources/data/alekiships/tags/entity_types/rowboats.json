@@ -1,0 +1,26 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "replace": false,
+  "values": [
+    "alekiships:rowboat/acacia",
+    "alekiships:rowboat/ash",
+    "alekiships:rowboat/aspen",
+    "alekiships:rowboat/birch",
+    "alekiships:rowboat/blackwood",
+    "alekiships:rowboat/chestnut",
+    "alekiships:rowboat/douglas_fir",
+    "alekiships:rowboat/hickory",
+    "alekiships:rowboat/kapok",
+    "alekiships:rowboat/mangrove",
+    "alekiships:rowboat/maple",
+    "alekiships:rowboat/oak",
+    "alekiships:rowboat/palm",
+    "alekiships:rowboat/pine",
+    "alekiships:rowboat/rosewood",
+    "alekiships:rowboat/sequoia",
+    "alekiships:rowboat/spruce",
+    "alekiships:rowboat/sycamore",
+    "alekiships:rowboat/white_cedar",
+    "alekiships:rowboat/willow"
+  ]
+}
