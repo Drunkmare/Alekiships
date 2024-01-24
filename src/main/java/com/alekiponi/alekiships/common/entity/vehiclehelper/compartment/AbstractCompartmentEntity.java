@@ -101,8 +101,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
             this.checkInsideBlocks();
             if (!(this instanceof EmptyCompartmentEntity)) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.04D, 0));
-                if (this.isInWater() || this.level().getFluidState(this.blockPosition())
-                        .is(TFCFluids.SALT_WATER.getSource())) {
+                if (this.isInWater()) {
                     if (this.getFluidTypeHeight(this.getEyeInFluidType()) > this.getEyeHeight() - 0.25) {
                         this.setDeltaMovement(0, this.getBuoyancy(), 0);
                     }
@@ -334,6 +333,11 @@ public abstract class AbstractCompartmentEntity extends Entity {
     @Override
     public boolean isPickable() {
         return !this.isRemoved();
+    }
+
+    @Override
+    public boolean isInWater(){
+        return AlekiShipsHelper.inWater(this);
     }
 
     public boolean shouldFaceOtherWay(){

@@ -66,7 +66,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity {
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         // Silly easter egg
-        if (!this.isPassenger()) {
+        if (!this.isPassenger() && !player.isSecondaryUseActive()) {
             // TODO advancement? "Lost at sea"?
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
