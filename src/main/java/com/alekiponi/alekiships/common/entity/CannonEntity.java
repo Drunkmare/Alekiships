@@ -53,10 +53,6 @@ public class CannonEntity extends Entity {
 
     public final Item cannonBallItem = AlekiShipsItems.CANNONBALL.get();
 
-    public final Item paperItem = TFCItems.UNREFINED_PAPER.get();
-
-    public final Item gunpowderItem = Items.GUNPOWDER;
-
     protected int lerpSteps;
     protected double lerpX;
     protected double lerpY;
@@ -106,6 +102,22 @@ public class CannonEntity extends Entity {
         }
     }
 
+    public boolean needsPaperItem(){
+        return getPaperItem() != null;
+    }
+
+    public boolean needsGunpowderItem(){
+        return getGunpowderItem() != null;
+    }
+
+    public Item getPaperItem(){
+        return null;
+    }
+
+    public Item getGunpowderItem(){
+        return null;
+    }
+
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack item = player.getItemInHand(hand);
@@ -116,20 +128,25 @@ public class CannonEntity extends Entity {
             }
             return InteractionResult.CONSUME;
         }
-        if (item.is(this.paperItem)) {
-            if(this.getPaper().isEmpty()){
-                this.setPaper(item.split(1));
-                return InteractionResult.SUCCESS;
+        if(needsPaperItem()){
+            if (item.is(this.getPaperItem())) {
+                if(this.getPaper().isEmpty()){
+                    this.setPaper(item.split(1));
+                    return InteractionResult.SUCCESS;
+                }
+                return InteractionResult.CONSUME;
             }
-            return InteractionResult.CONSUME;
         }
-        if (item.is(this.gunpowderItem)) {
-            if(this.getGunpowder().isEmpty()){
-                this.setGunpowder(item.split(1));
-                return InteractionResult.SUCCESS;
+        if(needsGunpowderItem()){
+            if (item.is(this.getGunpowderItem())) {
+                if(this.getGunpowder().isEmpty()){
+                    this.setGunpowder(item.split(1));
+                    return InteractionResult.SUCCESS;
+                }
+                return InteractionResult.CONSUME;
             }
-            return InteractionResult.CONSUME;
         }
+
         if (item.is(Items.FLINT_AND_STEEL)) {
             this.light();
             return InteractionResult.CONSUME;
@@ -149,10 +166,10 @@ public class CannonEntity extends Entity {
         if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
             return;
         }
-        if(!this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
+        if(needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
             return;
         }
-        if(!this.getGunpowder().is(Items.GUNPOWDER)){
+        if(needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
             return;
         }
         if(this.isInWater() || this.level().getFluidState(this.blockPosition())
@@ -168,10 +185,10 @@ public class CannonEntity extends Entity {
         if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
             return;
         }
-        if(!this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
+        if(this.needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
             return;
         }
-        if(!this.getGunpowder().is(Items.GUNPOWDER)){
+        if(this.needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
             return;
         }
         this.setPaper(ItemStack.EMPTY);

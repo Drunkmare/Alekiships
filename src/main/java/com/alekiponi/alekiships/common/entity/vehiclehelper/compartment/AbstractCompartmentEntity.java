@@ -51,6 +51,8 @@ public abstract class AbstractCompartmentEntity extends Entity {
     protected double lerpXRot;
     @Nullable
     protected AbstractVehiclePart ridingThisPart = null;
+
+    protected int vehiclePassengerIndex = -1;
     private int notRidingTicks = 0;
 
     public AbstractCompartmentEntity(final EntityType<? extends AbstractCompartmentEntity> entityType,
@@ -79,6 +81,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         newCompartment.setYRot(this.getYRot());
         newCompartment.setPos(this.getX(), this.getY(), this.getZ());
         newCompartment.ridingThisPart = this.ridingThisPart;
+        assert ridingThisPart != null;
         newCompartment.startRiding(ridingThisPart);
         this.level().addFreshEntity(newCompartment);
         return newCompartment;
@@ -89,8 +92,12 @@ public abstract class AbstractCompartmentEntity extends Entity {
         if (ridingThisPart == null && this.isPassenger() && this.getVehicle() instanceof AbstractVehiclePart) {
             ridingThisPart = (AbstractVehiclePart) this.getVehicle();
         }
+        if(vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers().size() == vehicle.getMaxPassengers()){
+            vehiclePassengerIndex = vehicle.getPassengers().indexOf(this.getVehicle());
+        }
 
         if (!this.isPassenger()) {
+            vehiclePassengerIndex = -1;
             this.checkInsideBlocks();
             if (!(this instanceof EmptyCompartmentEntity)) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.04D, 0));

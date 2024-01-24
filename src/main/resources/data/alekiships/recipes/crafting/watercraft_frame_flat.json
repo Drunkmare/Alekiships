@@ -2,15 +2,15 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "AA"
+    "SSS"
   ],
   "key": {
-    "A": {
-      "item": "alekiships:watercraft_frame_angled"
+    "S": {
+      "item": "minecraft:scaffolding"
     }
   },
   "result": {
     "item": "alekiships:watercraft_frame_flat",
-    "count": 2
+    "count": 6
   }
 }

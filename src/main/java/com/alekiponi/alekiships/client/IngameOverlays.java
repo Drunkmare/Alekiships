@@ -197,23 +197,30 @@ public enum IngameOverlays {
                     stack.scale(1.0F, 1.0F, 1.0F);
 
                     Item cannonBall = cannon.cannonBallItem;
-                    Item gunpowder = cannon.gunpowderItem;
-                    Item paper = cannon.paperItem;
+                    Item gunpowder = cannon.getGunpowderItem();
+                    Item paper = cannon.getPaperItem();
 
                     if(cannon.getCannonball().getCount() == 0){
                         graphics.renderItem(cannonBall.getDefaultInstance(), 0,0);
                     }
-                    if(cannon.getPaper().getCount() == 0){
+                    if(cannon.getPaper().getCount() == 0 && cannon.needsPaperItem()){
                         graphics.renderItem(paper.getDefaultInstance(), 16,0);
                     }
-                    if(cannon.getGunpowder().getCount() == 0){
+                    if(cannon.getGunpowder().getCount() == 0 && cannon.needsPaperItem()){
                         graphics.renderItem(gunpowder.getDefaultInstance(), 32,0);
                     }
-                    if(cannon.getPaper().getCount() == cannon.getCannonball().getCount() &&
-                            cannon.getCannonball().getCount() == cannon.getGunpowder().getCount() &&
-                            cannon.getGunpowder().getCount() == 1 && cannon.getFuseTime() < 0){
-                        graphics.renderItem(Items.FLINT_AND_STEEL.getDefaultInstance(), 0,0);
+                    if(cannon.needsGunpowderItem() && cannon.needsPaperItem()){
+                        if(cannon.getPaper().getCount() == cannon.getCannonball().getCount() &&
+                                cannon.getCannonball().getCount() == cannon.getGunpowder().getCount() &&
+                                cannon.getGunpowder().getCount() == 1 && cannon.getFuseTime() < 0){
+                            graphics.renderItem(Items.FLINT_AND_STEEL.getDefaultInstance(), 0,0);
+                        }
+                    } else {
+                        if(cannon.getCannonball().getCount() == 1 && cannon.getFuseTime() < 0){
+                            graphics.renderItem(Items.FLINT_AND_STEEL.getDefaultInstance(), 0,0);
+                        }
                     }
+
 
                 }
 

@@ -7,37 +7,27 @@ import constants
 
 
 def generate(rm: ResourceManager):
-    def disableRecipe(name_parts: ResourceIdentifier):
-        rm.recipe(name_parts, None, {}, conditions="forge:false")
 
-    rm.crafting_shaped("crafting/watercraft_frame_angled", [" LL", "LLL", "LL "], {"L": "#tfc:lumber"},
+
+    rm.crafting_shaped("crafting/watercraft_frame_angled", ["  S", " SS", "SS "], {"S": "minecraft:scaffolding"},
                        ("alekiships:watercraft_frame_angled")).with_advancement("alekiships:watercraft_frame_angled")
 
-    rm.crafting_shaped("crafting/watercraft_frame_angled_3", ["LL ", "LLL", " LL"], {"L": "#tfc:lumber"},
+    rm.crafting_shaped("crafting/watercraft_frame_angled_3", ["S  ", "SS ", " SS"], {"S": "minecraft:scaffolding"},
                        ("alekiships:watercraft_frame_angled")).with_advancement("alekiships:watercraft_frame_angled")
 
-    rm.crafting_shaped("crafting/watercraft_frame_flat", ["AA"], {"A": "alekiships:watercraft_frame_angled"},
-                       (2, "alekiships:watercraft_frame_flat")).with_advancement("alekiships:watercraft_frame_flat")
+    rm.crafting_shaped("crafting/watercraft_frame_flat", ["SSS"], {"S": "minecraft:scaffolding"},
+                       (6, "alekiships:watercraft_frame_flat")).with_advancement("alekiships:watercraft_frame_flat")
 
-    rm.crafting_shaped("crafting/watercraft_frame_angled_1", ["F ", " F"], {"F": "alekiships:watercraft_frame_flat"},
-                       (2, "alekiships:watercraft_frame_angled"))
-
-    rm.crafting_shaped("crafting/watercraft_frame_angled_2", [" F", "F "], {"F": "alekiships:watercraft_frame_flat"},
-                       (2, "alekiships:watercraft_frame_angled"))
-
-    rm.crafting_shaped("crafting/oar", ["  S", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#tfc:lumber"},
+    rm.crafting_shaped("crafting/oar", ["  S", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#minecraft:wooden_slabs"},
                        "alekiships:oar").with_advancement("alekiships:oar")
-    rm.crafting_shaped("crafting/kayak_paddle", ["  L", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#tfc:lumber"},
-                       "alekiships:kayak_paddle").with_advancement("alekiships:kayak_paddle")
-    rm.crafting_shaped("crafting/canoe_paddle", [" S ", "L  "], {"S": "#forge:rods/wooden", "L": "#tfc:lumber"},
-                       "alekiships:canoe_paddle").with_advancement("alekiships:canoe_paddle")
 
-    rm.crafting_shaped("crafting/cannon", ["BBB", "LL ", "R R"], {"B": "alekiships:cannon_barrel", "L": "#tfc:lumber",
-                                                                  "R": "#forge:rods/wrought_iron"},
+    rm.crafting_shaped("crafting/cannon", ["BBB", "LL ", "R R"], {"B": "minecraft:iron_block",
+                                                                  "L": "#minecraft:wooden_slabs",
+                                                                  "R": "minecraft:iron_nugget"},
                        "alekiships:cannon").with_advancement("alekiships:cannon")
 
     rm.crafting_shaped("crafting/small_triangular_sail", ["WSS", "WWS", "WWW"],
-                       {"W": "tfc:wool_cloth", "S": "#forge:string"},
+                       {"W": "minecraft:white_wool", "S": "#forge:string"},
                        "alekiships:small_triangular_sail").with_advancement("alekiships:small_triangular_sail")
 
     rm.crafting_shaped("crafting/medium_triangular_sail", ["S  ", "WS ", "WWS"],
@@ -113,3 +103,6 @@ def item_stack_provider(
             'modifiers': modifiers
         }
     return stack
+
+def disableRecipe(name_parts: ResourceIdentifier):
+    rm.recipe(name_parts, None, {}, conditions="forge:false")

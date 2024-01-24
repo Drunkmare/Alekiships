@@ -55,7 +55,6 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     protected boolean canAddNonPlayers;
     protected boolean canAddOnlyBlocks;
-
     protected boolean canAddCannons;
 
 
@@ -458,12 +457,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     public RidingPose getRidingPose(){
         // TODO fix, it not work
-        if(this.getTrueVehicle() != null){
-            for(int i = 0; i < this.getTrueVehicle().getMaxPassengers(); i ++){
-                if(this.getTrueVehicle().getPassengers().indexOf(this) == i){
-                    return this.getTrueVehicle().getRidingPoses()[i];
-                }
-            }
+        if(this.getTrueVehicle() != null && vehiclePassengerIndex != -1){
+            return this.getTrueVehicle().getRidingPoses()[this.vehiclePassengerIndex];
         }
         return RidingPose.STANDARD;
     }

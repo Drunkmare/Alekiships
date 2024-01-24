@@ -8,13 +8,13 @@
   ],
   "key": {
     "B": {
-      "item": "alekiships:cannon_barrel"
+      "item": "minecraft:iron_block"
     },
     "L": {
-      "tag": "tfc:lumber"
+      "tag": "minecraft:wooden_slabs"
     },
     "R": {
-      "tag": "forge:rods/wrought_iron"
+      "item": "minecraft:iron_nugget"
     }
   },
   "result": {

@@ -9,9 +9,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractVehicleUnderConstruction extends AbstractVehicle{
+public abstract class AbstractUnderConstructionEntity extends AbstractVehicle{
 
-    public AbstractVehicleUnderConstruction(EntityType entityType, Level level) {
+    public AbstractUnderConstructionEntity(EntityType entityType, Level level) {
         super(entityType, level);
     }
 

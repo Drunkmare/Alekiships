@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicleUnderConstruction;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractUnderConstructionEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -49,7 +49,7 @@ public class ConstructionEntity extends Entity {
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        if(this.getRootVehicle() instanceof AbstractVehicleUnderConstruction constructionEntity){
+        if(this.getRootVehicle() instanceof AbstractUnderConstructionEntity constructionEntity){
             constructionEntity.interactFromConstructionEntity(player, hand);
             return InteractionResult.SUCCESS;
         }

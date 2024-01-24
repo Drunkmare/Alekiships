@@ -11,7 +11,7 @@
       "tag": "forge:rods/wooden"
     },
     "L": {
-      "tag": "tfc:lumber"
+      "tag": "minecraft:wooden_slabs"
     }
   },
   "result": {

@@ -49,7 +49,7 @@ def generate(rm: ResourceManager):
 
     # Basic frame
     rm.blockstate("watercraft_frame_angled", variants=blockStates.angledWaterCraftFrame).with_lang(
-        "Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_angled")
+        "Sloped Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_angled")
 
     # Need to manually make the model
     rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame_angled/straight",

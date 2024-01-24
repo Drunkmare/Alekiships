@@ -2,13 +2,13 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "LL ",
-    "LLL",
-    " LL"
+    "S  ",
+    "SS ",
+    " SS"
   ],
   "key": {
-    "L": {
-      "tag": "tfc:lumber"
+    "S": {
+      "item": "minecraft:scaffolding"
     }
   },
   "result": {

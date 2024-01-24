@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "tfc:block/wood/planks/maple",
-		"particle": "tfc:block/wood/planks/maple"
+		"1": "minecraft:block/bamboo_mosaic",
+		"particle": "minecraft:block/bamboo_mosaic"
 	},
 	"elements": [
 		{

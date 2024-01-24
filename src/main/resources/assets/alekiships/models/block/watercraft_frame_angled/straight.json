@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/stairs",
 	"textures": {
-		"particle": "tfc:block/wood/planks/maple",
-		"frame": "tfc:block/wood/planks/maple"
+		"particle": "minecraft:block/bamboo_mosaic",
+		"frame": "minecraft:block/bamboo_mosaic"
 	},
 	"elements": [
 		{

@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class SloopUnderConstructionEntity extends AbstractVehicleUnderConstruction {
+public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntity {
 
     public final RegistryWood wood;
     public final Item lumber;
