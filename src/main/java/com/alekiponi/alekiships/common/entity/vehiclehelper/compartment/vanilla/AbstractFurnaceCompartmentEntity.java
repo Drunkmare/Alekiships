@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
@@ -12,12 +13,15 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
@@ -29,6 +33,7 @@ import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -39,6 +44,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
@@ -59,11 +65,13 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * {@link BlastFurnaceCompartmentMenu} and {@link SmokerCompartmentMenu}. If you extend or use the vanilla menu
  * counterparts you'll need to use or extend our menus as well
  */
-public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
+public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
 
     protected static final int SLOT_INPUT = 0;
     protected static final int SLOT_FUEL = 1;
     protected static final int SLOT_RESULT = 2;
+    private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
+            AbstractFurnaceCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private static final int[] SLOTS_FOR_UP = new int[]{SLOT_INPUT};
     private static final int[] SLOTS_FOR_DOWN = new int[]{SLOT_RESULT, SLOT_FUEL};
     private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FUEL};
@@ -124,6 +132,10 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         super(entityType, level, 3, itemStack);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
+
+        if (itemStack.getItem() instanceof BlockItem blockItem) {
+            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
+        }
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,
@@ -140,6 +152,12 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private static int getTotalCookTime(final Level pLevel, final AbstractFurnaceCompartmentEntity furnaceCompartment) {
         return furnaceCompartment.quickCheck.getRecipeFor(furnaceCompartment, pLevel)
                 .map(AbstractCookingRecipe::getCookingTime).orElse(BURN_TIME_STANDARD);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -210,6 +228,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     public void remove(final RemovalReason removalReason) {
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            this.playBreakSound();
+        }
         super.remove(removalReason);
     }
 
@@ -309,6 +330,16 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
+    protected void playHurtSound(final DamageSource damageSource) {
+        this.playHitSound();
+    }
+
+    @Override
+    protected void onPlaced() {
+        this.playPlaceSound();
+    }
+
+    @Override
     public int[] getSlotsForFace(final Direction direction) {
         if (direction == Direction.DOWN) {
             return SLOTS_FOR_DOWN;
@@ -345,6 +376,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         for (final String recipeKey : compoundtag.getAllKeys()) {
             this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
         }
+
+        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
+                compoundTag.getCompound("heldBlock")));
     }
 
     @Override
@@ -357,6 +391,8 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         final CompoundTag compoundtag = new CompoundTag();
         this.recipesUsed.forEach((recipeKey, integer) -> compoundtag.putInt(recipeKey.toString(), integer));
         compoundTag.put("RecipesUsed", compoundtag);
+
+        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
@@ -399,8 +435,13 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
-    protected SoundEvent getHurtSound(final DamageSource damageSource) {
-        return SoundEvents.STONE_BREAK;
+    public BlockState getDisplayBlockState() {
+        return this.entityData.get(DATA_ID_DISPLAY_BLOCK);
+    }
+
+    @Override
+    public void setDisplayBlockState(final BlockState blockState) {
+        this.entityData.set(DATA_ID_DISPLAY_BLOCK, blockState);
     }
 
     @Override
