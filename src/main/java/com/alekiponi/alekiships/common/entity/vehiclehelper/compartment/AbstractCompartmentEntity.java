@@ -243,19 +243,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         return true;
     }
 
-    @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            final BlockState blockState = this.getDisplayBlockState();
-            if (!blockState.isAir()) {
-                final SoundEvent breakSound = blockState.getSoundType().getBreakSound();
-                this.playSound(breakSound, 1, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
-            }
-        }
-
-        super.remove(removalReason);
-    }
-
     protected void destroy(final DamageSource damageSource) {
         this.kill();
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
@@ -376,12 +363,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
      * This is primarily for playing the placement sound, but I could imagine that there's other good uses
      */
     protected void onPlaced() {
-        if (!this.level().isClientSide()) {
-            final SoundType soundType = this.getDisplayBlockState().getSoundType();
-            final SoundEvent placeSound = soundType.getPlaceSound();
-            this.playSound(placeSound, SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
-                    soundType.getPitch() * 0.8F);
-        }
     }
 
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
