@@ -2,9 +2,12 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,11 +15,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ChestCompartmentEntity extends ContainerCompartmentEntity {
+public class ChestCompartmentEntity extends ContainerCompartmentEntity implements LidCompartment {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
@@ -25,12 +29,14 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity {
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            ChestCompartmentEntity.this.playSound(SoundEvents.CHEST_OPEN);
+            ChestCompartmentEntity.this.playSound(SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
         protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            ChestCompartmentEntity.this.playSound(SoundEvents.CHEST_CLOSE);
+            ChestCompartmentEntity.this.playSound(SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
@@ -64,7 +70,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity {
         this.chestLidController.tickLid();
 
         if (!this.isRemoved() && this.level().isClientSide()) {
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), this.getDisplayBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -79,10 +85,28 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity {
     }
 
     @Override
+    public void remove(final RemovalReason removalReason) {
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            this.playSound(SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        }
+        super.remove(removalReason);
+    }
+
+    @Override
+    protected void playHurtSound(final DamageSource damageSource) {
+        this.playSound(SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.5F);
+    }
+
+    @Override
+    protected void onPlaced() {
+        this.playSound(SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+    }
+
+    @Override
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -90,7 +114,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity {
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -99,6 +123,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity {
         return ChestMenu.threeRows(id, playerInventory, this);
     }
 
+    @Override
     public float getOpenNess(final float partialTicks) {
         return this.chestLidController.getOpenness(partialTicks);
     }
