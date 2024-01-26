@@ -7,11 +7,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -33,19 +35,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements MenuProvider, HasCustomInventoryScreen {
+public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements MenuProvider, HasCustomInventoryScreen, LidCompartment {
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_OPEN);
+            EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_OPEN, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
         protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_CLOSE);
+            EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_CLOSE, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
@@ -56,7 +60,6 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
         @Override
         protected boolean isOwnContainer(final Player player) {
-
             return false;
         }
     };
@@ -69,8 +72,6 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> entityType,
             final Level level, final ItemStack ignoredItemStack) {
         this(entityType, level);
-
-        this.setDisplayBlockState(Blocks.ENDER_CHEST.defaultBlockState());
     }
 
     @Override
@@ -86,7 +87,7 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
                         (this.random.nextDouble() - 0.5D) * 2);
             }
 
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), this.getDisplayBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -112,17 +113,18 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
+    @Override
     public float getOpenNess(final float partialTicks) {
         return this.chestLidController.getOpenness(partialTicks);
     }
@@ -134,6 +136,24 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     @Override
     public void openCustomInventoryScreen(final Player player) {
         player.openMenu(this);
+    }
+
+    @Override
+    protected void onPlaced() {
+        this.playSound(SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+    }
+
+    @Override
+    public void remove(final RemovalReason removalReason) {
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        }
+        super.remove(removalReason);
+    }
+
+    @Override
+    protected void playHurtSound(final DamageSource damageSource) {
+        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     private boolean stillValid(final Player player) {
