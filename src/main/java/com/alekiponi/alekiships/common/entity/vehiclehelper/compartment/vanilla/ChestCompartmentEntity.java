@@ -24,6 +24,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
+    public static final int SLOT_COUNT = 27;
 
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -55,12 +56,28 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
     };
 
     public ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level) {
-        super(entityType, level, 27);
+        this(entityType, level, SLOT_COUNT);
     }
 
     public ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> entityType, final Level level,
             final ItemStack itemStack) {
-        super(entityType, level, 27, itemStack);
+        this(entityType, level, SLOT_COUNT, itemStack);
+    }
+
+    /**
+     * Protected constructor so children can have their own size
+     */
+    protected ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level,
+            final int slotCount) {
+        super(entityType, level, slotCount);
+    }
+
+    /**
+     * Protected constructor so children can have their own size
+     */
+    protected ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> entityType,
+            final Level level, final int slotCount, final ItemStack itemStack) {
+        super(entityType, level, slotCount, itemStack);
     }
 
     @Override
@@ -69,7 +86,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
 
         this.chestLidController.tickLid();
 
-        if (!this.isRemoved() && this.level().isClientSide()) {
+        if (!this.isRemoved() && !this.level().isClientSide()) {
             this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
         }
     }
