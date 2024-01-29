@@ -22,7 +22,7 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
     @Override
     public void render(final CompartmentType compartmentEntity, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
         super.render(compartmentEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
 
         if (compartmentEntity.tickCount < 2) {
@@ -38,20 +38,15 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(180 - rotation));
-        if (compartmentEntity.shouldFaceOtherWay()) {
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
-        }
-
 
         float renderSize = 0.6875f;
-        if(compartmentEntity.isPassenger() && compartmentEntity.getTrueVehicle() != null){
+        if (compartmentEntity.isPassenger() && compartmentEntity.getTrueVehicle() != null) {
             renderSize = compartmentEntity.getTrueVehicle().renderSizeForCompartments();
         }
 
         poseStack.scale(renderSize, renderSize, renderSize);
 
         poseStack.translate(-0.5F, 0, -0.5F);
-
 
         this.renderCompartmentContents(compartmentEntity, partialTicks, poseStack, bufferSource, packedLight);
 
@@ -62,7 +57,7 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
      * Render the compartment contents. This is pre-scaled, rotated and translated for ease of use
      */
     protected abstract void renderCompartmentContents(final CompartmentType compartmentEntity, final float partialTicks,
-                                                      final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight);
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight);
 
     @Override
     public ResourceLocation getTextureLocation(final CompartmentType compartmentEntity) {

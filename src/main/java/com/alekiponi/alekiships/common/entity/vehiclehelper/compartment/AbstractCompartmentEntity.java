@@ -339,10 +339,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         return !this.isRemoved();
     }
 
-    public boolean shouldFaceOtherWay(){
-        return false;
-    }
-
     /**
      * Gets the ItemStack that should be dropped when this compartment is destroyed
      * This is so compartments can easily control the output stack or add NBT
