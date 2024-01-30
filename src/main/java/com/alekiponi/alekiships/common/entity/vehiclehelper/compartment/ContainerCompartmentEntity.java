@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +26,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity, HasCustomInventoryScreen {
+public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity {
 
     private final int slotCount;
     private NonNullList<ItemStack> itemStacks;
@@ -99,11 +98,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     }
 
     abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
-
-    @Override
-    public void openCustomInventoryScreen(final Player player) {
-        this.interactWithContainerVehicle(player);
-    }
 
     @Override
     public void stopOpen(final Player player) {

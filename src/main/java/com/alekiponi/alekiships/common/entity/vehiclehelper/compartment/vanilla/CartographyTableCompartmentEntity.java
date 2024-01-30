@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class CartographyTableCompartmentEntity extends BlockCompartmentEntity implements HasCustomInventoryScreen, MenuProvider {
+public class CartographyTableCompartmentEntity extends BlockCompartmentEntity implements MenuProvider {
 
     public CartographyTableCompartmentEntity(final EntityType<? extends CartographyTableCompartmentEntity> entityType,
             final Level level) {
@@ -36,14 +35,9 @@ public class CartographyTableCompartmentEntity extends BlockCompartmentEntity im
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        this.openCustomInventoryScreen(player);
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void openCustomInventoryScreen(final Player player) {
         player.openMenu(this);
         player.awardStat(Stats.INTERACT_WITH_CARTOGRAPHY_TABLE);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

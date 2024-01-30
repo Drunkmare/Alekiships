@@ -15,7 +15,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements MenuProvider, HasCustomInventoryScreen, LidCompartment {
+public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements MenuProvider, LidCompartment {
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
     private final ChestLidController chestLidController = new ChestLidController();
@@ -131,11 +130,6 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
     private void signalOpenCount(final Level level, final byte openCount) {
         level.broadcastEntityEvent(this, openCount > 0 ? CONTAINER_OPEN : CONTAINER_CLOSE);
-    }
-
-    @Override
-    public void openCustomInventoryScreen(final Player player) {
-        player.openMenu(this);
     }
 
     @Override
