@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -47,10 +46,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         this(entityType, level, slotCount);
         if (itemStack.hasCustomHoverName()) {
             this.setCustomName(itemStack.getHoverName());
-        }
-
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
         }
 
         final CompoundTag blockEntityTag = itemStack.getTagElement("BlockEntityTag");
