@@ -39,8 +39,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
             AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
-            AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final float DAMAGE_TO_BREAK = 8.0f;
     private static final float DAMAGE_RECOVERY = 0.5f;
     public int lifespan = 6000;
@@ -66,7 +64,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.entityData.define(DATA_ID_HURT, 0);
         this.entityData.define(DATA_ID_HURT_DIR, 1);
         this.entityData.define(DATA_ID_DAMAGE, 0F);
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Block.getId(Blocks.AIR.defaultBlockState()));
     }
 
     /**
@@ -184,14 +181,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.lerpSteps = 10;
     }
 
-    protected SoundEvent getHurtSound(final DamageSource damageSource) {
-        return this.getDisplayBlockState().getSoundType().getHitSound();
-    }
-
     protected void playHurtSound(final DamageSource damageSource) {
-        final SoundType soundType = this.getDisplayBlockState().getSoundType();
-        this.playSound(this.getHurtSound(damageSource), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
-                soundType.getPitch() * 0.5F);
     }
 
     @Override
@@ -259,15 +249,12 @@ public abstract class AbstractCompartmentEntity extends Entity {
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         this.lifespan = compoundTag.getInt("Lifespan");
         this.notRidingTicks = compoundTag.getInt("notRidingTicks");
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt("Lifespan", this.lifespan);
         compoundTag.putInt("notRidingTicks", this.notRidingTicks);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     /**
@@ -289,14 +276,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
             return firmacivBoatEntity;
         }
         return null;
-    }
-
-    public BlockState getDisplayBlockState() {
-        return Block.stateById(this.getEntityData().get(DATA_ID_DISPLAY_BLOCK));
-    }
-
-    public void setDisplayBlockState(final BlockState blockState) {
-        this.getEntityData().set(DATA_ID_DISPLAY_BLOCK, Block.getId(blockState));
     }
 
     public float getDamage() {
@@ -346,12 +325,13 @@ public abstract class AbstractCompartmentEntity extends Entity {
      * @return The ItemStack that should be dropped in world when the compartment is destroyed
      */
     public ItemStack getDropStack() {
-        return this.getDisplayBlockState().getBlock().asItem().getDefaultInstance();
+        return ItemStack.EMPTY;
     }
 
+    @Nullable
     @Override
     public ItemStack getPickResult() {
-        return this.getDisplayBlockState().getBlock().asItem().getDefaultInstance();
+        return null;
     }
 
     /**
