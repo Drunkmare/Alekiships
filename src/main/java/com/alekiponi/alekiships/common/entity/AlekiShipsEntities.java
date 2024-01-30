@@ -1,8 +1,12 @@
 package com.alekiponi.alekiships.common.entity;
 
-import com.alekiponi.alekiships.common.entity.vehicle.*;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.*;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.CraftingTableCompartment;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.*;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
@@ -38,8 +42,9 @@ public final class AlekiShipsEntities {
 
     public static final Map<RegistryWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.TFCWoodMap(
             wood -> register("sloop_construction/" + wood.getSerializedName(),
-                    EntityType.Builder.<SloopUnderConstructionEntity>of((type, level) -> new SloopUnderConstructionEntity(type,level, wood), MobCategory.MISC).sized(4F, 0.75F)
-                            .setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon()));
+                    EntityType.Builder.<SloopUnderConstructionEntity>of(
+                                    (type, level) -> new SloopUnderConstructionEntity(type, level, wood), MobCategory.MISC)
+                            .sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon()));
 
     public static final RegistryObject<EntityType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = register(
             "compartment_empty",
@@ -78,9 +83,9 @@ public final class AlekiShipsEntities {
             "compartment_smoker", CompartmentType.Builder.of(SmokerCompartmentEntity::new, SmokerCompartmentEntity::new,
                     itemStack -> itemStack.is(Blocks.SMOKER.asItem()), MobCategory.MISC));
 
-    public static final RegistryObject<CompartmentType<WorkbenchCompartmentEntity>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_workbench",
-            CompartmentType.Builder.of(WorkbenchCompartmentEntity::new, WorkbenchCompartmentEntity::new,
+    public static final RegistryObject<CompartmentType<CraftingTableCompartment>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_crafting_table",
+            CompartmentType.Builder.of(CraftingTableCompartment::new, CraftingTableCompartment::new,
                     itemStack -> itemStack.is(AlekiShipsTags.Items.CRAFTING_TABLES), MobCategory.MISC));
 
     public static final RegistryObject<CompartmentType<StonecutterCompartmentEntity>> STONECUTTER_COMPARTMENT_ENTITY = registerCompartment(
@@ -111,7 +116,8 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(BoatVehiclePart::new, MobCategory.MISC).sized(0, 0)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
-    public static final RegistryObject<EntityType<ConstructionVehiclePart>> CONSTRUCTION_VEHICLE_PART = register("vehicle_part_construction",
+    public static final RegistryObject<EntityType<ConstructionVehiclePart>> CONSTRUCTION_VEHICLE_PART = register(
+            "vehicle_part_construction",
             EntityType.Builder.of(ConstructionVehiclePart::new, MobCategory.MISC).sized(0, 0)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
@@ -131,8 +137,8 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(AnchorEntity::new, MobCategory.MISC).sized(1, 1)
                     .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
-    public static final RegistryObject<EntityType<ConstructionEntity>> CONSTRUCTION_ENTITY = register("vehicle_construction",
-            EntityType.Builder.of(ConstructionEntity::new, MobCategory.MISC).sized(1, 1)
+    public static final RegistryObject<EntityType<ConstructionEntity>> CONSTRUCTION_ENTITY = register(
+            "vehicle_construction", EntityType.Builder.of(ConstructionEntity::new, MobCategory.MISC).sized(1, 1)
                     .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
     public static final RegistryObject<EntityType<WindlassSwitchEntity>> WINDLASS_SWITCH_ENTITY = register(

@@ -1,6 +1,7 @@
-package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
+package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -20,14 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class WorkbenchCompartmentEntity extends BlockCompartmentEntity implements HasCustomInventoryScreen, MenuProvider {
+public class CraftingTableCompartment extends BlockCompartmentEntity implements HasCustomInventoryScreen, MenuProvider {
 
-    public WorkbenchCompartmentEntity(final EntityType<? extends WorkbenchCompartmentEntity> entityType,
+    public CraftingTableCompartment(final EntityType<? extends CraftingTableCompartment> entityType,
             final Level level) {
         super(entityType, level);
     }
 
-    public WorkbenchCompartmentEntity(final CompartmentType<? extends WorkbenchCompartmentEntity> entityType,
+    public CraftingTableCompartment(final CompartmentType<? extends CraftingTableCompartment> entityType,
             final Level level, final ItemStack itemStack) {
         super(entityType, level, itemStack);
     }
@@ -50,13 +51,13 @@ public class WorkbenchCompartmentEntity extends BlockCompartmentEntity implement
         return new CraftingMenu(id, playerInventory, new ContainerLevelAccess() {
             @Override
             public <T> Optional<T> evaluate(final BiFunction<Level, BlockPos, T> function) {
-                return Optional.of(function.apply(WorkbenchCompartmentEntity.this.level(),
-                        WorkbenchCompartmentEntity.this.blockPosition()));
+                return Optional.of(function.apply(CraftingTableCompartment.this.level(),
+                        CraftingTableCompartment.this.blockPosition()));
             }
         }) {
             @Override
             public boolean stillValid(final Player player) {
-                final BlockPos blockPos = WorkbenchCompartmentEntity.this.blockPosition();
+                final BlockPos blockPos = CraftingTableCompartment.this.blockPosition();
                 return player.distanceToSqr(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) <= 64;
             }
         };
