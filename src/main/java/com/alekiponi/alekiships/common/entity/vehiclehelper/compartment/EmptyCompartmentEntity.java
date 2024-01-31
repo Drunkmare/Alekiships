@@ -420,7 +420,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public Vec3 getDismountLocationForPassenger(final LivingEntity passenger) {
-        if(this.getTrueVehicle().getDeltaMovement().length() > 0.01){
+        if (this.getTrueVehicle().getDeltaMovement().length() > 0.01) {
             return this.getTrueVehicle().getDismountLocationForPassenger(passenger);
         }
         double y = this.getTrueVehicle().getDismountLocationForPassenger(passenger).y();
@@ -487,5 +487,26 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         if (!(entity instanceof LivingEntity livingentity)) return null;
 
         return livingentity;
+    }
+
+    @Override
+    protected void onPlaced() {
+        // Purposefully empty
+    }
+
+    @Override
+    protected void playHurtSound(final DamageSource damageSource) {
+        // Purposefully empty
+    }
+
+    @Override
+    public ItemStack getDropStack() {
+        return ItemStack.EMPTY;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return null;
     }
 }

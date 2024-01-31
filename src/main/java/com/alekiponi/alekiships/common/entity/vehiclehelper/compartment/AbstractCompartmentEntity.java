@@ -181,8 +181,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.lerpSteps = 10;
     }
 
-    protected void playHurtSound(final DamageSource damageSource) {
-    }
+    abstract protected void playHurtSound(final DamageSource damageSource);
 
     @Override
     public boolean isInvulnerableTo(DamageSource pSource) {
@@ -324,22 +323,17 @@ public abstract class AbstractCompartmentEntity extends Entity {
      *
      * @return The ItemStack that should be dropped in world when the compartment is destroyed
      */
-    public ItemStack getDropStack() {
-        return ItemStack.EMPTY;
-    }
+    abstract public ItemStack getDropStack();
 
     @Nullable
     @Override
-    public ItemStack getPickResult() {
-        return null;
-    }
+    abstract public ItemStack getPickResult();
 
     /**
      * Called after the compartment is placed into the world by {@link EmptyCompartmentEntity}.
      * This is primarily for playing the placement sound, but I could imagine that there's other good uses
      */
-    protected void onPlaced() {
-    }
+    abstract protected void onPlaced();
 
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
             final float pitch) {

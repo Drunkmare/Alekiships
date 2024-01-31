@@ -30,7 +30,8 @@ import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class BarrelCompartmentEntity extends ContainerCompartmentEntity implements BlockCompartment {
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
@@ -169,6 +170,11 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     @Override
     public double getBuoyancy() {
         return this.tickCount % 21 > 10 ? -0.01 : 0.01;
+    }
+
+    @Override
+    public ItemStack getDropStack() {
+        return new ItemStack(this.getDisplayBlockState().getBlock());
     }
 
     @Nullable

@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 public class ChestCompartmentEntity extends ContainerCompartmentEntity implements LidCompartment {
 
@@ -147,5 +148,16 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
 
     private void signalOpenCount(final Level level, final byte openCount) {
         level.broadcastEntityEvent(this, openCount > 0 ? CONTAINER_OPEN : CONTAINER_CLOSE);
+    }
+
+    @Override
+    public ItemStack getDropStack() {
+        return new ItemStack(Blocks.CHEST.asItem());
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return new ItemStack(Blocks.CHEST.asItem());
     }
 }

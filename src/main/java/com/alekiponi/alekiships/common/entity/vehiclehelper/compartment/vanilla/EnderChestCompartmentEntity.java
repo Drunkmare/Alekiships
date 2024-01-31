@@ -154,6 +154,17 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         return !this.isRemoved() && this.position().closerThan(player.position(), 8);
     }
 
+    @Override
+    public ItemStack getDropStack() {
+        return new ItemStack(Blocks.ENDER_CHEST);
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return new ItemStack(Blocks.ENDER_CHEST);
+    }
+
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {

@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -184,6 +185,16 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
     private void signalOpenCount(final Level level, final int openCount) {
         level.broadcastEntityEvent(this, openCount > 0 ? CONTAINER_OPEN : CONTAINER_CLOSE);
+    }
+
+    @Override
+    protected void playHurtSound(final DamageSource damageSource) {
+        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.5F);
+    }
+
+    @Override
+    protected void onPlaced() {
+        this.playSound(SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     @Override

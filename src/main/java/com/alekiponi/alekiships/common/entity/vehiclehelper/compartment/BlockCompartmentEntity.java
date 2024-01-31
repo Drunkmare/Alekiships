@@ -18,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+
 /**
  * This is a light class for compartments which are dumb blocks. It automatically sets the display blockstate if the
  * given {@link ItemStack} is a {@link BlockItem} as well as uses blockstate to get and play the break sound
@@ -80,6 +82,17 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
         }
 
         super.remove(removalReason);
+    }
+
+    @Override
+    public ItemStack getDropStack() {
+        return new ItemStack(this.getDisplayBlockState().getBlock());
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return new ItemStack(this.getDisplayBlockState().getBlock());
     }
 
     @Override

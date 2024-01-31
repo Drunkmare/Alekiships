@@ -66,7 +66,6 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * counterparts you'll need to use or extend our menus as well
  */
 public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
-
     protected static final int SLOT_INPUT = 0;
     protected static final int SLOT_FUEL = 1;
     protected static final int SLOT_RESULT = 2;
@@ -442,6 +441,17 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     @Override
     public void setDisplayBlockState(final BlockState blockState) {
         this.entityData.set(DATA_ID_DISPLAY_BLOCK, blockState);
+    }
+
+    @Override
+    public ItemStack getDropStack() {
+        return new ItemStack(this.getDisplayBlockState().getBlock());
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return new ItemStack(this.getDisplayBlockState().getBlock());
     }
 
     @Override
