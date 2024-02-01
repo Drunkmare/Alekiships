@@ -1,26 +1,23 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
-import net.minecraft.core.BlockPos;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
+public class CraftingTableCompartment extends SimpleBlockMenuCompartmentEntity {
 
-public class CraftingTableCompartment extends BlockCompartmentEntity implements MenuProvider {
+    private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
 
     public CraftingTableCompartment(final EntityType<? extends CraftingTableCompartment> entityType,
             final Level level) {
@@ -33,27 +30,23 @@ public class CraftingTableCompartment extends BlockCompartmentEntity implements 
     }
 
     @Override
-    public InteractionResult interact(final Player player, final InteractionHand hand) {
-        player.openMenu(this);
-        player.awardStat(Stats.INTERACT_WITH_CRAFTING_TABLE);
-        return InteractionResult.SUCCESS;
+    public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
+            final Player player) {
+        return new CraftingMenu(id, playerInventory, this.getContainerLevelAccess()) {
+            @Override
+            public boolean stillValid(final Player player) {
+                return CraftingTableCompartment.this.stillValid(player);
+            }
+        };
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
-            final Player player) {
-        return new CraftingMenu(id, playerInventory, new ContainerLevelAccess() {
-            @Override
-            public <T> Optional<T> evaluate(final BiFunction<Level, BlockPos, T> function) {
-                return Optional.of(function.apply(CraftingTableCompartment.this.level(),
-                        CraftingTableCompartment.this.blockPosition()));
-            }
-        }) {
-            @Override
-            public boolean stillValid(final Player player) {
-                final BlockPos blockPos = CraftingTableCompartment.this.blockPosition();
-                return player.distanceToSqr(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) <= 64;
-            }
-        };
+    protected Stat<ResourceLocation> getInteractionStat() {
+        return Stats.CUSTOM.get(Stats.INTERACT_WITH_CRAFTING_TABLE);
+    }
+
+    @Override
+    protected Component getContainerTitle() {
+        return CONTAINER_TITLE;
     }
 }
