@@ -1,17 +1,26 @@
 package com.alekiponi.alekiships.mixins.minecraft;
 
-
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.GrindstoneCompartmentEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.OptionalInt;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity{
@@ -19,12 +28,6 @@ public abstract class PlayerMixin extends LivingEntity{
     protected PlayerMixin(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
-
-    @Shadow
-    public abstract void causeFoodExhaustion(float pExhaustion);
-
-    @Shadow
-    public abstract void resetAttackStrengthTicker();
 
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     public void injectAttackSoundCancellation(Entity pTarget, CallbackInfo ci){
@@ -51,5 +54,34 @@ public abstract class PlayerMixin extends LivingEntity{
         }
     }
 
+    /**
+     * Injection to {@link Player#interactOn(Entity, InteractionHand)} so we can have simple compartments
+     * like {@link GrindstoneCompartmentEntity} that will open in spectator mode as {@link MenuProvider} results in
+     * using the entities name which causes us a number of issues. {@link MenuProvider} takes priority over our
+     * interface if both are present
+     */
+    @Inject(method = "interactOn", at = @At(value = "HEAD"), cancellable = true)
+    public void inject$interactOn(final Entity entityToInteractOn, final InteractionHand pHand,
+            final CallbackInfoReturnable<InteractionResult> callbackInfo) {
+        if (this.isSpectator()) {
+            if (!(entityToInteractOn instanceof MenuProvider)) {
+                if (entityToInteractOn instanceof SimpleBlockMenuCompartment compartment) {
+                    this.openMenu(compartment.getMenuProvider());
+                    callbackInfo.setReturnValue(InteractionResult.PASS);
+                }
+            }
+        }
+    }
 
+    @Shadow
+    public abstract void causeFoodExhaustion(float pExhaustion);
+
+    @Shadow
+    public abstract void resetAttackStrengthTicker();
+
+    @Shadow
+    public abstract boolean isSpectator();
+
+    @Shadow
+    public abstract OptionalInt openMenu(@Nullable final MenuProvider pMenu);
 }
