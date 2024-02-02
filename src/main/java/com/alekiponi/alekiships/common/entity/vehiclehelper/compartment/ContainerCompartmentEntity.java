@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -48,8 +49,35 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
             this.setCustomName(itemStack.getHoverName());
         }
 
+
         final CompoundTag blockEntityTag = itemStack.getTagElement("BlockEntityTag");
-        if (blockEntityTag != null) ContainerHelper.loadAllItems(blockEntityTag, this.getItemStacks());
+        if (blockEntityTag != null) {
+            ContainerHelper.loadAllItems(blockEntityTag, this.getItemStacks());
+            if (blockEntityTag.contains("CustomName", CompoundTag.TAG_STRING)) {
+                this.setCustomName(Component.Serializer.fromJson(blockEntityTag.getString("CustomName")));
+            }
+        }
+    }
+
+    /**
+     * Saves the container contents to an item stack.
+     * Does not clear the container contents!
+     *
+     * @param itemStack The item stack the contents are written to
+     */
+    public void saveToStack(final ItemStack itemStack) {
+        final CompoundTag compoundTag = new CompoundTag();
+        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
+
+        if (this.hasCustomName()) {
+            compoundTag.putString("CustomName", Component.Serializer.toJson(this.getCustomName()));
+        }
+
+        if (compoundTag.isEmpty()) {
+            itemStack.removeTagKey("BlockEntityTag");
+        } else {
+            itemStack.addTagElement("BlockEntityTag", compoundTag);
+        }
     }
 
     @Override
