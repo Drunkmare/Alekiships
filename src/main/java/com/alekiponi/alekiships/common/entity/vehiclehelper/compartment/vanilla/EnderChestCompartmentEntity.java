@@ -3,16 +3,15 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -34,9 +33,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements MenuProvider, LidCompartment {
+public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements SimpleBlockMenuCompartment, LidCompartment {
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
+    private static final Component CONTAINER_TITLE = Component.translatable("container.enderchest");
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
@@ -102,7 +102,7 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        player.openMenu(this);
+        player.openMenu(this.getMenuProvider());
         this.gameEvent(GameEvent.CONTAINER_OPEN, player);
         player.awardStat(Stats.OPEN_ENDERCHEST);
         PiglinAi.angerNearbyPiglins(player, true);
@@ -165,9 +165,12 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         return new ItemStack(Blocks.ENDER_CHEST);
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
+    public MenuProvider getMenuProvider() {
+        return new SimpleMenuProvider(this::createMenu, CONTAINER_TITLE);
+    }
+
+    private AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
 
         // Container that wraps the Player Ender Chest Container
         class EnderChestContainerWrapper extends SimpleContainer {
