@@ -10,23 +10,20 @@ def generate(manager: ResourceManager):
         manager.block_tag("can_make_canoe_unrestricted", f"tfc:wood/stripped_log/{wood}")
         manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame_angled/{wood}",
                           f"wood/watercraft_frame_flat/{wood}")
-        manager.entity_tag("alekiships:sloops", f"alekiships:sloop/{wood}")
-        manager.entity_tag("alekiships:dugout_canoes", f"alekiships:dugout_canoe/{wood}")
-        manager.entity_tag("alekiships:rowboats", f"alekiships:rowboat/{wood}")
+        manager.entity_tag("sloops", f"sloop/{wood}")
+        manager.entity_tag("dugout_canoes", f"dugout_canoe/{wood}")
+        manager.entity_tag("rowboats", f"rowboat/{wood}")
 
     # Vehicle helpers such as our collision entities
-    manager.entity_tag("vehicle_helpers", "alekiships:vehicle_cleat", "alekiships:vehicle_part_boat",
-                       "alekiships:vehicle_switch_windlass", "alekiships:vehicle_switch_sail",
-                       "alekiships:vehicle_collider", "alekiships:vehicle_mast")
+    manager.entity_tag("vehicle_helpers", "vehicle_cleat", "vehicle_part_boat", "vehicle_switch_windlass",
+                       "vehicle_switch_sail", "vehicle_collider", "vehicle_mast")
 
     # Compartment Entities
-    manager.entity_tag("compartments", "alekiships:compartment_barrel", "alekiships:compartment_blast_furnace",
-                       "alekiships:compartment_cartography_table", "alekiships:compartment_chest",
-                       "alekiships:compartment_empty", "alekiships:compartment_ender_chest",
-                       "alekiships:compartment_furnace", "alekiships:compartment_grindstone",
-                       "alekiships:compartment_loom", "alekiships:compartment_shulker_box",
-                       "alekiships:compartment_smithing_table", "alekiships:compartment_smoker",
-                       "alekiships:compartment_stonecutter", "alekiships:compartment_crafting_table")
+    manager.entity_tag("compartments", "compartment_barrel", "compartment_blast_furnace",
+                       "compartment_cartography_table", "compartment_chest", "compartment_empty",
+                       "compartment_ender_chest", "compartment_furnace", "compartment_grindstone", "compartment_loom",
+                       "compartment_shulker_box", "compartment_smithing_table", "compartment_smoker",
+                       "compartment_stonecutter", "compartment_crafting_table")
 
     # Tag that allows things to go into compartments
     manager.item_tag("can_place_in_compartments", "minecraft:barrel", "minecraft:chest", "minecraft:ender_chest",
@@ -51,7 +48,7 @@ def generate(manager: ResourceManager):
 
     # Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
     manager.block_tag("carryon:block_blacklist", "#alekiships:canoe_component_blocks")
-    manager.entity_tag("carryon:entity_blacklist", "alekiships:cannonball", "alekiships:kayak",
+    manager.entity_tag("carryon:entity_blacklist", "cannonball", "kayak",
                        "#alekiships:dugout_canoes", "#alekiships:sloops", "#alekiships:rowboats",
                        "#alekiships:vehicle_helpers", "#alekiships:compartments",
-                       *[f"alekiships:sloop_construction/{wood}" for wood in constants.TFC_WOODS.keys()])
+                       *[f"sloop_construction/{wood}" for wood in constants.TFC_WOODS.keys()])
