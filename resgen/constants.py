@@ -219,16 +219,21 @@ DEFAULT_LANG = {
     "entity.alekiships.cannonball": "Cannonball",
     "entity.alekiships.cannon": "Cannon",
 
-    "entity.alekiships.compartment_tfcchest": "Chest Compartment",
-    "entity.alekiships.compartment_chest": "Chest Compartment",
-    "entity.alekiships.compartment_workbench": "Workbench Compartment",
-    "entity.alekiships.compartment_log_pile": "Log Pile Compartment",
-    "entity.alekiships.compartment_anvil": "Anvil Compartment",
-    "entity.alekiships.compartment_barrel": "Barrel Compartment",
-    "entity.alekiships.compartment_large_vessel": "Large Vessel Compartment",
+    # Compartments
     "entity.alekiships.compartment_empty": "Empty Compartment",
-
-
+    "entity.alekiships.compartment_barrel": "Barrel Compartment",
+    "entity.alekiships.compartment_chest": "Chest Compartment",
+    "entity.alekiships.compartment_ender_chest": "Ender Chest Compartment",
+    "entity.alekiships.compartment_shulker_box": "Shulker Box Compartment",
+    "entity.alekiships.compartment_furnace": "Furnace Compartment",
+    "entity.alekiships.compartment_blast_furnace": "Blast Furnace Compartment",
+    "entity.alekiships.compartment_smoker": "Smoker Compartment",
+    "entity.alekiships.compartment_crafting_table": "Workbench Compartment",
+    "entity.alekiships.compartment_stonecutter": "Stonecutter Compartment",
+    "entity.alekiships.compartment_cartography_table": "Cartography Table Compartment",
+    "entity.alekiships.compartment_smithing_table": "Smithing Table Compartment",
+    "entity.alekiships.compartment_grindstone": "Grindstone Compartment",
+    "entity.alekiships.compartment_loom": "Loom Compartment",
 
     "block.alekiships.boat_frame": "Shipwright's Scaffolding",
 
@@ -238,7 +243,6 @@ DEFAULT_LANG = {
     "creativetab.alekiships_tab": "aleki's Nifty Ships",
     "creativetab.watercraft_tab": "Watercraft",
     "creativetab.navigation_tab": "Navigation",
-
 
     "press_button": "Press",
     "eject_passengers": "to eject",
