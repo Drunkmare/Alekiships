@@ -12,7 +12,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,6 +22,7 @@ import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
@@ -91,6 +94,38 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
         if (!this.isRemoved() && this.level().isClientSide()) {
             this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
+        }
+    }
+
+    @Override
+    public void remove(final RemovalReason removalReason) {
+        this.setRemoved(removalReason);
+
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        }
+
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            final ItemStack itemStack = this.getDropStack();
+            if (this.hasCustomName()) {
+                itemStack.setHoverName(this.getCustomName());
+            }
+
+            this.spawnAtLocation(itemStack);
+        }
+
+        this.invalidateCaps();
+    }
+
+    @Override
+    public void chestVehicleDestroyed(final DamageSource damageSource, final Level level, final Entity entity) {
+        if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            if (!level.isClientSide) {
+                final Entity directEntity = damageSource.getDirectEntity();
+                if (directEntity != null && directEntity.getType() == EntityType.PLAYER) {
+                    PiglinAi.angerNearbyPiglins((Player) directEntity, true);
+                }
+            }
         }
     }
 
