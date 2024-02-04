@@ -323,7 +323,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
      *
      * @return The ItemStack that should be dropped in world when the compartment is destroyed
      */
-    abstract public ItemStack getDropStack();
+    abstract protected ItemStack getDropStack();
 
     @Nullable
     @Override
