@@ -16,6 +16,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -363,38 +364,6 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
-    protected void readAdditionalSaveData(final CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-
-        this.litTime = compoundTag.getInt("BurnTime");
-        this.cookingProgress = compoundTag.getInt("CookTime");
-        this.cookingTotalTime = compoundTag.getInt("CookTimeTotal");
-        this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
-        final CompoundTag compoundtag = compoundTag.getCompound("RecipesUsed");
-
-        for (final String recipeKey : compoundtag.getAllKeys()) {
-            this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
-        }
-
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
-    }
-
-    @Override
-    protected void addAdditionalSaveData(final CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
-
-        compoundTag.putInt("BurnTime", this.litTime);
-        compoundTag.putInt("CookTime", this.cookingProgress);
-        compoundTag.putInt("CookTimeTotal", this.cookingTotalTime);
-        final CompoundTag compoundtag = new CompoundTag();
-        this.recipesUsed.forEach((recipeKey, integer) -> compoundtag.putInt(recipeKey.toString(), integer));
-        compoundTag.put("RecipesUsed", compoundtag);
-
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
-    }
-
-    @Override
     public boolean canPlaceItem(final int slotIndex, final ItemStack itemStack) {
         if (slotIndex == SLOT_RESULT) {
             return false;
@@ -441,6 +410,67 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     @Override
     public void setDisplayBlockState(final BlockState blockState) {
         this.entityData.set(DATA_ID_DISPLAY_BLOCK, blockState);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(final CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+
+        this.loadCommonNBTData(compoundTag);
+
+        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
+                compoundTag.getCompound("heldBlock")));
+    }
+
+    @Override
+    protected void addAdditionalSaveData(final CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
+
+        this.saveCommonNBTData(compoundTag);
+
+        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+    }
+
+    @Override
+    public void loadFromStackNBT(final CompoundTag compoundTag) {
+        super.loadFromStackNBT(compoundTag);
+
+        this.loadCommonNBTData(compoundTag);
+    }
+
+    @Override
+    public CompoundTag saveForItemStack() {
+        final CompoundTag compoundTag = super.saveForItemStack();
+
+        this.saveCommonNBTData(compoundTag);
+
+        return compoundTag;
+    }
+
+    private void loadCommonNBTData(final CompoundTag compoundTag) {
+        if (compoundTag.contains("BurnTime", Tag.TAG_INT)) this.litTime = compoundTag.getInt("BurnTime");
+        if (compoundTag.contains("CookTime", Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt("CookTime");
+        if (compoundTag.contains("CookTimeTotal", Tag.TAG_INT))
+            this.cookingTotalTime = compoundTag.getInt("CookTimeTotal");
+
+        this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
+
+        if (compoundTag.contains("RecipesUsed", Tag.TAG_COMPOUND)) {
+            final CompoundTag compoundtag = compoundTag.getCompound("RecipesUsed");
+
+            for (final String recipeKey : compoundtag.getAllKeys()) {
+                this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
+            }
+        }
+    }
+
+    private void saveCommonNBTData(final CompoundTag compoundTag) {
+        compoundTag.putInt("BurnTime", this.litTime);
+        compoundTag.putInt("CookTime", this.cookingProgress);
+        compoundTag.putInt("CookTimeTotal", this.cookingTotalTime);
+        CompoundTag compoundtag = new CompoundTag();
+        this.recipesUsed.forEach((recipeKey, integer) -> compoundtag.putInt(recipeKey.toString(), integer));
+        compoundTag.put("RecipesUsed", compoundtag);
     }
 
     @Override
