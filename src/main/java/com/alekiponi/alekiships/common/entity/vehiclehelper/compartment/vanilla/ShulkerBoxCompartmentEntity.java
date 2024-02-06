@@ -200,10 +200,8 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
         ContainerHelper.saveAllItems(compoundTag, this.getItemStacks(), false);
 
-        if (compoundTag.isEmpty()) {
-            dropStack.removeTagKey("BlockEntityTag");
-        } else {
-            dropStack.addTagElement("BlockEntityTag", compoundTag);
+        if (!compoundTag.isEmpty()) {
+            dropStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compoundTag);
         }
 
         return dropStack;
