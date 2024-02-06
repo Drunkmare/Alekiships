@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundPickCompartmentPacket;
 import net.minecraft.client.Minecraft;
@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -38,11 +39,11 @@ public final class ClientEvents {
 
         final Entity entity = ((EntityHitResult) minecraft.hitResult).getEntity();
 
-        if (!(entity instanceof ContainerCompartmentEntity compartment)) return;
-
-        final ItemStack pickResult = compartment.getPickedResult(minecraft.hitResult);
+        final ItemStack pickResult = entity.getPickedResult(minecraft.hitResult);
 
         if (pickResult.isEmpty()) return;
+
+        if (!(entity instanceof CompartmentCloneable compartment)) return;
 
         addNBTData(pickResult, compartment);
 
@@ -50,14 +51,14 @@ public final class ClientEvents {
 
         inventory.setPickedItem(pickResult);
         PacketHandler.CHANNEL.sendToServer(
-                new ServerBoundPickCompartmentPacket(compartment, minecraft.player.getMainHandItem(),
+                new ServerBoundPickCompartmentPacket(entity.getId(), minecraft.player.getMainHandItem(),
                         Inventory.INVENTORY_SIZE + inventory.selected));
 
         event.setCanceled(true);
     }
 
-    private static void addNBTData(final ItemStack itemStack, final ContainerCompartmentEntity compartment) {
-        compartment.saveToStack(itemStack);
+    private static void addNBTData(final ItemStack itemStack, final CompartmentCloneable compartment) {
+        itemStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compartment.saveForItemStack());
 
         final CompoundTag compoundTag = new CompoundTag();
         final ListTag listtag = new ListTag();

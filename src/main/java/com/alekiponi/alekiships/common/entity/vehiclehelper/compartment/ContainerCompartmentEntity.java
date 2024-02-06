@@ -28,13 +28,14 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity {
+public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity, CompartmentCloneable {
 
     private final int slotCount;
     private NonNullList<ItemStack> itemStacks;
     @Nullable
     private ResourceLocation lootTable;
     private long lootTableSeed;
+
     private LazyOptional<?> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
 
     public ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
@@ -63,6 +64,17 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         if (compoundTag.contains("CustomName", Tag.TAG_STRING)) {
             this.setCustomName(Component.Serializer.fromJson(compoundTag.getString("CustomName")));
         }
+    }
+
+    @Override
+    public CompoundTag saveForItemStack() {
+        final CompoundTag compoundTag = new CompoundTag();
+        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
+
+        if (this.hasCustomName()) {
+            compoundTag.putString("CustomName", Component.Serializer.toJson(this.getCustomName()));
+        }
+        return compoundTag;
     }
 
     /**

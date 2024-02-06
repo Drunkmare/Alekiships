@@ -1,10 +1,10 @@
 package com.alekiponi.alekiships.network;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -16,9 +16,8 @@ public class ServerBoundPickCompartmentPacket {
     private final ItemStack itemStack;
     private final int slotIndex;
 
-    public ServerBoundPickCompartmentPacket(final AbstractCompartmentEntity compartment, final ItemStack itemStack,
-            final int slotIndex) {
-        this.compartmentID = compartment.getId();
+    public ServerBoundPickCompartmentPacket(final int compartmentID, final ItemStack itemStack, final int slotIndex) {
+        this.compartmentID = compartmentID;
         this.itemStack = itemStack.copy();
         this.slotIndex = slotIndex;
     }
@@ -52,8 +51,8 @@ public class ServerBoundPickCompartmentPacket {
 
                 final Entity entity = player.level().getEntity(this.compartmentID);
 
-                if (entity instanceof ContainerCompartmentEntity compartment) {
-                    compartment.saveToStack(this.itemStack);
+                if (entity instanceof CompartmentCloneable compartment) {
+                    this.itemStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compartment.saveForItemStack());
                 }
             }
 
