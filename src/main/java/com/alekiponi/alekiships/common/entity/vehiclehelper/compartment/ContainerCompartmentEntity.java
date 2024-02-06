@@ -77,27 +77,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         return compoundTag;
     }
 
-    /**
-     * Saves the container contents to an item stack.
-     * Does not clear the container contents!
-     *
-     * @param itemStack The item stack the contents are written to
-     */
-    public void saveToStack(final ItemStack itemStack) {
-        final CompoundTag compoundTag = new CompoundTag();
-        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
-
-        if (this.hasCustomName()) {
-            compoundTag.putString("CustomName", Component.Serializer.toJson(this.getCustomName()));
-        }
-
-        if (compoundTag.isEmpty()) {
-            itemStack.removeTagKey("BlockEntityTag");
-        } else {
-            itemStack.addTagElement("BlockEntityTag", compoundTag);
-        }
-    }
-
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final InteractionResult interactionResult = this.interactWithContainerVehicle(player);
