@@ -36,6 +36,9 @@ public final class RenderEventHandler {
         });
 
         event.registerEntityRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(), NoopRenderer::new);
+
+        event.registerEntityRenderer(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
+
         event.registerEntityRenderer(AlekiShipsEntities.BARREL_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY.get(), ChestCompartmentRenderer::new);
 

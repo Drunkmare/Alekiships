@@ -1,6 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.Util;
 import net.minecraft.util.datafix.fixes.References;
@@ -83,11 +85,13 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      * this means registry order can effect which is chosen
      */
     public static Optional<CompartmentType<?>> fromStack(final ItemStack itemStack) {
+        if (!itemStack.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) return Optional.empty();
+
         for (final CompartmentType<?> compartmentType : COMPARTMENT_TYPES) {
             if (compartmentType.predicate.test(itemStack)) return Optional.of(compartmentType);
         }
 
-        return Optional.empty();
+        return Optional.of(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get());
     }
 
     /**
