@@ -50,6 +50,8 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY.get(),
                 BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY.get(),
+                BlockCompartmentRenderer::new);
 
         event.registerEntityRenderer(AlekiShipsEntities.WORKBENCH_COMPARTMENT_ENTITY.get(),
                 BlockCompartmentRenderer::new);

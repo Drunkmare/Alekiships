@@ -228,6 +228,7 @@ DEFAULT_LANG = {
     "entity.alekiships.compartment_furnace": "Furnace Compartment",
     "entity.alekiships.compartment_blast_furnace": "Blast Furnace Compartment",
     "entity.alekiships.compartment_smoker": "Smoker Compartment",
+    "entity.alekiships.compartment_brewing_stand": "Brewing Stand Compartment",
     "entity.alekiships.compartment_crafting_table": "Workbench Compartment",
     "entity.alekiships.compartment_stonecutter": "Stonecutter Compartment",
     "entity.alekiships.compartment_cartography_table": "Cartography Table Compartment",

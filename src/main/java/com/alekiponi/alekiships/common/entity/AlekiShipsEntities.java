@@ -5,7 +5,6 @@ import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.CraftingTableCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.*;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -82,6 +81,11 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<CompartmentType<SmokerCompartmentEntity>> SMOKER_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_smoker", CompartmentType.Builder.of(SmokerCompartmentEntity::new, SmokerCompartmentEntity::new,
                     itemStack -> itemStack.is(Blocks.SMOKER.asItem()), MobCategory.MISC));
+
+    public static final RegistryObject<CompartmentType<BrewingStandCompartmentEntity>> BREWING_STAND_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_brewing_stand",
+            CompartmentType.Builder.of(BrewingStandCompartmentEntity::new, BrewingStandCompartmentEntity::new,
+                    itemStack -> itemStack.is(Blocks.BREWING_STAND.asItem()), MobCategory.MISC));
 
     public static final RegistryObject<CompartmentType<CraftingTableCompartment>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_crafting_table",

@@ -14,6 +14,7 @@
     "minecraft:cartography_table",
     "minecraft:smithing_table",
     "minecraft:grindstone",
-    "minecraft:loom"
+    "minecraft:loom",
+    "minecraft:brewing_stand"
   ]
 }
