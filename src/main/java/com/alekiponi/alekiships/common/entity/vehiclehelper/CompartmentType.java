@@ -12,6 +12,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.flag.FeatureFlag;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -90,7 +91,11 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             if (predicatePair.getB().test(itemStack)) return Optional.of(predicatePair.getA());
         }
 
-        return Optional.of(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get());
+        if (itemStack.getItem() instanceof BlockItem) {
+            return Optional.of(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get());
+        }
+
+        return Optional.empty();
     }
 
     /**
