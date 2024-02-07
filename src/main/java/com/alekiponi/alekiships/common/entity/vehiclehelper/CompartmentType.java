@@ -152,6 +152,19 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             return new Builder<>(entityFactory, compartmentFactory, predicate, mobCategory);
         }
 
+        /**
+         * Compartment version of {@link EntityType.Builder#of(EntityFactory, MobCategory)}.
+         *
+         * @apiNote The built compartment type should not be used to call {@link CompartmentType#register(CompartmentType)}
+         * as it'll only pollute the
+         */
+        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
+                final EntityType.EntityFactory<T> entityFactory, final MobCategory mobCategory) {
+            //noinspection DataFlowIssue
+            return new Builder<>(entityFactory, (entityType, level, itemStack) -> null, itemStack -> false,
+                    mobCategory);
+        }
+
         public static <T extends AbstractCompartmentEntity> Builder<T> createNothing(final MobCategory mobCategory) {
             //noinspection DataFlowIssue
             return new Builder<>((entityType, level) -> null, (entityType, level, itemStack) -> null,

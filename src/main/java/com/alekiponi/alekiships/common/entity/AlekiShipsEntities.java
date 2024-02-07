@@ -51,10 +51,8 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(EmptyCompartmentEntity::new, MobCategory.MISC).sized(0.6F, 0.7F).fireImmune()
                     .noSummon());
 
-    public static final RegistryObject<CompartmentType<BlockCompartmentEntity>> BLOCK_COMPARTMENT_ENTITY = ENTITY_TYPES.register(
-            "compartment_block", () -> CompartmentType.Builder.<BlockCompartmentEntity>of(BlockCompartmentEntity::new,
-                            BlockCompartmentEntity::new, itemStack -> true, MobCategory.MISC).sized(0.6F, 0.7F).fireImmune()
-                    .noSummon().build(MOD_ID + ":compartment_block"));
+    public static final RegistryObject<CompartmentType<BlockCompartmentEntity>> BLOCK_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_block", CompartmentType.Builder.createBasic(BlockCompartmentEntity::new, MobCategory.MISC));
 
     public static final RegistryObject<CompartmentType<BarrelCompartmentEntity>> BARREL_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_barrel", CompartmentType.Builder.of(BarrelCompartmentEntity::new, BarrelCompartmentEntity::new,
