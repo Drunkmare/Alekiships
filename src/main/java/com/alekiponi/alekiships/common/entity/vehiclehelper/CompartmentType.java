@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.network.PlayMessages;
+import oshi.util.tuples.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,28 +27,25 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 /**
- * Besides {@link #register(CompartmentType)} and {@link #fromStack(ItemStack)} This is essentially to keep the vanilla
+ * Besides {@link #register(CompartmentType, Predicate)} and {@link #fromStack(ItemStack)} This is essentially to keep the vanilla
  * {@link EntityType#create(Level)} api but with an additional ItemStack parameter to allow for constructor logic based
  * on the ItemStack. For example using the stack NBT to initialize the compartment
  *
  * @param <T> The type of compartment
  */
 public class CompartmentType<T extends AbstractCompartmentEntity> extends EntityType<T> {
-    private static final List<CompartmentType<? extends AbstractCompartmentEntity>> COMPARTMENT_TYPES = new ArrayList<>();
+    private static final List<Pair<CompartmentType<? extends AbstractCompartmentEntity>, Predicate<ItemStack>>> COMPARTMENT_TYPES = new ArrayList<>();
     private final CompartmentFactory<T> factory;
-    private final Predicate<ItemStack> predicate;
-
 
     @SuppressWarnings("unused")
     public CompartmentType(final EntityFactory<T> entityFactory, final MobCategory mobCategory, final boolean serialize,
             final boolean summon, final boolean fireImmune, final boolean canSpawnFarFromPlayer,
             final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions, final int clientTrackingRange,
             final int updateInterval, final FeatureFlagSet requiredFeatures,
-            final CompartmentFactory<T> compartmentFactory, final Predicate<ItemStack> predicate) {
+            final CompartmentFactory<T> compartmentFactory) {
         super(entityFactory, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
                 clientTrackingRange, updateInterval, requiredFeatures);
         this.factory = compartmentFactory;
-        this.predicate = predicate;
     }
 
     public CompartmentType(final EntityFactory<T> entityFactory, final MobCategory mobCategory, final boolean serialize,
@@ -58,23 +56,24 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             final ToIntFunction<EntityType<?>> trackingRangeSupplier,
             final ToIntFunction<EntityType<?>> updateIntervalSupplier,
             @Nullable final BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory,
-            final CompartmentFactory<T> factory, final Predicate<ItemStack> predicate) {
+            final CompartmentFactory<T> factory) {
         //noinspection DataFlowIssue    customClientFactory can be null
         super(entityFactory, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
                 clientTrackingRange, updateInterval, requiredFeatures, velocityUpdateSupplier, trackingRangeSupplier,
                 updateIntervalSupplier, customClientFactory);
         this.factory = factory;
-        this.predicate = predicate;
     }
 
     /**
-     * Registers a Compartment Type to be automatically picked and constructed when empty compartments are right-clicked
-     * with a ItemStack matching the CompartmentTypes ItemStack predicate
+     * Registers a {@link CompartmentType} to be automatically picked and constructed when empty compartments are
+     * right-clicked with an {@link ItemStack} matching the CompartmentTypes ItemStack predicate.
+     *
+     * @param compartmentType The compartment type to register
+     * @param predicate       The ItemStack predicate that determines if the compartment type should be chosen
+     * @apiNote This is order dependent so the predicate should be as exact as possible
      */
-    public static <T extends AbstractCompartmentEntity> CompartmentType<T> register(
-            final CompartmentType<T> compartmentType) {
-        COMPARTMENT_TYPES.add(compartmentType);
-        return compartmentType;
+    public static void register(final CompartmentType<?> compartmentType, final Predicate<ItemStack> predicate) {
+        COMPARTMENT_TYPES.add(new Pair<>(compartmentType, predicate));
     }
 
     /**
@@ -87,8 +86,8 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
     public static Optional<CompartmentType<?>> fromStack(final ItemStack itemStack) {
         if (!itemStack.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) return Optional.empty();
 
-        for (final CompartmentType<?> compartmentType : COMPARTMENT_TYPES) {
-            if (compartmentType.predicate.test(itemStack)) return Optional.of(compartmentType);
+        for (final Pair<CompartmentType<? extends AbstractCompartmentEntity>, Predicate<ItemStack>> predicatePair : COMPARTMENT_TYPES) {
+            if (predicatePair.getB().test(itemStack)) return Optional.of(predicatePair.getA());
         }
 
         return Optional.of(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get());
@@ -121,7 +120,6 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
         private final EntityType.EntityFactory<T> factory;
         private final MobCategory category;
         private final CompartmentFactory<T> compartmentFactory;
-        private final Predicate<ItemStack> predicate;
         private ImmutableSet<Block> immuneTo = ImmutableSet.of();
         private boolean serialize = true;
         private boolean summon = true;
@@ -138,37 +136,46 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
         private BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory;
 
         private Builder(final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory,
-                final Predicate<ItemStack> predicate, final MobCategory mobCategory) {
+                final MobCategory mobCategory) {
             this.factory = entityFactory;
             this.compartmentFactory = compartmentFactory;
-            this.predicate = predicate;
             this.category = mobCategory;
             this.canSpawnFarFromPlayer = mobCategory == MobCategory.CREATURE || mobCategory == MobCategory.MISC;
         }
 
+        /**
+         * Overload for {@link MobCategory#MISC}
+         */
         public static <T extends AbstractCompartmentEntity> Builder<T> of(
-                final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory,
-                final Predicate<ItemStack> predicate, final MobCategory mobCategory) {
-            return new Builder<>(entityFactory, compartmentFactory, predicate, mobCategory);
+                final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory) {
+            return new Builder<>(entityFactory, compartmentFactory, MobCategory.MISC);
+        }
+
+        public static <T extends AbstractCompartmentEntity> Builder<T> of(final EntityFactory<T> entityFactory,
+                final CompartmentFactory<T> compartmentFactory, final MobCategory mobCategory) {
+            return new Builder<>(entityFactory, compartmentFactory, mobCategory);
         }
 
         /**
-         * Compartment version of {@link EntityType.Builder#of(EntityFactory, MobCategory)}.
-         *
-         * @apiNote The built compartment type should not be used to call {@link CompartmentType#register(CompartmentType)}
-         * as it'll only pollute the
+         * Overload for {@link MobCategory#MISC}
+         */
+        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
+                final EntityType.EntityFactory<T> entityFactory) {
+            return createBasic(entityFactory, MobCategory.MISC);
+        }
+
+        /**
+         * Creates a compartment with an empty {@link CompartmentFactory}
          */
         public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
                 final EntityType.EntityFactory<T> entityFactory, final MobCategory mobCategory) {
             //noinspection DataFlowIssue
-            return new Builder<>(entityFactory, (entityType, level, itemStack) -> null, itemStack -> false,
-                    mobCategory);
+            return of(entityFactory, (entityType, level, itemStack) -> null, mobCategory);
         }
 
         public static <T extends AbstractCompartmentEntity> Builder<T> createNothing(final MobCategory mobCategory) {
             //noinspection DataFlowIssue
-            return new Builder<>((entityType, level) -> null, (entityType, level, itemStack) -> null,
-                    itemStack -> false, mobCategory);
+            return of((entityType, level) -> null, (entityType, level, itemStack) -> null, mobCategory);
         }
 
         public Builder<T> sized(final float width, final float height) {
@@ -249,7 +256,7 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             return new CompartmentType<>(this.factory, this.category, this.serialize, this.summon, this.fireImmune,
                     this.canSpawnFarFromPlayer, this.immuneTo, this.dimensions, this.clientTrackingRange,
                     this.updateInterval, this.requiredFeatures, this.velocityUpdateSupplier, this.trackingRangeSupplier,
-                    this.updateIntervalSupplier, this.customClientFactory, this.compartmentFactory, this.predicate);
+                    this.updateIntervalSupplier, this.customClientFactory, this.compartmentFactory);
         }
     }
 }
