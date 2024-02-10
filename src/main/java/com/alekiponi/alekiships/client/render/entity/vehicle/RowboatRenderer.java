@@ -38,7 +38,8 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
      * @param woodName The name of the wood
      */
     public RowboatRenderer(final EntityRendererProvider.Context context, final String woodName) {
-        this(context, new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/rowboat/" + woodName + ".png"));
+        this(context,
+                new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/rowboat/" + woodName + ".png"));
     }
 
     /**
@@ -97,7 +98,7 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
                     .render(poseStack, waterMaskVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
 
-        if (!rowboatEntity.getPaint().isEmpty() && rowboatEntity.getPaintColor() != null) {
+        if (rowboatEntity.getPaintColor() != null) {
             final VertexConsumer paintVertexConsumer = bufferSource.getBuffer(
                     RenderType.entityTranslucent(getPaintTexture(rowboatEntity)));
             this.rowboatModel.renderToBuffer(poseStack, paintVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1,

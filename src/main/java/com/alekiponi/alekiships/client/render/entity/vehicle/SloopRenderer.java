@@ -154,7 +154,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
             }
         }
 
-        if (!sloopEntity.getPaint().isEmpty() && sloopEntity.getPaintColor() != null) {
+        if (sloopEntity.getPaintColor() != null) {
             final VertexConsumer paintVertexConsumer = bufferSource.getBuffer(
                     RenderType.entityTranslucent(getPaintTexture(sloopEntity)));
             this.sloopModel.renderToBuffer(poseStack, paintVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1,
