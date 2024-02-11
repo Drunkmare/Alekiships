@@ -545,8 +545,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         this.entityData.define(DATA_ID_JIBSAIL_ACTIVE, false);
         this.entityData.define(DATA_ID_TICKS_NO_RIDERS, 0);
         this.entityData.define(DATA_ID_MAINSHEET_LENGTH, 0f);
-        this.entityData.define(DATA_ID_JIBSAIL_DYE, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_MAINSAIL_DYE, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
+        this.entityData.define(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
         this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
     }
 
@@ -823,36 +823,34 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         return this.entityData.get(DATA_ID_RUDDER_ROTATION);
     }
 
-    public ItemStack getMainsailDye() {
-        return this.entityData.get(DATA_ID_MAINSAIL_DYE);
+    /**
+     * @return The color of the mainsail
+     */
+    public DyeColor getMainsailDye() {
+        return DyeColor.byId(this.entityData.get(DATA_ID_MAINSAIL_DYE));
     }
 
-    public void setMainsailDye(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE, itemStack.copy());
+    public void setMainsailDye(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) paintColor.getId());
     }
 
-    public ItemStack getJibsailDye() {
-        return this.entityData.get(DATA_ID_JIBSAIL_DYE);
+    public void clearMainsailDye() {
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
     }
 
-    public void setJibsailDye(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_JIBSAIL_DYE, itemStack.copy());
+    /**
+     * @return The color of the Jibsail
+     */
+    public DyeColor getJibsailDye() {
+        return DyeColor.byId(this.entityData.get(DATA_ID_JIBSAIL_DYE));
     }
 
-    public DyeColor getDyeColor(int sailIndex){
-        ItemStack stack = ItemStack.EMPTY;
-        if(sailIndex == 0){
-            stack = this.getMainsailDye();
-        } else if (sailIndex == 1){
-            stack = this.getJibsailDye();
-        }
-        if(!stack.isEmpty()){
-            if(stack.is(Tags.Items.DYES)){
-                return DyeColor.getColor(stack);
-            }
-        }
+    public void setJibsailDye(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) paintColor.getId());
+    }
 
-        return null;
+    public void clearJibsailDye() {
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
     }
 
     /**
@@ -884,10 +882,15 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         this.setJibsailActive(pCompound.getBoolean("jibsailActive"));
         this.setTicksNoRiders(pCompound.getInt("ticksNoRiders"));
         this.setMainsheetLength(pCompound.getFloat("mainSheetLength"));
-        this.setJibsailDye(ItemStack.of(pCompound.getCompound("jibsailDye")));
-        this.setMainsailDye(ItemStack.of(pCompound.getCompound("mainsailDye")));
 
-        if (pCompound.getBoolean("hasPaint")) {
+        if (pCompound.contains("jibsailDye", Tag.TAG_BYTE)) {
+            this.setMainsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
+        }
+
+        if (pCompound.contains("mainsailDye", Tag.TAG_BYTE)) {
+            this.setMainsailDye(DyeColor.byId(pCompound.getByte("mainsailDye")));
+        }
+
         if (pCompound.contains("paint", Tag.TAG_BYTE)) {
             this.setPaintColor(DyeColor.byId(pCompound.getByte("paint")));
         }
@@ -902,8 +905,20 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         pCompound.putBoolean("jibsailActive", this.getJibsailActive());
         pCompound.putInt("ticksNoRiders", this.getTicksNoRiders());
         pCompound.putFloat("mainSheetLength", this.getMainsheetLength());
-        pCompound.put("jibsailDye", this.getJibsailDye().save(new CompoundTag()));
-        pCompound.put("mainsailDye", this.getMainsailDye().save(new CompoundTag()));
+
+        {
+            final DyeColor paintColor = this.getJibsailDye();
+            if (paintColor != DyeColor.WHITE) {
+                pCompound.putByte("jibsailDye", (byte) paintColor.getId());
+            }
+        }
+
+        {
+            final DyeColor paintColor = this.getMainsailDye();
+            if (paintColor != DyeColor.WHITE) {
+                pCompound.putByte("mainsailDye", (byte) paintColor.getId());
+            }
+        }
 
         {
             final DyeColor paintColor = this.getPaintColor();

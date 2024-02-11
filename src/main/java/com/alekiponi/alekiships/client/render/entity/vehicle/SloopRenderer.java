@@ -102,63 +102,39 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         if (sloopEntity.getMainsailActive()) {
             this.sloopModel.getMainsailDeployedParts()
                     .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            if (sloopEntity.getMainsailDye().isEmpty()) {
-                this.sloopModel.getMainsail()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
+            this.sloopModel.getMainsail().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getMainsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         } else {
             this.sloopModel.getMainsailFurledParts()
                     .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            // TODO we do need to render this twice as the sail is included in this model part.
+            //  change the model (or don't it's probably not that big of a deal)
+            this.sloopModel.getMainsailFurledParts().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getMainsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
 
-        if (sloopEntity.getJibsailDye().isEmpty()) {
-            if (sloopEntity.getJibsailActive()) {
-
-                this.sloopModel.getJibsail()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-
-            } else {
-                this.sloopModel.getJibsailFurled()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
+        if (sloopEntity.getJibsailActive()) {
+            this.sloopModel.getJibsail().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getJibsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        } else {
+            this.sloopModel.getJibsailFurled().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getJibsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
+
         if (!sloopEntity.isUnderWater() && sloopEntity.getDamage() < sloopEntity.getDamageThreshold() * 0.9) {
             final VertexConsumer vertexconsumer1 = bufferSource.getBuffer(RenderType.waterMask());
             this.sloopModel.getWaterocclusion()
                     .render(poseStack, vertexconsumer1, packedLight, OverlayTexture.NO_OVERLAY);
         }
 
-        if (!sloopEntity.getMainsailDye().isEmpty() && sloopEntity.getDyeColor(0) != null) {
-            final VertexConsumer mainsailVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityCutout(getMainsailTexture(sloopEntity)));
-            if (sloopEntity.getMainsailActive()) {
-                this.sloopModel.getMainsailDeployedParts()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-                this.sloopModel.getMainsail()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            } else {
-                this.sloopModel.getMainsailFurledParts()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
-        }
-
-        if (!sloopEntity.getJibsailDye().isEmpty() && sloopEntity.getDyeColor(1) != null) {
-            final VertexConsumer jibsailVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityCutout(getJibsailTexture(sloopEntity)));
-            if (sloopEntity.getJibsailActive()) {
-                this.sloopModel.getJibsail()
-                        .render(poseStack, jibsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            } else {
-                this.sloopModel.getJibsailFurled()
-                        .render(poseStack, jibsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
-        }
-
         if (sloopEntity.getPaintColor() != null) {
-            final VertexConsumer paintVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityTranslucent(getPaintTexture(sloopEntity)));
-            this.sloopModel.renderToBuffer(poseStack, paintVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1,
-                    1, 0.9F);
+            this.sloopModel.renderToBuffer(poseStack,
+                    bufferSource.getBuffer(RenderType.entityTranslucent(getPaintTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 0.9F);
         }
 
         if (sloopEntity.getDamage() > 0) {
@@ -180,11 +156,11 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     }
 
     public ResourceLocation getMainsailTexture(final SloopEntity sloopEntity) {
-        return SAIL_TEXTURES.get(sloopEntity.getDyeColor(0));
+        return SAIL_TEXTURES.get(sloopEntity.getMainsailDye());
     }
 
     public ResourceLocation getJibsailTexture(final SloopEntity sloopEntity) {
-        return SAIL_TEXTURES.get(sloopEntity.getDyeColor(1));
+        return SAIL_TEXTURES.get(sloopEntity.getJibsailDye());
     }
 
     public ResourceLocation getPaintTexture(final SloopEntity sloopEntity) {
