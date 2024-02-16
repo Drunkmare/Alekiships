@@ -81,14 +81,17 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
         this.rowboatModel.renderToBuffer(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1,
                 1);
 
-        if (1 <= rowboatEntity.getOars().getCount()) {
-            this.rowboatModel.getOarStarboard()
+        switch (rowboatEntity.getOars()) {
+            case ZERO -> {
+            }
+            case ONE -> this.rowboatModel.getOarStarboard()
                     .render(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        }
-
-        if (2 == rowboatEntity.getOars().getCount()) {
-            this.rowboatModel.getOarPort()
-                    .render(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+            case TWO -> {
+                this.rowboatModel.getOarStarboard()
+                        .render(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+                this.rowboatModel.getOarPort()
+                        .render(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+            }
         }
 
         if (!rowboatEntity.isUnderWater() && rowboatEntity.getDamage() < rowboatEntity.getDamageThreshold() * 0.9) {
