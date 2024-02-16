@@ -30,7 +30,7 @@ public final class RenderEventHandler {
             event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get(),
                     context -> new RowboatRenderer(context, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(),
-                    context -> new SloopRenderer(context, vanillaWood.getSerializedName()));
+                    context -> new SloopRenderer(context, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(vanillaWood).get(),
                     context -> new SloopConstructionRenderer(context, vanillaWood.getSerializedName()));
         }
