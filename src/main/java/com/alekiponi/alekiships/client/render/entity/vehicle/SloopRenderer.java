@@ -29,7 +29,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
             "textures/entity/watercraft/sloop/damage_overlay.png");
     public static final Map<DyeColor, ResourceLocation> SAIL_TEXTURES = Helpers.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                    "textures/entity/watercraft/sloop/dye/" + dyeColor.getSerializedName() + ".png"));
+                    "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
     protected final ResourceLocation sloopTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
     protected final SloopEntityModel sloopModel = new SloopEntityModel();
