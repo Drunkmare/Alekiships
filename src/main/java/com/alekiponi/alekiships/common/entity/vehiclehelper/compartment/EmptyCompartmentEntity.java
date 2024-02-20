@@ -308,7 +308,10 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             this.setInputRight(false);
             this.setInputUp(false);
             this.setInputDown(false);
-            PacketHandler.clientSendPacket(new ServerboundCompartmentInputPacket(false, false, false, false, this.getId()));
+            if(this.level().isClientSide()){
+                PacketHandler.clientSendPacket(new ServerboundCompartmentInputPacket(false, false, false, false, this.getId()));
+            }
+
         }
 
     }
