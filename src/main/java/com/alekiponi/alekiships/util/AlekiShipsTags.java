@@ -37,9 +37,9 @@ public class AlekiShipsTags {
         public static final TagKey<Item> ANVILS = getFromTFC("anvils");
 
         public static final TagKey<Item> PLANKS = create("planks");
-        public static final TagKey<Item> CHESTS = create("chests");
-        public static final TagKey<Item> WORKBENCHES = create("workbenches");
-        public static final TagKey<Item> SHULKER_BOX = create("shulker_box");
+        public static final TagKey<Item> TFC_CHESTS = create("tfc_chests");
+        public static final TagKey<Item> CRAFTING_TABLES = create("crafting_tables");
+        public static final TagKey<Item> SHULKER_BOXES = create("shulker_boxes");
         public static final TagKey<Item> CAN_PLACE_IN_COMPARTMENTS = create("can_place_in_compartments");
 
         public static final TagKey<Item> PLANKS_THAT_MAKE_SHIPS = create("planks_that_make_ships");

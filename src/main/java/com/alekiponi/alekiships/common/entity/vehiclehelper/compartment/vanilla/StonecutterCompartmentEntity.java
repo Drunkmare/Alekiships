@@ -1,27 +1,23 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
-import net.minecraft.core.BlockPos;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
+public class StonecutterCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
-public class StonecutterCompartmentEntity extends BlockCompartmentEntity implements HasCustomInventoryScreen, MenuProvider {
+    private static final Component CONTAINER_TITLE = Component.translatable("container.stonecutter");
 
     public StonecutterCompartmentEntity(final EntityType<? extends StonecutterCompartmentEntity> entityType,
             final Level level) {
@@ -34,32 +30,23 @@ public class StonecutterCompartmentEntity extends BlockCompartmentEntity impleme
     }
 
     @Override
-    public InteractionResult interact(final Player player, final InteractionHand hand) {
-        this.openCustomInventoryScreen(player);
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void openCustomInventoryScreen(final Player player) {
-        player.openMenu(this);
-        player.awardStat(Stats.INTERACT_WITH_STONECUTTER);
-    }
-
-    @Override
     public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
             final Player player) {
-        return new StonecutterMenu(id, playerInventory, new ContainerLevelAccess() {
-            @Override
-            public <T> Optional<T> evaluate(final BiFunction<Level, BlockPos, T> function) {
-                return Optional.of(function.apply(StonecutterCompartmentEntity.this.level(),
-                        StonecutterCompartmentEntity.this.blockPosition()));
-            }
-        }) {
+        return new StonecutterMenu(id, playerInventory, this.getContainerLevelAccess()) {
             @Override
             public boolean stillValid(final Player player) {
-                final BlockPos blockPos = StonecutterCompartmentEntity.this.blockPosition();
-                return player.distanceToSqr(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) <= 64;
+                return StonecutterCompartmentEntity.this.stillValid(player);
             }
         };
+    }
+
+    @Override
+    protected Stat<ResourceLocation> getInteractionStat() {
+        return Stats.CUSTOM.get(Stats.INTERACT_WITH_STONECUTTER);
+    }
+
+    @Override
+    protected Component getContainerTitle() {
+        return CONTAINER_TITLE;
     }
 }

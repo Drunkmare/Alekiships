@@ -1,8 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
@@ -10,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -27,13 +29,14 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity, HasCustomInventoryScreen {
+public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity, CompartmentCloneable {
 
     private final int slotCount;
     private NonNullList<ItemStack> itemStacks;
     @Nullable
     private ResourceLocation lootTable;
     private long lootTableSeed;
+
     private LazyOptional<?> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
 
     public ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
@@ -43,19 +46,36 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         this.itemStacks = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     }
 
-    public ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    public ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
             final Level level, final int slotCount, final ItemStack itemStack) {
         this(entityType, level, slotCount);
         if (itemStack.hasCustomHoverName()) {
             this.setCustomName(itemStack.getHoverName());
         }
 
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
-        }
+        final CompoundTag blockEntityTag = itemStack.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
+        if (blockEntityTag != null) this.loadFromStackNBT(blockEntityTag);
+    }
 
-        final CompoundTag blockEntityTag = itemStack.getTagElement("BlockEntityTag");
-        if (blockEntityTag != null) ContainerHelper.loadAllItems(blockEntityTag, this.getItemStacks());
+    /**
+     * Called from {@link ContainerCompartmentEntity} during construction to load values from NBT
+     */
+    public void loadFromStackNBT(final CompoundTag compoundTag) {
+        ContainerHelper.loadAllItems(compoundTag, this.getItemStacks());
+        if (compoundTag.contains("CustomName", Tag.TAG_STRING)) {
+            this.setCustomName(Component.Serializer.fromJson(compoundTag.getString("CustomName")));
+        }
+    }
+
+    @Override
+    public CompoundTag saveForItemStack() {
+        final CompoundTag compoundTag = new CompoundTag();
+        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
+
+        if (this.hasCustomName()) {
+            compoundTag.putString("CustomName", Component.Serializer.toJson(this.getCustomName()));
+        }
+        return compoundTag;
     }
 
     @Override
@@ -99,11 +119,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     }
 
     abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
-
-    @Override
-    public void openCustomInventoryScreen(final Player player) {
-        this.interactWithContainerVehicle(player);
-    }
 
     @Override
     public void stopOpen(final Player player) {

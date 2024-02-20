@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.ChestCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -12,27 +13,28 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Calendar;
 
-public class ChestCompartmentRenderer extends CompartmentRenderer<ChestCompartmentEntity> {
+@OnlyIn(Dist.CLIENT)
+public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartmentEntity & LidCompartment> extends CompartmentRenderer<CompartmentEntity> {
 
     private static final String BOTTOM = "bottom";
     private static final String LID = "lid";
     private static final String LOCK = "lock";
+    protected final boolean xmasTextures;
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart lock;
-    private boolean xmasTextures;
 
     public ChestCompartmentRenderer(final EntityRendererProvider.Context context) {
         super(context);
 
         final Calendar calendar = Calendar.getInstance();
-        if (calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(Calendar.DAY_OF_MONTH) >= 24 && calendar.get(
-                Calendar.DAY_OF_MONTH) <= 26) {
-            this.xmasTextures = true;
-        }
+        this.xmasTextures = calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(
+                Calendar.DAY_OF_MONTH) >= 24 && calendar.get(Calendar.DAY_OF_MONTH) <= 26;
 
         final ModelPart modelpart = context.bakeLayer(ModelLayers.CHEST);
         this.bottom = modelpart.getChild(BOTTOM);
@@ -41,27 +43,38 @@ public class ChestCompartmentRenderer extends CompartmentRenderer<ChestCompartme
     }
 
     @Override
-    protected void renderCompartmentContents(final ChestCompartmentEntity compartmentEntity, final float partialTicks,
+    protected void renderCompartmentContents(final CompartmentEntity compartmentEntity, final float partialTicks,
             final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
 
         float openAngle = compartmentEntity.getOpenNess(partialTicks);
         openAngle = 1 - openAngle;
         openAngle = 1 - openAngle * openAngle * openAngle;
 
-        final Material material = this.xmasTextures ? Sheets.CHEST_XMAS_LOCATION : Sheets.CHEST_LOCATION;
+        final Material material = this.getMaterial(compartmentEntity);
         final VertexConsumer vertexConsumer = material.buffer(bufferSource, RenderType::entityCutout);
 
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.translate(-1, 0, -1);
-        this.render(poseStack, vertexConsumer, this.lid, this.lock, this.bottom, openAngle, packedLight);
+        this.render(poseStack, vertexConsumer, openAngle, packedLight);
     }
 
-    private void render(final PoseStack poseStack, final VertexConsumer vertexConsumer, final ModelPart lidModel,
-            final ModelPart lockModel, final ModelPart bottomModel, final float lidAngle, final int packedLight) {
-        lidModel.xRot = (float) (-lidAngle * Math.PI / 2);
-        lockModel.xRot = lidModel.xRot;
-        lidModel.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        lockModel.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        bottomModel.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+    private void render(final PoseStack poseStack, final VertexConsumer vertexConsumer, final float lidAngle,
+            final int packedLight) {
+        this.lid.xRot = (float) (-lidAngle * Math.PI / 2);
+        this.lock.xRot = this.lid.xRot;
+        this.lid.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+        this.lock.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+        this.bottom.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
+    }
+
+    /**
+     * Gets the material to use for rendering the chest model.
+     * See: {@link #xmasTextures} if there's a different texture for Christmas
+     *
+     * @param compartmentEntity The compartment
+     * @return The material for rendering the chest model
+     */
+    protected Material getMaterial(final CompartmentEntity compartmentEntity) {
+        return this.xmasTextures ? Sheets.CHEST_XMAS_LOCATION : Sheets.CHEST_LOCATION;
     }
 }

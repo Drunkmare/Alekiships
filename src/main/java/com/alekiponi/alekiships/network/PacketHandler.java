@@ -2,47 +2,45 @@ package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class PacketHandler {
-    private static final String PROTOCOL_VERSION = "1";
+public final class PacketHandler {
+    private static final String PROTOCOL_VERSION = ModList.get().getModFileById(AlekiShips.MOD_ID).versionString();
 
-    public static final SimpleChannel INSTANCE;
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(AlekiShips.MOD_ID, "network"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals);
 
-    static {
-        INSTANCE = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(AlekiShips.MOD_ID, "main"),
-                () -> PROTOCOL_VERSION,
-                PROTOCOL_VERSION::equals,
-                PROTOCOL_VERSION::equals
-        );
-    }
-
-    public static void init(){
+    public static void init() {
         int id = 0;
-        INSTANCE.messageBuilder(ServerboundCompartmentInputPacket.class, id)
+        CHANNEL.messageBuilder(ServerboundCompartmentInputPacket.class, id++)
                 .encoder(ServerboundCompartmentInputPacket::encoder)
                 .decoder(ServerboundCompartmentInputPacket::decoder)
                 .consumerMainThread(ServerboundCompartmentInputPacket::handle)
                 .add();
-        id++;
-        INSTANCE.messageBuilder(ServerboundSwitchEntityPacket.class, id)
+
+        CHANNEL.messageBuilder(ServerboundSwitchEntityPacket.class, id++)
                 .encoder(ServerboundSwitchEntityPacket::encoder)
                 .decoder(ServerboundSwitchEntityPacket::decoder)
                 .consumerMainThread(ServerboundSwitchEntityPacket::handle)
                 .add();
-        id++;
-        INSTANCE.messageBuilder(ServerBoundSloopPacket.class, id)
+
+        CHANNEL.messageBuilder(ServerBoundSloopPacket.class, id++)
                 .encoder(ServerBoundSloopPacket::encoder)
                 .decoder(ServerBoundSloopPacket::decoder)
                 .consumerMainThread(ServerBoundSloopPacket::handle)
                 .add();
+
+        CHANNEL.messageBuilder(ServerBoundPickCompartmentPacket.class, id++)
+                .encoder(ServerBoundPickCompartmentPacket::encoder)
+                .decoder(ServerBoundPickCompartmentPacket::decoder)
+                .consumerMainThread(ServerBoundPickCompartmentPacket::handle)
+                .add();
     }
 
-    public static void clientSendPacket(Object msg){
-        INSTANCE.sendToServer(msg);
+    public static void clientSendPacket(Object msg) {
+        CHANNEL.sendToServer(msg);
     }
-
-
 }

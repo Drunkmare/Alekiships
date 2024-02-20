@@ -7,12 +7,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,7 +22,9 @@ import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -39,12 +43,14 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_OPEN);
+            ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_OPEN, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
         protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_CLOSE);
+            ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_CLOSE, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
@@ -87,7 +93,39 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
         this.chestLidController.tickLid();
 
         if (!this.isRemoved() && this.level().isClientSide()) {
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), this.getDisplayBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
+        }
+    }
+
+    @Override
+    public void remove(final RemovalReason removalReason) {
+        this.setRemoved(removalReason);
+
+        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
+            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        }
+
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            final ItemStack itemStack = this.getDropStack();
+            if (this.hasCustomName()) {
+                itemStack.setHoverName(this.getCustomName());
+            }
+
+            this.spawnAtLocation(itemStack);
+        }
+
+        this.invalidateCaps();
+    }
+
+    @Override
+    public void chestVehicleDestroyed(final DamageSource damageSource, final Level level, final Entity entity) {
+        if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            if (!level.isClientSide) {
+                final Entity directEntity = damageSource.getDirectEntity();
+                if (directEntity != null && directEntity.getType() == EntityType.PLAYER) {
+                    PiglinAi.angerNearbyPiglins((Player) directEntity, true);
+                }
+            }
         }
     }
 
@@ -138,7 +176,7 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -146,7 +184,7 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
             this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+                    Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -162,10 +200,8 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
         ContainerHelper.saveAllItems(compoundTag, this.getItemStacks(), false);
 
-        if (compoundTag.isEmpty()) {
-            dropStack.removeTagKey("BlockEntityTag");
-        } else {
-            dropStack.addTagElement("BlockEntityTag", compoundTag);
+        if (!compoundTag.isEmpty()) {
+            dropStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compoundTag);
         }
 
         return dropStack;
@@ -185,8 +221,13 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     }
 
     @Override
-    protected SoundEvent getHurtSound(final DamageSource damageSource) {
-        return SoundEvents.STONE_BREAK;
+    protected void playHurtSound(final DamageSource damageSource) {
+        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.5F);
+    }
+
+    @Override
+    protected void onPlaced() {
+        this.playSound(SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     @Override

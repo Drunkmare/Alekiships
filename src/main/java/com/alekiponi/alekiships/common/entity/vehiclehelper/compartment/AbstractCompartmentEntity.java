@@ -12,7 +12,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,6 +25,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -38,8 +39,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
             AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
-            AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final float DAMAGE_TO_BREAK = 8.0f;
     private static final float DAMAGE_RECOVERY = 0.5f;
     public int lifespan = 6000;
@@ -65,7 +64,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.entityData.define(DATA_ID_HURT, 0);
         this.entityData.define(DATA_ID_HURT_DIR, 1);
         this.entityData.define(DATA_ID_DAMAGE, 0F);
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Block.getId(Blocks.AIR.defaultBlockState()));
     }
 
     /**
@@ -182,13 +180,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.lerpSteps = 10;
     }
 
-    protected SoundEvent getHurtSound(final DamageSource damageSource) {
-        return SoundEvents.WOOD_HIT;
-    }
-
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playSound(this.getHurtSound(damageSource), 1, this.level().getRandom().nextFloat() * 0.05F + 0.35F);
-    }
+    abstract protected void playHurtSound(final DamageSource damageSource);
 
     @Override
     public boolean isInvulnerableTo(DamageSource pSource) {
@@ -255,15 +247,12 @@ public abstract class AbstractCompartmentEntity extends Entity {
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         this.lifespan = compoundTag.getInt("Lifespan");
         this.notRidingTicks = compoundTag.getInt("notRidingTicks");
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt("Lifespan", this.lifespan);
         compoundTag.putInt("notRidingTicks", this.notRidingTicks);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     /**
@@ -285,14 +274,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
             return firmacivBoatEntity;
         }
         return null;
-    }
-
-    public BlockState getDisplayBlockState() {
-        return Block.stateById(this.getEntityData().get(DATA_ID_DISPLAY_BLOCK));
-    }
-
-    public void setDisplayBlockState(final BlockState blockState) {
-        this.getEntityData().set(DATA_ID_DISPLAY_BLOCK, Block.getId(blockState));
     }
 
     public float getDamage() {
@@ -350,12 +331,20 @@ public abstract class AbstractCompartmentEntity extends Entity {
      *
      * @return The ItemStack that should be dropped in world when the compartment is destroyed
      */
-    public ItemStack getDropStack() {
-        return this.getDisplayBlockState().getBlock().asItem().getDefaultInstance();
-    }
+    abstract protected ItemStack getDropStack();
 
+    @Nullable
     @Override
-    public ItemStack getPickResult() {
-        return this.getDisplayBlockState().getBlock().asItem().getDefaultInstance();
+    abstract public ItemStack getPickResult();
+
+    /**
+     * Called after the compartment is placed into the world by {@link EmptyCompartmentEntity}.
+     * This is primarily for playing the placement sound, but I could imagine that there's other good uses
+     */
+    abstract protected void onPlaced();
+
+    public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
+            final float pitch) {
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
     }
 }
