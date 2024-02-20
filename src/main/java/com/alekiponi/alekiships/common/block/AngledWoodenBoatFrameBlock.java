@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.TFCTags;
 import net.dries007.tfc.common.blocks.wood.Wood;
 import net.dries007.tfc.util.registry.RegistryWood;
@@ -279,9 +280,9 @@ public class AngledWoodenBoatFrameBlock extends SquaredAngleBlock {
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
             if (processState <= 3) {
-                ItemHandlerHelper.giveItemToPlayer(player, this.getPlankAsItemStack());
+                AlekiShipsHelper.giveItemToPlayer(player, this.getPlankAsItemStack());
             } else {
-                ItemHandlerHelper.giveItemToPlayer(player, AlekiShipsItems.COPPER_BOLT.get().getDefaultInstance());
+                AlekiShipsHelper.giveItemToPlayer(player, AlekiShipsItems.COPPER_BOLT.get().getDefaultInstance());
             }
 
             // Set ourselves back to our base

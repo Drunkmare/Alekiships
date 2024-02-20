@@ -852,8 +852,8 @@ public abstract class AbstractVehicle extends Entity {
     }
 
     public boolean isInWater() {
-        return this.wasTouchingWater || this.level().getFluidState(this.blockPosition())
-                .is(TFCFluids.SALT_WATER.getSource());
+        return AlekiShipsHelper.inWater(this);
+
     }
 
     public boolean everyNthTickUnique(int n){

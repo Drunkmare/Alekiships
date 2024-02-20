@@ -1,11 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatVariant;
 import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.common.items.TFCItems;
 import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,15 +31,6 @@ import java.util.Comparator;
 public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntity {
 
     public final RegistryWood wood;
-    public final Item lumber;
-    public final Item stripped;
-    public final Item planks;
-    //TODO correct items
-    public final Item mainsail;
-    public final Item jibsail;
-    public final Item anchor;
-    public final Item rigging;
-
     public final int KEEL_ITEM_NUMBER = 8;
 
     public final int DECK_ITEM_NUMBER = 20;
@@ -65,14 +56,34 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     public SloopUnderConstructionEntity(EntityType entityType, Level level, RegistryWood wood) {
         super(entityType, level);
         this.wood = wood;
-        this.lumber = TFCItems.LUMBER.get((Wood) (wood)).get();
-        this.stripped = wood.getBlock(Wood.BlockType.STRIPPED_LOG).get().asItem();
-        this.planks = wood.getBlock(Wood.BlockType.PLANKS).get().asItem();
-        //TODO correct items
-        this.mainsail = AlekiShipsItems.MEDIUM_TRIANGULAR_SAIL.get();
-        this.jibsail = AlekiShipsItems.SMALL_TRIANGULAR_SAIL.get();
-        this.anchor = AlekiShipsItems.ANCHOR.get();
-        this.rigging = Items.LEAD;
+    }
+
+    public Item getRailingsItem(){
+        return Items.STICK;
+    }
+
+    public Item getMainsailItem(){
+        return Items.WHITE_WOOL;
+    }
+
+    public Item getJibsailItem(){
+        return Items.WHITE_WOOL;
+    }
+
+    public Item getRiggingItem(){
+        return Items.LEAD;
+    }
+
+    public Item getAnchorItem(){
+        return AlekiShipsItems.ANCHOR.get();
+    }
+
+    public Item getPlanksItem(){
+        return Items.OAK_PLANKS;
+    }
+
+    public Item getStrippedItem(){
+        return Items.STRIPPED_OAK_LOG;
     }
 
     private static final EntityDataAccessor<ItemStack> DATA_ID_KEEL = SynchedEntityData.defineId(SloopUnderConstructionEntity.class,
@@ -339,25 +350,25 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         ConstructionState stage = this.getConstructionStage();
         switch (stage) {
             case KEEL, MAST, BOOM, BOWSPRIT -> {
-                return this.stripped;
+                return this.getStrippedItem();
             }
             case DECK -> {
-                return this.planks;
+                return this.getPlanksItem();
             }
             case MAINSAIL -> {
-                return this.mainsail;
+                return this.getMainsailItem();
             }
             case JIBSAIl -> {
-                return this.jibsail;
+                return this.getJibsailItem();
             }
             case RAILINGS_STERN, RAILINGS_BOW -> {
-                return this.lumber;
+                return this.getRailingsItem();
             }
             case ANCHOR -> {
-                return this.anchor;
+                return this.getAnchorItem();
             }
             case RIGGING -> {
-                return this.rigging;
+                return this.getRiggingItem();
             }
         }
         return null;
@@ -419,7 +430,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         thisPos = thisPos.relative(thisDir.getCounterClockWise(), 2);
         switch (stage) {
             case KEEL -> {
-                if (stack.is(stripped)) {
+                if (stack.is(getStrippedItem())) {
                     this.setKeel(new ItemStack(stack.split(1).getItem(), this.getKeel().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getKeel().getCount() >= KEEL_ITEM_NUMBER) {
@@ -434,7 +445,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case DECK -> {
-                if (stack.is(planks)) {
+                if (stack.is(getPlanksItem())) {
                     this.setDeck(new ItemStack(stack.split(1).getItem(), this.getDeck().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getDeck().getCount() >= DECK_ITEM_NUMBER) {
@@ -449,7 +460,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case BOWSPRIT -> {
-                if (stack.is(stripped)) {
+                if (stack.is(getStrippedItem())) {
                     this.setBowsprit(new ItemStack(stack.split(1).getItem(), this.getBowsprit().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getBowsprit().getCount() >= BOWSPRIT_ITEM_NUMBER) {
@@ -464,7 +475,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case MAST -> {
-                if (stack.is(stripped)) {
+                if (stack.is(getStrippedItem())) {
                     this.setMast(new ItemStack(stack.split(1).getItem(), this.getMast().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getMast().getCount() >= MAST_ITEM_NUMBER) {
@@ -479,7 +490,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case BOOM -> {
-                if (stack.is(stripped)) {
+                if (stack.is(getStrippedItem())) {
                     this.setBoom(new ItemStack(stack.split(1).getItem(), this.getBoom().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getBoom().getCount() >= BOOM_ITEM_NUMER) {
@@ -494,7 +505,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case MAINSAIL -> {
-                if (stack.is(mainsail)) {
+                if (stack.is(getMainsailItem())) {
                     this.setMainsail(new ItemStack(stack.split(1).getItem(), this.getMainsail().getCount() + 1));
                     this.playSound(SoundEvents.WOOL_PLACE);
                     if (this.getMainsail().getCount() >= MAINSAIL_ITEM_NUMBER) {
@@ -509,7 +520,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case JIBSAIl -> {
-                if (stack.is(jibsail)) {
+                if (stack.is(getJibsailItem())) {
                     this.setJibsail(new ItemStack(stack.split(1).getItem(), this.getJibsail().getCount() + 1));
                     this.playSound(SoundEvents.WOOL_PLACE);
                     if (this.getJibsail().getCount() >= JIBSAIL_ITEM_NUMBER) {
@@ -525,7 +536,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case RAILINGS_STERN -> {
-                if (stack.is(lumber)) {
+                if (stack.is(getRailingsItem())) {
                     this.setRailingsStern(new ItemStack(stack.split(1).getItem(), this.getRailingsStern().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getRailingsStern().getCount() >= STERN_RAILING_ITEM_NUMBER) {
@@ -540,7 +551,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case RAILINGS_BOW -> {
-                if (stack.is(lumber)) {
+                if (stack.is(getRailingsItem())) {
                     this.setRailingsBow(new ItemStack(stack.split(1).getItem(), this.getRailingsBow().getCount() + 1));
                     this.playSound(SoundEvents.WOOD_PLACE);
                     if (this.getRailingsBow().getCount() >= BOW_RAILING_ITEM_NUMBER) {
@@ -555,7 +566,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case ANCHOR -> {
-                if (stack.is(anchor)) {
+                if (stack.is(getAnchorItem())) {
                     this.setAnchor(new ItemStack(stack.split(1).getItem(), this.getAnchor().getCount() + 1));
                     this.playSound(SoundEvents.METAL_PLACE);
                     if (this.getAnchor().getCount() >= ANCHOR_ITEM_NUMBER) {
@@ -570,7 +581,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                 }
             }
             case RIGGING -> {
-                if (stack.is(rigging)) {
+                if (stack.is(getRiggingItem())) {
                     this.setRigging(new ItemStack(stack.split(1).getItem(), this.getRigging().getCount() + 1));
                     this.playSound(SoundEvents.LEASH_KNOT_PLACE);
                     if (this.getRigging().getCount() >= RIGGING_ITEM_NUMBER) {

@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.TFCTags;
 import net.dries007.tfc.common.blocks.wood.Wood;
 import net.dries007.tfc.util.registry.RegistryWood;
@@ -62,9 +63,9 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
             if (processState <= 3) {
-                ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
+                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
             } else {
-                ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(AlekiShipsItems.COPPER_BOLT.get()));
+                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(AlekiShipsItems.COPPER_BOLT.get()));
             }
 
             // Set ourselves back to our base

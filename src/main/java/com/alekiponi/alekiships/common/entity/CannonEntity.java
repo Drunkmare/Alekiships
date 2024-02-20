@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.fluids.TFCFluids;
 import net.dries007.tfc.common.items.TFCItems;
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class CannonEntity extends Entity {
@@ -68,8 +70,7 @@ public class CannonEntity extends Entity {
     public void tick(){
         if (!this.isPassenger()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
-            if (this.isInWater() || this.level().getFluidState(this.blockPosition())
-                    .is(TFCFluids.SALT_WATER.getSource())) {
+            if (this.isInWater()) {
                 this.setDeltaMovement(0.0D, -0.01D, 0.0D);
                 this.setYRot(this.getYRot() + 0.4f);
             }
@@ -110,10 +111,13 @@ public class CannonEntity extends Entity {
         return getGunpowderItem() != null;
     }
 
+    @Nullable
     public Item getPaperItem(){
         return null;
     }
 
+
+    @Nullable
     public Item getGunpowderItem(){
         return null;
     }
@@ -172,13 +176,17 @@ public class CannonEntity extends Entity {
         if(needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
             return;
         }
-        if(this.isInWater() || this.level().getFluidState(this.blockPosition())
-                .is(TFCFluids.SALT_WATER.getSource())){
+        if(this.isInWater()){
             return;
         }
 
         this.setFuseTime(40);
         this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
+    }
+
+    @Override
+    public boolean isInWater(){
+        return AlekiShipsHelper.inWater(this);
     }
 
     public void fire(){
