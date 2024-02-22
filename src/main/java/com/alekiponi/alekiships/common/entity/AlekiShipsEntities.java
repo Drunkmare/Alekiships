@@ -10,7 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCom
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.*;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
-import net.dries007.tfc.util.registry.RegistryWood;
+import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -20,8 +20,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.EnumMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.alekiponi.alekiships.AlekiShips.MOD_ID;
@@ -33,20 +33,20 @@ public final class AlekiShipsEntities {
     public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
             MOD_ID);
 
-    public static final Map<RegistryWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.TFCWoodMap(
-            wood -> register("rowboat/" + wood.getSerializedName(),
-                    EntityType.Builder.of(RowboatEntity::new, MobCategory.MISC).sized(1.875F, 0.625F)));
+    public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
+            VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
+                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, vanillaWood),
+                            MobCategory.MISC)));
 
-    public static final Map<RegistryWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.TFCWoodMap(
-            wood -> register("sloop/" + wood.getSerializedName(),
-                    EntityType.Builder.of(SloopEntity::new, MobCategory.MISC).sized(3F, 0.75F)
-                            .setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune()));
+    public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.mapOfKeys(
+            VanillaWood.class, vanillaWood -> registerSloop(vanillaWood,
+                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, vanillaWood),
+                            MobCategory.MISC)));
 
-    public static final Map<RegistryWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.TFCWoodMap(
-            wood -> register("sloop_construction/" + wood.getSerializedName(),
-                    EntityType.Builder.<SloopUnderConstructionEntity>of(
-                                    (type, level) -> new SloopUnderConstructionEntity(type, level, wood), MobCategory.MISC)
-                            .sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon()));
+    public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.mapOfKeys(
+            VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
+                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
+                    MobCategory.MISC)));
 
     public static final RegistryObject<CompartmentType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_empty", CompartmentType.Builder.createBasic(EmptyCompartmentEntity::new));
@@ -166,6 +166,23 @@ public final class AlekiShipsEntities {
     public static final RegistryObject<EntityType<MastEntity>> MAST_ENTITY = register("vehicle_mast",
             EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+
+    private static <E extends RowboatEntity> RegistryObject<EntityType<E>> registerRowboat(
+            final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
+        return register("rowboat/" + vanillaWood.getSerializedName(), builder.sized(1.875F, 0.625F));
+    }
+
+    private static <E extends SloopEntity> RegistryObject<EntityType<E>> registerSloop(final VanillaWood vanillaWood,
+            final EntityType.Builder<E> builder) {
+        return register("sloop/" + vanillaWood.getSerializedName(),
+                builder.sized(3F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune());
+    }
+
+    private static <E extends SloopUnderConstructionEntity> RegistryObject<EntityType<E>> registerSloopConstruction(
+            final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
+        return register("sloop_construction/" + vanillaWood.getSerializedName(),
+                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon());
+    }
 
     /**
      * Registers a compartment entity and registers it for placing into empty compartments

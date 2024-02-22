@@ -1,24 +1,40 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
 
 public class AngledBoatFrameBlock extends SquaredAngleBlock {
 
+    private static final IdentityHashMap<Item, AngledBoatFrameBlock> ANGLED_FRAMES = new IdentityHashMap<>();
+
     public AngledBoatFrameBlock(final Properties properties) {
         super(properties);
+    }
+
+    /**
+     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link AngledBoatFrameBlock}
+     * A given {@link Item} instance may only map to one {@link AngledBoatFrameBlock} instance but multiple
+     * {@link Item}s can map to the same {@link AngledBoatFrameBlock}.
+     */
+    public static void registerFrame(final Item item, final AngledBoatFrameBlock frameBlock) {
+        ANGLED_FRAMES.put(item, frameBlock);
+    }
+
+    @Nullable
+    public static AngledBoatFrameBlock getFrame(final Item item) {
+        return ANGLED_FRAMES.get(item);
     }
 
     @Override
@@ -28,32 +44,25 @@ public class AngledBoatFrameBlock extends SquaredAngleBlock {
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        // Should we do plank stuff
-        if (!heldStack.is(AlekiShipsTags.Items.PLANKS)) return InteractionResult.PASS;
+        final SquaredAngleBlock frameBlock = getFrame(heldStack.getItem());
 
-        // We must replace ourselves with the correct wood version
-        for (final RegistryObject<Block> registryObject : AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.values()) {
-            if (!(registryObject.get() instanceof AngledWoodenBoatFrameBlock woodenFrameBlock)) continue;
+        if (frameBlock != null) {
+            final BlockState newBlockState = frameBlock.defaultBlockState().setValue(SHAPE, blockState.getValue(SHAPE))
+                    .setValue(FACING, blockState.getValue(FACING))
+                    .setValue(WATERLOGGED, blockState.getValue(WATERLOGGED));
 
-            // Must find the right block variant for this item
-            if (!heldStack.is(woodenFrameBlock.getPlankAsItemStack().getItem())) continue;
+            level.setBlockAndUpdate(blockPos, newBlockState);
 
-            final BlockState newBlockState = woodenFrameBlock.defaultBlockState()
-                    .setValue(SHAPE, blockState.getValue(SHAPE)).setValue(FACING, blockState.getValue(FACING));
-
-            level.setBlock(blockPos, newBlockState, 10);
-
-            if(!player.getAbilities().instabuild){
+            if (!player.getAbilities().instabuild) {
                 heldStack.shrink(1);
             }
 
-            level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                    level.getRandom().nextFloat() * 0.1F + 0.9F);
+            final SoundType soundType = newBlockState.getSoundType(level, blockPos, player);
+
+            level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
+                    (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
             return InteractionResult.SUCCESS;
         }
-
-        AlekiShips.LOGGER.error("Couldn't find a frame for the item {} even though it's contained in {}",
-                heldStack.getItem(), AlekiShipsTags.Items.PLANKS);
 
         return InteractionResult.PASS;
     }

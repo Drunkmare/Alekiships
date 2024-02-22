@@ -1,15 +1,13 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -17,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -27,17 +26,33 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
 
 public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected static final VoxelShape HALF_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
+    private static final IdentityHashMap<Item, FlatBoatFrameBlock> FLAT_FRAMES = new IdentityHashMap<>();
 
     public FlatBoatFrameBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false));
+    }
+
+    /**
+     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link FlatBoatFrameBlock}
+     * A given {@link Item} instance may only map to one {@link FlatBoatFrameBlock} instance but multiple
+     * {@link Item}s can map to the same {@link FlatBoatFrameBlock}.
+     */
+    public static void registerFrame(final Item item, final FlatBoatFrameBlock frameBlock) {
+        FLAT_FRAMES.put(item, frameBlock);
+    }
+
+    @Nullable
+    public static FlatBoatFrameBlock getFrame(final Item item) {
+        return FLAT_FRAMES.get(item);
     }
 
     @Override
@@ -52,29 +67,24 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        // Should we do plank stuff
-        if (!heldStack.is(AlekiShipsTags.Items.PLANKS)) return InteractionResult.PASS;
+        final FlatBoatFrameBlock frameBlock = getFrame(heldStack.getItem());
 
-        // We must replace ourselves with the correct wood version
-        for (final RegistryObject<FlatWoodenBoatFrameBlock> registryObject : AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.values()) {
-            final FlatWoodenBoatFrameBlock woodenFrameBlock = registryObject.get();
+        if (frameBlock != null) {
+            final BlockState newBlockState = frameBlock.defaultBlockState()
+                    .setValue(WATERLOGGED, blockState.getValue(WATERLOGGED));
 
-            // Must find the right block variant for this item
-            if (!heldStack.is(woodenFrameBlock.getUnderlyingPlank().asItem())) continue;
+            level.setBlockAndUpdate(blockPos, newBlockState);
 
-            level.setBlock(blockPos, woodenFrameBlock.defaultBlockState(), UPDATE_CLIENTS | UPDATE_IMMEDIATE);
-
-            if(!player.getAbilities().instabuild){
+            if (!player.getAbilities().instabuild) {
                 heldStack.shrink(1);
             }
 
-            level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                    level.getRandom().nextFloat() * 0.1F + 0.9F);
+            final SoundType soundType = newBlockState.getSoundType(level, blockPos, player);
+
+            level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
+                    (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
             return InteractionResult.SUCCESS;
         }
-
-        AlekiShips.LOGGER.error("Couldn't find a frame for the item {} even though it's contained in {}",
-                heldStack.getItem(), AlekiShipsTags.Items.PLANKS);
 
         return InteractionResult.PASS;
     }

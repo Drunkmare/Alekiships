@@ -1,10 +1,9 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.TFCTags;
-import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -26,12 +25,12 @@ import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperti
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
-    public final RegistryWood wood;
+    public final BoatMaterial boatMaterial;
 
-    public FlatWoodenBoatFrameBlock(final RegistryWood wood, final Properties properties) {
+    public FlatWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
-        this.wood = wood;
+        this.boatMaterial = boatMaterial;
     }
 
     @Override
@@ -127,10 +126,10 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
     }
 
     public Block getUnderlyingPlank() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get();
+        return this.boatMaterial.getDeckBlock().getBlock();
     }
 
     public ItemStack getPlankAsItemStack() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get().asItem().getDefaultInstance();
+        return new ItemStack(this.boatMaterial.getDeckItem());
     }
 }

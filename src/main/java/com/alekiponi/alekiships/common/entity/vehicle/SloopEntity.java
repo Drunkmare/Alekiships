@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.BoatVariant;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -68,9 +69,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     protected final int SAIL_TOGGLE_TICKS = 20;
     protected final float DAMAGE_THRESHOLD = 512.0f;
     protected final float DAMAGE_RECOVERY = 5.333f;
+    private final BoatMaterial boatMaterial;
 
-    public SloopEntity(EntityType<? extends AbstractAlekiBoatEntity> entityType, Level level) {
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
+            final BoatMaterial boatMaterial) {
         super(entityType, level);
+        this.boatMaterial = boatMaterial;
     }
 
     public BoatVariant getVariant() {
@@ -542,7 +546,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     }
 
     @Override
-    public Item getDropItem(){ return getVariant().getPlanks().get().asItem(); }
+    public Item getDropItem() {
+        return this.boatMaterial.getDeckItem();
+    }
 
     @Nullable
     public EmptyCompartmentEntity getSailingCompartment() {

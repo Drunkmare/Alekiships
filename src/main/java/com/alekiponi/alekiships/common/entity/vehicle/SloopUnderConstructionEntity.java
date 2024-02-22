@@ -1,12 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.BoatVariant;
-import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +27,7 @@ import java.util.Comparator;
 
 public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntity {
 
-    public final RegistryWood wood;
+    public final BoatMaterial boatMaterial;
     public final int KEEL_ITEM_NUMBER = 8;
 
     public final int DECK_ITEM_NUMBER = 20;
@@ -53,37 +50,38 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     public final int RIGGING_ITEM_NUMBER = 8;
 
-    public SloopUnderConstructionEntity(EntityType entityType, Level level, RegistryWood wood) {
+    public SloopUnderConstructionEntity(final EntityType<? extends SloopUnderConstructionEntity> entityType,
+            final Level level, final BoatMaterial boatMaterial) {
         super(entityType, level);
-        this.wood = wood;
+        this.boatMaterial = boatMaterial;
     }
 
-    public Item getRailingsItem(){
-        return Items.STICK;
+    public Item getRailingsItem() {
+        return this.boatMaterial.getRailing();
     }
 
-    public Item getMainsailItem(){
+    public Item getMainsailItem() {
         return Items.WHITE_WOOL;
     }
 
-    public Item getJibsailItem(){
+    public Item getJibsailItem() {
         return Items.WHITE_WOOL;
     }
 
-    public Item getRiggingItem(){
+    public Item getRiggingItem() {
         return Items.LEAD;
     }
 
-    public Item getAnchorItem(){
+    public Item getAnchorItem() {
         return AlekiShipsItems.ANCHOR.get();
     }
 
-    public Item getPlanksItem(){
-        return Items.OAK_PLANKS;
+    public Item getPlanksItem() {
+        return this.boatMaterial.getDeckItem();
     }
 
-    public Item getStrippedItem(){
-        return Items.STRIPPED_OAK_LOG;
+    public Item getStrippedItem() {
+        return this.boatMaterial.getStrippedLog();
     }
 
     private static final EntityDataAccessor<ItemStack> DATA_ID_KEEL = SynchedEntityData.defineId(SloopUnderConstructionEntity.class,
@@ -438,7 +436,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -453,7 +451,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -468,7 +466,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -483,7 +481,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -498,7 +496,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -544,7 +542,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -559,7 +557,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -574,7 +572,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 this.playSound(SoundEvents.WOOD_BREAK);
-                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x), this.boatMaterial.getDeckBlock());
                             }
                         }
                     }
@@ -585,16 +583,20 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                     this.setRigging(new ItemStack(stack.split(1).getItem(), this.getRigging().getCount() + 1));
                     this.playSound(SoundEvents.LEASH_KNOT_PLACE);
                     if (this.getRigging().getCount() >= RIGGING_ITEM_NUMBER) {
-                        SloopEntity sloop = AlekiShipsEntities.SLOOPS.get(wood).get().create(this.level());
-                        sloop.setYRot(this.getYRot());
-                        sloop.setPos(this.getPosition(0));
-                        this.level().addFreshEntity(sloop);
+                        this.boatMaterial.getEntityType(BoatMaterial.BoatType.SLOOP).ifPresent(entityType -> {
+                            final AbstractVehicle sloop = entityType.create(this.level());
+                            if (sloop != null) {
+                                sloop.setYRot(this.getYRot());
+                                sloop.setPos(this.getPosition(0));
+                                this.level().addFreshEntity(sloop);
+                            }
+                        });
 
                         for (int x = 0; x < 4; x++) {
                             for (int y = 0; y < 7; y++) {
                                 for (int z = 0; z < 11; z++) {
                                     this.playSound(SoundEvents.WOOD_BREAK);
-                                    this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x).relative(Direction.UP, z), this.wood.getBlock(Wood.BlockType.PLANKS).get().defaultBlockState());
+                                    this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x).relative(Direction.UP, z), this.boatMaterial.getDeckBlock());
                                     this.level().addDestroyBlockEffect(thisPos.relative(thisDir.getOpposite(), y).relative(thisDir.getClockWise(), x).relative(Direction.UP, z), AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState());
                                 }
                             }

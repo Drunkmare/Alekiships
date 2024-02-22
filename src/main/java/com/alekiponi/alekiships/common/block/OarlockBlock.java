@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -107,13 +107,17 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         Direction direction = blockState.getValue(FACING);
         Direction.Axis axis = direction.getClockWise().getAxis();
         if(framestate.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock){
-            RowboatEntity rowboat = AlekiShipsEntities.ROWBOATS.get(boatFrameBlock.wood).get().create(pLevel);
-            rowboat.setPos(getSpawnPosition(pLevel, thispos, blockState));
-            if (axis == Direction.Axis.X) {
-                rowboat.setYRot(90F);
-            }
+            boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.ROWBOAT).ifPresent(entityType -> {
+                final AbstractVehicle rowboat = entityType.create(pLevel);
+                if (rowboat != null) {
+                    rowboat.setPos(getSpawnPosition(pLevel, thispos, blockState));
+                    if (axis == Direction.Axis.X) {
+                        rowboat.setYRot(90F);
+                    }
 
-            pLevel.addFreshEntity(rowboat);
+                    pLevel.addFreshEntity(rowboat);
+                }
+            });
         }
         //String woodName = boatFrameBlock.getPlankAsItemStack().getItem().toString().split("planks/")[1];
         //BoatVariant variant = BoatVariant.byName(woodName);

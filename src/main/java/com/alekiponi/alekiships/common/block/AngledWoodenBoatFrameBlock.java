@@ -1,10 +1,9 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.common.TFCTags;
-import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -27,17 +26,17 @@ import javax.annotation.Nullable;
 
 import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
 
-public class AngledWoodenBoatFrameBlock extends SquaredAngleBlock {
+public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
 
-    public final RegistryWood wood;
+    public final BoatMaterial boatMaterial;
 
-    public AngledWoodenBoatFrameBlock(final RegistryWood wood, final Properties properties) {
+    public AngledWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
         super(properties);
         this.registerDefaultState(
                 this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHAPE, StairsShape.STRAIGHT)
                         .setValue(WATERLOGGED, false).setValue(FRAME_PROCESSED, 0));
-        this.wood = wood;
+        this.boatMaterial = boatMaterial;
     }
 
     @Override
@@ -266,7 +265,6 @@ public class AngledWoodenBoatFrameBlock extends SquaredAngleBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
                                  final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
 
@@ -340,11 +338,7 @@ public class AngledWoodenBoatFrameBlock extends SquaredAngleBlock {
         return AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().getCloneItemStack(blockGetter, blockPos, blockState);
     }
 
-    public Block getPlankAsBlock() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get();
-    }
-
     public ItemStack getPlankAsItemStack() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get().asItem().getDefaultInstance();
+        return new ItemStack(this.boatMaterial.getDeckItem());
     }
 }

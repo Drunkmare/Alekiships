@@ -1,5 +1,8 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.block.AngledBoatFrameBlock;
+import com.alekiponi.alekiships.common.block.FlatBoatFrameBlock;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.world.entity.EntityType;
@@ -36,6 +39,15 @@ public enum VanillaWood implements BoatMaterial {
         this.plankBlock = plankBlock;
         this.railingItem = railingItem;
         this.strippedLogItem = strippedLogItem;
+    }
+
+    public static void registerFrames() {
+        for (final VanillaWood wood : values()) {
+            FlatBoatFrameBlock.registerFrame(wood.plankBlock.asItem(),
+                    AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(wood).get());
+            AngledBoatFrameBlock.registerFrame(wood.plankBlock.asItem(),
+                    AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(wood).get());
+        }
     }
 
     @Override

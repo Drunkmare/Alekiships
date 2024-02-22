@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -190,18 +190,26 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
                 spawnPosition = spawnPosition.add(0,0,1);
             }
 
-            SloopUnderConstructionEntity sloop = AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(boatFrameBlock.wood).get().create(level);
-            sloop.setPos(spawnPosition);
-            if (structureDirection == Direction.NORTH) {
-                sloop.setYRot(180F);
-            } else if (structureDirection == Direction.EAST) {
-                sloop.setYRot(-90F);
-            } else if (structureDirection == Direction.WEST) {
-                sloop.setYRot(90F);
+
+            {
+                // TODO also try to initialize the position in a final context to avoid the silly copy
+                //  (lambda is unhappy when it's mutable)
+                final Vec3 finalSpawnPosition = spawnPosition;
+                boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.CONSTRUCTION_SLOOP).ifPresent(entityType -> {
+                    final AbstractVehicle sloop = entityType.create(level);
+                    if (sloop != null) {
+                        sloop.setPos(finalSpawnPosition);
+                        if (structureDirection == Direction.NORTH) {
+                            sloop.setYRot(180F);
+                        } else if (structureDirection == Direction.EAST) {
+                            sloop.setYRot(-90F);
+                        } else if (structureDirection == Direction.WEST) {
+                            sloop.setYRot(90F);
+                        }
+                        level.addFreshEntity(sloop);
+                    }
+                });
             }
-            level.addFreshEntity(sloop);
-
-
         }
 
 
