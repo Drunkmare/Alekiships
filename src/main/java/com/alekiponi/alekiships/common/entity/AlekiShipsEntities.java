@@ -172,10 +172,13 @@ public final class AlekiShipsEntities {
      */
     private static <E extends AbstractCompartmentEntity> RegistryObject<CompartmentType<E>> registerCompartment(
             final String name, final CompartmentType.Builder<E> builder, final Predicate<ItemStack> predicate) {
-        final RegistryObject<CompartmentType<E>> compartmentTypeRegistryObject = registerCompartment(name,
-                builder.sized(0.6F, 0.7F).fireImmune().noSummon(), true);
-        CompartmentType.register(compartmentTypeRegistryObject.get(), predicate);
-        return compartmentTypeRegistryObject;
+        final String id = name.toLowerCase(Locale.ROOT);
+        return ENTITY_TYPES.register(id, () -> {
+            final CompartmentType<E> compartmentType = builder.sized(0.6F, 0.7F).fireImmune().noSummon()
+                    .build(MOD_ID + ":" + id);
+            CompartmentType.register(compartmentType, predicate);
+            return compartmentType;
+        });
     }
 
     /**
