@@ -186,7 +186,7 @@ public final class AlekiShipsEntities {
      */
     private static <E extends AbstractCompartmentEntity> RegistryObject<CompartmentType<E>> registerCompartment(
             final String name, final CompartmentType.Builder<E> builder) {
-        return registerCompartment(name, builder, true);
+        return registerCompartment(name, builder.sized(0.6F, 0.7F).fireImmune().noSummon(), true);
     }
 
     /**
