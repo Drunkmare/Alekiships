@@ -22,6 +22,7 @@ import oshi.util.tuples.Pair;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -74,7 +75,7 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      * @apiNote This is order dependent so the predicate should be as exact as possible
      */
     public static void register(final CompartmentType<?> compartmentType, final Predicate<ItemStack> predicate) {
-        COMPARTMENT_TYPES.add(new Pair<>(compartmentType, predicate));
+        COMPARTMENT_TYPES.add(new Pair<>(Objects.requireNonNull(compartmentType), Objects.requireNonNull(predicate)));
     }
 
     /**
