@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.block;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import net.dries007.tfc.common.TFCTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -24,10 +23,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 
-import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
-
 public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
-    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
+    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_3;
+    public static final int FULLY_PROCESSED = 3;
 
     public final BoatMaterial boatMaterial;
 
@@ -259,7 +257,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
         if (framestate.getBlock() instanceof AngledWoodenBoatFrameBlock wbfb && wbfb.getPlankAsItemStack()
                 .is(plankitem.getItem())) {
             // check if the state matches
-            return framestate.getValue(FRAME_PROCESSED_7) == 7;
+            return framestate.getValue(FRAME_PROCESSED) == FULLY_PROCESSED;
         }
         return false;
     }
@@ -277,7 +275,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
         // Try extract
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
-            if (processState <= 3) {
+            if (processState <= FULLY_PROCESSED) {
                 AlekiShipsHelper.giveItemToPlayer(player, this.getPlankAsItemStack());
             } else {
                 AlekiShipsHelper.giveItemToPlayer(player, AlekiShipsItems.COPPER_BOLT.get().getDefaultInstance());
@@ -300,7 +298,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
         // Should we do plank stuff
         if (heldStack.is(this.getPlankAsItemStack().getItem())) {
             // Must be [0,3)
-            if (processState < 3) {
+            if (processState < FULLY_PROCESSED) {
                 if(!player.getAbilities().instabuild){
                     heldStack.shrink(1);
                 }
@@ -310,21 +308,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.CONSUME;
-        }
-
-        // Should we do bolt stuff
-        if (heldStack.is(AlekiShipsItems.COPPER_BOLT.get()) && player.getOffhandItem().is(TFCTags.Items.HAMMERS)) {
-            // Must be [3,7)
-            if (3 <= processState && processState < 7) {
-                if(!player.getAbilities().instabuild){
-                    heldStack.shrink(1);
-                }
-                level.setBlock(blockPos, blockState.cycle(FRAME_PROCESSED), 10);
-                level.playSound(null, blockPos, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F);
-                return InteractionResult.sidedSuccess(level.isClientSide());
-            }
-            return InteractionResult.FAIL;
         }
 
         return InteractionResult.PASS;

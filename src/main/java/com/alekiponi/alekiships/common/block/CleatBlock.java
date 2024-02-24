@@ -22,8 +22,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
 
-import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
-
 public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -48,7 +46,7 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
     public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
-                thispos.below()).getValue(FRAME_PROCESSED_7) == 7) {
+                thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
             return AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
                     thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
                     thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
