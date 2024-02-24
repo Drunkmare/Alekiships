@@ -851,11 +851,6 @@ public abstract class AbstractVehicle extends Entity {
         return average;
     }
 
-    public boolean isInWater() {
-        return AlekiShipsHelper.inWater(this);
-
-    }
-
     public boolean everyNthTickUnique(int n){
         return AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, n);
     }

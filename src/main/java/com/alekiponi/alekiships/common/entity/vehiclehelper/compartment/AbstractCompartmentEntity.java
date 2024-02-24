@@ -316,10 +316,6 @@ public abstract class AbstractCompartmentEntity extends Entity {
         return !this.isRemoved();
     }
 
-    @Override
-    public boolean isInWater(){
-        return AlekiShipsHelper.inWater(this);
-    }
 
     public boolean shouldFaceOtherWay(){
         return false;

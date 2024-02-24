@@ -184,11 +184,6 @@ public class CannonEntity extends Entity {
         this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
     }
 
-    @Override
-    public boolean isInWater(){
-        return AlekiShipsHelper.inWater(this);
-    }
-
     public void fire(){
         if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
             return;

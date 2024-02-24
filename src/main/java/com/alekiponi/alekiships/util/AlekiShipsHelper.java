@@ -153,10 +153,6 @@ public class AlekiShipsHelper {
         return false;
     }
 
-    public static boolean inWater(Entity thisEntity){
-        return thisEntity.isInWater();
-        // mixin override this in Firmaciv to add a check for salt water
-    }
 
     /**
      * Utility function to centralize all the mod interop relating to TFC woods.
