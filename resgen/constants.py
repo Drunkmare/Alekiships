@@ -36,6 +36,8 @@ COLORS = ["white",
           "red",
           "black"]
 
+WOODS = ["oak", "spruce", "birch", "acacia", "cherry", "jungle", "dark_oak", "crimson", "warped", "mangrove", "bamboo"]
+
 FLORAE_WOODS: dict[str, str] = {"african_padauk": "African Padauk",
                                 "alder": "Alder",
                                 "angelim": "Angelim",

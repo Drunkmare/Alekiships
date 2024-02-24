@@ -5,13 +5,10 @@ import constants
 
 def generate(manager: ResourceManager):
     # Tags with all wood types
-    for wood in constants.TFC_WOODS.keys():
-        manager.block_tag("canoe_component_blocks", f"wood/canoe_component_block/{wood}")
-        manager.block_tag("can_make_canoe_unrestricted", f"tfc:wood/stripped_log/{wood}")
+    for wood in constants.WOODS:
         manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame_angled/{wood}",
                           f"wood/watercraft_frame_flat/{wood}")
         manager.entity_tag("sloops", f"sloop/{wood}")
-        manager.entity_tag("dugout_canoes", f"dugout_canoe/{wood}")
         manager.entity_tag("rowboats", f"rowboat/{wood}")
 
     # Vehicle helpers such as our collision entities
@@ -38,17 +35,11 @@ def generate(manager: ResourceManager):
 
     # Vanilla mining tags
     manager.block_tag("minecraft:mineable/axe", "watercraft_frame_angled", "watercraft_frame_flat",
-                      "#alekiships:canoe_component_blocks", "#alekiships:wooden_watercraft_frames")
+                      "#alekiships:wooden_watercraft_frames")
     manager.block_tag("minecraft:mineable/pickaxe", "oarlock")
 
-    # TFC tags
-    manager.block_tag("tfc:mineable_with_blunt_tool", "#alekiships:canoe_component_blocks")
-    manager.item_tag("tfc:usable_on_tool_rack", "canoe_paddle", "kayak_paddle", "oar", "kayak", "nav_clock", "sextant",
-                     "barometer")
-
     # Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
-    manager.block_tag("carryon:block_blacklist", "#alekiships:canoe_component_blocks")
     manager.entity_tag("carryon:entity_blacklist", "cannonball", "kayak",
                        "#alekiships:dugout_canoes", "#alekiships:sloops", "#alekiships:rowboats",
                        "#alekiships:vehicle_helpers", "#alekiships:compartments",
-                       *[f"sloop_construction/{wood}" for wood in constants.TFC_WOODS.keys()])
+                       *[f"sloop_construction/{wood}" for wood in constants.WOODS])

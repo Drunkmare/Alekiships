@@ -6,46 +6,29 @@ import lootTables
 
 
 def generate(rm: ResourceManager):
-    for woodType, woodName in constants.TFC_WOODS.items():
-        # Generate models from templates
+    for wood in constants.WOODS:
+        wood_name = ' '.join([word.capitalize() for word in wood.split('_')])
+
         for progress in ["first", "second", "third", "fourth"]:
             # Slab frame models
-            rm.block_model(f"wood/watercraft_frame/flat/{woodType}/{progress}",
-                           {"plank": f"tfc:block/wood/planks/{woodType}"},
+            rm.block_model(f"wood/watercraft_frame/flat/{wood}/{progress}",
+                           {"plank": f"minecraft:block/{wood}_planks"},
                            f"alekiships:block/watercraft_frame/flat/template/{progress}")
 
             for shape in ["straight", "inner", "outer"]:
-                rm.block_model(f"wood/watercraft_frame_angled/{woodType}/{shape}/{progress}",
-                               {"plank": f"tfc:block/wood/planks/{woodType}"},
+                rm.block_model(f"wood/watercraft_frame_angled/{wood}/{shape}/{progress}",
+                               {"plank": f"minecraft:block/{wood}_planks"},
                                f"alekiships:block/watercraft_frame_angled/template/{shape}/{progress}")
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_flat/{woodType}",
-                                *blockStates.getWoodFrameFlatMultipart(woodType)).with_lang(
-            f"{woodName} Flat Shipwright's Scaffolding").with_block_loot(*lootTables.boat_frame_flat(woodType))
+        rm.blockstate_multipart(f"wood/watercraft_frame_flat/{wood}",
+                                *blockStates.getWoodFrameFlatMultipart(wood)).with_lang(
+            f"{wood_name} Flat Shipwright's Scaffolding").with_block_loot(
+            *lootTables.boat_frame_flat(wood))
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_angled/{woodType}",
-                                *blockStates.getWoodFrameMultipart(woodType)).with_lang(
-            f"{woodName} Sloped Shipwright's Scaffolding").with_block_loot(*lootTables.boat_frame(woodType))
-
-        # Canoe components now
-        canoe_component_textures = {"0": f"tfc:block/wood/stripped_log/{woodType}",
-                                    "1": f"tfc:block/wood/stripped_log_top/{woodType}",
-                                    "particle": f"tfc:block/wood/stripped_log/{woodType}"}
-
-        # Models that are shared by the end and middle states
-        for n in range(8):
-            rm.block_model(f"wood/canoe_component_block/{woodType}/all/{n}", canoe_component_textures,
-                           f"alekiships:block/canoe_component_block/template/all/{n}")
-
-        # End and Middle only models
-        for n in range(8, 13):
-            rm.block_model(f"wood/canoe_component_block/{woodType}/end/{n}", canoe_component_textures,
-                           f"alekiships:block/canoe_component_block/template/end/{n}")
-            rm.block_model(f"wood/canoe_component_block/{woodType}/middle/{n}", canoe_component_textures,
-                           f"alekiships:block/canoe_component_block/template/middle/{n}")
-            rm.blockstate(f"wood/canoe_component_block/{woodType}",
-                          variants=blockStates.canoe_component(woodType)).with_lang(
-                f"{woodName} Canoe Component").with_block_loot(f"tfc:wood/lumber/{woodType}")
+        rm.blockstate_multipart(f"wood/watercraft_frame_angled/{wood}",
+                                *blockStates.getWoodFrameMultipart(wood)).with_lang(
+            f"{wood_name} Sloped Shipwright's Scaffolding").with_block_loot(
+            *lootTables.boat_frame(wood))
 
     # Basic frame
     rm.blockstate("watercraft_frame_angled", variants=blockStates.angledWaterCraftFrame).with_lang(
