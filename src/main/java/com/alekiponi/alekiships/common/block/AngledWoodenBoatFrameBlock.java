@@ -19,12 +19,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 
 public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
-    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_3;
+    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
     public final BoatMaterial boatMaterial;
