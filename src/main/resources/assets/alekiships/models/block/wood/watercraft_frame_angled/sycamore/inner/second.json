@@ -1,7 +1,0 @@
-{
-  "__comment__": "This file was automatically created by mcresources",
-  "parent": "alekiships:block/watercraft_frame_angled/template/inner/second",
-  "textures": {
-    "plank": "tfc:block/wood/planks/sycamore"
-  }
-}
