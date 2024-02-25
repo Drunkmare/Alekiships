@@ -21,25 +21,6 @@ def boat_frame_flat(wood: str) -> list[Json]:
                 *[{"name": f"tfc:wood/planks/{wood}", "functions": loot_tables.set_count(4),
                    "conditions": [loot_tables.block_state_property(
                        f"alekiships:wood/watercraft_frame_flat/{wood}[frame_processed={n}]")]} for n in range(3, 8)]
-            ],
-
-            # Bolts
-            [
-                {"name": "alekiships:copper_bolt",
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_flat/{wood}[frame_processed=4]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(2),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_flat/{wood}[frame_processed=5]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(3),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_flat/{wood}[frame_processed=6]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(4),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_flat/{wood}[frame_processed=7]")]}
             ]]
 
 
@@ -62,23 +43,4 @@ def boat_frame(wood: str) -> list[Json]:
                 *[{"name": f"tfc:wood/planks/{wood}", "functions": loot_tables.set_count(4),
                    "conditions": [loot_tables.block_state_property(
                        f"alekiships:wood/watercraft_frame_angled/{wood}[frame_processed={n}]")]} for n in range(3, 8)]
-            ],
-
-            # Bolts
-            [
-                {"name": "alekiships:copper_bolt",
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_angled/{wood}[frame_processed=4]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(2),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_angled/{wood}[frame_processed=5]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(3),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_angled/{wood}[frame_processed=6]")]},
-
-                {"name": "alekiships:copper_bolt", "functions": loot_tables.set_count(4),
-                 "conditions": [loot_tables.block_state_property(
-                     f"alekiships:wood/watercraft_frame_angled/{wood}[frame_processed=7]")]}
             ]]

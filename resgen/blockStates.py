@@ -78,45 +78,13 @@ angledWaterCraftFrame = {
     }}
 
 
-def canoe_component(wood: str) -> Json:
-    var: Json = {}
-
-    for direction, rotation in {"north": None, "east": 90, "south": 180, "west": 270}.items():
-        for n in range(8):
-            var[f"facing={direction},canoe_carved={n + 1}"] = {
-                "model": f"alekiships:block/wood/canoe_component_block/{wood}/all/{n}",
-                "y": rotation
-            }
-
-        for n in range(8, 13):
-            var[f"facing={direction},canoe_carved={n + 1},end=false"] = {
-                "model": f"alekiships:block/wood/canoe_component_block/{wood}/middle/{n}",
-                "y": rotation
-            }
-            var[f"facing={direction},canoe_carved={n + 1},end=true"] = {
-                "model": f"alekiships:block/wood/canoe_component_block/{wood}/end/{n}",
-                "y": rotation
-            }
-
-    return var
-
-
 def getWoodFrameFlatMultipart(wood: str) -> list[Json]:
-    json = [{"model": "alekiships:block/watercraft_frame/flat/frame"}]
-    plankTemplateStates = {"first": "0|1|2|3|4|5|6|7", "second": "1|2|3|4|5|6|7", "third": "2|3|4|5|6|7",
-                           "fourth": "3|4|5|6|7"}
-
-    for template, processedStates in plankTemplateStates.items():
-        json += [({"frame_processed": processedStates},
-                  {"model": f"alekiships:block/wood/watercraft_frame/flat/{wood}/{template}"})]
-
-    boltTemplateStates = {"first": "4|5|6|7", "second": "5|6|7", "third": "6|7", "fourth": "7"}
-
-    for template, processedStates in boltTemplateStates.items():
-        json += [({"frame_processed": processedStates},
-                  {"model": f"alekiships:block/watercraft_frame/flat/bolt/{template}"})]
-
-    return json
+    return [{"model": "alekiships:block/watercraft_frame/flat/frame"},
+            *[({"frame_processed": processedStates},
+               {
+                   "model": f"alekiships:block/wood/watercraft_frame/flat/{wood}/{template}"})
+              for template, processedStates in
+              {"first": "0|1|2|3", "second": "1|2|3", "third": "2|3", "fourth": "3"}.items()]]
 
 
 def getWoodFrameMultipart(wood: str) -> list[Json]:
@@ -164,8 +132,7 @@ def getWoodFrameMultipart(wood: str) -> list[Json]:
          {"model": "alekiships:block/watercraft_frame_angled/outer", "y": 270})
     ]
 
-    plankTemplateStates = {"first": "0|1|2|3|4|5|6|7", "second": "1|2|3|4|5|6|7", "third": "2|3|4|5|6|7",
-                           "fourth": "3|4|5|6|7"}
+    plankTemplateStates = {"first": "0|1|2|3", "second": "1|2|3", "third": "2|3", "fourth": "3"}
 
     # Straight shape planks
     for template, processedStates in plankTemplateStates.items():
@@ -212,50 +179,4 @@ def getWoodFrameMultipart(wood: str) -> list[Json]:
                       "uvlock": True,
                       "y": rotation[3]})
                 ]
-
-    boltTemplateStates = {"first": "4|5|6|7", "second": "5|6|7", "third": "6|7", "fourth": "7"}
-
-    # Bolt straight
-    for template, processedStates in boltTemplateStates.items():
-        # Bolt progress states
-        json += [
-            ({"facing": "north", "shape": "straight", "frame_processed": processedStates},
-             {"model": f"alekiships:block/watercraft_frame_angled/bolt/straight/{template}",
-              "uvlock": True,
-              "y": 180}),
-            ({"facing": "east", "shape": "straight", "frame_processed": processedStates},
-             {"model": f"alekiships:block/watercraft_frame_angled/bolt/straight/{template}",
-              "uvlock": True,
-              "y": 270}),
-            ({"facing": "south", "shape": "straight", "frame_processed": processedStates},
-             {"model": f"alekiships:block/watercraft_frame_angled/bolt/straight/{template}"}),
-            ({"facing": "west", "shape": "straight", "frame_processed": processedStates},
-             {"model": f"alekiships:block/watercraft_frame_angled/bolt/straight/{template}",
-              "uvlock": True,
-              "y": 90})
-        ]
-
-    # Bolt for inner and outer
-    for shape, rotations in {"inner": inner, "outer": outer}.items():
-        for side, rotation in rotations.items():
-            for template, processedStates in boltTemplateStates.items():
-                json += [
-                    ({"facing": "north", "shape": f"{shape}_{side}", "frame_processed": processedStates},
-                     {"model": f"alekiships:block/watercraft_frame_angled/bolt/{shape}/{template}",
-                      "uvlock": True,
-                      "y": rotation[0]}),
-                    ({"facing": "east", "shape": f"{shape}_{side}", "frame_processed": processedStates},
-                     {"model": f"alekiships:block/watercraft_frame_angled/bolt/{shape}/{template}",
-                      "uvlock": True,
-                      "y": rotation[1]}),
-                    ({"facing": "south", "shape": f"{shape}_{side}", "frame_processed": processedStates},
-                     {"model": f"alekiships:block/watercraft_frame_angled/bolt/{shape}/{template}",
-                      "uvlock": True,
-                      "y": rotation[2]}),
-                    ({"facing": "west", "shape": f"{shape}_{side}", "frame_processed": processedStates},
-                     {"model": f"alekiships:block/watercraft_frame_angled/bolt/{shape}/{template}",
-                      "uvlock": True,
-                      "y": rotation[3]})
-                ]
-
     return json
