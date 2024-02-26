@@ -1,14 +1,7 @@
-from typing import Optional, Union
-
-from mcresources import ResourceManager, utils, RecipeContext
-from mcresources.type_definitions import ResourceIdentifier, Json
-
-import constants
+from mcresources import ResourceManager
 
 
 def generate(rm: ResourceManager):
-
-
     rm.crafting_shaped("crafting/watercraft_frame_angled", ["  S", " SS", "SS "], {"S": "minecraft:scaffolding"},
                        ("alekiships:watercraft_frame_angled")).with_advancement("alekiships:watercraft_frame_angled")
 
@@ -18,7 +11,8 @@ def generate(rm: ResourceManager):
     rm.crafting_shaped("crafting/watercraft_frame_flat", ["SSS"], {"S": "minecraft:scaffolding"},
                        (6, "alekiships:watercraft_frame_flat")).with_advancement("alekiships:watercraft_frame_flat")
 
-    rm.crafting_shaped("crafting/oar", ["  S", " S ", "L  "], {"S": "#forge:rods/wooden", "L": "#minecraft:wooden_slabs"},
+    rm.crafting_shaped("crafting/oar", ["  S", " S ", "L  "],
+                       {"S": "#forge:rods/wooden", "L": "#minecraft:wooden_slabs"},
                        "alekiships:oar").with_advancement("alekiships:oar")
 
     rm.crafting_shaped("crafting/cannon", ["BBB", "LL ", "R R"], {"B": "minecraft:iron_block",
@@ -52,8 +46,5 @@ def generate(rm: ResourceManager):
                        "alekiships:oarlock").with_advancement("alekiships:oarlock")
 
     rm.crafting_shapeless("crafting/cannonball",
-                          ["minecraft:iron_ingot", "minecraft:paper", "minecraft:gunpowder",],
+                          ["minecraft:iron_ingot", "minecraft:paper", "minecraft:gunpowder", ],
                           "alekiships:cannonball").with_advancement("alekiships:cannonball")
-
-def disableRecipe(name_parts: ResourceIdentifier):
-    rm.recipe(name_parts, None, {}, conditions="forge:false")
