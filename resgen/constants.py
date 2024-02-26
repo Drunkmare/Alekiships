@@ -17,89 +17,23 @@ COLORS = ["white",
 
 WOODS = ["oak", "spruce", "birch", "acacia", "cherry", "jungle", "dark_oak", "crimson", "warped", "mangrove", "bamboo"]
 
+
+def normalize(s: str) -> str:
+    """
+    Takes a string like dark_oak and converts it to Dark Oak.
+    Yes this method is horribly named I'm having trouble coming up with a good one :|
+    """
+    return ' '.join([word.capitalize() for word in s.split('_')])
+
+
 DEFAULT_LANG = {
 
     "item.alekiships.testitem": "They're waiting for you, Mr. Freeman. With the Test Item.",
 
-    "entity.alekiships.dugout_canoe.acacia": "Acacia Dugout Canoe",
-    "entity.alekiships.dugout_canoe.ash": "Ash Dugout Canoe",
-    "entity.alekiships.dugout_canoe.aspen": "Aspen Dugout Canoe",
-    "entity.alekiships.dugout_canoe.birch": "Birch Dugout Canoe",
-    "entity.alekiships.dugout_canoe.blackwood": "Blackwood Dugout Canoe",
-    "entity.alekiships.dugout_canoe.chestnut": "Chestnut Dugout Canoe",
-    "entity.alekiships.dugout_canoe.douglas_fir": "Douglas Fir Dugout Canoe",
-    "entity.alekiships.dugout_canoe.hickory": "Hickory Dugout Canoe",
-    "entity.alekiships.dugout_canoe.kapok": "Kapok Dugout Canoe",
-    "entity.alekiships.dugout_canoe.maple": "Maple Dugout Canoe",
-    "entity.alekiships.dugout_canoe.oak": "Oak Dugout Canoe",
-    "entity.alekiships.dugout_canoe.palm": "Palm Dugout Canoe",
-    "entity.alekiships.dugout_canoe.pine": "Pine Dugout Canoe",
-    "entity.alekiships.dugout_canoe.rosewood": "Rosewood Dugout Canoe",
-    "entity.alekiships.dugout_canoe.sequoia": "Sequoia Dugout Canoe",
-    "entity.alekiships.dugout_canoe.spruce": "Spruce Dugout Canoe",
-    "entity.alekiships.dugout_canoe.sycamore": "Sycamore Dugout Canoe",
-    "entity.alekiships.dugout_canoe.white_cedar": "White Cedar Dugout Canoe",
-    "entity.alekiships.dugout_canoe.willow": "Willow Dugout Canoe",
-
-    "entity.alekiships.rowboat.acacia": "Acacia Rowboat",
-    "entity.alekiships.rowboat.ash": "Ash Rowboat",
-    "entity.alekiships.rowboat.aspen": "Aspen Rowboat",
-    "entity.alekiships.rowboat.birch": "Birch Rowboat",
-    "entity.alekiships.rowboat.blackwood": "Blackwood Rowboat",
-    "entity.alekiships.rowboat.chestnut": "Chestnut Rowboat",
-    "entity.alekiships.rowboat.douglas_fir": "Douglas Fir Rowboat",
-    "entity.alekiships.rowboat.hickory": "Hickory Rowboat",
-    "entity.alekiships.rowboat.kapok": "KapokRowboat",
-    "entity.alekiships.rowboat.maple": "Maple Rowboat",
-    "entity.alekiships.rowboat.oak": "Oak Rowboat",
-    "entity.alekiships.rowboat.palm": "Palm Rowboat",
-    "entity.alekiships.rowboat.pine": "Pine Rowboat",
-    "entity.alekiships.rowboat.rosewood": "Rosewood Rowboat",
-    "entity.alekiships.rowboat.sequoia": "Sequoia Rowboat",
-    "entity.alekiships.rowboat.spruce": "Spruce Rowboat",
-    "entity.alekiships.rowboat.sycamore": "Sycamore Rowboat",
-    "entity.alekiships.rowboat.white_cedar": "White Cedar Rowboat",
-    "entity.alekiships.rowboat.willow": "Willow Rowboat",
-
-    "entity.alekiships.sloop.acacia": "Acacia Sloop",
-    "entity.alekiships.sloop.ash": "Ash Sloop",
-    "entity.alekiships.sloop.aspen": "Aspen Sloop",
-    "entity.alekiships.sloop.birch": "Birch Sloop",
-    "entity.alekiships.sloop.blackwood": "Blackwood Sloop",
-    "entity.alekiships.sloop.chestnut": "Chestnut Sloop",
-    "entity.alekiships.sloop.douglas_fir": "Douglas Fir Sloop",
-    "entity.alekiships.sloop.hickory": "Hickory Sloop",
-    "entity.alekiships.sloop.kapok": "KapokRowboat",
-    "entity.alekiships.sloop.maple": "Maple Sloop",
-    "entity.alekiships.sloop.oak": "Oak Sloop",
-    "entity.alekiships.sloop.palm": "Palm Sloop",
-    "entity.alekiships.sloop.pine": "Pine Sloop",
-    "entity.alekiships.sloop.rosewood": "Rosewood Sloop",
-    "entity.alekiships.sloop.sequoia": "Sequoia Sloop",
-    "entity.alekiships.sloop.spruce": "Spruce Sloop",
-    "entity.alekiships.sloop.sycamore": "Sycamore Sloop",
-    "entity.alekiships.sloop.white_cedar": "White Cedar Sloop",
-    "entity.alekiships.sloop.willow": "Willow Sloop",
-
-    "entity.alekiships.sloop_construction.acacia": "Acacia Sloop",
-    "entity.alekiships.sloop_construction.ash": "Ash Sloop",
-    "entity.alekiships.sloop_construction.aspen": "Aspen Sloop",
-    "entity.alekiships.sloop_construction.birch": "Birch Sloop",
-    "entity.alekiships.sloop_construction.blackwood": "Blackwood Sloop",
-    "entity.alekiships.sloop_construction.chestnut": "Chestnut Sloop",
-    "entity.alekiships.sloop_construction.douglas_fir": "Douglas Fir Sloop",
-    "entity.alekiships.sloop_construction.hickory": "Hickory Sloop",
-    "entity.alekiships.sloop_construction.kapok": "KapokRowboat",
-    "entity.alekiships.sloop_construction.maple": "Maple Sloop",
-    "entity.alekiships.sloop_construction.oak": "Oak Sloop",
-    "entity.alekiships.sloop_construction.palm": "Palm Sloop",
-    "entity.alekiships.sloop_construction.pine": "Pine Sloop",
-    "entity.alekiships.sloop_construction.rosewood": "Rosewood Sloop",
-    "entity.alekiships.sloop_construction.sequoia": "Sequoia Sloop",
-    "entity.alekiships.sloop_construction.spruce": "Spruce Sloop",
-    "entity.alekiships.sloop_construction.sycamore": "Sycamore Sloop",
-    "entity.alekiships.sloop_construction.white_cedar": "White Cedar Sloop",
-    "entity.alekiships.sloop_construction.willow": "Willow Sloop",
+    # Entities
+    **{f"entity.alekiships.rowboat.{wood}": f"{normalize(wood)} Rowboat" for wood in WOODS},
+    **{f"entity.alekiships.sloop.{wood}": f"{normalize(wood)} Sloop" for wood in WOODS},
+    **{f"entity.alekiships.sloop_construction.{wood}": f"{normalize(wood)} Sloop" for wood in WOODS},
 
     "entity.alekiships.kayak": "Kayak",
 
