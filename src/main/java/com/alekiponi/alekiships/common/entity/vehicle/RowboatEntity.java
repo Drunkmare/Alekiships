@@ -4,7 +4,6 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.BoatVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -202,11 +201,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
             return this.getPassengers().get(0);
         }
         return null;
-    }
-
-    @Override
-    public BoatVariant getVariant() {
-        return getVariant("rowboat");
     }
 
     public ItemStack getOars() {

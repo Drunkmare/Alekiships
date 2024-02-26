@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.BoatVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -621,11 +620,6 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     @Override
     public int[] getCleatIndices() {
         return new int[0];
-    }
-
-    @Override
-    public BoatVariant getVariant() {
-        return null;
     }
 
     protected float getMomentumSubtractor() {

@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.util.BoatVariant;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.dries007.tfc.util.climate.Climate;
 import net.minecraft.core.BlockPos;
@@ -560,12 +559,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
         }
         return null;
-    }
-
-    public abstract BoatVariant getVariant();
-
-    public BoatVariant getVariant(String boat_type) {
-        return BoatVariant.byName(this.getType().toString().split(boat_type + ".")[1]);
     }
 
     protected abstract float getMomentumSubtractor();

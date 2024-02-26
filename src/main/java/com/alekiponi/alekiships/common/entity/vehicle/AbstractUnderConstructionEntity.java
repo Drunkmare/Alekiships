@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
-import com.alekiponi.alekiships.util.BoatVariant;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -23,12 +22,6 @@ public abstract class AbstractUnderConstructionEntity extends AbstractVehicle{
     @Override
     public int[] getCleatIndices() {
         return new int[0];
-    }
-
-    public abstract BoatVariant getVariant();
-
-    public BoatVariant getVariant(String boat_type) {
-        return BoatVariant.byName(this.getType().toString().split(boat_type + ".")[1]);
     }
 
     @Override

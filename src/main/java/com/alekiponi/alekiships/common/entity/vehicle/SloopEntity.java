@@ -5,7 +5,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCom
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.BoatVariant;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -75,10 +74,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
             final BoatMaterial boatMaterial) {
         super(entityType, level);
         this.boatMaterial = boatMaterial;
-    }
-
-    public BoatVariant getVariant() {
-        return getVariant("sloop");
     }
 
     @Override
