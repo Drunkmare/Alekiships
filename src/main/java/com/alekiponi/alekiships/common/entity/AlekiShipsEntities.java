@@ -30,8 +30,8 @@ public final class AlekiShipsEntities {
 
     private static final int LARGE_VEHICLE_TRACKING = 20;
     private static final int VEHICLE_HELPER_TRACKING = LARGE_VEHICLE_TRACKING + 1;
-    public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
-            MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
+            ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,

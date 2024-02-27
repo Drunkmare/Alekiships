@@ -35,10 +35,4 @@ public class AlekiShipsTabs {
                         pOutput.accept(AlekiShipsItems.LARGE_TRIANGULAR_SAIL.get());
 
                     }).build());
-
-
-    public static void register(IEventBus eventBus) {
-        CREATIVE_MODE_TABS.register((eventBus));
-    }
-
 }

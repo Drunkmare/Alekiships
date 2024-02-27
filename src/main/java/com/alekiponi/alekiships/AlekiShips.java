@@ -28,10 +28,9 @@ public class AlekiShips {
     public AlekiShips() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        AlekiShipsTabs.register(eventBus);
-
-        AlekiShipsItems.register(eventBus);
-        AlekiShipsBlocks.register(eventBus);
+        AlekiShipsTabs.CREATIVE_MODE_TABS.register(eventBus);
+        AlekiShipsItems.ITEMS.register(eventBus);
+        AlekiShipsBlocks.BLOCKS.register(eventBus);
         AlekiShipsEntities.ENTITY_TYPES.register(eventBus);
 
         eventBus.addListener(this::setup);
