@@ -55,20 +55,18 @@ public abstract class PlayerMixin extends LivingEntity{
     }
 
     /**
-     * Injection to {@link Player#interactOn(Entity, InteractionHand)} so we can have simple compartments
-     * like {@link GrindstoneCompartmentEntity} that will open in spectator mode as {@link MenuProvider} results in
+     * @reason Injection to {@link Player#interactOn(Entity, InteractionHand)} so we can have simple compartments
+     * like {@link GrindstoneCompartmentEntity} that will open in Spectator Mode as {@link MenuProvider} results in
      * using the entities name which causes us a number of issues. {@link MenuProvider} takes priority over our
-     * interface if both are present
+     * interface if both are present and has no effect if the player isn't in Spectator Mode
+     * @author Traister101
      */
-    @Inject(method = "interactOn", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "interactOn", at = @At(value = "RETURN", ordinal = 0))
     public void inject$interactOn(final Entity entityToInteractOn, final InteractionHand pHand,
             final CallbackInfoReturnable<InteractionResult> callbackInfo) {
-        if (this.isSpectator()) {
-            if (!(entityToInteractOn instanceof MenuProvider)) {
-                if (entityToInteractOn instanceof SimpleBlockMenuCompartment compartment) {
-                    this.openMenu(compartment.getMenuProvider());
-                    callbackInfo.setReturnValue(InteractionResult.PASS);
-                }
+        if (!(entityToInteractOn instanceof MenuProvider)) {
+            if (entityToInteractOn instanceof SimpleBlockMenuCompartment compartment) {
+                this.openMenu(compartment.getMenuProvider());
             }
         }
     }
@@ -78,9 +76,6 @@ public abstract class PlayerMixin extends LivingEntity{
 
     @Shadow
     public abstract void resetAttackStrengthTicker();
-
-    @Shadow
-    public abstract boolean isSpectator();
 
     @Shadow
     public abstract OptionalInt openMenu(@Nullable final MenuProvider pMenu);
