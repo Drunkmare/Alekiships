@@ -13,51 +13,46 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class ConstructionRenderer extends EntityRenderer<Entity> {
+public class ConstructionRenderer extends EntityRenderer<ConstructionEntity> {
 
-    private static final ResourceLocation HAMMER = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/construction.png");
+    private static final ResourceLocation HAMMER = new ResourceLocation(AlekiShips.MOD_ID,
+            "textures/entity/watercraft/construction.png");
 
-    private final ConstructionEntityModel<ConstructionEntity> model;
+    private final ConstructionEntityModel<ConstructionEntity> model = new ConstructionEntityModel<>();
 
-    public ConstructionRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        model = new ConstructionEntityModel<>();
-    }
-
-    public void render(Entity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        if(pEntity.getVehicle()== null){
-            return;
-        }
-        if(pEntity.getVehicle().getVehicle() == null){
-            return;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.player != null;
-        if(mc.player.distanceTo(pEntity.getRootVehicle()) > 5){
-            return;
-        }
-
-        pPoseStack.pushPose();
-        pPoseStack.scale(1,1,1);
-        pPoseStack.translate(0f, 1.75f, 0);
-
-        float f3 = ((ConstructionEntity) pEntity).getSpin(pPartialTicks);
-        pPoseStack.mulPose(Axis.YP.rotation(f3));
-        pPoseStack.mulPose(Axis.ZP.rotation((float) Math.toRadians(180)));
-
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(
-                RenderType.entityCutout(HAMMER));
-        this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                1.0F, 1.0F);
-        pPoseStack.popPose();
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
+    public ConstructionRenderer(final EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Entity pEntity) {
-        return null;
+    public void render(final ConstructionEntity entity, final float entityYaw, final float partialTicks,
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+        if (entity.getVehicle() == null) return;
+        if (entity.getVehicle().getVehicle() == null) return;
+
+        {
+            final Minecraft mc = Minecraft.getInstance();
+            assert mc.player != null;
+            if (mc.player.distanceTo(entity.getRootVehicle()) > 5) return;
+        }
+
+        poseStack.pushPose();
+        poseStack.scale(1, 1, 1);
+        poseStack.translate(0, 1.75f, 0);
+
+        poseStack.mulPose(Axis.YP.rotation(entity.getSpin(partialTicks)));
+        poseStack.mulPose(Axis.ZP.rotation((float) Math.toRadians(180)));
+
+        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
+                RenderType.entityCutout(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final ConstructionEntity entity) {
+        return HAMMER;
     }
 }
