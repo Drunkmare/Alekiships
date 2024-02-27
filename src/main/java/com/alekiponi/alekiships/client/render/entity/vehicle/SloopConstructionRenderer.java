@@ -5,6 +5,7 @@ import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
 import com.alekiponi.alekiships.client.model.entity.SloopConstructionModel;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -36,18 +37,13 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
 
     /**
      * This is primarily for us as it hardcodes the Firmaciv namespace.
-     * Use the constructor taking a {@link ResourceLocation} to provide a fully custom path
-     *
-     * @param woodName The name of the wood
      */
-    public SloopConstructionRenderer(final EntityRendererProvider.Context context, final String woodName) {
+    public SloopConstructionRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
-                "textures/entity/watercraft/sloop_construction/" + woodName + ".png"));
+                "textures/entity/watercraft/sloop_construction/" + vanillaWood.getSerializedName() + ".png"));
     }
 
     /**
-     * Alternative constructor taking a resource location instead of a wood name
-     *
      * @param sloopTexture The texture location. Must include file extension!
      */
     public SloopConstructionRenderer(final EntityRendererProvider.Context context,
