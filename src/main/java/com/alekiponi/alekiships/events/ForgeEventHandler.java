@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
 import com.mojang.logging.LogUtils;
@@ -12,9 +13,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.GameRules;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -78,5 +81,23 @@ public class ForgeEventHandler {
         }
     }
 
+    /**
+     * Intercept the normal entity attack handling, so we can prevent the attack sound from being played on compartments
+     */
+    @SubscribeEvent
+    public static void onPlayerAttack(final AttackEntityEvent event) {
+        final Entity target = event.getTarget();
+        if (!(target instanceof AbstractCompartmentEntity)) return;
 
+        final Player player = event.getEntity();
+        final double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+        if (target.hurt(player.damageSources().playerAttack((player)), (float) attackDamage)) {
+            player.setLastHurtMob(target);
+            player.causeFoodExhaustion(0.1F);
+        }
+
+        player.resetAttackStrengthTicker();
+        event.setCanceled(true);
+    }
 }
