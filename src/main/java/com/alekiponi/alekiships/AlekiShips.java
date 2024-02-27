@@ -6,10 +6,10 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
+import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -35,8 +35,8 @@ public class AlekiShips {
         AlekiShipsEntities.ENTITY_TYPES.register(eventBus);
 
         eventBus.addListener(this::setup);
-        MinecraftForge.EVENT_BUS.register(this);
         AlekiShipsConfig.init();
+        PacketHandler.init();
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init();
