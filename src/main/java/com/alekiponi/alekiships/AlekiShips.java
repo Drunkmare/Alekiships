@@ -10,7 +10,6 @@ import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -37,7 +36,6 @@ public class AlekiShips {
 
         eventBus.addListener(this::setup);
         MinecraftForge.EVENT_BUS.register(this);
-        eventBus.addListener(this::addCreative);
         AlekiShipsConfig.init();
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -48,10 +46,4 @@ public class AlekiShips {
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(VanillaWood::registerFrames);
     }
-
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
-    }
-
-
 }
