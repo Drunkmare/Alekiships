@@ -2,6 +2,6 @@
   "__comment__": "This file was automatically created by mcresources",
   "parent": "alekiships:block/watercraft_frame_angled/template/straight/fourth",
   "textures": {
-    "plank": "tfc:block/wood/planks/oak"
+    "plank": "minecraft:block/oak_planks"
   }
 }

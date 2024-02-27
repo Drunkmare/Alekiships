@@ -4,7 +4,6 @@
   "values": [
     "alekiships:watercraft_frame_angled",
     "alekiships:watercraft_frame_flat",
-    "#alekiships:canoe_component_blocks",
     "#alekiships:wooden_watercraft_frames"
   ]
 }

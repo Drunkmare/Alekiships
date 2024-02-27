@@ -9,7 +9,7 @@ import com.alekiponi.alekiships.client.render.entity.vehicle.SloopConstructionRe
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -26,14 +26,14 @@ public final class RenderEventHandler {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        AlekiShipsHelper.forAllTFCWoods(wood -> {
-            event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(wood).get(),
-                    context -> new RowboatRenderer(context, wood.getSerializedName()));
-            event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(wood).get(),
-                    context -> new SloopRenderer(context, wood.getSerializedName()));
-            event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(wood).get(),
-                    context -> new SloopConstructionRenderer(context, wood.getSerializedName()));
-        });
+        for (final VanillaWood vanillaWood : VanillaWood.values()) {
+            event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get(),
+                    context -> new RowboatRenderer(context, vanillaWood.getSerializedName()));
+            event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(),
+                    context -> new SloopRenderer(context, vanillaWood.getSerializedName()));
+            event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(vanillaWood).get(),
+                    context -> new SloopConstructionRenderer(context, vanillaWood.getSerializedName()));
+        }
 
         event.registerEntityRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(), NoopRenderer::new);
 

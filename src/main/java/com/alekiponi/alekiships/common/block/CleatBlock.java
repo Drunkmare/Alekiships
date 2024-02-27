@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +21,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
-
-import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
 
 public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
@@ -48,7 +46,7 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
     public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
-                thispos.below()).getValue(FRAME_PROCESSED_7) == 7) {
+                thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
             return AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
                     thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
                     thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
@@ -190,18 +188,26 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
                 spawnPosition = spawnPosition.add(0,0,1);
             }
 
-            SloopUnderConstructionEntity sloop = AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(boatFrameBlock.wood).get().create(level);
-            sloop.setPos(spawnPosition);
-            if (structureDirection == Direction.NORTH) {
-                sloop.setYRot(180F);
-            } else if (structureDirection == Direction.EAST) {
-                sloop.setYRot(-90F);
-            } else if (structureDirection == Direction.WEST) {
-                sloop.setYRot(90F);
+
+            {
+                // TODO also try to initialize the position in a final context to avoid the silly copy
+                //  (lambda is unhappy when it's mutable)
+                final Vec3 finalSpawnPosition = spawnPosition;
+                boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.CONSTRUCTION_SLOOP).ifPresent(entityType -> {
+                    final AbstractVehicle sloop = entityType.create(level);
+                    if (sloop != null) {
+                        sloop.setPos(finalSpawnPosition);
+                        if (structureDirection == Direction.NORTH) {
+                            sloop.setYRot(180F);
+                        } else if (structureDirection == Direction.EAST) {
+                            sloop.setYRot(-90F);
+                        } else if (structureDirection == Direction.WEST) {
+                            sloop.setYRot(90F);
+                        }
+                        level.addFreshEntity(sloop);
+                    }
+                });
             }
-            level.addFreshEntity(sloop);
-
-
         }
 
 

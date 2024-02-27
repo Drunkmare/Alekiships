@@ -1,10 +1,8 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import net.dries007.tfc.common.TFCTags;
-import net.dries007.tfc.common.blocks.wood.Wood;
-import net.dries007.tfc.util.registry.RegistryWood;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,19 +17,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.ItemHandlerHelper;
-
-import static com.alekiponi.alekiships.common.block.AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
 
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
 
-    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED_7;
-    public final RegistryWood wood;
+    public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
+    public static final int FULLY_PROCESSED = 3;
+    public final BoatMaterial boatMaterial;
 
-    public FlatWoodenBoatFrameBlock(final RegistryWood wood, final Properties properties) {
+    public FlatWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
-        this.wood = wood;
+        this.boatMaterial = boatMaterial;
     }
 
     @Override
@@ -44,7 +40,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         if (framestate.getBlock() instanceof FlatWoodenBoatFrameBlock wbfb && wbfb.getPlankAsItemStack()
                 .is(plankitem.getItem())) {
             // check if the state matches
-            return framestate.getValue(FRAME_PROCESSED_7) == 7;
+            return framestate.getValue(FRAME_PROCESSED) == FULLY_PROCESSED;
         }
         return false;
     }
@@ -62,7 +58,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         // Try extract
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
-            if (processState <= 3) {
+            if (processState <= FULLY_PROCESSED) {
                 AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
             } else {
                 AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(AlekiShipsItems.COPPER_BOLT.get()));
@@ -84,7 +80,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         // Should we do plank stuff
         if (heldStack.is(this.getUnderlyingPlank().asItem())) {
             // Must be [0,3)
-            if (processState < 3) {
+            if (processState < FULLY_PROCESSED) {
                 if(!player.getAbilities().instabuild){
                     heldStack.shrink(1);
                 }
@@ -94,21 +90,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.CONSUME;
-        }
-
-        // Should we do bolt stuff
-        if (heldStack.is(AlekiShipsItems.COPPER_BOLT.get()) && player.getOffhandItem().is(TFCTags.Items.HAMMERS)) {
-            // Must be [3,7)
-            if (3 <= processState && processState < 7) {
-                if(!player.getAbilities().instabuild){
-                    heldStack.shrink(1);
-                }
-                level.setBlock(blockPos, blockState.cycle(FRAME_PROCESSED), 10);
-                level.playSound(null, blockPos, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F);
-                return InteractionResult.sidedSuccess(level.isClientSide());
-            }
-            return InteractionResult.FAIL;
         }
 
         return InteractionResult.PASS;
@@ -127,10 +108,10 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
     }
 
     public Block getUnderlyingPlank() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get();
+        return this.boatMaterial.getDeckBlock().getBlock();
     }
 
     public ItemStack getPlankAsItemStack() {
-        return wood.getBlock(Wood.BlockType.PLANKS).get().asItem().getDefaultInstance();
+        return new ItemStack(this.boatMaterial.getDeckItem());
     }
 }

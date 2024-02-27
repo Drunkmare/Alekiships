@@ -1,15 +1,13 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.BoatVariant;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -37,10 +35,13 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
 
     protected final float DAMAGE_THRESHOLD = 128.0f;
     protected final float DAMAGE_RECOVERY = 5.333f;
+    private final BoatMaterial boatMaterial;
 
 
-    public RowboatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
+            final BoatMaterial boatMaterial) {
         super(entityType, level);
+        this.boatMaterial = boatMaterial;
     }
 
     @Override
@@ -190,7 +191,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
 
     @Override
     public Item getDropItem() {
-        return getVariant().getPlanks().get().asItem();
+        return this.boatMaterial.getDeckItem();
     }
 
     @Nullable
@@ -200,11 +201,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
             return this.getPassengers().get(0);
         }
         return null;
-    }
-
-    @Override
-    public BoatVariant getVariant() {
-        return getVariant("rowboat");
     }
 
     public ItemStack getOars() {
@@ -255,11 +251,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         compoundTag.put("dataOars", this.getOars().save(new CompoundTag()));
-    }
-
-    public ResourceLocation getTextureLocation() {
-        return new ResourceLocation(AlekiShips.MOD_ID,
-                "textures/entity/watercraft/rowboat/" + getVariant().getName() + ".png");
     }
 
     @Override

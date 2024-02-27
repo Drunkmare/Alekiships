@@ -8,6 +8,7 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
 import com.alekiponi.alekiships.util.AlekiShipsInteractionManager;
+import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -50,6 +51,7 @@ public class AlekiShips {
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             AlekiShipsInteractionManager.init();
+            VanillaWood.registerFrames();
         });
     }
 

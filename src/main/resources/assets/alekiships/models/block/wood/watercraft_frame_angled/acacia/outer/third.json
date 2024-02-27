@@ -2,6 +2,6 @@
   "__comment__": "This file was automatically created by mcresources",
   "parent": "alekiships:block/watercraft_frame_angled/template/outer/third",
   "textures": {
-    "plank": "tfc:block/wood/planks/acacia"
+    "plank": "minecraft:block/acacia_planks"
   }
 }

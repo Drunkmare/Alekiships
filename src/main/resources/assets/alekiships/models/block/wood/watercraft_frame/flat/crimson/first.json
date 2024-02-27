@@ -1,0 +1,7 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "parent": "alekiships:block/watercraft_frame/flat/template/first",
+  "textures": {
+    "plank": "minecraft:block/crimson_planks"
+  }
+}

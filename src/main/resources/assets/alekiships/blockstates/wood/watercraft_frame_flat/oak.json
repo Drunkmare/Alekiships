@@ -8,7 +8,7 @@
     },
     {
       "when": {
-        "frame_processed": "0|1|2|3|4|5|6|7"
+        "frame_processed": "0|1|2|3"
       },
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/flat/oak/first"
@@ -16,7 +16,7 @@
     },
     {
       "when": {
-        "frame_processed": "1|2|3|4|5|6|7"
+        "frame_processed": "1|2|3"
       },
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/flat/oak/second"
@@ -24,7 +24,7 @@
     },
     {
       "when": {
-        "frame_processed": "2|3|4|5|6|7"
+        "frame_processed": "2|3"
       },
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/flat/oak/third"
@@ -32,42 +32,10 @@
     },
     {
       "when": {
-        "frame_processed": "3|4|5|6|7"
+        "frame_processed": "3"
       },
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/flat/oak/fourth"
-      }
-    },
-    {
-      "when": {
-        "frame_processed": "4|5|6|7"
-      },
-      "apply": {
-        "model": "alekiships:block/watercraft_frame/flat/bolt/first"
-      }
-    },
-    {
-      "when": {
-        "frame_processed": "5|6|7"
-      },
-      "apply": {
-        "model": "alekiships:block/watercraft_frame/flat/bolt/second"
-      }
-    },
-    {
-      "when": {
-        "frame_processed": "6|7"
-      },
-      "apply": {
-        "model": "alekiships:block/watercraft_frame/flat/bolt/third"
-      }
-    },
-    {
-      "when": {
-        "frame_processed": "7"
-      },
-      "apply": {
-        "model": "alekiships:block/watercraft_frame/flat/bolt/fourth"
       }
     }
   ]

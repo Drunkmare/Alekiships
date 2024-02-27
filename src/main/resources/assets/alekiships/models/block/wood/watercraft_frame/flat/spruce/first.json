@@ -2,6 +2,6 @@
   "__comment__": "This file was automatically created by mcresources",
   "parent": "alekiships:block/watercraft_frame/flat/template/first",
   "textures": {
-    "plank": "tfc:block/wood/planks/spruce"
+    "plank": "minecraft:block/spruce_planks"
   }
 }
