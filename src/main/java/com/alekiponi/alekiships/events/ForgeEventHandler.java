@@ -3,20 +3,28 @@ package com.alekiponi.alekiships.events;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -99,5 +107,47 @@ public class ForgeEventHandler {
 
         player.resetAttackStrengthTicker();
         event.setCanceled(true);
+    }
+
+    /**
+     * Try leash our cleats to the clicked fence
+     */
+    @SubscribeEvent
+    public static void onBlockClick(final PlayerInteractEvent.RightClickBlock event) {
+        final Level level = event.getLevel();
+
+        // Only do server logic
+        if (level.isClientSide()) return;
+
+        final BlockPos blockPos = event.getPos();
+        final BlockState blockState = level.getBlockState(blockPos);
+
+        // Must click on a fence
+        if (!blockState.is(BlockTags.FENCES)) return;
+
+        final Player player = event.getEntity();
+
+        LeashFenceKnotEntity knotEntity = null;
+        boolean leashedSomething = false;
+
+        for (final VehicleCleatEntity cleat : level.getEntitiesOfClass(VehicleCleatEntity.class,
+                new AABB(blockPos.getX() - 7, blockPos.getY() - 7, blockPos.getZ() - 7, blockPos.getX() + 7,
+                        blockPos.getY() + 7, blockPos.getZ() + 7))) {
+            if (cleat.getLeashHolder() == player) {
+                if (knotEntity == null) {
+                    knotEntity = LeashFenceKnotEntity.getOrCreateKnot(level, blockPos);
+                    knotEntity.playPlacementSound();
+                }
+
+                cleat.setLeashedTo(knotEntity, true);
+                leashedSomething = true;
+            }
+        }
+
+        if (leashedSomething) {
+            level.gameEvent(GameEvent.BLOCK_ATTACH, blockPos, GameEvent.Context.of(player));
+        }
+
+        event.setCancellationResult(InteractionResult.SUCCESS);
     }
 }
