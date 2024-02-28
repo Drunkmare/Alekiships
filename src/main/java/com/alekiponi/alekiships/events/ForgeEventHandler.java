@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -107,6 +109,18 @@ public class ForgeEventHandler {
 
         player.resetAttackStrengthTicker();
         event.setCanceled(true);
+    }
+
+    /**
+     * Cancel Suffocation damage when riding our boats
+     */
+    @SubscribeEvent
+    public static void onLivingAttack(final LivingAttackEvent event) {
+        if (event.getSource().is(DamageTypes.IN_WALL)) {
+            if (event.getEntity().getVehicle() instanceof EmptyCompartmentEntity) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     /**
