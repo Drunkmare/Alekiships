@@ -8,7 +8,6 @@
   ],
   "client": [
     "minecraft.PlayerModelMixin",
-    "client.ClientPacketListenerMixin",
     "client.LocalPlayerMixin",
     "client.CameraMixin"
   ],

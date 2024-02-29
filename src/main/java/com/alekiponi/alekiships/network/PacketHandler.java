@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class PacketHandler {
@@ -12,6 +13,10 @@ public final class PacketHandler {
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(AlekiShips.MOD_ID, "network"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals);
+
+    public static void send(final PacketDistributor.PacketTarget target, final Object message) {
+        CHANNEL.send(target, message);
+    }
 
     public static void init() {
         int id = 0;
@@ -37,6 +42,13 @@ public final class PacketHandler {
                 .encoder(ServerBoundPickCompartmentPacket::encoder)
                 .decoder(ServerBoundPickCompartmentPacket::decoder)
                 .consumerMainThread(ServerBoundPickCompartmentPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(ClientBoundCleatLinkPacket.class, id++)
+                .encoder(ClientBoundCleatLinkPacket::encoder)
+                .decoder(ClientBoundCleatLinkPacket::new)
+                .consumerMainThread(
+                        (clientBoundCleatLinkPacket, contextSupplier) -> clientBoundCleatLinkPacket.handle())
                 .add();
     }
 
