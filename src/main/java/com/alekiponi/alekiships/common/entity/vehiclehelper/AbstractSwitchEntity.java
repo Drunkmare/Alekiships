@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.PacketDistributor;
 
 public abstract class AbstractSwitchEntity extends AbstractInvisibleHelper {
 
@@ -24,7 +25,8 @@ public abstract class AbstractSwitchEntity extends AbstractInvisibleHelper {
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         if(this.level().isClientSide()){
-            PacketHandler.clientSendPacket(new ServerboundSwitchEntityPacket(!this.getSwitched(),this.getId()));
+            PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                    new ServerboundSwitchEntityPacket(!this.getSwitched(), this.getId()));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

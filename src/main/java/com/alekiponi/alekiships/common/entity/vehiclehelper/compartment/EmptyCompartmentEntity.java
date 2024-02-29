@@ -33,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -300,7 +301,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 shouldUpdateServer = true;
             }
             if(this.level().isClientSide() && shouldUpdateServer){
-                PacketHandler.clientSendPacket(new ServerboundCompartmentInputPacket(inputLeft, inputRight, inputUp, inputDown, this.getId()));
+                PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                        new ServerboundCompartmentInputPacket(inputLeft, inputRight, inputUp, inputDown, this.getId()));
             }
         } else {
             this.setInputLeft(false);
@@ -308,7 +310,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             this.setInputUp(false);
             this.setInputDown(false);
             if(this.level().isClientSide()){
-                PacketHandler.clientSendPacket(new ServerboundCompartmentInputPacket(false, false, false, false, this.getId()));
+                PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                        new ServerboundCompartmentInputPacket(false, false, false, false, this.getId()));
             }
 
         }

@@ -19,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -50,7 +51,7 @@ public final class ClientEvents {
         final Inventory inventory = minecraft.player.getInventory();
 
         inventory.setPickedItem(pickResult);
-        PacketHandler.CHANNEL.sendToServer(
+        PacketHandler.send(PacketDistributor.SERVER.noArg(),
                 new ServerBoundPickCompartmentPacket(entity.getId(), minecraft.player.getMainHandItem(),
                         Inventory.INVENTORY_SIZE + inventory.selected));
 

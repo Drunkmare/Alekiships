@@ -10,7 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public final class PacketHandler {
     private static final String PROTOCOL_VERSION = ModList.get().getModFileById(AlekiShips.MOD_ID).versionString();
 
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(AlekiShips.MOD_ID, "network"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals);
 
@@ -50,9 +50,5 @@ public final class PacketHandler {
                 .consumerMainThread(
                         (clientBoundCleatLinkPacket, contextSupplier) -> clientBoundCleatLinkPacket.handle())
                 .add();
-    }
-
-    public static void clientSendPacket(Object msg) {
-        CHANNEL.sendToServer(msg);
     }
 }
