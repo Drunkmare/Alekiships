@@ -43,10 +43,6 @@ public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacke
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerboundCompartmentInputPacket decoder(FriendlyByteBuf buffer) {
-        return new ServerboundCompartmentInputPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);

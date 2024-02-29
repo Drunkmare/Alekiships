@@ -34,10 +34,6 @@ public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> 
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerBoundSloopPacket decoder(FriendlyByteBuf buffer){
-        return new ServerBoundSloopPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);

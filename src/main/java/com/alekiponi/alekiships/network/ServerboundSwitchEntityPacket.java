@@ -30,10 +30,6 @@ public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketLis
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerboundSwitchEntityPacket decoder(FriendlyByteBuf buffer) {
-        return new ServerboundSwitchEntityPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);
