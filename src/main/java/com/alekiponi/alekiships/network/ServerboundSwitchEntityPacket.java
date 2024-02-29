@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketListener> {
+public class ServerboundSwitchEntityPacket {
     private final boolean switched;
     private final int entityID;
 
@@ -42,14 +42,5 @@ public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketLis
             }
 
         });
-    }
-
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener supplier) {
-    }
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf buffer) {
     }
 }

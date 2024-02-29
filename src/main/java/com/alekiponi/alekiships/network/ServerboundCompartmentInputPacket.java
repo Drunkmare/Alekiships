@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacketListener> {
+public class ServerboundCompartmentInputPacket {
     private final boolean inputLeft;
     private final boolean inputRight;
     private final boolean inputUp;
@@ -54,14 +54,5 @@ public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacke
                 }
             }
         });
-    }
-
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener supplier) {
-    }
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf buffer) {
     }
 }

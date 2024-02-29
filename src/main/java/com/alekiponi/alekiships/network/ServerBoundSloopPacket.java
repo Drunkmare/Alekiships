@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> {
+public class ServerBoundSloopPacket {
     private final float sheetLength;
     private final float rudderAngle;
     private final int entityID;
@@ -46,16 +46,5 @@ public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> 
                 }
             }
         });
-    }
-
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf pBuffer) {
-
-    }
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener pHandler) {
-
     }
 }
