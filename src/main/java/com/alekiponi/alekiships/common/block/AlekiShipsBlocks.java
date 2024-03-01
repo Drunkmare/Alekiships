@@ -4,8 +4,6 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
-import net.dries007.tfc.common.blocks.TFCBlocks;
-import net.dries007.tfc.util.Metal;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -40,12 +38,10 @@ public final class AlekiShipsBlocks {
                     () -> new FlatWoodenBoatFrameBlock(vanillaWood, BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()))));
 
     public static final RegistryObject<Block> OARLOCK = registerBlockWithItem("oarlock", () -> new OarlockBlock(
-            BlockBehaviour.Properties.copy(
-                    TFCBlocks.METALS.get(Metal.Default.WROUGHT_IRON).get(Metal.BlockType.BLOCK).get()).noOcclusion()));
+            BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
 
     public static final RegistryObject<Block> CLEAT = registerBlockWithItem("cleat", () -> new CleatBlock(
-            BlockBehaviour.Properties.copy(
-                    TFCBlocks.METALS.get(Metal.Default.WROUGHT_IRON).get(Metal.BlockType.BLOCK).get()).noOcclusion()));
+            BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);
