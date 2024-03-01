@@ -3,10 +3,10 @@ package com.alekiponi.alekiships.client.render.entity.vehicle;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.dries007.tfc.util.Helpers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -18,14 +18,14 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Map;
+import java.util.EnumMap;
 
 @OnlyIn(Dist.CLIENT)
 public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/rowboat/damage_overlay.png");
-    public static final Map<DyeColor, ResourceLocation> PAINT_TEXTURES = Helpers.mapOfKeys(DyeColor.class,
+    public static final EnumMap<DyeColor, ResourceLocation> PAINT_TEXTURES = AlekiShipsHelper.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/rowboat/paint/" + dyeColor.getSerializedName() + ".png"));
     protected final RowboatEntityModel rowboatModel = new RowboatEntityModel();
