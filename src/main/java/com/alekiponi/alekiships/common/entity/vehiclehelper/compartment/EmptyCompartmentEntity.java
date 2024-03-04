@@ -11,9 +11,6 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.google.common.collect.Lists;
-import net.dries007.tfc.common.entities.predator.Predator;
-import net.dries007.tfc.util.calendar.Calendars;
-import net.dries007.tfc.util.calendar.ICalendar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -40,8 +37,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
-    protected static final EntityDataAccessor<Long> DATA_ID_PASSENGER_RIDE_TICK = SynchedEntityData.defineId(
-            EmptyCompartmentEntity.class, EntityDataSerializers.LONG);
 
     protected static final EntityDataAccessor<Boolean> DATA_ID_INPUT_LEFT = SynchedEntityData.defineId(
             EmptyCompartmentEntity.class, EntityDataSerializers.BOOLEAN);
@@ -69,22 +64,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_PASSENGER_RIDE_TICK, Long.MAX_VALUE);
         this.entityData.define(DATA_ID_INPUT_LEFT, false);
         this.entityData.define(DATA_ID_INPUT_RIGHT, false);
         this.entityData.define(DATA_ID_INPUT_UP, false);
         this.entityData.define(DATA_ID_INPUT_DOWN, false);
         super.defineSynchedData();
     }
-
-    public long getPassengerRideTick() {
-        return this.entityData.get(DATA_ID_PASSENGER_RIDE_TICK);
-    }
-
-    public void setPassengerRideTick(final long stillTick) {
-        this.entityData.set(DATA_ID_PASSENGER_RIDE_TICK, stillTick);
-    }
-
 
     public boolean canAddNonPlayers() {
         return canAddNonPlayers;
@@ -214,22 +199,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                         if (this.getPassengers()
                                 .size() == 0 && !entity.isPassenger() && entity.getBbWidth() <= maxSize) {
                             if(entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)){
-                                if (!(entity instanceof Predator)) {
-                                    entity.startRiding(this);
-                                    this.setPassengerRideTick(Calendars.SERVER.getTicks());
-                                }
+                                entity.startRiding(this);
                             }
 
                         }
                     }
 
-                }
-            }
-            if (this.isVehicle() && !(this.getFirstPassenger() instanceof Player)) {
-                long remainingTicks = (long) (ICalendar.TICKS_IN_DAY * 3) - (Calendars.SERVER.getTicks() - this.getPassengerRideTick());
-
-                if (remainingTicks <= 0L) {
-                    this.ejectPassengers();
                 }
             }
         }
@@ -248,7 +223,6 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        this.setPassengerRideTick(pCompound.getLong("passengerRideTick"));
 
         pCompound.getBoolean("inputLeft");
         pCompound.getBoolean("inputRight");
@@ -260,7 +234,6 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
-        pCompound.putLong("passengerRideTick", this.getPassengerRideTick());
 
         pCompound.putBoolean("inputLeft", this.getInputLeft());
         pCompound.putBoolean("inputRight", this.getInputRight());

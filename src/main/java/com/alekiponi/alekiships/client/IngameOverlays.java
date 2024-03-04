@@ -14,8 +14,6 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.dries007.tfc.util.calendar.Calendars;
-import net.dries007.tfc.util.calendar.ICalendar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -116,11 +114,6 @@ public enum IngameOverlays {
 
                         stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
                         stack.scale(1.0F, 1.0F, 1.0F);
-                        long remainingTicks = (long) (ICalendar.TICKS_IN_DAY * 3) - (Calendars.SERVER.getTicks() - emptyCompartmentEntity.getPassengerRideTick());
-
-                        if (remainingTicks <= ICalendar.TICKS_IN_DAY) {
-                            string = restlessPassenger.getString() + " ";
-                        }
                         string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
                                 .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
                                 .getString() + " " + toEject.getString();
@@ -129,11 +122,6 @@ public enum IngameOverlays {
                     stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
                     stack.scale(1.0F, 1.0F, 1.0F);
                     if (emptyCompartmentEntity.getFirstPassenger() instanceof LivingEntity livingEntity) {
-                        long remainingTicks = (long) (ICalendar.TICKS_IN_DAY * 3) - (Calendars.SERVER.getTicks() - emptyCompartmentEntity.getPassengerRideTick());
-
-                        if (remainingTicks <= ICalendar.TICKS_IN_DAY) {
-                            string = restlessPassenger.getString() + " ";
-                        }
                         string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
                                 .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
                                 .getString() + " " + toEject.getString();
