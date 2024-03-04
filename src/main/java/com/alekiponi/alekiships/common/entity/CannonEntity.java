@@ -2,8 +2,6 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import net.dries007.tfc.common.fluids.TFCFluids;
 import net.dries007.tfc.common.items.TFCItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
