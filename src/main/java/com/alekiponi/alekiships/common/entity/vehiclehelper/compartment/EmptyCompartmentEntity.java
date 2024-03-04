@@ -64,11 +64,11 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(DATA_ID_INPUT_LEFT, false);
         this.entityData.define(DATA_ID_INPUT_RIGHT, false);
         this.entityData.define(DATA_ID_INPUT_UP, false);
         this.entityData.define(DATA_ID_INPUT_DOWN, false);
-        super.defineSynchedData();
     }
 
     public boolean canAddNonPlayers() {
