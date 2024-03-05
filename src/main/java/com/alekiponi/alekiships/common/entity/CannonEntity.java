@@ -35,8 +35,6 @@ public class CannonEntity extends Entity {
     public static final byte EVENT_LIGHT = 10;
     public static final String FUSE_KEY = "Fuse";
     public static final String CANNONBALL_KEY = "Cannonball";
-    protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
             EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
@@ -58,7 +56,6 @@ public class CannonEntity extends Entity {
 
     @Override
     protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_HURT, 0);
         this.entityData.define(DATA_ID_DAMAGE, 0F);
         this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
     }
@@ -246,7 +243,6 @@ public class CannonEntity extends Entity {
 
         if (this.level().isClientSide || this.isRemoved()) return true;
 
-        this.setHurtTime(10);
         this.setDamage(this.getDamage() + amount * 10);
         this.markHurt();
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
@@ -331,14 +327,6 @@ public class CannonEntity extends Entity {
 
     public void setDamage(final float damageTaken) {
         this.entityData.set(DATA_ID_DAMAGE, damageTaken);
-    }
-
-    public int getHurtTime() {
-        return this.entityData.get(DATA_ID_HURT);
-    }
-
-    public void setHurtTime(final int hurtTime) {
-        this.entityData.set(DATA_ID_HURT, hurtTime);
     }
 
     @SuppressWarnings("unused")
