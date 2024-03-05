@@ -35,6 +35,7 @@ public class CannonEntity extends Entity {
     public static final byte EVENT_LIGHT = 10;
     public static final String FUSE_KEY = "Fuse";
     public static final String CANNONBALL_KEY = "Cannonball";
+    public static final String DAMAGE_KEY = "Damage";
     protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
             EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
@@ -64,12 +65,14 @@ public class CannonEntity extends Entity {
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         this.fuse = compoundTag.getInt(FUSE_KEY);
         this.setCannonball(ItemStack.of(compoundTag.getCompound(CANNONBALL_KEY)));
+        this.setDamage(compoundTag.getFloat(DAMAGE_KEY));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt(FUSE_KEY, this.fuse);
         compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(new CompoundTag()));
+        compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
     }
 
     @Override
