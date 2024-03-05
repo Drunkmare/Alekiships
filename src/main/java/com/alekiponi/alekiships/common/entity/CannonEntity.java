@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import net.dries007.tfc.common.items.TFCItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,27 +28,17 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class CannonEntity extends Entity {
 
-    private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_PAPER_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_GUNPOWDER_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.INT);
-    protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.FLOAT);
-
     public static final byte EVENT_LIGHT = 10;
-
+    protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(CannonEntity.class,
+            EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
+            EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
+            CannonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final ItemStack CANNONBALL = new ItemStack(AlekiShipsItems.CANNONBALL.get());
 
     protected int lerpSteps;
@@ -105,25 +94,6 @@ public class CannonEntity extends Entity {
         }
     }
 
-    public boolean needsPaperItem(){
-        return getPaperItem() != null;
-    }
-
-    public boolean needsGunpowderItem(){
-        return getGunpowderItem() != null;
-    }
-
-    @Nullable
-    public Item getPaperItem(){
-        return null;
-    }
-
-
-    @Nullable
-    public Item getGunpowderItem(){
-        return null;
-    }
-
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldItem = player.getItemInHand(hand);
@@ -173,15 +143,6 @@ public class CannonEntity extends Entity {
      * Lights the cannon
      */
     public void light(){
-        if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
-            return;
-        }
-        if(needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
-            return;
-        }
-        if(needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
-            return;
-        }
         if(this.isInWater()){
             return;
         }
@@ -199,18 +160,7 @@ public class CannonEntity extends Entity {
      * Fires the cannon once the fuse is out. This should also clear whatever contents are necessary
      */
     public void fire(){
-        if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
-            return;
-        }
-        if(this.needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
-            return;
-        }
-        if(this.needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
-            return;
-        }
         this.fuse = -1;
-        this.setPaper(ItemStack.EMPTY);
-        this.setGunpowder(ItemStack.EMPTY);
         this.setCannonball(ItemStack.EMPTY);
 
         final CannonballEntity cannonball = AlekiShipsEntities.CANNONBALL_ENTITY.get()
@@ -345,28 +295,12 @@ public class CannonEntity extends Entity {
 
     }
 
-    public ItemStack getCannonball(){
+    public ItemStack getCannonball() {
         return this.entityData.get(DATA_ID_CANNONBALL_ITEM);
     }
 
-    public ItemStack getPaper(){
-        return this.entityData.get(DATA_ID_PAPER_ITEM);
-    }
-
-    public ItemStack getGunpowder(){
-        return this.entityData.get(DATA_ID_GUNPOWDER_ITEM);
-    }
-
-    protected void setCannonball(ItemStack itemStack){
+    protected void setCannonball(final ItemStack itemStack) {
         this.entityData.set(DATA_ID_CANNONBALL_ITEM, itemStack.copy());
-    }
-
-    protected void setPaper(ItemStack itemStack){
-        this.entityData.set(DATA_ID_PAPER_ITEM, itemStack.copy());
-    }
-
-    protected void setGunpowder(ItemStack itemStack){
-        this.entityData.set(DATA_ID_GUNPOWDER_ITEM, itemStack.copy());
     }
 
     private static final float DAMAGE_TO_BREAK = 8.0f;
@@ -376,9 +310,7 @@ public class CannonEntity extends Entity {
     protected void defineSynchedData() {
         this.entityData.define(DATA_ID_HURT, 0);
         this.entityData.define(DATA_ID_DAMAGE, 0F);
-        this.entityData.define(DATA_ID_PAPER_ITEM, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_GUNPOWDER_ITEM, ItemStack.EMPTY);
     }
 
     public float getDamage() {
@@ -403,8 +335,6 @@ public class CannonEntity extends Entity {
 
     protected void destroy(final DamageSource damageSource) {
         this.spawnAtLocation(this.getCannonball(), 1);
-        this.spawnAtLocation(this.getPaper(), 1);
-        this.spawnAtLocation(this.getGunpowder(), 1);
         this.spawnAtLocation(this.getDropItem(), 1);
     }
 
