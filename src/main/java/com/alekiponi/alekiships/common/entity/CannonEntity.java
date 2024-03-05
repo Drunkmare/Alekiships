@@ -48,8 +48,7 @@ public class CannonEntity extends Entity {
     protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
             CannonEntity.class, EntityDataSerializers.FLOAT);
 
-    protected static final EntityDataAccessor<Integer> DATA_ID_FUSE_TIME = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.INT);
+    public static final byte EVENT_LIGHT = 10;
 
     public final Item cannonBallItem = AlekiShipsItems.CANNONBALL.get();
 
@@ -59,6 +58,7 @@ public class CannonEntity extends Entity {
     protected double lerpZ;
     protected double lerpYRot;
     protected double lerpXRot;
+    private int fuse = -1;
 
     public CannonEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -89,14 +89,18 @@ public class CannonEntity extends Entity {
             this.updateInWaterStateAndDoFluidPushing();
         }
         tickLerp();
-        this.setFuseTime(this.getFuseTime()-1);
-        if(this.getFuseTime() > 0){
-            Vec3 fuse = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.5), 0.8,
-                    Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.5).multiply(-1,1,-1).add(this.getPosition(0));
-            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x,fuse.y,fuse.z,this.getRootVehicle().getDeltaMovement().x,0.01,this.getRootVehicle().getDeltaMovement().z);
-            //this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, this.getPosition(0).x,this.getPosition(0).y+1.0,this.getPosition(0).z,0,0.01,0);
-            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x,fuse.y,fuse.z,this.getRootVehicle().getDeltaMovement().x,0.01,this.getRootVehicle().getDeltaMovement().z);
-        } else if(this.getFuseTime() == 0){
+
+        if (this.fuse > 0) {
+            --this.fuse;
+            final Vec3 fuse = new Vec3((Mth.sin((float) (this.getYRot() * (Math.PI / 180))) * 0.5), 0.8,
+                    Mth.cos((float) (-this.getYRot() * (Math.PI / 180))) * 0.5).multiply(-1, 1, -1)
+                    .add(this.getPosition(0));
+            final Vec3 deltaMovement = this.getRootVehicle().getDeltaMovement();
+            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x, fuse.y, fuse.z, deltaMovement.x, 0.01,
+                    deltaMovement.z);
+            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x, fuse.y, fuse.z, deltaMovement.x, 0.01,
+                    deltaMovement.z);
+        } else if (this.fuse == 0) {
             this.fire();
         }
     }
@@ -164,6 +168,9 @@ public class CannonEntity extends Entity {
 
     }
 
+    /**
+     * Lights the cannon
+     */
     public void light(){
         if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
             return;
@@ -178,10 +185,18 @@ public class CannonEntity extends Entity {
             return;
         }
 
-        this.setFuseTime(40);
-        this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
+        this.fuse = 40;
+        if (!this.level().isClientSide()) {
+            this.level().broadcastEntityEvent(this, EVENT_LIGHT);
+            if (!this.isSilent()) {
+                this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
+            }
+        }
     }
 
+    /**
+     * Fires the cannon once the fuse is out. This should also clear whatever contents are necessary
+     */
     public void fire(){
         if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
             return;
@@ -192,6 +207,7 @@ public class CannonEntity extends Entity {
         if(this.needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
             return;
         }
+        this.fuse = -1;
         this.setPaper(ItemStack.EMPTY);
         this.setGunpowder(ItemStack.EMPTY);
         this.setCannonball(ItemStack.EMPTY);
@@ -244,6 +260,15 @@ public class CannonEntity extends Entity {
         Vec3 movement = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
                 Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1,1,-1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
+    }
+
+    @Override
+    public void handleEntityEvent(final byte eventID) {
+        if (eventID == EVENT_LIGHT) {
+            this.light();
+        } else {
+            super.handleEntityEvent(eventID);
+        }
     }
 
     @Override
@@ -353,7 +378,6 @@ public class CannonEntity extends Entity {
         this.entityData.define(DATA_ID_PAPER_ITEM, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_GUNPOWDER_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_FUSE_TIME, -1);
     }
 
     public float getDamage() {
@@ -373,11 +397,7 @@ public class CannonEntity extends Entity {
     }
 
     public int getFuseTime(){
-        return this.entityData.get(DATA_ID_FUSE_TIME);
-    }
-
-    public void setFuseTime(int fuse){
-        this.entityData.set(DATA_ID_FUSE_TIME, Mth.clamp(fuse, -1, 200));
+        return this.fuse;
     }
 
     protected void destroy(final DamageSource damageSource) {
