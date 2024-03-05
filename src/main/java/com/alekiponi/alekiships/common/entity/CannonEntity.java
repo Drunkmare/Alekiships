@@ -50,7 +50,7 @@ public class CannonEntity extends Entity {
 
     public static final byte EVENT_LIGHT = 10;
 
-    public final Item cannonBallItem = AlekiShipsItems.CANNONBALL.get();
+    private static final ItemStack CANNONBALL = new ItemStack(AlekiShipsItems.CANNONBALL.get());
 
     protected int lerpSteps;
     protected double lerpX;
@@ -133,6 +133,9 @@ public class CannonEntity extends Entity {
         if (insertResult.consumesAction()) return insertResult;
 
         if (heldItem.is(Items.FLINT_AND_STEEL)) {
+            // Already lit
+            if (this.isLit()) return InteractionResult.PASS;
+
             this.light();
             heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
             return InteractionResult.CONSUME;
@@ -436,5 +439,21 @@ public class CannonEntity extends Entity {
     @Override
     public boolean isPushable() {
         return true;
+    }
+
+    /**
+     * @return The next required ItemStack to load the cannon.
+     * @apiNote The returned stack must not be modified and is expected to be used only in rendering
+     */
+    public ItemStack nextRequiredItem() {
+        return CANNONBALL;
+    }
+
+    public boolean isLoaded() {
+        return !this.getCannonball().isEmpty();
+    }
+
+    public boolean isLit() {
+        return this.fuse > -1;
     }
 }
