@@ -33,6 +33,8 @@ import java.util.Random;
 
 public class CannonEntity extends Entity {
     public static final byte EVENT_LIGHT = 10;
+    public static final String FUSE_KEY = "Fuse";
+    public static final String CANNONBALL_KEY = "Cannonball";
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(CannonEntity.class,
             EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
@@ -63,12 +65,14 @@ public class CannonEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
-
+        this.fuse = compoundTag.getInt(FUSE_KEY);
+        this.setCannonball(ItemStack.of(compoundTag.getCompound(CANNONBALL_KEY)));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
-
+        compoundTag.putInt(FUSE_KEY, this.fuse);
+        compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(new CompoundTag()));
     }
 
     @Override
