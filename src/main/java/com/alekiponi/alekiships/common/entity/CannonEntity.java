@@ -126,35 +126,15 @@ public class CannonEntity extends Entity {
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        final ItemStack item = player.getItemInHand(hand);
-        if (item.is(this.cannonBallItem)) {
-            if(this.getCannonball().isEmpty()){
-                this.setCannonball(item.split(1));
-                return InteractionResult.SUCCESS;
-            }
-            return InteractionResult.CONSUME;
-        }
-        if(needsPaperItem()){
-            if (item.is(this.getPaperItem())) {
-                if(this.getPaper().isEmpty()){
-                    this.setPaper(item.split(1));
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.CONSUME;
-            }
-        }
-        if(needsGunpowderItem()){
-            if (item.is(this.getGunpowderItem())) {
-                if(this.getGunpowder().isEmpty()){
-                    this.setGunpowder(item.split(1));
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.CONSUME;
-            }
-        }
+        final ItemStack heldItem = player.getItemInHand(hand);
 
-        if (item.is(Items.FLINT_AND_STEEL)) {
+        final InteractionResult insertResult = this.insertItem(heldItem);
+
+        if (insertResult.consumesAction()) return insertResult;
+
+        if (heldItem.is(Items.FLINT_AND_STEEL)) {
             this.light();
+            heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
             return InteractionResult.CONSUME;
         }
         if(player.isSecondaryUseActive() && this.getXRot() < 20){
@@ -166,6 +146,24 @@ public class CannonEntity extends Entity {
         }
         return InteractionResult.PASS;
 
+    }
+
+    /**
+     * Called to insert an item into the cannon. We only insert cannonballs in vanilla
+     *
+     * @param itemStack The item stack to insert
+     * @return The result of the interaction. If {@link InteractionResult#consumesAction()} is
+     * true no further processing is attempted
+     */
+    private InteractionResult insertItem(final ItemStack itemStack) {
+        if (itemStack.is(AlekiShipsItems.CANNONBALL.get())) {
+            if (this.getCannonball().isEmpty()) {
+                this.setCannonball(itemStack.split(1));
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.CONSUME;
+        }
+        return InteractionResult.PASS;
     }
 
     /**
