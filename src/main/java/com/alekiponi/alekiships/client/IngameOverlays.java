@@ -63,10 +63,6 @@ public enum IngameOverlays {
         this.overlay = overlay;
     }
 
-    public static int iconOffset(CompIcon icon) {
-        return icon.ordinal() * 9;
-    }
-
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         above(event, VanillaGuiOverlay.CROSSHAIR, COMPARTMENT_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, PASSENGER_STATUS);
@@ -277,12 +273,12 @@ public enum IngameOverlays {
                     for (ItemStack item : player.getHandSlots()) {
                         if (item.is(vehicle.getDropItem())) {
                             stack = setupCompartmentStack(stack, width, height);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.HAMMER), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HAMMER), 0, 9, 9);
                             break;
                         }
                         if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
                             stack = setupCompartmentStack(stack, width, height);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BRUSH), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
                             break;
                         }
                     }
@@ -294,23 +290,23 @@ public enum IngameOverlays {
                             .getPilotVehiclePartAsEntity() != null) {
                         if (emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity().getFirstPassenger()
                                 .is(emptyCompartmentEntity)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.HELM), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HELM), 0, 9, 9);
                             if (emptyCompartmentEntity.getTrueVehicle()
                                     .pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
                                     player.getUsedItemHand()).is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
-                                graphics.blit(COMPARTMENT_ICONS, -12, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                                graphics.blit(COMPARTMENT_ICONS, -12, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                             }
 
                         } else if (player.getItemInHand(player.getUsedItemHand())
                                 .is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                         } else if (player.getItemInHand(player.getUsedItemHand())
                                 .is(AlekiShipsItems.CANNON.get()) && !emptyCompartmentEntity.canAddOnlyBLocks() && emptyCompartmentEntity.canAddCannons() && emptyCompartmentEntity.getRootVehicle() instanceof SloopEntity) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                         } else if (!emptyCompartmentEntity.isVehicle() && !emptyCompartmentEntity.canAddOnlyBLocks()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.SEAT), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SEAT), 0, 9, 9);
                         } else if (!emptyCompartmentEntity.isVehicle() && emptyCompartmentEntity.canAddOnlyBLocks()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                         }
                     }
                 } else if (entity instanceof VehicleCleatEntity vehicleCleatEntity && vehicleCleatEntity.isPassenger() && !vehicleCleatEntity.isLeashed()) {
@@ -323,18 +319,18 @@ public enum IngameOverlays {
                     boolean flag = false;
                     for (ItemStack item : player.getHandSlots()) {
                         if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BRUSH), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
                             flag = true;
                             break;
                         }
                     }
                     if (sailSwitch.getVehicle().getVehicle() != null && !flag) {
                         if (sailSwitch.getSwitched()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.SAIL), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 10, iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
                         } else {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.SAIL), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, -10, iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
                         }
 
                     }
@@ -342,11 +338,11 @@ public enum IngameOverlays {
                     stack = setupCompartmentStack(stack, width, height);
                     if (windlassSwitch.getVehicle().getVehicle() != null) {
                         if (!windlassSwitch.getSwitched()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.ANCHOR), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 10, iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
                         } else {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.ANCHOR), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, -10, iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
+                            graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
                         }
 
                     }
@@ -379,17 +375,27 @@ public enum IngameOverlays {
     }
 
     public enum CompIcon {
-        HELM,
-        BLOCK,
-        SAIL,
-        PADDLE,
-        SEAT,
-        EJECT,
-        LEAD,
-        ARROW_UP,
-        ARROW_DOWN,
-        ANCHOR,
-        BRUSH,
-        HAMMER
+        HELM(0),
+        BLOCK(1),
+        SAIL(2),
+        PADDLE(3),
+        SEAT(4),
+        EJECT(5),
+        LEAD(6),
+        ARROW_UP(7),
+        ARROW_DOWN(8),
+        ANCHOR(9),
+        BRUSH(10),
+        HAMMER(11);
+
+        public final int index;
+
+        CompIcon(final int index) {
+            this.index = index;
+        }
+
+        public static int iconOffset(final CompIcon icon) {
+            return icon.index * 9;
+        }
     }
 }
