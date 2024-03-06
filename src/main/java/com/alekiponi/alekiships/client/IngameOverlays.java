@@ -22,11 +22,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -51,6 +52,8 @@ public enum IngameOverlays {
             "textures/gui/icons/sailing_icons.png");
     public static final ResourceLocation SPEEDOMETER_ICONS = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/gui/icons/speedometer_icons.png");
+    public static final Component PRESS_BUTTON = Component.translatable("press_button");
+    public static final Component EJECT_PASSENGERS = Component.translatable("eject_passengers");
     private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
     private final IGuiOverlay overlay;
     private final String id;
@@ -76,55 +79,50 @@ public enum IngameOverlays {
         event.registerAbove(vanilla.id(), overlay.id, overlay.overlay);
     }
 
-    private static void renderPassengerStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-            int height) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            Player player = mc.player;
+    private static void renderPassengerStatus(final ForgeGui gui, final GuiGraphics graphics, final float partialTick,
+            final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
 
-            if (setup(gui, mc) && !player.isSpectator() && mc.options.getCameraType().isFirstPerson()) {
-                Entity entity = AlekiShipsHelper.getAnyEntityAtCrosshair(player, 2f);
-                PoseStack stack = graphics.pose();
+        if (mc.player == null) return;
 
-                Component press = Component.translatable("press_button");
+        if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-                Component toEject = Component.translatable("eject_passengers");
+        final Entity entity;
+        {
+            final HitResult hitResult = mc.hitResult;
 
-                Component restlessPassenger = Component.translatable("restless_passenger");
+            if (hitResult == null) return;
 
-                String string = "";
+            if (hitResult.getType() != HitResult.Type.ENTITY) return;
 
-                stack.pushPose();
-
-                if (entity instanceof LivingEntity livingEntity) {
-                    if (livingEntity.getVehicle() instanceof EmptyCompartmentEntity emptyCompartmentEntity) {
-
-                        stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
-                        stack.scale(1.0F, 1.0F, 1.0F);
-                        string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
-                                .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
-                                .getString() + " " + toEject.getString();
-                    }
-                } else if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity) {
-                    stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
-                    stack.scale(1.0F, 1.0F, 1.0F);
-                    if (emptyCompartmentEntity.getFirstPassenger() instanceof LivingEntity livingEntity) {
-                        string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
-                                .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
-                                .getString() + " " + toEject.getString();
-                    }
-                }
-
-                if (!string.equals("")) {
-                    graphics.drawString(mc.font, string, -mc.font.width(string) / 2, 0, Color.WHITE.getRGB(), true);
-                }
-
-                //Component copyMessage = Component.translatable("eject_passengers_1");
-                //player.displayClientMessage(copyMessage, true);
-
-                stack.popPose();
-            }
+            entity = ((EntityHitResult) hitResult).getEntity();
         }
+
+        final PoseStack stack = graphics.pose();
+
+        // Targeted entity isn't riding an Empty Compartment
+        if (!(entity.getVehicle() instanceof EmptyCompartmentEntity)) {
+            // Targeted entity isn't an empty compartment with a rider
+            if (!(entity instanceof EmptyCompartmentEntity compartment) || !compartment.hasPassenger(e -> true)) return;
+        }
+
+        stack.pushPose();
+
+        stack.translate(width / 2F, height / 2F - 15, 0);
+        stack.scale(1, 1, 1);
+
+        // Should look like: Press Left Shift + Right Button to eject
+        final String string = PRESS_BUTTON.getString() +
+                " " +
+                mc.options.keyShift.getTranslatedKeyMessage().getString() +
+                " + " +
+                mc.options.keyUse.getTranslatedKeyMessage().getString() +
+                " " +
+                EJECT_PASSENGERS.getString();
+
+        graphics.drawString(mc.font, string, -mc.font.width(string) / 2, 0, Color.WHITE.getRGB(), true);
+
+        stack.popPose();
     }
 
     private static void renderSloopConstructionStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
