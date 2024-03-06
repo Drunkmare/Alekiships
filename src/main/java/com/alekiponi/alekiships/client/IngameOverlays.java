@@ -7,7 +7,9 @@ package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.*;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -16,6 +18,7 @@ import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +31,6 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.Tags;
 
 import java.awt.*;
@@ -50,7 +52,7 @@ public enum IngameOverlays {
     public static final ResourceLocation SPEEDOMETER_ICONS = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/gui/icons/speedometer_icons.png");
     private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
-    final IGuiOverlay overlay;
+    private final IGuiOverlay overlay;
     private final String id;
 
     IngameOverlays(IGuiOverlay overlay) {
@@ -58,24 +60,8 @@ public enum IngameOverlays {
         this.overlay = overlay;
     }
 
-    public static final int COMPARTMENT_ICON_WIDTH = 9;
-    public static enum CompIcon {
-        HELM,
-        BLOCK,
-        SAIL,
-        PADDLE,
-        SEAT,
-        EJECT,
-        LEAD,
-        ARROW_UP,
-        ARROW_DOWN,
-        ANCHOR,
-        BRUSH,
-        HAMMER
-    }
-
-    public static int iconOffset(CompIcon icon){
-        return icon.ordinal()*9;
+    public static int iconOffset(CompIcon icon) {
+        return icon.ordinal() * 9;
     }
 
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
@@ -142,7 +128,7 @@ public enum IngameOverlays {
     }
 
     private static void renderSloopConstructionStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-                                              int height) {
+            int height) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             Player player = mc.player;
@@ -160,8 +146,8 @@ public enum IngameOverlays {
                     int countLeft = sloop.getNumberItemsLeft();
                     Item item = sloop.getCurrentRequiredItem();
 
-                    graphics.renderItem(item.getDefaultInstance().copyWithCount(countLeft), 0,0);
-                    graphics.renderItemDecorations(mc.font, item.getDefaultInstance().copyWithCount(countLeft), 0,0);
+                    graphics.renderItem(item.getDefaultInstance().copyWithCount(countLeft), 0, 0);
+                    graphics.renderItemDecorations(mc.font, item.getDefaultInstance().copyWithCount(countLeft), 0, 0);
                 }
 
                 stack.popPose();
@@ -170,7 +156,7 @@ public enum IngameOverlays {
     }
 
     private static void renderCannonLoadState(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-                                                      int height) {
+            int height) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             Player player = mc.player;
@@ -205,14 +191,16 @@ public enum IngameOverlays {
         if (mc.player != null) {
             Player player = mc.player;
 
-            if (setup(gui, mc)  && !player.isSpectator()) {
+            if (setup(gui, mc) && !player.isSpectator()) {
                 PoseStack stack = graphics.pose();
                 stack.pushPose();
-                if(player.getRootVehicle() instanceof SloopEntity sloopEntity){
-                    if(sloopEntity.getControllingCompartment() != null && sloopEntity.getControllingCompartment().hasExactlyOnePlayerPassenger() && sloopEntity.getControllingCompartment().getFirstPassenger().equals(player)){
+                if (player.getRootVehicle() instanceof SloopEntity sloopEntity) {
+                    if (sloopEntity.getControllingCompartment() != null && sloopEntity.getControllingCompartment()
+                            .hasExactlyOnePlayerPassenger() && sloopEntity.getControllingCompartment()
+                            .getFirstPassenger().equals(player)) {
 
                         int offhandOffset = 3;
-                        if(!player.getOffhandItem().isEmpty()){
+                        if (!player.getOffhandItem().isEmpty()) {
                             offhandOffset = 26;
                         }
                         stack.scale(1.0F, 1.0F, 1.0F);
@@ -220,7 +208,7 @@ public enum IngameOverlays {
                         int x = width / 2;
                         int y = height - gui.rightHeight;
 
-                        stack.translate((float)(x + 1), (float)(y + 4), 0.0F);
+                        stack.translate((float) (x + 1), (float) (y + 4), 0.0F);
                         if ((float) height % 2.0 != 0) {
                             stack.translate(0f, 0.5f, 0.0f);
                         }
@@ -228,32 +216,35 @@ public enum IngameOverlays {
                             stack.translate(0.5f, 0f, 0.0f);
                         }
 
-                        int windSpeed = (int)(sloopEntity.getLocalWindAngleAndSpeed()[1]*160);
+                        int windSpeed = (int) (sloopEntity.getLocalWindAngleAndSpeed()[1] * 160);
                         DecimalFormat df = new DecimalFormat("###.#");
-                        String displayBoatSpeed = df.format(sloopEntity.getSmoothSpeedMS()*3.6) + " km/h";
+                        String displayBoatSpeed = df.format(sloopEntity.getSmoothSpeedMS() * 3.6) + " km/h";
                         windSpeed = Mth.clamp(windSpeed, 1, 20);
-                        int ticksBetweenFrames = Mth.clamp(Math.abs(windSpeed-20), 1, 20);
-                        int ticks = sloopEntity.tickCount/ticksBetweenFrames;
-                        int frameIndex = ticks%(32);
+                        int ticksBetweenFrames = Mth.clamp(Math.abs(windSpeed - 20), 1, 20);
+                        int ticks = sloopEntity.tickCount / ticksBetweenFrames;
+                        int frameIndex = ticks % (32);
 
                         double speedMS = sloopEntity.getSmoothSpeedMS();
-                        int speedometerIndex = Mth.clamp((int)(speedMS-2)*2,0,31);
+                        int speedometerIndex = Mth.clamp((int) (speedMS - 2) * 2, 0, 31);
 
-                        int angle = Math.round((Mth.wrapDegrees(sloopEntity.getWindLocalRotation())/360)*64);
-                        angle = angle+32;
-                        if(angle == 64){
+                        int angle = Math.round((Mth.wrapDegrees(sloopEntity.getWindLocalRotation()) / 360) * 64);
+                        angle = angle + 32;
+                        if (angle == 64) {
                             angle = 0;
                         }
                         // TODO config to add numerical speed instead, config for units
-                        if(mc.options.renderDebug){
-                            graphics.drawString(mc.font, displayBoatSpeed, -134, -8-offhandOffset, Color.WHITE.getRGB(), true);
+                        if (mc.options.renderDebug) {
+                            graphics.drawString(mc.font, displayBoatSpeed, -134, -8 - offhandOffset,
+                                    Color.WHITE.getRGB(), true);
                         }
-                        graphics.blit(SAILING_ICONS, -126, 3-offhandOffset, 32*angle, (32)*(angle/8), 32, 32);
-                        graphics.blit(SPEEDOMETER_ICONS, -126-8, 3-offhandOffset+(32-16), 16*speedometerIndex, (16)*(speedometerIndex/16), 16, 16);
-                        graphics.blit(SPEEDOMETER_ICONS, -126-8, 3-offhandOffset+(32-32), 16*frameIndex, 32+(16)*(frameIndex/16), 16, 16);
+                        graphics.blit(SAILING_ICONS, -126, 3 - offhandOffset, 32 * angle, (32) * (angle / 8), 32, 32);
+                        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset + (32 - 16), 16 * speedometerIndex,
+                                (16) * (speedometerIndex / 16), 16, 16);
+                        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset + (32 - 32), 16 * frameIndex,
+                                32 + (16) * (frameIndex / 16), 16, 16);
                     }
-                    if(player.getVehicle() instanceof EmptyCompartmentEntity compartment){
-                        if(sloopEntity.getControllingCompartment() == compartment){
+                    if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
+                        if (sloopEntity.getControllingCompartment() == compartment) {
 
                         }
                     }
@@ -263,7 +254,6 @@ public enum IngameOverlays {
             }
         }
     }
-
 
     private static void renderCompartmentStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
             int height) {
@@ -276,23 +266,23 @@ public enum IngameOverlays {
 
                 stack.pushPose();
 
-                if(entity instanceof AbstractAlekiBoatEntity || entity instanceof VehicleCollisionEntity){
+                if (entity instanceof AbstractAlekiBoatEntity || entity instanceof VehicleCollisionEntity) {
                     AbstractAlekiBoatEntity vehicle;
-                    if(entity instanceof VehicleCollisionEntity collider && collider.getRootVehicle() instanceof AbstractAlekiBoatEntity){
+                    if (entity instanceof VehicleCollisionEntity collider && collider.getRootVehicle() instanceof AbstractAlekiBoatEntity) {
                         entity = collider.getRootVehicle();
                     }
-                    vehicle = (AbstractAlekiBoatEntity)entity;
-                    if(vehicle.isTiny()){
+                    vehicle = (AbstractAlekiBoatEntity) entity;
+                    if (vehicle.isTiny()) {
                         stack.popPose();
                         return;
                     }
-                    for(ItemStack item : player.getHandSlots()){
-                        if(item.is(vehicle.getDropItem())){
+                    for (ItemStack item : player.getHandSlots()) {
+                        if (item.is(vehicle.getDropItem())) {
                             stack = setupCompartmentStack(stack, width, height);
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.HAMMER), 0, 9, 9);
                             break;
                         }
-                        if(item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)){
+                        if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
                             stack = setupCompartmentStack(stack, width, height);
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BRUSH), 0, 9, 9);
                             break;
@@ -302,11 +292,13 @@ public enum IngameOverlays {
 
                 if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity && emptyCompartmentEntity.isPassenger() && !emptyCompartmentEntity.isVehicle()) {
                     stack = setupCompartmentStack(stack, width, height);
-                    if (emptyCompartmentEntity.getTrueVehicle() != null && emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity() != null) {
+                    if (emptyCompartmentEntity.getTrueVehicle() != null && emptyCompartmentEntity.getTrueVehicle()
+                            .getPilotVehiclePartAsEntity() != null) {
                         if (emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity().getFirstPassenger()
                                 .is(emptyCompartmentEntity)) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.HELM), 0, 9, 9);
-                            if (emptyCompartmentEntity.getTrueVehicle().pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
+                            if (emptyCompartmentEntity.getTrueVehicle()
+                                    .pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
                                     player.getUsedItemHand()).is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
                                 graphics.blit(COMPARTMENT_ICONS, -12, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
                             }
@@ -317,29 +309,29 @@ public enum IngameOverlays {
                         } else if (player.getItemInHand(player.getUsedItemHand())
                                 .is(AlekiShipsItems.CANNON.get()) && !emptyCompartmentEntity.canAddOnlyBLocks() && emptyCompartmentEntity.canAddCannons() && emptyCompartmentEntity.getRootVehicle() instanceof SloopEntity) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
-                        }else if (!emptyCompartmentEntity.isVehicle() && !emptyCompartmentEntity.canAddOnlyBLocks()) {
+                        } else if (!emptyCompartmentEntity.isVehicle() && !emptyCompartmentEntity.canAddOnlyBLocks()) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.SEAT), 0, 9, 9);
                         } else if (!emptyCompartmentEntity.isVehicle() && emptyCompartmentEntity.canAddOnlyBLocks()) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BLOCK), 0, 9, 9);
                         }
                     }
-                } else if (entity instanceof VehicleCleatEntity vehicleCleatEntity  && vehicleCleatEntity.isPassenger() && !vehicleCleatEntity.isLeashed()) {
+                } else if (entity instanceof VehicleCleatEntity vehicleCleatEntity && vehicleCleatEntity.isPassenger() && !vehicleCleatEntity.isLeashed()) {
                     stack = setupCompartmentStack(stack, width, height);
                     if (vehicleCleatEntity.getVehicle().getVehicle() != null) {
                         graphics.blit(COMPARTMENT_ICONS, 0, 0, 54, 0, 9, 9);
                     }
-                } else if (entity instanceof SailSwitchEntity sailSwitch  && sailSwitch.isPassenger()) {
+                } else if (entity instanceof SailSwitchEntity sailSwitch && sailSwitch.isPassenger()) {
                     stack = setupCompartmentStack(stack, width, height);
                     boolean flag = false;
-                    for(ItemStack item : player.getHandSlots()){
-                        if(item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)){
+                    for (ItemStack item : player.getHandSlots()) {
+                        if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.BRUSH), 0, 9, 9);
                             flag = true;
                             break;
                         }
                     }
                     if (sailSwitch.getVehicle().getVehicle() != null && !flag) {
-                        if(sailSwitch.getSwitched()){
+                        if (sailSwitch.getSwitched()) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.SAIL), 0, 9, 9);
                             graphics.blit(COMPARTMENT_ICONS, 0, 10, iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
                         } else {
@@ -348,10 +340,10 @@ public enum IngameOverlays {
                         }
 
                     }
-                } else if (entity instanceof WindlassSwitchEntity windlassSwitch  && windlassSwitch.isPassenger()) {
+                } else if (entity instanceof WindlassSwitchEntity windlassSwitch && windlassSwitch.isPassenger()) {
                     stack = setupCompartmentStack(stack, width, height);
                     if (windlassSwitch.getVehicle().getVehicle() != null) {
-                        if(!windlassSwitch.getSwitched()){
+                        if (!windlassSwitch.getSwitched()) {
                             graphics.blit(COMPARTMENT_ICONS, 0, 0, iconOffset(CompIcon.ANCHOR), 0, 9, 9);
                             graphics.blit(COMPARTMENT_ICONS, 0, 10, iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
                         } else {
@@ -367,7 +359,7 @@ public enum IngameOverlays {
         }
     }
 
-    public static PoseStack setupCompartmentStack(PoseStack stack, int width, int height){
+    public static PoseStack setupCompartmentStack(PoseStack stack, int width, int height) {
         stack.scale(1.0F, 1.0F, 1.0F);
         stack.translate((float) width / 2.0F - 5f - 12f, (float) height / 2.0F - 5F, 0.0F);
         if ((float) height % 2.0 != 0) {
@@ -386,5 +378,20 @@ public enum IngameOverlays {
         } else {
             return false;
         }
+    }
+
+    public enum CompIcon {
+        HELM,
+        BLOCK,
+        SAIL,
+        PADDLE,
+        SEAT,
+        EJECT,
+        LEAD,
+        ARROW_UP,
+        ARROW_DOWN,
+        ANCHOR,
+        BRUSH,
+        HAMMER
     }
 }
