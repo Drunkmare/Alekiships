@@ -26,8 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -83,16 +81,9 @@ public enum IngameOverlays {
 
         if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-        final Entity entity;
-        {
-            final HitResult hitResult = mc.hitResult;
+        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
 
-            if (hitResult == null) return;
-
-            if (hitResult.getType() != HitResult.Type.ENTITY) return;
-
-            entity = ((EntityHitResult) hitResult).getEntity();
-        }
+        if (entity == null) return;
 
         final PoseStack stack = graphics.pose();
 
