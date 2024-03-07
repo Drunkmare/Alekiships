@@ -23,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -112,32 +111,36 @@ public enum IngameOverlays {
         stack.popPose();
     }
 
-    private static void renderSloopConstructionStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-            int height) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            Player player = mc.player;
+    private static void renderSloopConstructionStatus(final ForgeGui gui, final GuiGraphics graphics,
+            final float partialTick, final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
 
-            if (setup(gui, mc) && !player.isSpectator() && mc.options.getCameraType().isFirstPerson()) {
-                Entity entity = AlekiShipsHelper.getAnyEntityAtCrosshair(player, 2f);
-                PoseStack stack = graphics.pose();
+        if (mc.player == null) return;
 
-                stack.pushPose();
+        if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-                if (entity instanceof ConstructionEntity constructionEntity && constructionEntity.getRootVehicle() instanceof SloopUnderConstructionEntity sloop) {
-                    stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
-                    stack.scale(1.0F, 1.0F, 1.0F);
+        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
 
-                    int countLeft = sloop.getNumberItemsLeft();
-                    Item item = sloop.getCurrentRequiredItem();
+        if (!(entity instanceof ConstructionEntity constructionEntity) || !(constructionEntity.getRootVehicle() instanceof SloopUnderConstructionEntity sloop))
+            return;
 
-                    graphics.renderItem(item.getDefaultInstance().copyWithCount(countLeft), 0, 0);
-                    graphics.renderItemDecorations(mc.font, item.getDefaultInstance().copyWithCount(countLeft), 0, 0);
-                }
+        final PoseStack stack = graphics.pose();
+        stack.pushPose();
+        stack.translate(width / 2F, height / 2F - 15, 0);
+        stack.scale(1, 1, 1);
 
-                stack.popPose();
-            }
+        final ItemStack itemStack = new ItemStack(sloop.getCurrentRequiredItem(), sloop.getNumberItemsLeft());
+
+        graphics.renderFakeItem(itemStack, 0, 0);
+        if (itemStack.getCount() != 1) {
+            stack.pushPose();
+            final String countString = String.valueOf(itemStack.getCount());
+            stack.translate(0, 0, 200);
+            graphics.drawString(mc.font, countString, 19 - 2 - mc.font.width(countString), 6 + 3, 16777215, true);
+            stack.popPose();
         }
+
+        stack.popPose();
     }
 
     private static void renderCannonLoadState(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
