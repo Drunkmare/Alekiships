@@ -143,34 +143,33 @@ public enum IngameOverlays {
         stack.popPose();
     }
 
-    private static void renderCannonLoadState(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-            int height) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            Player player = mc.player;
+    private static void renderCannonLoadState(final ForgeGui gui, final GuiGraphics graphics, final float partialTick,
+            final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
 
-            if (setup(gui, mc) && !player.isSpectator() && mc.options.getCameraType().isFirstPerson()) {
-                Entity entity = AlekiShipsHelper.getAnyEntityAtCrosshair(player, 2f);
-                PoseStack stack = graphics.pose();
+        if (mc.player == null) return;
 
-                stack.pushPose();
+        if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-                if (entity instanceof CannonEntity cannon) {
-                    stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
-                    stack.scale(1.0F, 1.0F, 1.0F);
+        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
 
-                    if (!cannon.isLit()) {
-                        if (cannon.isLoaded()) {
-                            graphics.renderItem(FLINT_AND_STEEL, 0, 0);
-                        } else {
-                            graphics.renderFakeItem(cannon.nextRequiredItem(), 0, 0);
-                        }
-                    }
-                }
+        if (!(entity instanceof CannonEntity cannon)) return;
 
-                stack.popPose();
-            }
+        if (cannon.isLit()) return;
+
+        final PoseStack stack = graphics.pose();
+
+        stack.pushPose();
+        stack.translate(width / 2F, height / 2F - 15, 0);
+        stack.scale(1, 1, 1);
+
+        if (cannon.isLoaded()) {
+            graphics.renderFakeItem(FLINT_AND_STEEL, 0, 0);
+        } else {
+            graphics.renderFakeItem(cannon.nextRequiredItem(), 0, 0);
         }
+
+        stack.popPose();
     }
 
     private static void renderSailingElement(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
