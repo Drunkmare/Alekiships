@@ -172,74 +172,71 @@ public enum IngameOverlays {
         stack.popPose();
     }
 
-    private static void renderSailingElement(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-            int height) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            Player player = mc.player;
+    private static void renderSailingElement(final ForgeGui gui, final GuiGraphics graphics, final float partialTick,
+            final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
 
-            if (setup(gui, mc) && !player.isSpectator()) {
-                PoseStack stack = graphics.pose();
-                stack.pushPose();
-                if (player.getRootVehicle() instanceof SloopEntity sloopEntity) {
-                    if (sloopEntity.getControllingCompartment() != null && sloopEntity.getControllingCompartment()
-                            .hasExactlyOnePlayerPassenger() && sloopEntity.getControllingCompartment()
-                            .getFirstPassenger().equals(player)) {
+        if (mc.player == null) return;
 
-                        int offhandOffset = 3;
-                        if (!player.getOffhandItem().isEmpty()) {
-                            offhandOffset = 26;
-                        }
-                        stack.scale(1.0F, 1.0F, 1.0F);
+        if (!setup(gui, mc) || mc.player.isSpectator()) return;
 
-                        int x = width / 2;
-                        int y = height - gui.rightHeight;
+        if (!(mc.player.getRootVehicle() instanceof SloopEntity sloopEntity)) return;
 
-                        stack.translate((float) (x + 1), (float) (y + 4), 0.0F);
-                        if ((float) height % 2.0 != 0) {
-                            stack.translate(0f, 0.5f, 0.0f);
-                        }
-                        if ((float) width % 2.0 != 0) {
-                            stack.translate(0.5f, 0f, 0.0f);
-                        }
+        if (sloopEntity.getControllingCompartment() == null) return;
+        if (!sloopEntity.getControllingCompartment().hasExactlyOnePlayerPassenger()) return;
+        if (sloopEntity.getControllingCompartment().getFirstPassenger() != mc.player) return;
 
-                        int windSpeed = (int) (sloopEntity.getLocalWindAngleAndSpeed()[1] * 160);
-                        DecimalFormat df = new DecimalFormat("###.#");
-                        String displayBoatSpeed = df.format(sloopEntity.getSmoothSpeedMS() * 3.6) + " km/h";
-                        windSpeed = Mth.clamp(windSpeed, 1, 20);
-                        int ticksBetweenFrames = Mth.clamp(Math.abs(windSpeed - 20), 1, 20);
-                        int ticks = sloopEntity.tickCount / ticksBetweenFrames;
-                        int frameIndex = ticks % (32);
+        final PoseStack stack = graphics.pose();
+        stack.pushPose();
 
-                        double speedMS = sloopEntity.getSmoothSpeedMS();
-                        int speedometerIndex = Mth.clamp((int) (speedMS - 2) * 2, 0, 31);
+        stack.scale(1, 1, 1);
 
-                        int angle = Math.round((Mth.wrapDegrees(sloopEntity.getWindLocalRotation()) / 360) * 64);
-                        angle = angle + 32;
-                        if (angle == 64) {
-                            angle = 0;
-                        }
-                        // TODO config to add numerical speed instead, config for units
-                        if (mc.options.renderDebug) {
-                            graphics.drawString(mc.font, displayBoatSpeed, -134, -8 - offhandOffset,
-                                    Color.WHITE.getRGB(), true);
-                        }
-                        graphics.blit(SAILING_ICONS, -126, 3 - offhandOffset, 32 * angle, (32) * (angle / 8), 32, 32);
-                        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset + (32 - 16), 16 * speedometerIndex,
-                                (16) * (speedometerIndex / 16), 16, 16);
-                        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset + (32 - 32), 16 * frameIndex,
-                                32 + (16) * (frameIndex / 16), 16, 16);
-                    }
-                    if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
-                        if (sloopEntity.getControllingCompartment() == compartment) {
+        final int x = width / 2;
+        final int y = height - gui.rightHeight;
 
-                        }
-                    }
-                }
-
-                stack.popPose();
-            }
+        stack.translate(x + 1, y + 4, 0);
+        if (height % 2 != 0) {
+            stack.translate(0, 0.5F, 0);
         }
+        if (width % 2 != 0) {
+            stack.translate(0.5f, 0, 0);
+        }
+
+        final double smoothSpeedMS = sloopEntity.getSmoothSpeedMS();
+        final String displayBoatSpeed = new DecimalFormat("###.#").format(smoothSpeedMS * 3.6) + " km/h";
+
+        final int frameIndex;
+        {
+            final int windSpeed = Mth.clamp((int) (sloopEntity.getLocalWindAngleAndSpeed()[1] * 160), 1, 20);
+            final int ticksBetweenFrames = Mth.clamp(Math.abs(windSpeed - 20), 1, 20);
+            final int ticks = sloopEntity.tickCount / ticksBetweenFrames;
+            frameIndex = ticks % 32;
+        }
+
+        final int offhandOffset = !mc.player.getOffhandItem().isEmpty() ? 26 : 3;
+
+        // TODO config to add numerical speed instead, config for units
+        if (mc.options.renderDebug) {
+            graphics.drawString(mc.font, displayBoatSpeed, -134, -8 - offhandOffset, Color.WHITE.getRGB(), true);
+        }
+
+        final int angle;
+        {
+            int deferredAngle = Math.round((Mth.wrapDegrees(sloopEntity.getWindLocalRotation()) / 360) * 64) + 32;
+            if (deferredAngle == 64) {
+                deferredAngle = 0;
+            }
+            angle = deferredAngle;
+        }
+
+        final int speedometerIndex = Mth.clamp((int) (smoothSpeedMS - 2) * 2, 0, 31);
+
+        graphics.blit(SAILING_ICONS, -126, 3 - offhandOffset, 32 * angle, 32 * (angle / 8), 32, 32);
+        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset + 32 - 16, 16 * speedometerIndex,
+                16 * (speedometerIndex / 16), 16, 16);
+        graphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset, 16 * frameIndex,
+                32 + 16 * (frameIndex / 16), 16, 16);
+        stack.popPose();
     }
 
     private static void renderCompartmentStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
