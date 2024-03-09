@@ -37,11 +37,11 @@ import java.util.Locale;
 
 public enum IngameOverlays {
     COMPARTMENT_STATUS(IngameOverlays::renderCompartmentStatus),
+    VEHICLE_STATUS(IngameOverlays::renderVehicleStatus),
     PASSENGER_STATUS(IngameOverlays::renderPassengerStatus),
     SAILING_ELEMENT(IngameOverlays::renderSailingElement),
     SLOOP_CONSTRUCTION(IngameOverlays::renderSloopConstructionStatus),
     CANNON_LOAD_STATE(IngameOverlays::renderCannonLoadState);
-
 
     public static final ResourceLocation COMPARTMENT_ICONS = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/gui/icons/compartment_icons.png");
@@ -62,6 +62,7 @@ public enum IngameOverlays {
 
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         above(event, VanillaGuiOverlay.CROSSHAIR, COMPARTMENT_STATUS);
+        above(event, VanillaGuiOverlay.CROSSHAIR, VEHICLE_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, PASSENGER_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, SLOOP_CONSTRUCTION);
         above(event, VanillaGuiOverlay.CROSSHAIR, CANNON_LOAD_STATE);
@@ -239,120 +240,144 @@ public enum IngameOverlays {
         stack.popPose();
     }
 
-    private static void renderCompartmentStatus(ForgeGui gui, GuiGraphics graphics, float partialTick, int width,
-            int height) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            Player player = mc.player;
-            if (setup(gui, mc) && !player.isSpectator() && mc.options.getCameraType().isFirstPerson()) {
-                net.minecraft.world.entity.Entity entity = AlekiShipsHelper.getAnyEntityAtCrosshair(player, 4f);
-                PoseStack stack = graphics.pose();
+    private static void renderCompartmentStatus(final ForgeGui gui, final GuiGraphics graphics, final float partialTick,
+            final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
 
-                stack.pushPose();
+        if (mc.player == null) return;
 
-                if (entity instanceof AbstractAlekiBoatEntity || entity instanceof VehicleCollisionEntity) {
-                    AbstractAlekiBoatEntity vehicle;
-                    if (entity instanceof VehicleCollisionEntity collider && collider.getRootVehicle() instanceof AbstractAlekiBoatEntity) {
-                        entity = collider.getRootVehicle();
+        final Player player = mc.player;
+
+        if (!setup(gui, mc) || player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
+
+        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+
+        final PoseStack stack = graphics.pose();
+
+        stack.pushPose();
+
+        stack.scale(1, 1, 1);
+        stack.translate(width / 2F - 5 - 12, height / 2F - 5, 0);
+
+        if (height % 2 != 0) {
+            stack.translate(0, 0.5F, 0);
+        }
+
+        if (width % 2 != 0) {
+            stack.translate(0.5F, 0, 0);
+        }
+
+        if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity && emptyCompartmentEntity.isPassenger() && !emptyCompartmentEntity.isVehicle()) {
+            if (emptyCompartmentEntity.getTrueVehicle() != null && emptyCompartmentEntity.getTrueVehicle()
+                    .getPilotVehiclePartAsEntity() != null) {
+                if (emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity().getFirstPassenger()
+                        .is(emptyCompartmentEntity)) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HELM), 0, 9, 9);
+                    if (emptyCompartmentEntity.getTrueVehicle()
+                            .pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
+                            player.getUsedItemHand()).is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
+                        graphics.blit(COMPARTMENT_ICONS, -12, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                     }
-                    vehicle = (AbstractAlekiBoatEntity) entity;
-                    if (vehicle.isTiny()) {
-                        stack.popPose();
-                        return;
-                    }
-                    for (ItemStack item : player.getHandSlots()) {
-                        if (item.is(vehicle.getDropItem())) {
-                            stack = setupCompartmentStack(stack, width, height);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HAMMER), 0, 9, 9);
-                            break;
-                        }
-                        if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
-                            stack = setupCompartmentStack(stack, width, height);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
-                            break;
-                        }
-                    }
+
+                } else if (player.getItemInHand(player.getUsedItemHand())
+                        .is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                } else if (player.getItemInHand(player.getUsedItemHand())
+                        .is(AlekiShipsItems.CANNON.get()) && !emptyCompartmentEntity.canAddOnlyBLocks() && emptyCompartmentEntity.canAddCannons() && emptyCompartmentEntity.getRootVehicle() instanceof SloopEntity) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
+                } else if (!emptyCompartmentEntity.isVehicle() && !emptyCompartmentEntity.canAddOnlyBLocks()) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SEAT), 0, 9, 9);
+                } else if (!emptyCompartmentEntity.isVehicle() && emptyCompartmentEntity.canAddOnlyBLocks()) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
                 }
-
-                if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity && emptyCompartmentEntity.isPassenger() && !emptyCompartmentEntity.isVehicle()) {
-                    stack = setupCompartmentStack(stack, width, height);
-                    if (emptyCompartmentEntity.getTrueVehicle() != null && emptyCompartmentEntity.getTrueVehicle()
-                            .getPilotVehiclePartAsEntity() != null) {
-                        if (emptyCompartmentEntity.getTrueVehicle().getPilotVehiclePartAsEntity().getFirstPassenger()
-                                .is(emptyCompartmentEntity)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HELM), 0, 9, 9);
-                            if (emptyCompartmentEntity.getTrueVehicle()
-                                    .pilotCompartmentAcceptsNonPlayers() && player.getItemInHand(
-                                    player.getUsedItemHand()).is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
-                                graphics.blit(COMPARTMENT_ICONS, -12, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
-                            }
-
-                        } else if (player.getItemInHand(player.getUsedItemHand())
-                                .is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
-                        } else if (player.getItemInHand(player.getUsedItemHand())
-                                .is(AlekiShipsItems.CANNON.get()) && !emptyCompartmentEntity.canAddOnlyBLocks() && emptyCompartmentEntity.canAddCannons() && emptyCompartmentEntity.getRootVehicle() instanceof SloopEntity) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
-                        } else if (!emptyCompartmentEntity.isVehicle() && !emptyCompartmentEntity.canAddOnlyBLocks()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SEAT), 0, 9, 9);
-                        } else if (!emptyCompartmentEntity.isVehicle() && emptyCompartmentEntity.canAddOnlyBLocks()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BLOCK), 0, 9, 9);
-                        }
-                    }
-                } else if (entity instanceof VehicleCleatEntity vehicleCleatEntity && vehicleCleatEntity.isPassenger() && !vehicleCleatEntity.isLeashed()) {
-                    stack = setupCompartmentStack(stack, width, height);
-                    if (vehicleCleatEntity.getVehicle().getVehicle() != null) {
-                        graphics.blit(COMPARTMENT_ICONS, 0, 0, 54, 0, 9, 9);
-                    }
-                } else if (entity instanceof SailSwitchEntity sailSwitch && sailSwitch.isPassenger()) {
-                    stack = setupCompartmentStack(stack, width, height);
-                    boolean flag = false;
-                    for (ItemStack item : player.getHandSlots()) {
-                        if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (sailSwitch.getVehicle().getVehicle() != null && !flag) {
-                        if (sailSwitch.getSwitched()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
-                        } else {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
-                        }
-
-                    }
-                } else if (entity instanceof WindlassSwitchEntity windlassSwitch && windlassSwitch.isPassenger()) {
-                    stack = setupCompartmentStack(stack, width, height);
-                    if (windlassSwitch.getVehicle().getVehicle() != null) {
-                        if (!windlassSwitch.getSwitched()) {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
-                        } else {
-                            graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
-                            graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
-                        }
-
-                    }
+            }
+        } else if (entity instanceof VehicleCleatEntity vehicleCleatEntity && vehicleCleatEntity.isPassenger() && !vehicleCleatEntity.isLeashed()) {
+            if (vehicleCleatEntity.getVehicle().getVehicle() != null) {
+                graphics.blit(COMPARTMENT_ICONS, 0, 0, 54, 0, 9, 9);
+            }
+        } else if (entity instanceof SailSwitchEntity sailSwitch && sailSwitch.isPassenger()) {
+            boolean flag = false;
+            for (ItemStack item : player.getHandSlots()) {
+                if (item.is(Tags.Items.DYES) || item.is(Items.WATER_BUCKET)) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
+                    flag = true;
+                    break;
                 }
+            }
 
-                stack.popPose();
+            if (sailSwitch.getVehicle().getVehicle() != null && !flag) {
+                if (sailSwitch.getSwitched()) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
+                    graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
+                } else {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.SAIL), 0, 9, 9);
+                    graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
+                }
+            }
+        } else if (entity instanceof WindlassSwitchEntity windlassSwitch && windlassSwitch.isPassenger()) {
+            if (windlassSwitch.getVehicle().getVehicle() != null) {
+                if (!windlassSwitch.getSwitched()) {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
+                    graphics.blit(COMPARTMENT_ICONS, 0, 10, CompIcon.iconOffset(CompIcon.ARROW_DOWN), 0, 9, 9);
+                } else {
+                    graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.ANCHOR), 0, 9, 9);
+                    graphics.blit(COMPARTMENT_ICONS, 0, -10, CompIcon.iconOffset(CompIcon.ARROW_UP), 0, 9, 9);
+                }
             }
         }
+
+        stack.popPose();
     }
 
-    public static PoseStack setupCompartmentStack(PoseStack stack, int width, int height) {
-        stack.scale(1.0F, 1.0F, 1.0F);
-        stack.translate((float) width / 2.0F - 5f - 12f, (float) height / 2.0F - 5F, 0.0F);
-        if ((float) height % 2.0 != 0) {
-            stack.translate(0f, 0.5f, 0.0f);
+    private static void renderVehicleStatus(final ForgeGui gui, final GuiGraphics graphics, final float partialTick,
+            final int width, final int height) {
+        final Minecraft mc = gui.getMinecraft();
+
+        if (mc.player == null) return;
+
+        final Player player = mc.player;
+
+        if (!setup(gui, mc) || player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
+
+        final AbstractAlekiBoatEntity vehicle;
+        {
+            final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+
+            if (entity instanceof AbstractAlekiBoatEntity) {
+                vehicle = (AbstractAlekiBoatEntity) entity;
+            } else if (entity instanceof VehicleCollisionEntity collisionEntity && collisionEntity.getRootVehicle() instanceof AbstractAlekiBoatEntity e) {
+                vehicle = e;
+            } else return;
         }
-        if ((float) width % 2.0 != 0) {
-            stack.translate(0.5f, 0f, 0.0f);
+
+        if (vehicle.isTiny()) return;
+
+        final PoseStack stack = graphics.pose();
+
+        stack.pushPose();
+
+        stack.scale(1, 1, 1);
+        stack.translate(width / 2F - 5 - 12, height / 2F - 5, 0);
+
+        if (height % 2 != 0) {
+            stack.translate(0, 0.5F, 0);
         }
-        return stack;
+
+        if (width % 2 != 0) {
+            stack.translate(0.5F, 0, 0);
+        }
+
+        for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.is(vehicle.getDropItem())) {
+                graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.HAMMER), 0, 9, 9);
+                return;
+            }
+
+            if (itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) {
+                graphics.blit(COMPARTMENT_ICONS, 0, 0, CompIcon.iconOffset(CompIcon.BRUSH), 0, 9, 9);
+                return;
+            }
+        }
     }
 
     public static boolean setup(ForgeGui gui, Minecraft minecraft) {
