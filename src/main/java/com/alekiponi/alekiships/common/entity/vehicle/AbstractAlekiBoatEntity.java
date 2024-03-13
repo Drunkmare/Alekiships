@@ -4,7 +4,6 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import net.dries007.tfc.util.climate.Climate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -66,17 +65,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected double oldWindSpeed;
 
-    protected int windLerpTicks;
-
-    protected Vec3 oldPosition;
+    protected int windLerpTicks = 0;
 
     public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
         super(entityType, level);
-        Vec2 windVector = Climate.getWindVector(this.level(), this.blockPosition());
-        this.setWindVector(windVector);
-        this.tickUpdateWind(false);
-        windLerpTicks = 0;
-        oldPosition = this.getPosition(0);
     }
 
     protected void defineSynchedData() {
@@ -278,7 +270,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickUpdateWind(boolean waitForWindUpdateTick) {
         if (this.everyNthTickUnique(WIND_UPDATE_TICKS) || !waitForWindUpdateTick) {
-            Vec2 windVector = Climate.getWindVector(this.level(), this.blockPosition());
+            Vec2 windVector = this.getWindVectorAt(this.level(), this.blockPosition());
             //windVector = new Vec2(0.05f,0.05f);
             if (windVector.length() == 0) {
                 windVector = new Vec2(-0.03f, 0f);
@@ -294,6 +286,18 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             updateLocalWindAngleAndSpeed();
         }
 
+    }
+
+    /**
+     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
+     * handling different wind models like the one found in TFC
+     *
+     * @param level The level
+     * @param blockPos The block pos at which the wind is being queried
+     * @return A Vec2 containing the winds x (x) and z (y) components.
+     */
+    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
+        return new Vec2(0.25F, 0.25F);
     }
 
     protected void tickFloatBoat() {
