@@ -157,8 +157,8 @@ public final class AlekiShipsEntities {
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
     public static final RegistryObject<EntityType<CannonballEntity>> CANNONBALL_ENTITY = register("cannonball",
-            EntityType.Builder.of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).setTrackingRange(32)
-                    .clientTrackingRange(32).noSummon());
+            EntityType.Builder.<CannonballEntity>of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
+                    .setTrackingRange(32).clientTrackingRange(32).noSummon());
 
     public static final RegistryObject<EntityType<CannonEntity>> CANNON_ENTITY = register("cannon",
             EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F));

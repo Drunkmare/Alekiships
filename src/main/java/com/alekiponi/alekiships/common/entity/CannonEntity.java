@@ -1,10 +1,7 @@
 package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +15,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,10 +24,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Random;
+import javax.annotation.Nullable;
 
 public class CannonEntity extends Entity {
     public static final byte EVENT_LIGHT = 10;
@@ -50,6 +47,8 @@ public class CannonEntity extends Entity {
     protected double lerpYRot;
     protected double lerpXRot;
     private int fuse = -1;
+    @Nullable
+    private LivingEntity igniter;
 
     public CannonEntity(final EntityType<? extends CannonEntity> entityType, final Level level) {
         super(entityType, level);
@@ -124,11 +123,12 @@ public class CannonEntity extends Entity {
 
         if (insertResult.consumesAction()) return insertResult;
 
-        if (heldItem.is(Items.FLINT_AND_STEEL)) {
+        if (this.isLoaded() && heldItem.is(Items.FLINT_AND_STEEL)) {
             // Already lit
             if (this.isLit()) return InteractionResult.PASS;
 
-            this.light();
+            this.light(player);
+            player.swing(hand);
             heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
             return InteractionResult.CONSUME;
         }
@@ -165,10 +165,12 @@ public class CannonEntity extends Entity {
     /**
      * Lights the cannon
      */
-    public void light() {
+    public void light(@Nullable final LivingEntity igniter) {
         if (this.isInWater()) {
             return;
         }
+
+        this.igniter = igniter;
 
         this.fuse = 40;
         if (!this.level().isClientSide()) {
@@ -185,54 +187,21 @@ public class CannonEntity extends Entity {
     public void fire() {
         this.fuse = -1;
         this.setCannonball(ItemStack.EMPTY);
-
-        final CannonballEntity cannonball = AlekiShipsEntities.CANNONBALL_ENTITY.get().create(this.level());
-        assert cannonball != null;
-        cannonball.setPos(this.getX(), this.getY(), this.getZ());
-
-        cannonball.setDeltaMovement(Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 3.0,
-                Mth.sin(-this.getXRot() * ((float) Math.PI / 180F)) * 3.0,
-                Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 3.0);
-
-        if (this.isPassenger() && this.getVehicle() instanceof EmptyCompartmentEntity compartment) {
-            cannonball.setDeltaMovement(
-                    cannonball.getDeltaMovement().add(compartment.getRootVehicle().getDeltaMovement()));
-        }
-
-        //cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(0,0.3,0));
-
-        //TODO config for terrain damage
         this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
-        Random r = new Random();
-        Vec3 particleMovement = cannonball.getDeltaMovement().multiply(0.3, 0.3, 0.3);
-        for (int i = 0; i < 4; i++) {
-            this.level().addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                    this.getX() + particleMovement.x + (r.nextDouble() - 0.5) * 0.5,
-                    this.getY() + 0.5 + particleMovement.y + (r.nextDouble() - 0.5) * 0.5,
-                    this.getZ() + particleMovement.z + (r.nextDouble() - 0.5) * 0.5, particleMovement.x * 0.05, 0.05D,
-                    particleMovement.z * 0.05);
+
+        final CannonballEntity cannonball = new CannonballEntity(this.getX(), this.getY(), this.getZ(), 0, -0.1, 0,
+                this.level());
+        cannonball.setOwner(this.igniter);
+        cannonball.setXRot(this.getXRot());
+        cannonball.setYRot(this.getYRot());
+
+        cannonball.setDeltaMovement(Mth.sin(this.getYRot() * ((float) Math.PI / 180)) * 3,
+                Mth.sin(-this.getXRot() * ((float) Math.PI / 180)) * 3,
+                Mth.cos(-this.getYRot() * ((float) Math.PI / 180)) * 3);
+
+        if (this.isPassenger()) {
+            cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(this.getRootVehicle().getDeltaMovement()));
         }
-
-
-        Vec3 rayCastStep = cannonball.getDeltaMovement().multiply(0.33, 0.33, 0.33);
-        Vec3 startPos = this.getPosition(0);
-
-        for (int i = 0; i < 8; i++) {
-            Vec3i currentPos = new Vec3i(Mth.floor(startPos.add(rayCastStep).x), Mth.floor(startPos.add(rayCastStep).y),
-                    Mth.floor((startPos.add(rayCastStep).z)));
-            BlockPos blockPos = new BlockPos(currentPos);
-            cannonball.setPos(startPos.add(rayCastStep));
-            if (!this.level().getBlockState(blockPos).isAir() && blockPos != this.blockPosition() && this.level()
-                    .getBlockState(blockPos).canBeReplaced(Fluids.WATER)) {
-                cannonball.discard();
-                cannonball.explode(3);
-                break;
-            }
-
-            rayCastStep = rayCastStep.add(rayCastStep);
-        }
-
-        cannonball.setPos(this.getPosition(0).add(cannonball.getDeltaMovement()).add(0, 0.3, 0));
 
         this.level().addFreshEntity(cannonball);
         Vec3 movement = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
@@ -310,7 +279,7 @@ public class CannonEntity extends Entity {
     @Override
     public void handleEntityEvent(final byte eventID) {
         if (eventID == EVENT_LIGHT) {
-            this.light();
+            this.light(null);
         } else {
             super.handleEntityEvent(eventID);
         }
