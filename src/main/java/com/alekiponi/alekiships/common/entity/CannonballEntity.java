@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.alekiponi.alekiships.util.CannonballExplosion;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public class CannonballEntity extends AbstractHurtingProjectile {
 
@@ -31,8 +33,17 @@ public class CannonballEntity extends AbstractHurtingProjectile {
     }
 
     protected void explode(final float radius) {
-        this.level()
-                .explode(this, this.getX(), this.getY(0.0625D), this.getZ(), radius, Level.ExplosionInteraction.TNT);
+        final Level level = this.level();
+
+        final Explosion.BlockInteraction blockInteraction = level.getGameRules().getBoolean(
+                GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
+        final CannonballExplosion explosion = new CannonballExplosion(level, this, null, null, this.getX(),
+                this.getY(0.0625D), this.getZ(), radius, false, blockInteraction);
+
+        if (ForgeEventFactory.onExplosionStart(level, explosion)) return;
+
+        explosion.explode();
+        explosion.finalizeExplosion(true);
     }
 
     @Override
