@@ -11,7 +11,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.flag.FeatureFlag;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -122,19 +121,8 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      * factory and an item stack predicate
      */
     @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public static class Builder<T extends AbstractCompartmentEntity> {
-        private final EntityType.EntityFactory<T> factory;
-        private final MobCategory category;
+    public static class Builder<T extends AbstractCompartmentEntity> extends EntityType.Builder<T> {
         private final CompartmentFactory<T> compartmentFactory;
-        private ImmutableSet<Block> immuneTo = ImmutableSet.of();
-        private boolean serialize = true;
-        private boolean summon = true;
-        private boolean fireImmune;
-        private boolean canSpawnFarFromPlayer;
-        private int clientTrackingRange = 5;
-        private int updateInterval = 3;
-        private EntityDimensions dimensions = EntityDimensions.scalable(0.6F, 1.8F);
-        private FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
         private Predicate<EntityType<?>> velocityUpdateSupplier = entityType -> true;
         private ToIntFunction<EntityType<?>> trackingRangeSupplier = entityType -> entityType.clientTrackingRange;
         private ToIntFunction<EntityType<?>> updateIntervalSupplier = entityType -> entityType.updateInterval;
@@ -143,17 +131,15 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
 
         private Builder(final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory,
                 final MobCategory mobCategory) {
-            this.factory = entityFactory;
+            super(entityFactory, mobCategory);
             this.compartmentFactory = compartmentFactory;
-            this.category = mobCategory;
-            this.canSpawnFarFromPlayer = mobCategory == MobCategory.CREATURE || mobCategory == MobCategory.MISC;
         }
 
         /**
          * Overload for {@link MobCategory#MISC}
          */
-        public static <T extends AbstractCompartmentEntity> Builder<T> of(
-                final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory) {
+        public static <T extends AbstractCompartmentEntity> Builder<T> of(final EntityFactory<T> entityFactory,
+                final CompartmentFactory<T> compartmentFactory) {
             return new Builder<>(entityFactory, compartmentFactory, MobCategory.MISC);
         }
 
@@ -166,94 +152,99 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
          * Overload for {@link MobCategory#MISC}
          */
         public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
-                final EntityType.EntityFactory<T> entityFactory) {
+                final EntityFactory<T> entityFactory) {
             return createBasic(entityFactory, MobCategory.MISC);
         }
 
         /**
          * Creates a compartment with an empty {@link CompartmentFactory}
          */
-        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
-                final EntityType.EntityFactory<T> entityFactory, final MobCategory mobCategory) {
+        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(final EntityFactory<T> entityFactory,
+                final MobCategory mobCategory) {
             //noinspection DataFlowIssue
             return of(entityFactory, (entityType, level, itemStack) -> null, mobCategory);
         }
 
-        public static <T extends AbstractCompartmentEntity> Builder<T> createNothing(final MobCategory mobCategory) {
+        /**
+         * This is named stupid because type erasure won't let this shadow {@link EntityType.Builder#createNothing(MobCategory)}
+         * Honestly this method probably isn't ever even going to get used, but I'd hate for somebody to need it
+         */
+        public static <T extends AbstractCompartmentEntity> Builder<T> createNothing2(final MobCategory mobCategory) {
             //noinspection DataFlowIssue
             return of((entityType, level) -> null, (entityType, level, itemStack) -> null, mobCategory);
         }
 
-        public Builder<T> sized(final float width, final float height) {
-            this.dimensions = EntityDimensions.scalable(width, height);
-            return this;
+        @Override
+        public Builder<T> sized(final float pWidth, final float pHeight) {
+            return (Builder<T>) super.sized(pWidth, pHeight);
         }
 
+        @Override
         public Builder<T> noSummon() {
-            this.summon = false;
-            return this;
+            return (Builder<T>) super.noSummon();
         }
 
+        @Override
         public Builder<T> noSave() {
-            this.serialize = false;
-            return this;
+            return (Builder<T>) super.noSave();
         }
 
+        @Override
         public Builder<T> fireImmune() {
-            this.fireImmune = true;
-            return this;
+            return (Builder<T>) super.fireImmune();
         }
 
-        public Builder<T> immuneTo(final Block... blocks) {
-            this.immuneTo = ImmutableSet.copyOf(blocks);
-            return this;
+        @Override
+        public Builder<T> immuneTo(final Block... pBlocks) {
+            return (Builder<T>) super.immuneTo(pBlocks);
         }
 
+        @Override
         public Builder<T> canSpawnFarFromPlayer() {
-            this.canSpawnFarFromPlayer = true;
-            return this;
+            return (Builder<T>) super.canSpawnFarFromPlayer();
         }
 
-        public Builder<T> clientTrackingRange(final int clientTrackingRange) {
-            this.clientTrackingRange = clientTrackingRange;
-            return this;
+        @Override
+        public Builder<T> clientTrackingRange(final int pClientTrackingRange) {
+            return (Builder<T>) super.clientTrackingRange(pClientTrackingRange);
         }
 
-        public Builder<T> updateInterval(final int updateInterval) {
-            this.updateInterval = updateInterval;
-            return this;
+        @Override
+        public Builder<T> updateInterval(final int pUpdateInterval) {
+            return (Builder<T>) super.updateInterval(pUpdateInterval);
         }
 
-        public Builder<T> requiredFeatures(final FeatureFlag... requiredFeatures) {
-            this.requiredFeatures = FeatureFlags.REGISTRY.subset(requiredFeatures);
-            return this;
+        @Override
+        public Builder<T> requiredFeatures(final FeatureFlag... pRequiredFeatures) {
+            return (Builder<T>) super.requiredFeatures(pRequiredFeatures);
         }
 
+        @Override
         public Builder<T> setUpdateInterval(final int interval) {
             this.updateIntervalSupplier = t -> interval;
             return this;
         }
 
+        @Override
         public Builder<T> setTrackingRange(final int range) {
             this.trackingRangeSupplier = t -> range;
             return this;
         }
 
+        @Override
         public Builder<T> setShouldReceiveVelocityUpdates(final boolean value) {
             this.velocityUpdateSupplier = t -> value;
             return this;
         }
 
-        /**
-         * By default, entities are spawned clientside via {@link EntityType#create(Level)}}.
-         * If you need finer control over the spawning process, use this to get read access to the spawn packet.
-         */
+        @Override
         public Builder<T> setCustomClientFactory(
                 final BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory) {
             this.customClientFactory = customClientFactory;
             return this;
         }
 
+        @Override
         public CompartmentType<T> build(final String key) {
             if (this.serialize) {
                 Util.fetchChoiceType(References.ENTITY_TREE, key);
