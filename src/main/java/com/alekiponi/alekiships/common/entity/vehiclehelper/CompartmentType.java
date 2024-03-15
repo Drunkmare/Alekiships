@@ -20,22 +20,22 @@ import oshi.util.tuples.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 /**
- * Besides {@link #register(CompartmentType, Predicate)} and {@link #fromStack(ItemStack)} This is essentially to keep the vanilla
+ * Besides {@link #register(Supplier, Predicate)} and {@link #fromStack(ItemStack)} This is essentially to keep the vanilla
  * {@link EntityType#create(Level)} api but with an additional ItemStack parameter to allow for constructor logic based
  * on the ItemStack. For example using the stack NBT to initialize the compartment
  *
  * @param <T> The type of compartment
  */
 public class CompartmentType<T extends AbstractCompartmentEntity> extends EntityType<T> {
-    private static final List<Pair<CompartmentType<? extends AbstractCompartmentEntity>, Predicate<ItemStack>>> COMPARTMENT_TYPES = new ArrayList<>();
+    private static final ArrayList<Pair<Supplier<? extends CompartmentType<? extends AbstractCompartmentEntity>>, Predicate<ItemStack>>> COMPARTMENT_TYPES = new ArrayList<>();
     private final CompartmentFactory<T> factory;
 
     @SuppressWarnings("unused")
@@ -69,12 +69,20 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      * Registers a {@link CompartmentType} to be automatically picked and constructed when empty compartments are
      * right-clicked with an {@link ItemStack} matching the CompartmentTypes ItemStack predicate.
      *
-     * @param compartmentType The compartment type to register
-     * @param predicate       The ItemStack predicate that determines if the compartment type should be chosen
-     * @apiNote This is order dependent so the predicate should be as exact as possible
+     * @param compartmentTypeSupplier A supplier for the compartment type
+     * @param predicate               The ItemStack predicate that determines if the compartment type should be chosen
+     * @return The same supplier which was passed in to allow for simplification of registration code.
+     * @apiNote The predicate should be as exact as possible.
+     * <p>
+     * You may register the same {@link CompartmentType} multiple times. This can be useful if you have for example a
+     * custom furnace that only has a different texture/model as {@link AlekiShipsEntities#FURNACE_COMPARTMENT_ENTITY}
+     * will display any block. Custom behavior will however require a custom compartment entity.
      */
-    public static void register(final CompartmentType<?> compartmentType, final Predicate<ItemStack> predicate) {
-        COMPARTMENT_TYPES.add(new Pair<>(Objects.requireNonNull(compartmentType), Objects.requireNonNull(predicate)));
+    public static <S extends Supplier<? extends CompartmentType<?>>> S register(final S compartmentTypeSupplier,
+            final Predicate<ItemStack> predicate) {
+        COMPARTMENT_TYPES.add(
+                new Pair<>(Objects.requireNonNull(compartmentTypeSupplier), Objects.requireNonNull(predicate)));
+        return compartmentTypeSupplier;
     }
 
     /**
@@ -87,8 +95,8 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
     public static Optional<CompartmentType<?>> fromStack(final ItemStack itemStack) {
         if (!itemStack.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) return Optional.empty();
 
-        for (final Pair<CompartmentType<? extends AbstractCompartmentEntity>, Predicate<ItemStack>> predicatePair : COMPARTMENT_TYPES) {
-            if (predicatePair.getB().test(itemStack)) return Optional.of(predicatePair.getA());
+        for (final var predicatePair : COMPARTMENT_TYPES) {
+            if (predicatePair.getB().test(itemStack)) return Optional.of(predicatePair.getA().get());
         }
 
         if (itemStack.getItem() instanceof BlockItem) {
