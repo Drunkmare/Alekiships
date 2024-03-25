@@ -60,14 +60,14 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override

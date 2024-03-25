@@ -419,7 +419,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         this.loadCommonNBTData(compoundTag);
 
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override
@@ -428,7 +428,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.saveCommonNBTData(compoundTag);
 
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override

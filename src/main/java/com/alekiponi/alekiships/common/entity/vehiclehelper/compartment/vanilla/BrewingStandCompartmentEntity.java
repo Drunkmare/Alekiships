@@ -288,14 +288,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         super.readAdditionalSaveData(compoundTag);
         this.loadCommonNBTData(compoundTag);
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         this.saveCommonNBTData(compoundTag);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
