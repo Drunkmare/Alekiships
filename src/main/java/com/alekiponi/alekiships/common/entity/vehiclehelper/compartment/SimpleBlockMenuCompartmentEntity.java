@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -28,9 +27,9 @@ import java.util.function.BiFunction;
  */
 public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEntity implements SimpleBlockMenuCompartment, MenuConstructor {
 
-    public SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
-            final Level level) {
-        super(entityType, level);
+    public SimpleBlockMenuCompartmentEntity(
+            final CompartmentType<? extends SimpleBlockMenuCompartmentEntity> compartmentType, final Level level) {
+        super(compartmentType, level);
     }
 
     public SimpleBlockMenuCompartmentEntity(

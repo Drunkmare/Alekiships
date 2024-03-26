@@ -17,7 +17,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.Containers;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.BrewingStandMenu;
@@ -88,14 +87,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     @Nullable
     private Item ingredient;
 
-    public BrewingStandCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level, SLOT_COUNT);
+        super(compartmentType, level, SLOT_COUNT);
     }
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        super(entityType, level, SLOT_COUNT, itemStack);
+        super(compartmentType, level, SLOT_COUNT, itemStack);
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());

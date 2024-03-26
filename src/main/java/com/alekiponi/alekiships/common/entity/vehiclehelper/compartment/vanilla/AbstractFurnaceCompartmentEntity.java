@@ -27,7 +27,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.StackedContents;
@@ -119,17 +118,18 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private LazyOptional<? extends IItemHandler>[] directionalHandlers = SidedInvWrapper.create(this, Direction.UP,
             Direction.DOWN, Direction.NORTH);
 
-    public AbstractFurnaceCompartmentEntity(final EntityType<? extends AbstractFurnaceCompartmentEntity> entityType,
-            final Level level, final RecipeType<? extends AbstractCookingRecipe> recipeType) {
-        super(entityType, level, 3);
+    public AbstractFurnaceCompartmentEntity(
+            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
+            final RecipeType<? extends AbstractCookingRecipe> recipeType) {
+        super(compartmentType, level, 3);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
     }
 
     public AbstractFurnaceCompartmentEntity(
-            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> entityType, final Level level,
+            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
             final RecipeType<? extends AbstractCookingRecipe> recipeType, final ItemStack itemStack) {
-        super(entityType, level, 3, itemStack);
+        super(compartmentType, level, 3, itemStack);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
 

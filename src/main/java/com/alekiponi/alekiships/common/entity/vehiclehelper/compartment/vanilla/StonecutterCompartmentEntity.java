@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,14 +18,14 @@ public class StonecutterCompartmentEntity extends SimpleBlockMenuCompartmentEnti
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.stonecutter");
 
-    public StonecutterCompartmentEntity(final EntityType<? extends StonecutterCompartmentEntity> entityType,
+    public StonecutterCompartmentEntity(final CompartmentType<? extends StonecutterCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level);
+        super(compartmentType, level);
     }
 
-    public StonecutterCompartmentEntity(final CompartmentType<? extends StonecutterCompartmentEntity> entityType,
+    public StonecutterCompartmentEntity(final CompartmentType<? extends StonecutterCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        super(entityType, level, itemStack);
+        super(compartmentType, level, itemStack);
     }
 
     @Override

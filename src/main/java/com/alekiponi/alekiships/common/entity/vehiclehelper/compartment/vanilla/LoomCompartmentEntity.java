@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,13 +18,14 @@ public class LoomCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.loom");
 
-    public LoomCompartmentEntity(final EntityType<? extends LoomCompartmentEntity> entityType, final Level level) {
-        super(entityType, level);
+    public LoomCompartmentEntity(final CompartmentType<? extends LoomCompartmentEntity> compartmentType,
+            final Level level) {
+        super(compartmentType, level);
     }
 
-    public LoomCompartmentEntity(final CompartmentType<? extends LoomCompartmentEntity> entityType, final Level level,
-            final ItemStack itemStack) {
-        super(entityType, level, itemStack);
+    public LoomCompartmentEntity(final CompartmentType<? extends LoomCompartmentEntity> compartmentType,
+            final Level level, final ItemStack itemStack) {
+        super(compartmentType, level, itemStack);
     }
 
     @Override

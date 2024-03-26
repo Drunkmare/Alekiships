@@ -70,14 +70,14 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     @Nullable
     private DyeColor color;
 
-    public ShulkerBoxCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level, 27);
+        super(compartmentType, level, 27);
     }
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        super(entityType, level, 27, itemStack);
+        super(compartmentType, level, 27, itemStack);
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             if (blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {

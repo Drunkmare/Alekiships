@@ -12,7 +12,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -39,16 +38,16 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
 
     private LazyOptional<?> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
 
-    public ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    public ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final int slotCount) {
-        super(entityType, level);
+        super(compartmentType, level);
         this.slotCount = slotCount;
         this.itemStacks = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     }
 
-    public ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
+    public ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final int slotCount, final ItemStack itemStack) {
-        this(entityType, level, slotCount);
+        this(compartmentType, level, slotCount);
         if (itemStack.hasCustomHoverName()) {
             this.setCustomName(itemStack.getHoverName());
         }

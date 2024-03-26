@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -63,14 +62,15 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         }
     };
 
-    public EnderChestCompartmentEntity(final EntityType<? extends EnderChestCompartmentEntity> entityType,
+    public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level);
+        super(compartmentType, level);
     }
 
-    public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> entityType,
+    //TODO make this constructor unnecessary
+    public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> compartmentType,
             final Level level, final ItemStack ignoredItemStack) {
-        this(entityType, level);
+        this(compartmentType, level);
     }
 
     @Override

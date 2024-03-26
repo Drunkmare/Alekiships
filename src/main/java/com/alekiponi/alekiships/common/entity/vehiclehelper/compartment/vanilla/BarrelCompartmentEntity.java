@@ -17,7 +17,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -63,14 +62,15 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
         }
     };
 
-    public BarrelCompartmentEntity(final EntityType<? extends BarrelCompartmentEntity> entityType, final Level level) {
-        super(entityType, level, 27);
+    public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
+            final Level level) {
+        super(compartmentType, level, 27);
     }
 
 
-    public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> entityType,
+    public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        this(entityType, level);
+        this(compartmentType, level);
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             this.setDisplayBlockState(
