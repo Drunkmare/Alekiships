@@ -67,12 +67,6 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         super(compartmentType, level);
     }
 
-    //TODO make this constructor unnecessary
-    public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> compartmentType,
-            final Level level, final ItemStack ignoredItemStack) {
-        this(compartmentType, level);
-    }
-
     @Override
     public void tick() {
         super.tick();

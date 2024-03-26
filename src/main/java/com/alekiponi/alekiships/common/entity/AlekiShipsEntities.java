@@ -64,7 +64,7 @@ public final class AlekiShipsEntities {
 
     public static final RegistryObject<CompartmentType<EnderChestCompartmentEntity>> ENDER_CHEST_COMPARTMENT_ENTITY = CompartmentType.register(
             registerCompartment("compartment_ender_chest",
-                    CompartmentType.Builder.of(EnderChestCompartmentEntity::new, EnderChestCompartmentEntity::new)),
+                    CompartmentType.Builder.createBasic(EnderChestCompartmentEntity::new)),
             itemStack -> itemStack.is(Items.ENDER_CHEST));
 
     public static final RegistryObject<CompartmentType<ShulkerBoxCompartmentEntity>> SHULKER_BOX_COMPARTMENT_ENTITY = CompartmentType.register(
