@@ -36,33 +36,37 @@ import java.util.function.ToIntFunction;
  */
 public class CompartmentType<T extends AbstractCompartmentEntity> extends EntityType<T> {
     private static final ArrayList<Pair<Supplier<? extends CompartmentType<? extends AbstractCompartmentEntity>>, Predicate<ItemStack>>> COMPARTMENT_TYPES = new ArrayList<>();
-    private final CompartmentFactory<T> factory;
+    private final StackCompartmentFactory<T> stackCompartmentFactory;
+    private final BasicCompartmentFactory<T> basicCompartmentFactory;
 
     @SuppressWarnings("unused")
-    public CompartmentType(final EntityFactory<T> entityFactory, final MobCategory mobCategory, final boolean serialize,
-            final boolean summon, final boolean fireImmune, final boolean canSpawnFarFromPlayer,
-            final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions, final int clientTrackingRange,
-            final int updateInterval, final FeatureFlagSet requiredFeatures,
-            final CompartmentFactory<T> compartmentFactory) {
-        super(entityFactory, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
+    public CompartmentType(final BasicCompartmentFactory<T> basicCompartmentFactory, final MobCategory mobCategory,
+            final boolean serialize, final boolean summon, final boolean fireImmune,
+            final boolean canSpawnFarFromPlayer, final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions,
+            final int clientTrackingRange, final int updateInterval, final FeatureFlagSet requiredFeatures,
+            final StackCompartmentFactory<T> stackCompartmentFactory) {
+        //noinspection DataFlowIssue    We entirely replace the vanilla factory
+        super(null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
                 clientTrackingRange, updateInterval, requiredFeatures);
-        this.factory = compartmentFactory;
+        this.basicCompartmentFactory = basicCompartmentFactory;
+        this.stackCompartmentFactory = stackCompartmentFactory;
     }
 
-    public CompartmentType(final EntityFactory<T> entityFactory, final MobCategory mobCategory, final boolean serialize,
-            final boolean summon, final boolean fireImmune, final boolean canSpawnFarFromPlayer,
-            final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions, final int clientTrackingRange,
-            final int updateInterval, final FeatureFlagSet requiredFeatures,
+    public CompartmentType(final BasicCompartmentFactory<T> basicCompartmentFactory, final MobCategory mobCategory,
+            final boolean serialize, final boolean summon, final boolean fireImmune,
+            final boolean canSpawnFarFromPlayer, final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions,
+            final int clientTrackingRange, final int updateInterval, final FeatureFlagSet requiredFeatures,
             final Predicate<EntityType<?>> velocityUpdateSupplier,
             final ToIntFunction<EntityType<?>> trackingRangeSupplier,
             final ToIntFunction<EntityType<?>> updateIntervalSupplier,
             @Nullable final BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory,
-            final CompartmentFactory<T> factory) {
-        //noinspection DataFlowIssue    customClientFactory can be null
-        super(entityFactory, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
+            final StackCompartmentFactory<T> stackCompartmentFactory) {
+        //noinspection DataFlowIssue    customClientFactory can be null, and we entirely replace the vanilla factory
+        super(null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
                 clientTrackingRange, updateInterval, requiredFeatures, velocityUpdateSupplier, trackingRangeSupplier,
                 updateIntervalSupplier, customClientFactory);
-        this.factory = factory;
+        this.basicCompartmentFactory = basicCompartmentFactory;
+        this.stackCompartmentFactory = stackCompartmentFactory;
     }
 
     /**
@@ -106,22 +110,36 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
         return Optional.empty();
     }
 
+    @Nullable
+    @Override
+    public T create(final Level level) {
+        return !this.isEnabled(level.enabledFeatures()) ? null : this.basicCompartmentFactory.create(this, level);
+    }
+
     /**
      * Create a Compartment Entity for this CompartmentType.
      * Respects the levels enabled features
      */
     @Nullable
     public T create(final Level level, final ItemStack itemStack) {
-        return !this.isEnabled(level.enabledFeatures()) ? null : this.factory.create(this, level, itemStack);
+        return !this.isEnabled(level.enabledFeatures()) ? null : this.stackCompartmentFactory.create(this, level,
+                itemStack);
     }
 
     /**
-     * Like vanillas {@link EntityType.EntityFactory} but takes an additional {@link ItemStack} parameter
+     * Like vanillas {@link EntityFactory} but takes an additional {@link ItemStack} parameter
      *
      * @param <T> The type of compartment
      */
-    public interface CompartmentFactory<T extends AbstractCompartmentEntity> {
-        T create(final CompartmentType<T> entityType, final Level level, final ItemStack itemStack);
+    public interface StackCompartmentFactory<T extends AbstractCompartmentEntity> {
+        T create(final CompartmentType<T> compartmentType, final Level level, final ItemStack itemStack);
+    }
+
+    /**
+     * A replacement of {@link EntityFactory} to enforce compartments use a {@link CompartmentType} instead of {@link EntityType}
+     */
+    public interface BasicCompartmentFactory<T extends AbstractCompartmentEntity> {
+        T create(final CompartmentType<T> compartmentType, final Level level);
     }
 
     /**
@@ -130,47 +148,52 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      */
     @SuppressWarnings({"unused", "UnusedReturnValue"})
     public static class Builder<T extends AbstractCompartmentEntity> extends EntityType.Builder<T> {
-        private final CompartmentFactory<T> compartmentFactory;
+        private final BasicCompartmentFactory<T> basicCompartmentFactory;
+        private final StackCompartmentFactory<T> stackCompartmentFactory;
         private Predicate<EntityType<?>> velocityUpdateSupplier = entityType -> true;
         private ToIntFunction<EntityType<?>> trackingRangeSupplier = entityType -> entityType.clientTrackingRange;
         private ToIntFunction<EntityType<?>> updateIntervalSupplier = entityType -> entityType.updateInterval;
         @Nullable
         private BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory;
 
-        private Builder(final EntityType.EntityFactory<T> entityFactory, final CompartmentFactory<T> compartmentFactory,
-                final MobCategory mobCategory) {
-            super(entityFactory, mobCategory);
-            this.compartmentFactory = compartmentFactory;
+        private Builder(final BasicCompartmentFactory<T> basicCompartmentFactory,
+                final StackCompartmentFactory<T> stackCompartmentFactory, final MobCategory mobCategory) {
+            //noinspection DataFlowIssue
+            super(null, mobCategory);
+            this.basicCompartmentFactory = basicCompartmentFactory;
+            this.stackCompartmentFactory = stackCompartmentFactory;
         }
 
         /**
          * Overload for {@link MobCategory#MISC}
          */
-        public static <T extends AbstractCompartmentEntity> Builder<T> of(final EntityFactory<T> entityFactory,
-                final CompartmentFactory<T> compartmentFactory) {
-            return new Builder<>(entityFactory, compartmentFactory, MobCategory.MISC);
+        public static <T extends AbstractCompartmentEntity> Builder<T> of(
+                final BasicCompartmentFactory<T> basicCompartmentFactory,
+                final StackCompartmentFactory<T> stackCompartmentFactory) {
+            return new Builder<>(basicCompartmentFactory, stackCompartmentFactory, MobCategory.MISC);
         }
 
-        public static <T extends AbstractCompartmentEntity> Builder<T> of(final EntityFactory<T> entityFactory,
-                final CompartmentFactory<T> compartmentFactory, final MobCategory mobCategory) {
-            return new Builder<>(entityFactory, compartmentFactory, mobCategory);
+        public static <T extends AbstractCompartmentEntity> Builder<T> of(
+                final BasicCompartmentFactory<T> basicCompartmentFactory,
+                final StackCompartmentFactory<T> stackCompartmentFactory, final MobCategory mobCategory) {
+            return new Builder<>(basicCompartmentFactory, stackCompartmentFactory, mobCategory);
         }
 
         /**
          * Overload for {@link MobCategory#MISC}
          */
         public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
-                final EntityFactory<T> entityFactory) {
-            return createBasic(entityFactory, MobCategory.MISC);
+                final BasicCompartmentFactory<T> basicCompartmentFactory) {
+            return createBasic(basicCompartmentFactory, MobCategory.MISC);
         }
 
         /**
-         * Creates a compartment with an empty {@link CompartmentFactory}
+         * Creates a compartment with an empty {@link StackCompartmentFactory}
          */
-        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(final EntityFactory<T> entityFactory,
-                final MobCategory mobCategory) {
+        public static <T extends AbstractCompartmentEntity> Builder<T> createBasic(
+                final BasicCompartmentFactory<T> basicCompartmentFactory, final MobCategory mobCategory) {
             //noinspection DataFlowIssue
-            return of(entityFactory, (entityType, level, itemStack) -> null, mobCategory);
+            return of(basicCompartmentFactory, (entityType, level, itemStack) -> null, mobCategory);
         }
 
         /**
@@ -258,10 +281,11 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
                 Util.fetchChoiceType(References.ENTITY_TREE, key);
             }
 
-            return new CompartmentType<>(this.factory, this.category, this.serialize, this.summon, this.fireImmune,
-                    this.canSpawnFarFromPlayer, this.immuneTo, this.dimensions, this.clientTrackingRange,
-                    this.updateInterval, this.requiredFeatures, this.velocityUpdateSupplier, this.trackingRangeSupplier,
-                    this.updateIntervalSupplier, this.customClientFactory, this.compartmentFactory);
+            return new CompartmentType<>(this.basicCompartmentFactory, this.category, this.serialize, this.summon,
+                    this.fireImmune, this.canSpawnFarFromPlayer, this.immuneTo, this.dimensions,
+                    this.clientTrackingRange, this.updateInterval, this.requiredFeatures, this.velocityUpdateSupplier,
+                    this.trackingRangeSupplier, this.updateIntervalSupplier, this.customClientFactory,
+                    this.stackCompartmentFactory);
         }
     }
 }
