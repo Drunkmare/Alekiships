@@ -117,13 +117,18 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
     }
 
     /**
-     * Create a Compartment Entity for this CompartmentType.
-     * Respects the levels enabled features
+     * Create a Compartment Entity for this CompartmentType. This will use the {@link StackCompartmentFactory} if the type
+     * has one. If it does not then it'll use the {@link BasicCompartmentFactory}. This is to allow this method to always
+     * call a factory and return what it creates.
+     *
+     * @apiNote Respects the levels enabled features
      */
     @Nullable
     public T create(final Level level, final ItemStack itemStack) {
-        return !this.isEnabled(level.enabledFeatures()) ? null : this.stackCompartmentFactory.create(this, level,
-                itemStack);
+        if (!this.isEnabled(level.enabledFeatures())) return null;
+
+        return this.stackCompartmentFactory != null ? this.stackCompartmentFactory.create(this, level,
+                itemStack) : this.basicCompartmentFactory.create(this, level);
     }
 
     /**
