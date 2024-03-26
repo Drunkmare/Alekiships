@@ -50,7 +50,7 @@ public final class AlekiShipsEntities {
             "compartment_empty", CompartmentType.Builder.createBasic(EmptyCompartmentEntity::new));
 
     public static final RegistryObject<CompartmentType<BlockCompartmentEntity>> BLOCK_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_block", CompartmentType.Builder.createBasic(BlockCompartmentEntity::new));
+            "compartment_block", CompartmentType.Builder.of(BlockCompartmentEntity::new, BlockCompartmentEntity::new));
 
     public static final RegistryObject<CompartmentType<BarrelCompartmentEntity>> BARREL_COMPARTMENT_ENTITY = CompartmentType.register(
             registerCompartment("compartment_barrel",
