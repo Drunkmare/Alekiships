@@ -66,6 +66,11 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * counterparts you'll need to use or extend our menus as well
  */
 public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
+    public static final int SLOT_COUNT = 3;
+    public static final String BURN_TIME_KEY = "BurnTime";
+    public static final String COOK_TIME_KEY = "CookTime";
+    public static final String COOK_TIME_TOTAL_KEY = "CookTimeTotal";
+    public static final String RECIPES_USED_KEY = "RecipesUsed";
     protected static final int SLOT_INPUT = 0;
     protected static final int SLOT_FUEL = 1;
     protected static final int SLOT_RESULT = 2;
@@ -118,18 +123,18 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private LazyOptional<? extends IItemHandler>[] directionalHandlers = SidedInvWrapper.create(this, Direction.UP,
             Direction.DOWN, Direction.NORTH);
 
-    public AbstractFurnaceCompartmentEntity(
+    protected AbstractFurnaceCompartmentEntity(
             final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
             final RecipeType<? extends AbstractCookingRecipe> recipeType) {
-        super(compartmentType, level, 3);
+        super(compartmentType, level, SLOT_COUNT);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
     }
 
-    public AbstractFurnaceCompartmentEntity(
+    protected AbstractFurnaceCompartmentEntity(
             final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
             final RecipeType<? extends AbstractCookingRecipe> recipeType, final ItemStack itemStack) {
-        super(compartmentType, level, 3, itemStack);
+        super(compartmentType, level, SLOT_COUNT, itemStack);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
 
@@ -448,15 +453,15 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private void loadCommonNBTData(final CompoundTag compoundTag) {
-        if (compoundTag.contains("BurnTime", Tag.TAG_INT)) this.litTime = compoundTag.getInt("BurnTime");
-        if (compoundTag.contains("CookTime", Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt("CookTime");
-        if (compoundTag.contains("CookTimeTotal", Tag.TAG_INT))
-            this.cookingTotalTime = compoundTag.getInt("CookTimeTotal");
+        if (compoundTag.contains(BURN_TIME_KEY, Tag.TAG_INT)) this.litTime = compoundTag.getInt(BURN_TIME_KEY);
+        if (compoundTag.contains(COOK_TIME_KEY, Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt(COOK_TIME_KEY);
+        if (compoundTag.contains(COOK_TIME_TOTAL_KEY, Tag.TAG_INT))
+            this.cookingTotalTime = compoundTag.getInt(COOK_TIME_TOTAL_KEY);
 
         this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
 
-        if (compoundTag.contains("RecipesUsed", Tag.TAG_COMPOUND)) {
-            final CompoundTag compoundtag = compoundTag.getCompound("RecipesUsed");
+        if (compoundTag.contains(RECIPES_USED_KEY, Tag.TAG_COMPOUND)) {
+            final CompoundTag compoundtag = compoundTag.getCompound(RECIPES_USED_KEY);
 
             for (final String recipeKey : compoundtag.getAllKeys()) {
                 this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
@@ -465,12 +470,12 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private void saveCommonNBTData(final CompoundTag compoundTag) {
-        compoundTag.putInt("BurnTime", this.litTime);
-        compoundTag.putInt("CookTime", this.cookingProgress);
-        compoundTag.putInt("CookTimeTotal", this.cookingTotalTime);
+        compoundTag.putInt(BURN_TIME_KEY, this.litTime);
+        compoundTag.putInt(COOK_TIME_KEY, this.cookingProgress);
+        compoundTag.putInt(COOK_TIME_TOTAL_KEY, this.cookingTotalTime);
         CompoundTag compoundtag = new CompoundTag();
         this.recipesUsed.forEach((recipeKey, integer) -> compoundtag.putInt(recipeKey.toString(), integer));
-        compoundTag.put("RecipesUsed", compoundtag);
+        compoundTag.put(RECIPES_USED_KEY, compoundtag);
     }
 
     @Override
