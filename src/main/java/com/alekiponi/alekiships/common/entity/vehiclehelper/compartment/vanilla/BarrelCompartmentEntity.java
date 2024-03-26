@@ -22,7 +22,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -33,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 
 public class BarrelCompartmentEntity extends ContainerCompartmentEntity implements BlockCompartment {
+    public static final int SLOT_COUNT = 27;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             BarrelCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -64,19 +64,15 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
             final Level level) {
-        super(compartmentType, level, 27);
+        super(compartmentType, level, SLOT_COUNT);
     }
-
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        this(compartmentType, level);
+        super(compartmentType, level, SLOT_COUNT, itemStack);
 
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(
-                    blockItem.getBlock().defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
-                            .setValue(BarrelBlock.OPEN, false));
-        }
+        this.setDisplayBlockState(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
+                .setValue(BarrelBlock.OPEN, false));
     }
 
     @Override
@@ -130,14 +126,14 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override
