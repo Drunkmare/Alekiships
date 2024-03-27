@@ -21,7 +21,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.BrewingStandMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -41,12 +40,14 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
-import static net.minecraft.world.level.block.entity.BrewingStandBlockEntity.NUM_DATA_VALUES;
+import static net.minecraft.world.level.block.entity.BrewingStandBlockEntity.*;
 
 public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, BlockCompartment {
     public static final int SLOT_COUNT = 5;
-    private static final int INGREDIENT_SLOT = 3;
-    private static final int FUEL_SLOT = 4;
+    public static final String FUEL_KEY = "Fuel";
+    public static final String BREW_TIME_KEY = "BrewTime";
+    public static final int INGREDIENT_SLOT = 3;
+    public static final int FUEL_SLOT = 4;
     private static final int[] SLOTS_FOR_UP = new int[]{3};
     private static final int[] SLOTS_FOR_DOWN = new int[]{0, 1, 2, 3};
     private static final int[] SLOTS_FOR_SIDES = new int[]{0, 1, 2, 4};
@@ -58,8 +59,8 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         @Override
         public int get(final int dataType) {
             return switch (dataType) {
-                case 0 -> BrewingStandCompartmentEntity.this.brewTime;
-                case 1 -> BrewingStandCompartmentEntity.this.fuel;
+                case DATA_BREW_TIME -> BrewingStandCompartmentEntity.this.brewTime;
+                case DATA_FUEL_USES -> BrewingStandCompartmentEntity.this.fuel;
                 default -> 0;
             };
         }
@@ -67,10 +68,10 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         @Override
         public void set(final int dataType, final int dataValue) {
             switch (dataType) {
-                case 0:
+                case DATA_BREW_TIME:
                     BrewingStandCompartmentEntity.this.brewTime = dataValue;
                     break;
-                case 1:
+                case DATA_FUEL_USES:
                     BrewingStandCompartmentEntity.this.fuel = dataValue;
             }
         }
@@ -96,14 +97,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
-        }
+        this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
     }
 
     private static void doBrew(final Level level, final BlockPos blockPos, final NonNullList<ItemStack> itemStacks) {
         if (ForgeEventFactory.onPotionAttemptBrew(itemStacks)) return;
-        ItemStack itemstack = itemStacks.get(INGREDIENT_SLOT);
+        final ItemStack itemstack = itemStacks.get(INGREDIENT_SLOT);
 
         BrewingRecipeRegistry.brewPotions(itemStacks, itemstack, SLOTS_FOR_SIDES);
         ForgeEventFactory.onPotionBrewed(itemStacks);
@@ -313,24 +312,24 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     }
 
     private void loadCommonNBTData(final CompoundTag compoundTag) {
-        if (compoundTag.contains("BrewTime", Tag.TAG_SHORT)) this.brewTime = compoundTag.getShort("BrewTime");
-        if (compoundTag.contains("Fuel", Tag.TAG_BYTE)) this.fuel = compoundTag.getByte("Fuel");
+        if (compoundTag.contains(BREW_TIME_KEY, Tag.TAG_SHORT)) this.brewTime = compoundTag.getShort(BREW_TIME_KEY);
+        if (compoundTag.contains(FUEL_KEY, Tag.TAG_BYTE)) this.fuel = compoundTag.getByte(FUEL_KEY);
     }
 
     private void saveCommonNBTData(final CompoundTag compoundTag) {
-        compoundTag.putShort("BrewTime", (short) this.brewTime);
-        compoundTag.putByte("Fuel", (byte) this.fuel);
+        compoundTag.putShort(BREW_TIME_KEY, (short) this.brewTime);
+        compoundTag.putByte(FUEL_KEY, (byte) this.fuel);
     }
 
     @Override
     protected ItemStack getDropStack() {
-        return new ItemStack(Blocks.BREWING_STAND.asItem());
+        return new ItemStack(Items.BREWING_STAND);
     }
 
     @Nullable
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(Blocks.BREWING_STAND.asItem());
+        return new ItemStack(Items.BREWING_STAND);
     }
 
     @Override
@@ -339,21 +338,21 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
+    public <T> LazyOptional<T> getCapability(final Capability<T> capability, @Nullable final Direction facing) {
         if (!this.isAlive() || facing == null || capability != ForgeCapabilities.ITEM_HANDLER)
             return super.getCapability(capability, facing);
 
-        if (facing == Direction.UP) return directionalHandlers[0].cast();
+        if (facing == Direction.UP) return this.directionalHandlers[0].cast();
 
-        if (facing == Direction.DOWN) return directionalHandlers[1].cast();
+        if (facing == Direction.DOWN) return this.directionalHandlers[1].cast();
 
-        return directionalHandlers[2].cast();
+        return this.directionalHandlers[2].cast();
     }
 
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        Arrays.stream(directionalHandlers).forEach(LazyOptional::invalidate);
+        Arrays.stream(this.directionalHandlers).forEach(LazyOptional::invalidate);
     }
 
     @Override
