@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
@@ -9,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
+import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity {
     protected static final byte NO_DYE = -1;
@@ -158,8 +159,15 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
             this.playSound(SoundEvents.WOOD_BREAK, 1.0F, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
-            spawnAtLocation(this.getOars().split(1));
-            spawnAtLocation(this.getOars().split(1));
+            switch (this.getOars()) {
+                case ZERO:
+                    break;
+                case TWO:
+                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
+                case ONE:
+                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
+                    break;
+            }
         }
 
         super.remove(removalReason);
@@ -168,7 +176,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected float getPaddleMultiplier() {
         float paddleMultiplier = 1.0f;
-        if (this.getOars().getCount() > 0) {
+        if (this.getOars() != Oars.ZERO) {
             paddleMultiplier = 1.6f;
         }
         return paddleMultiplier;
@@ -209,12 +217,12 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
         return null;
     }
 
-    public ItemStack getOars() {
-        return this.entityData.get(DATA_OARS);
+    public Oars getOars() {
+        return Oars.byId(this.entityData.get(DATA_ID_OARS));
     }
 
-    public void setOars(final ItemStack itemStack) {
-        this.entityData.set(DATA_OARS, itemStack.copy());
+    public void setOars(final Oars oars) {
+        this.entityData.set(DATA_ID_OARS, (byte) oars.ordinal());
     }
 
     @Override
@@ -246,10 +254,13 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     }
 
     public void addOar() {
-        ItemStack newItemStack = this.getOars();
-        int numberOfOars = newItemStack.getCount();
-        newItemStack = new ItemStack(AlekiShipsItems.OAR.get(), numberOfOars + 1);
-        this.setOars(newItemStack);
+        switch (this.getOars()) {
+            case ZERO -> this.setOars(Oars.ONE);
+            case ONE -> this.setOars(Oars.TWO);
+            case TWO -> {
+                // Intentionally empty
+            }
+        }
     }
 
     @Override
@@ -313,5 +324,27 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     public float getStepHeight(){
         return 0.0f;
+    }
+
+    public enum Oars {
+        ZERO(0),
+        ONE(1),
+        TWO(2);
+
+        private static final IntFunction<Oars> BY_ID = ByIdMap.continuous(Oars::getId, values(),
+                ByIdMap.OutOfBoundsStrategy.ZERO);
+        private final int id;
+
+        Oars(final int id) {
+            this.id = id;
+        }
+
+        public static Oars byId(final int id) {
+            return BY_ID.apply(id);
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }

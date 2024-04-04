@@ -24,6 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -637,7 +638,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
             tickSailBoat();
 
             if (this.level().isClientSide() && this.getControllingPassenger() != null) {
-                PacketHandler.clientSendPacket(new ServerBoundSloopPacket(this.getMainsheetLength(), this.getRudderRotation(), this.getId()));
+                PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                        new ServerBoundSloopPacket(this.getMainsheetLength(), this.getRudderRotation(), this.getId()));
             }
         }
     }

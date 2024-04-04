@@ -38,9 +38,4 @@ public class AlekiShipsItems {
 
     public static final RegistryObject<Item> COPPER_BOLT = ITEMS.register("copper_bolt",
             () -> new Item(new Item.Properties().stacksTo(1)));
-
-
-    public static void register(IEventBus eventBus) {
-        ITEMS.register(eventBus);
-    }
 }

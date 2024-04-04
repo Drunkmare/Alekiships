@@ -6,9 +6,8 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.google.common.collect.Lists;
-import net.dries007.tfc.common.TFCTags;
-import net.dries007.tfc.common.fluids.TFCFluids;
 import net.minecraft.BlockUtil;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -312,24 +311,42 @@ public abstract class AbstractVehicle extends Entity {
         return this.getDirection().getClockWise();
     }
 
-    protected void tickDestroyPlants(){
-        BlockPos blockPos = this.blockPosition();
-        int size = (int) Math.ceil(this.getBoundingBox().getXsize());
-        if(size % 2 != 0){
-            size++;
-        }
-        size = size/2;
-        for(int x = -size;x <=size; x++){
-            for(int z = -size;z <=size; z++){
-                for(int y = 0; y <=1; y++){
-                    if(this.level().getBlockState(blockPos.offset(x,y,z)).is(TFCTags.Blocks.PLANTS)){
-                        this.level().destroyBlock(blockPos.offset(x,y,z),false);
-                    }
-                }
+    protected void tickDestroyPlants() {
+        final BlockPos.MutableBlockPos blockPos = this.blockPosition().mutable();
 
+        final int size;
+        {
+            int sizeTemp = (int) Math.ceil(this.getBoundingBox().getXsize());
+            if (sizeTemp % 2 != 0) {
+                sizeTemp++;
             }
+            size = sizeTemp / 2;
         }
 
+        // Move to our destroy "origin"
+        blockPos.move(-size, 0, -size);
+
+        for (int x = -size; x <= size; x++) {
+            for (int z = -size; z <= size; z++) {
+                for (int y = 0; y < 2; y++) {
+                    final BlockState blockState = this.level().getBlockState(blockPos);
+                    if (blockState.is(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED)) {
+                        // TODO this.level().removeBlock(blockPos false) will remove the block without drops & without sound
+                        this.level().destroyBlock(blockPos, false);
+                    }
+                    // Move down a block
+                    blockPos.setY(blockPos.getY() - 1);
+                }
+                // Move us back to our y "origin"
+                blockPos.setY(blockPos.getY() + 2);
+                // Move positive z
+                blockPos.setZ(blockPos.getZ() + 1);
+            }
+            // Move us back to our z "origin"
+            blockPos.setZ(blockPos.getZ() - (1 + size * 2));
+            // Move positive x
+            blockPos.setX(blockPos.getX() + 1);
+        }
     }
 
     protected void tickTakeEntitiesForARide(){

@@ -16,55 +16,55 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 public class VehicleCleatRenderer extends EntityRenderer<VehicleCleatEntity> {
 
-    private static final ResourceLocation CLEAT_KNOT = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/cleat_knot.png");
-    private final CleatKnotEntityModel model;
+    private static final ResourceLocation CLEAT_KNOT = new ResourceLocation(AlekiShips.MOD_ID,
+            "textures/entity/cleat_knot.png");
+    private final CleatKnotEntityModel<VehicleCleatEntity> model = new CleatKnotEntityModel<>();
 
-    public VehicleCleatRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new CleatKnotEntityModel();
+    public VehicleCleatRenderer(final EntityRendererProvider.Context context) {
+        super(context);
     }
-
-
 
     @Override
-    public ResourceLocation getTextureLocation(VehicleCleatEntity pEntity) {
-        return null;
-    }
+    public void render(final VehicleCleatEntity cleat, final float entityYaw, final float partialTicks,
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+        final Entity entity = cleat.getLeashHolder();
+        if (entity == null) return;
 
-    public void render(VehicleCleatEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        net.minecraft.world.entity.Entity entity = pEntity.getLeashHolder();
-        if (entity != null) {
-            super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
-            float rotation = 0f;
-            if (pEntity.getVehicle().getVehicle() instanceof AbstractAlekiBoatEntity trueVehicle) {
-                rotation = trueVehicle.getYRot();
-            } else {
-                rotation = pEntityYaw;
-            }
-            pPoseStack.pushPose();
-            pPoseStack.translate(0f, 1.5f, 0f);
-            pPoseStack.mulPose(Axis.ZP.rotationDegrees(180));
-
-            if ((pEntity.getVehicle().isPassenger() && pEntity.getVehicle().getVehicle() instanceof RowboatEntity)) {
-                pPoseStack.mulPose(Axis.YP.rotationDegrees(rotation));
-            } else {
-                pPoseStack.mulPose(Axis.YP.rotationDegrees(rotation + 90));
-            }
-            this.model.setupAnim(pEntity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-            VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(CLEAT_KNOT));
-            this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                    1.0F, 1.0F);
-            if (!(pEntity.getVehicle().isPassenger() && pEntity.getVehicle().getVehicle() instanceof AbstractVehicle vehicle && vehicle.renderCleatKnotSides())) {
-                model.getSides().render(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY);
-            }
-            pPoseStack.popPose();
-            AlekiShipsRenderHelper.renderRope(pEntity, pPartialTicks, pPoseStack, pBuffer, entity, this.getBlockLightLevel(pEntity,  BlockPos.containing(pEntity.getEyePosition(pPartialTicks))));
+        super.render(cleat, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
+        final float rotation;
+        if (cleat.getVehicle().getVehicle() instanceof AbstractAlekiBoatEntity trueVehicle) {
+            rotation = trueVehicle.getYRot();
+        } else {
+            rotation = entityYaw;
         }
+        poseStack.pushPose();
+        poseStack.translate(0, 1.5f, 0);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+
+        if ((cleat.getVehicle().isPassenger() && cleat.getVehicle().getVehicle() instanceof RowboatEntity)) {
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+        } else {
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotation + 90));
+        }
+        this.model.setupAnim(cleat, 0, 0, 0, 0, 0);
+        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
+                this.model.renderType(this.getTextureLocation(cleat)));
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        if (!(cleat.getVehicle().isPassenger() && cleat.getVehicle()
+                .getVehicle() instanceof AbstractVehicle vehicle && vehicle.renderCleatKnotSides())) {
+            model.getSides().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
+        }
+        poseStack.popPose();
+        AlekiShipsRenderHelper.renderRope(cleat, partialTicks, poseStack, bufferSource, entity,
+                this.getBlockLightLevel(cleat, BlockPos.containing(cleat.getEyePosition(partialTicks))));
     }
 
-
+    @Override
+    public ResourceLocation getTextureLocation(final VehicleCleatEntity cleat) {
+        return CLEAT_KNOT;
+    }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketListener> {
+public class ServerboundSwitchEntityPacket {
     private final boolean switched;
     private final int entityID;
 
@@ -30,10 +30,6 @@ public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketLis
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerboundSwitchEntityPacket decoder(FriendlyByteBuf buffer) {
-        return new ServerboundSwitchEntityPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);
@@ -46,14 +42,5 @@ public class ServerboundSwitchEntityPacket implements Packet<ServerGamePacketLis
             }
 
         });
-    }
-
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener supplier) {
-    }
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf buffer) {
     }
 }

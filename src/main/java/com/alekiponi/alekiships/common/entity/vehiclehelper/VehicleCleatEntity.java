@@ -1,10 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.network.ClientBoundCleatLinkPacket;
+import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -163,9 +164,9 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity {
             this.leashInfoTag = null;
 
 
-            if (!this.level().isClientSide && pBroadcastPacket && this.level() instanceof ServerLevel) {
-                ((ServerLevel) this.level()).getChunkSource()
-                        .broadcast(this, new ClientboundSetEntityLinkPacket(this, null));
+            if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
+                PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
+                        new ClientBoundCleatLinkPacket(this, null));
             }
         }
 
@@ -199,9 +200,9 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity {
     public void setLeashedTo(net.minecraft.world.entity.Entity pLeashHolder, boolean pBroadcastPacket) {
         this.leashHolder = pLeashHolder;
         this.leashInfoTag = null;
-        if (!this.level().isClientSide && pBroadcastPacket && this.level() instanceof ServerLevel) {
-            ((ServerLevel) this.level()).getChunkSource()
-                    .broadcast(this, new ClientboundSetEntityLinkPacket(this, this.leashHolder));
+        if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
+            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
+                    new ClientBoundCleatLinkPacket(this, this.leashHolder));
         }
 
     }

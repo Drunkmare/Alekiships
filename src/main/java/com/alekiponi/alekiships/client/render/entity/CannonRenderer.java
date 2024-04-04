@@ -11,35 +11,34 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class CannonRenderer extends EntityRenderer<Entity> {
+public class CannonRenderer extends EntityRenderer<CannonEntity> {
 
-    private static final ResourceLocation CANNON = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/cannon.png");
+    private static final ResourceLocation CANNON = new ResourceLocation(AlekiShips.MOD_ID,
+            "textures/entity/cannon.png");
 
-    private final CannonEntityModel<CannonEntity> model;
+    private final CannonEntityModel<CannonEntity> model = new CannonEntityModel<>();
 
-    public CannonRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new CannonEntityModel<>();
-    }
-
-    public void render(Entity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        pPoseStack.pushPose();
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(pEntity.getYRot() + 180));
-        pPoseStack.mulPose(Axis.ZP.rotationDegrees(180));
-        pPoseStack.translate(0f, -1.5f, 0.0f);
-        this.model.setupAnim((CannonEntity) pEntity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(CANNON));
-        this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                1.0F, 1.0F);
-        pPoseStack.popPose();
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
+    public CannonRenderer(final EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Entity pEntity) {
-        return null;
+    public void render(final CannonEntity entity, final float entityYaw, final float partialTicks,
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot() + 180));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+        poseStack.translate(0, -1.5f, 0);
+        this.model.setupAnim(entity, 0, 0, 0, 0, 0);
+        VertexConsumer vertexconsumer = bufferSource.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final CannonEntity entity) {
+        return CANNON;
     }
 }

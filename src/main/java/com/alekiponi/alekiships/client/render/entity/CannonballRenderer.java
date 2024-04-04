@@ -11,34 +11,33 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class CannonballRenderer extends EntityRenderer<Entity> {
+public class CannonballRenderer extends EntityRenderer<CannonballEntity> {
 
-    private static final ResourceLocation CANNONBALL = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/cannonball.png");
+    private static final ResourceLocation CANNONBALL = new ResourceLocation(AlekiShips.MOD_ID,
+            "textures/entity/cannonball.png");
 
-    private final CannonballEntityModel<CannonballEntity> model;
+    private final CannonballEntityModel<CannonballEntity> model = new CannonballEntityModel<>();
 
-    public CannonballRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new CannonballEntityModel<>();
-    }
-
-    public void render(Entity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        pPoseStack.pushPose();
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(pEntity.getYRot()));
-        pPoseStack.translate(0f, -1.4f, 0.0f);
-        this.model.setupAnim((CannonballEntity) pEntity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(CANNONBALL));
-        this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                1.0F, 1.0F);
-        pPoseStack.popPose();
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
+    public CannonballRenderer(final EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Entity pEntity) {
-        return null;
+    public void render(final CannonballEntity entity, final float entityYaw, final float partialTicks,
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot()));
+        poseStack.translate(0, -1.4f, 0);
+        this.model.setupAnim(entity, 0, 0, 0, 0, 0);
+        VertexConsumer vertexconsumer = bufferSource.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        poseStack.popPose();
+        super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(final CannonballEntity entity) {
+        return CANNONBALL;
     }
 }

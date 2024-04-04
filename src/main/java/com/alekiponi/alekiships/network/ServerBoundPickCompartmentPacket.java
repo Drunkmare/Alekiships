@@ -28,10 +28,6 @@ public class ServerBoundPickCompartmentPacket {
         this.slotIndex = byteBuf.readInt();
     }
 
-    public static ServerBoundPickCompartmentPacket decoder(final FriendlyByteBuf byteBuf) {
-        return new ServerBoundPickCompartmentPacket(byteBuf);
-    }
-
     public void encoder(final FriendlyByteBuf byteBuf) {
         byteBuf.writeInt(this.compartmentID);
         byteBuf.writeItemStack(this.itemStack, false);

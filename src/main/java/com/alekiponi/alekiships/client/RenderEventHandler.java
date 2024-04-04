@@ -32,7 +32,7 @@ public final class RenderEventHandler {
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(),
                     context -> new SloopRenderer(context, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(vanillaWood).get(),
-                    context -> new SloopConstructionRenderer(context, vanillaWood.getSerializedName()));
+                    context -> new SloopConstructionRenderer(context, vanillaWood));
         }
 
         event.registerEntityRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(), NoopRenderer::new);

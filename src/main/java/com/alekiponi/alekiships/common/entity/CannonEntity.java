@@ -1,12 +1,7 @@
 package com.alekiponi.alekiships.common.entity;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import net.dries007.tfc.common.fluids.TFCFluids;
-import net.dries007.tfc.common.items.TFCItems;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,6 +15,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,46 +24,58 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class CannonEntity extends Entity {
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_PAPER_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_GUNPOWDER_ITEM = SynchedEntityData.defineId(CannonEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.INT);
-    protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.FLOAT);
-
-    protected static final EntityDataAccessor<Integer> DATA_ID_FUSE_TIME = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.INT);
-
-    public final Item cannonBallItem = AlekiShipsItems.CANNONBALL.get();
-
+    public static final byte EVENT_LIGHT = 10;
+    public static final String FUSE_KEY = "Fuse";
+    public static final String CANNONBALL_KEY = "Cannonball";
+    public static final String DAMAGE_KEY = "Damage";
+    protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
+            EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
+            CannonEntity.class, EntityDataSerializers.ITEM_STACK);
+    private static final ItemStack CANNONBALL = new ItemStack(AlekiShipsItems.CANNONBALL.get());
+    private static final float DAMAGE_TO_BREAK = 8;
+    private static final float DAMAGE_RECOVERY = 0.5F;
     protected int lerpSteps;
     protected double lerpX;
     protected double lerpY;
     protected double lerpZ;
     protected double lerpYRot;
     protected double lerpXRot;
+    private int fuse = -1;
+    @Nullable
+    private LivingEntity igniter;
 
-    public CannonEntity(EntityType<?> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public CannonEntity(final EntityType<? extends CannonEntity> entityType, final Level level) {
+        super(entityType, level);
     }
 
     @Override
-    public void tick(){
+    protected void defineSynchedData() {
+        this.entityData.define(DATA_ID_DAMAGE, 0F);
+        this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(final CompoundTag compoundTag) {
+        this.fuse = compoundTag.getInt(FUSE_KEY);
+        this.setCannonball(ItemStack.of(compoundTag.getCompound(CANNONBALL_KEY)));
+        this.setDamage(compoundTag.getFloat(DAMAGE_KEY));
+    }
+
+    @Override
+    protected void addAdditionalSaveData(final CompoundTag compoundTag) {
+        compoundTag.putInt(FUSE_KEY, this.fuse);
+        compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(new CompoundTag()));
+        compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
+    }
+
+    @Override
+    public void tick() {
         if (!this.isPassenger()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
             if (this.isInWater()) {
@@ -91,160 +99,113 @@ public class CannonEntity extends Entity {
             this.updateInWaterStateAndDoFluidPushing();
         }
         tickLerp();
-        this.setFuseTime(this.getFuseTime()-1);
-        if(this.getFuseTime() > 0){
-            Vec3 fuse = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.5), 0.8,
-                    Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.5).multiply(-1,1,-1).add(this.getPosition(0));
-            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x,fuse.y,fuse.z,this.getRootVehicle().getDeltaMovement().x,0.01,this.getRootVehicle().getDeltaMovement().z);
-            //this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, this.getPosition(0).x,this.getPosition(0).y+1.0,this.getPosition(0).z,0,0.01,0);
-            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x,fuse.y,fuse.z,this.getRootVehicle().getDeltaMovement().x,0.01,this.getRootVehicle().getDeltaMovement().z);
-        } else if(this.getFuseTime() == 0){
+
+        if (this.fuse > 0) {
+            --this.fuse;
+            final Vec3 fuse = new Vec3((Mth.sin((float) (this.getYRot() * (Math.PI / 180))) * 0.5), 0.8,
+                    Mth.cos((float) (-this.getYRot() * (Math.PI / 180))) * 0.5).multiply(-1, 1, -1)
+                    .add(this.getPosition(0));
+            final Vec3 deltaMovement = this.getRootVehicle().getDeltaMovement();
+            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x, fuse.y, fuse.z, deltaMovement.x, 0.01,
+                    deltaMovement.z);
+            this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x, fuse.y, fuse.z, deltaMovement.x, 0.01,
+                    deltaMovement.z);
+        } else if (this.fuse == 0) {
             this.fire();
         }
     }
 
-    public boolean needsPaperItem(){
-        return getPaperItem() != null;
-    }
-
-    public boolean needsGunpowderItem(){
-        return getGunpowderItem() != null;
-    }
-
-    @Nullable
-    public Item getPaperItem(){
-        return null;
-    }
-
-
-    @Nullable
-    public Item getGunpowderItem(){
-        return null;
-    }
-
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        final ItemStack item = player.getItemInHand(hand);
-        if (item.is(this.cannonBallItem)) {
-            if(this.getCannonball().isEmpty()){
-                this.setCannonball(item.split(1));
+        final ItemStack heldItem = player.getItemInHand(hand);
+
+        final InteractionResult insertResult = this.insertItem(heldItem);
+
+        if (insertResult.consumesAction()) return insertResult;
+
+        if (this.isLoaded() && heldItem.is(Items.FLINT_AND_STEEL)) {
+            // Already lit
+            if (this.isLit()) return InteractionResult.PASS;
+
+            this.light(player);
+            player.swing(hand);
+            heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            return InteractionResult.CONSUME;
+        }
+
+        if (player.isSecondaryUseActive() && this.getXRot() < 20) {
+            this.setXRot(this.getXRot() + 1);
+            return InteractionResult.SUCCESS;
+        } else if (this.getXRot() > -20) {
+            this.setXRot(this.getXRot() - 1);
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    /**
+     * Called to insert an item into the cannon. We only insert cannonballs in vanilla
+     *
+     * @param itemStack The item stack to insert
+     * @return The result of the interaction. If {@link InteractionResult#consumesAction()} is
+     * true no further processing is attempted
+     */
+    private InteractionResult insertItem(final ItemStack itemStack) {
+        if (itemStack.is(AlekiShipsItems.CANNONBALL.get())) {
+            if (this.getCannonball().isEmpty()) {
+                this.setCannonball(itemStack.split(1));
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.CONSUME;
         }
-        if(needsPaperItem()){
-            if (item.is(this.getPaperItem())) {
-                if(this.getPaper().isEmpty()){
-                    this.setPaper(item.split(1));
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.CONSUME;
-            }
-        }
-        if(needsGunpowderItem()){
-            if (item.is(this.getGunpowderItem())) {
-                if(this.getGunpowder().isEmpty()){
-                    this.setGunpowder(item.split(1));
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.CONSUME;
-            }
-        }
-
-        if (item.is(Items.FLINT_AND_STEEL)) {
-            this.light();
-            return InteractionResult.CONSUME;
-        }
-        if(player.isSecondaryUseActive() && this.getXRot() < 20){
-            this.setXRot(this.getXRot()+1);
-            return InteractionResult.SUCCESS;
-        } else if (this.getXRot() > -20){
-            this.setXRot(this.getXRot()-1);
-            return InteractionResult.SUCCESS;
-        }
         return InteractionResult.PASS;
-
     }
 
-    public void light(){
-        if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
-            return;
-        }
-        if(needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
-            return;
-        }
-        if(needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
-            return;
-        }
-        if(this.isInWater()){
+    /**
+     * Lights the cannon
+     */
+    public void light(@Nullable final LivingEntity igniter) {
+        if (this.isInWater()) {
             return;
         }
 
-        this.setFuseTime(40);
-        this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
-    }
+        this.igniter = igniter;
 
-    public void fire(){
-        if(!this.getCannonball().is(AlekiShipsItems.CANNONBALL.get())){
-            return;
-        }
-        if(this.needsPaperItem() && !this.getPaper().is(TFCItems.UNREFINED_PAPER.get())){
-            return;
-        }
-        if(this.needsGunpowderItem() && !this.getGunpowder().is(Items.GUNPOWDER)){
-            return;
-        }
-        this.setPaper(ItemStack.EMPTY);
-        this.setGunpowder(ItemStack.EMPTY);
-        this.setCannonball(ItemStack.EMPTY);
-
-        final CannonballEntity cannonball = AlekiShipsEntities.CANNONBALL_ENTITY.get()
-                .create(this.level());
-        assert cannonball != null;
-        cannonball.setPos(this.getX(), this.getY(), this.getZ());
-
-        cannonball.setDeltaMovement(
-                Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 3.0,
-                Mth.sin(-this.getXRot() * ((float) Math.PI / 180F)) * 3.0,
-                Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 3.0);
-
-        if(this.isPassenger() && this.getVehicle() instanceof EmptyCompartmentEntity compartment){
-            cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(compartment.getRootVehicle().getDeltaMovement()));
-        }
-
-        //cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(0,0.3,0));
-
-        //TODO config for terrain damage
-        this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
-        Random r = new Random();
-        Vec3 particleMovement = cannonball.getDeltaMovement().multiply(0.3,0.3,0.3);
-        for(int i = 0; i < 4; i ++){
-            this.level().addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, this.getX() + particleMovement.x+(r.nextDouble()-0.5)*0.5, this.getY() + 0.5 + particleMovement.y+(r.nextDouble()-0.5)*0.5, this.getZ() + particleMovement.z+(r.nextDouble()-0.5)*0.5,
-                    particleMovement.x*0.05, 0.05D, particleMovement.z*0.05);
-        }
-
-
-        Vec3 rayCastStep = cannonball.getDeltaMovement().multiply(0.33,0.33,0.33);
-        Vec3 startPos = this.getPosition(0);
-
-        for(int i = 0; i < 8; i ++){
-            Vec3i currentPos = new Vec3i(Mth.floor(startPos.add(rayCastStep).x), Mth.floor(startPos.add(rayCastStep).y), Mth.floor((startPos.add(rayCastStep).z)));
-            BlockPos blockPos = new BlockPos(currentPos);
-            cannonball.setPos(startPos.add(rayCastStep));
-            if(!this.level().getBlockState(blockPos).isAir() && blockPos != this.blockPosition() && this.level().getBlockState(blockPos).canBeReplaced(Fluids.WATER)){
-                cannonball.discard();
-                cannonball.explode(3);
-                break;
+        this.fuse = 40;
+        if (!this.level().isClientSide()) {
+            this.level().broadcastEntityEvent(this, EVENT_LIGHT);
+            if (!this.isSilent()) {
+                this.playSound(SoundEvents.TNT_PRIMED, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.91F);
             }
-
-            rayCastStep = rayCastStep.add(rayCastStep);
         }
+    }
 
-        cannonball.setPos(this.getPosition(0).add(cannonball.getDeltaMovement()).add(0,0.3,0));
+    /**
+     * Fires the cannon once the fuse is out. This should also clear whatever contents are necessary
+     */
+    public void fire() {
+        this.fuse = -1;
+        this.setCannonball(ItemStack.EMPTY);
+        this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
+
+        final CannonballEntity cannonball = new CannonballEntity(this.getX(), this.getY(), this.getZ(), 0, -0.1, 0,
+                this.level());
+        cannonball.setOwner(this.igniter);
+        cannonball.setXRot(this.getXRot());
+        cannonball.setYRot(this.getYRot());
+
+        cannonball.setDeltaMovement(Mth.sin(this.getYRot() * ((float) Math.PI / 180)) * 3,
+                Mth.sin(-this.getXRot() * ((float) Math.PI / 180)) * 3,
+                Mth.cos(-this.getYRot() * ((float) Math.PI / 180)) * 3);
+
+        if (this.isPassenger()) {
+            cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(this.getRootVehicle().getDeltaMovement()));
+        }
 
         this.level().addFreshEntity(cannonball);
         Vec3 movement = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
-                Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1,1,-1);
+                Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
     }
 
@@ -254,7 +215,6 @@ public class CannonEntity extends Entity {
 
         if (this.level().isClientSide || this.isRemoved()) return true;
 
-        this.setHurtTime(10);
         this.setDamage(this.getDamage() + amount * 10);
         this.markHurt();
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
@@ -275,11 +235,11 @@ public class CannonEntity extends Entity {
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource pSource) {
-        if(pSource.is(DamageTypeTags.IS_EXPLOSION)){
+    public boolean isInvulnerableTo(final DamageSource damageSource) {
+        if (damageSource.is(DamageTypeTags.IS_EXPLOSION)) {
             return true;
         }
-        return super.isInvulnerableTo(pSource);
+        return super.isInvulnerableTo(damageSource);
     }
 
     protected void tickLerp() {
@@ -302,7 +262,7 @@ public class CannonEntity extends Entity {
 
     @Override
     public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-                       final int pPosRotationIncrements, final boolean teleport) {
+            final int pPosRotationIncrements, final boolean teleport) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;
@@ -311,51 +271,26 @@ public class CannonEntity extends Entity {
         this.lerpSteps = 10;
     }
 
-    @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-
+    protected void destroy(@SuppressWarnings("unused") final DamageSource damageSource) {
+        this.spawnAtLocation(this.getCannonball(), 1);
+        this.spawnAtLocation(new ItemStack(this.getDropItem()), 1);
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-
+    public void handleEntityEvent(final byte eventID) {
+        if (eventID == EVENT_LIGHT) {
+            this.light(null);
+        } else {
+            super.handleEntityEvent(eventID);
+        }
     }
 
-    public ItemStack getCannonball(){
+    public ItemStack getCannonball() {
         return this.entityData.get(DATA_ID_CANNONBALL_ITEM);
     }
 
-    public ItemStack getPaper(){
-        return this.entityData.get(DATA_ID_PAPER_ITEM);
-    }
-
-    public ItemStack getGunpowder(){
-        return this.entityData.get(DATA_ID_GUNPOWDER_ITEM);
-    }
-
-    protected void setCannonball(ItemStack itemStack){
+    protected void setCannonball(final ItemStack itemStack) {
         this.entityData.set(DATA_ID_CANNONBALL_ITEM, itemStack.copy());
-    }
-
-    protected void setPaper(ItemStack itemStack){
-        this.entityData.set(DATA_ID_PAPER_ITEM, itemStack.copy());
-    }
-
-    protected void setGunpowder(ItemStack itemStack){
-        this.entityData.set(DATA_ID_GUNPOWDER_ITEM, itemStack.copy());
-    }
-
-    private static final float DAMAGE_TO_BREAK = 8.0f;
-    private static final float DAMAGE_RECOVERY = 0.5f;
-
-    @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_HURT, 0);
-        this.entityData.define(DATA_ID_DAMAGE, 0F);
-        this.entityData.define(DATA_ID_PAPER_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_GUNPOWDER_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_FUSE_TIME, -1);
     }
 
     public float getDamage() {
@@ -366,27 +301,9 @@ public class CannonEntity extends Entity {
         this.entityData.set(DATA_ID_DAMAGE, damageTaken);
     }
 
-    public int getHurtTime() {
-        return this.entityData.get(DATA_ID_HURT);
-    }
-
-    public void setHurtTime(final int hurtTime) {
-        this.entityData.set(DATA_ID_HURT, hurtTime);
-    }
-
-    public int getFuseTime(){
-        return this.entityData.get(DATA_ID_FUSE_TIME);
-    }
-
-    public void setFuseTime(int fuse){
-        this.entityData.set(DATA_ID_FUSE_TIME, Mth.clamp(fuse, -1, 200));
-    }
-
-    protected void destroy(final DamageSource damageSource) {
-        this.spawnAtLocation(this.getCannonball(), 1);
-        this.spawnAtLocation(this.getPaper(), 1);
-        this.spawnAtLocation(this.getGunpowder(), 1);
-        this.spawnAtLocation(this.getDropItem(), 1);
+    @SuppressWarnings("unused")
+    public int getFuseTime() {
+        return this.fuse;
     }
 
     public Item getDropItem() {
@@ -395,7 +312,7 @@ public class CannonEntity extends Entity {
 
     @Override
     public ItemStack getPickResult() {
-        return getDropItem().getDefaultInstance();
+        return new ItemStack(this.getDropItem());
     }
 
     @Override
@@ -404,12 +321,8 @@ public class CannonEntity extends Entity {
     }
 
     @Override
-    public boolean canCollideWith(final net.minecraft.world.entity.Entity other) {
-        return canVehicleCollide(this, other);
-    }
-
-    public static boolean canVehicleCollide(final net.minecraft.world.entity.Entity vehicle, final net.minecraft.world.entity.Entity entity) {
-        return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
+    public boolean canCollideWith(final Entity other) {
+        return AbstractVehicle.canVehicleCollide(this, other);
     }
 
     @Override
@@ -420,5 +333,21 @@ public class CannonEntity extends Entity {
     @Override
     public boolean isPushable() {
         return true;
+    }
+
+    /**
+     * @return The next required ItemStack to load the cannon.
+     * @apiNote The returned stack must not be modified and is expected to be used only in rendering
+     */
+    public ItemStack nextRequiredItem() {
+        return CANNONBALL;
+    }
+
+    public boolean isLoaded() {
+        return !this.getCannonball().isEmpty();
+    }
+
+    public boolean isLit() {
+        return this.fuse > -1;
     }
 }

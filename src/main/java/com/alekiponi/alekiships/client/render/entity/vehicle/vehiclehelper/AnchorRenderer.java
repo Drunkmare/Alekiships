@@ -16,53 +16,44 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class AnchorRenderer extends EntityRenderer<Entity> {
-    private static final ResourceLocation ANCHOR = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/anchor.png");
-    private final AnchorEntityModel<AnchorEntity> model;
+public class AnchorRenderer extends EntityRenderer<AnchorEntity> {
+    private static final ResourceLocation ANCHOR = new ResourceLocation(AlekiShips.MOD_ID,
+            "textures/entity/watercraft/anchor.png");
+    private final AnchorEntityModel<AnchorEntity> model = new AnchorEntityModel<>();
 
-    public AnchorRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new AnchorEntityModel<>();
-    }
-
-    public void render(Entity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack,
-                       MultiBufferSource pBuffer, int pPackedLight) {
-        float rotation = 0f;
-        if(pEntity.getVehicle()== null){
-            return;
-        }
-        if(pEntity.getVehicle().getVehicle() == null){
-            return;
-        }
-        if(pEntity.getVehicle().getVehicle().getVehicle() == null){
-            return;
-        }
-        if (pEntity.getVehicle().getVehicle().getVehicle() instanceof AbstractAlekiBoatEntity trueVehicle) {
-            rotation = trueVehicle.getYRot();
-        } else {
-            rotation = pEntityYaw;
-        }
-        pPoseStack.pushPose();
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(60 - rotation));
-        pPoseStack.translate(0f, 0f, 1.4f);
-        pPoseStack.mulPose(Axis.XP.rotationDegrees(270));
-
-        this.model.setupAnim((AnchorEntity) pEntity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(this.model.renderType(ANCHOR));
-        this.model.renderToBuffer(pPoseStack, vertexconsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
-                1.0F, 1.0F);
-        pPoseStack.popPose();
-        Entity vehicle = pEntity.getVehicle();
-        assert vehicle != null;
-        AlekiShipsRenderHelper.renderRope(pEntity, pPartialTicks, pPoseStack, pBuffer, vehicle, this.getBlockLightLevel(pEntity, BlockPos.containing(pEntity.getEyePosition(pPartialTicks))));
-        super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight);
+    public AnchorRenderer(final EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Entity pEntity) {
-        return null;
+    public void render(final AnchorEntity anchor, final float entityYaw, final float partialTicks,
+            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+        if (anchor.getVehicle() == null) return;
+        if (anchor.getVehicle().getVehicle() == null) return;
+        if (anchor.getVehicle().getVehicle().getVehicle() == null) return;
+
+        final float rotation = anchor.getVehicle().getVehicle()
+                .getVehicle() instanceof AbstractAlekiBoatEntity trueVehicle ? trueVehicle.getYRot() : entityYaw;
+
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(60 - rotation));
+        poseStack.translate(0, 0, 1.4f);
+        poseStack.mulPose(Axis.XP.rotationDegrees(270));
+
+        this.model.setupAnim(anchor, 0, 0, 0, 0, 0);
+        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
+                this.model.renderType(this.getTextureLocation(anchor)));
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        poseStack.popPose();
+        final Entity vehicle = anchor.getVehicle();
+        assert vehicle != null;
+        AlekiShipsRenderHelper.renderRope(anchor, partialTicks, poseStack, bufferSource, vehicle,
+                this.getBlockLightLevel(anchor, BlockPos.containing(anchor.getEyePosition(partialTicks))));
+        super.render(anchor, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }
 
-
+    @Override
+    public ResourceLocation getTextureLocation(final AnchorEntity pEntity) {
+        return ANCHOR;
+    }
 }
-
