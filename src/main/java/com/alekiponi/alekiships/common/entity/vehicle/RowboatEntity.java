@@ -27,8 +27,8 @@ import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity {
     protected static final byte NO_DYE = -1;
-    private static final EntityDataAccessor<ItemStack> DATA_OARS = SynchedEntityData.defineId(RowboatEntity.class,
-            EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
+            EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     public final int PASSENGER_NUMBER = 6;
@@ -244,7 +244,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars().getCount() < 2) {
+        if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars() != Oars.TWO) {
             this.addOar();
             heldItem.split(1);
             return InteractionResult.SUCCESS;
@@ -266,7 +266,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_OARS, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
         this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
     }
 
@@ -301,7 +301,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setOars(ItemStack.of(compoundTag.getCompound("dataOars")));
+        this.setOars(Oars.byId(compoundTag.getByte("oars")));
 
         if (compoundTag.contains("paint", CompoundTag.TAG_BYTE)) {
             this.setPaintColor(DyeColor.byId(compoundTag.getByte("paint")));
@@ -311,7 +311,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put("dataOars", this.getOars().save(new CompoundTag()));
+        compoundTag.putByte("oars", (byte) this.getOars().getId());
 
         {
             final DyeColor paintColor = this.getPaintColor();

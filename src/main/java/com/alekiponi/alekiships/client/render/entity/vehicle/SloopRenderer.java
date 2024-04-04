@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.client.render.entity.vehicle;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,14 +20,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.EnumMap;
-import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/sloop/damage_overlay.png");
-    public static final Map<DyeColor, ResourceLocation> SAIL_TEXTURES = Helpers.mapOfKeys(DyeColor.class,
+    public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = AlekiShipsHelper.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
     protected final ResourceLocation sloopTexture;
@@ -39,7 +39,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     public SloopRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/normal.png"),
-                Helpers.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
+                AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName() + ".png")));
     }
 
