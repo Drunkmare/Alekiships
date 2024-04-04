@@ -7,9 +7,11 @@ import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.SmokerCompartmentMenu;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -24,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +45,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -139,7 +143,8 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         this.recipeType = recipeType;
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
+            this.setDisplayBlockState(
+                    blockItem.getBlock().defaultBlockState().setValue(AbstractFurnaceBlock.LIT, this.isLit()));
         }
     }
 
@@ -173,7 +178,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             --this.litTime;
         }
 
-        if (this.level().isClientSide()) return;
+        if (this.level().isClientSide()) {
+            if (!this.isRemoved() && AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, 10))
+                this.animateTick();
+            return;
+        }
 
         final ItemStack fuelStack = this.getItem(SLOT_FUEL);
         final boolean inputSlotEmpty = !this.getItem(SLOT_INPUT).isEmpty();
@@ -488,6 +497,13 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     public ItemStack getPickResult() {
         return new ItemStack(this.getDisplayBlockState().getBlock());
     }
+
+    /**
+     * Called on the client to do animation stuff. This is attempting to replicate what
+     * {@link Block#animateTick(BlockState, Level, BlockPos, RandomSource)} does but you'll have to play with it
+     * as we call this every couple ticks
+     */
+    protected abstract void animateTick();
 
     @Override
     protected abstract AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory);

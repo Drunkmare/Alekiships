@@ -3,10 +3,15 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
@@ -18,6 +23,30 @@ public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     public FurnaceCompartmentEntity(final CompartmentType<? extends FurnaceCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, RecipeType.SMELTING, itemStack);
+    }
+
+    @Override
+    protected void animateTick() {
+        if (!this.getDisplayBlockState().getValue(AbstractFurnaceBlock.LIT)) return;
+
+        final double xPos = this.getX();
+        final double yPos = this.getY();
+        final double zPos = this.getZ();
+        if (this.random.nextDouble() < 0.1D) {
+            this.level().playLocalSound(xPos, yPos, zPos, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1, 1,
+                    false);
+        }
+
+        final double randomOffset = this.random.nextDouble() * 0.6 - 0.3;
+        final double xOffset = Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * 0.48;
+        final double yOffset = this.random.nextDouble() * 6 / 16;
+        final double zOffset = Mth.cos(-this.getYRot() * Mth.DEG_TO_RAD) * 0.48;
+
+        // TODO I'm too stupid for this. This needs to be a horizontal line that the particles are randomly distributed on
+        //  IE it should look like how the vanilla furnace particles do
+
+        this.level().addParticle(ParticleTypes.SMOKE, xPos + xOffset, yPos + yOffset, zPos + zOffset, 0, 0, 0);
+        this.level().addParticle(ParticleTypes.FLAME, xPos + xOffset, yPos + yOffset, zPos + zOffset, 0, 0, 0);
     }
 
     @Override

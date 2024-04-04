@@ -21,6 +21,11 @@ public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     }
 
     @Override
+    protected void animateTick() {
+        // TODO should spawn particles like the Smoker block does. I'm too stupid for it - Traister
+    }
+
+    @Override
     protected AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory) {
         return new SmokerCompartmentMenu(id, playerInventory, this, this.dataAccess);
     }

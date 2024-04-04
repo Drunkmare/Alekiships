@@ -21,6 +21,11 @@ public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEnt
     }
 
     @Override
+    protected void animateTick() {
+        // TODO should spawn particles like the Blast Furnace block does. I'm too stupid for it - Traister
+    }
+
+    @Override
     protected AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory) {
         return new BlastFurnaceCompartmentMenu(id, playerInventory, this, this.dataAccess);
     }
