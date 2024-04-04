@@ -20,15 +20,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -532,16 +529,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(Tags.Items.DYES) && !stack.is(this.getPaint().getItem())) {
-            this.setPaint(stack.split(1));
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
-        }
-        if (stack.is(Items.WATER_BUCKET)) {
-            this.setPaint(ItemStack.EMPTY);
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
-        }
         if (stack.is(this.getDropItem())) {
             if (this.getDamage() > 0.0F) {
                 this.setDamage(this.getDamage() - getDamageRecovery());
@@ -553,16 +540,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
         }
         return InteractionResult.PASS;
-    }
-
-    public DyeColor getPaintColor() {
-        ItemStack stack = this.getPaint();
-        if (!stack.isEmpty()) {
-            if (stack.is(Tags.Items.DYES)) {
-                return DyeColor.getColor(stack);
-            }
-        }
-        return null;
     }
 
     protected abstract float getMomentumSubtractor();

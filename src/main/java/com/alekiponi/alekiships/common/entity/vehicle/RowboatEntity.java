@@ -14,16 +14,22 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity {
-    private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
+    protected static final byte NO_DYE = -1;
+    private static final EntityDataAccessor<ItemStack> DATA_OARS = SynchedEntityData.defineId(RowboatEntity.class,
+            EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Byte> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     public final int PASSENGER_NUMBER = 6;
 
@@ -223,7 +229,22 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldItem = player.getItemInHand(hand);
 
-        if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars() != Oars.TWO) {
+        if (heldItem.is(Tags.Items.DYES)) {
+            final DyeColor dyeColor = DyeColor.getColor(heldItem);
+            if (dyeColor != null && dyeColor != this.getPaintColor()) {
+                this.setPaintColor(dyeColor);
+                player.swing(hand);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        if (heldItem.is(Items.WATER_BUCKET)) {
+            this.clearPaint();
+            player.swing(hand);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars().getCount() < 2) {
             this.addOar();
             heldItem.split(1);
             return InteractionResult.SUCCESS;
@@ -245,7 +266,31 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_ID_OARS, (byte) Oars.ZERO.ordinal());
+        this.entityData.define(DATA_OARS, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
+    }
+
+    /**
+     * @return The paint color of the boat. {@code null} for no color
+     */
+    @Nullable
+    public DyeColor getPaintColor() {
+        final byte colorIndex = this.entityData.get(DATA_ID_PAINT_COLOR);
+
+        if (colorIndex == NO_DYE) return null;
+
+        return DyeColor.byId(colorIndex);
+    }
+
+    /**
+     * @param paintColor A {@link DyeColor}
+     */
+    public void setPaintColor(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_PAINT_COLOR, (byte) paintColor.getId());
+    }
+
+    public void clearPaint() {
+        this.entityData.set(DATA_ID_PAINT_COLOR, NO_DYE);
     }
 
     @Override
@@ -256,13 +301,24 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setOars(Oars.byId(compoundTag.getByte("oars")));
+        this.setOars(ItemStack.of(compoundTag.getCompound("dataOars")));
+
+        if (compoundTag.contains("paint", CompoundTag.TAG_BYTE)) {
+            this.setPaintColor(DyeColor.byId(compoundTag.getByte("paint")));
+        }
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.putByte("oars", (byte) this.getOars().getId());
+        compoundTag.put("dataOars", this.getOars().save(new CompoundTag()));
+
+        {
+            final DyeColor paintColor = this.getPaintColor();
+            if (paintColor != null) {
+                compoundTag.putByte("paint", (byte) paintColor.getId());
+            }
+        }
     }
 
     @Override

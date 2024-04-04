@@ -3,7 +3,7 @@ package com.alekiponi.alekiships.client.render.entity.vehicle;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -19,40 +19,40 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/sloop/damage_overlay.png");
-    public static final EnumMap<DyeColor, ResourceLocation> SLOOP_PAINT_TEXTURES = AlekiShipsHelper.mapOfKeys(
-            DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                    "textures/entity/watercraft/sloop/paint/" + dyeColor.getSerializedName() + ".png"));
-    public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = AlekiShipsHelper.mapOfKeys(DyeColor.class,
+    public static final Map<DyeColor, ResourceLocation> SAIL_TEXTURES = Helpers.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                    "textures/entity/watercraft/sloop/dye/" + dyeColor.getSerializedName() + ".png"));
+                    "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
     protected final ResourceLocation sloopTexture;
+    protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
     protected final SloopEntityModel sloopModel = new SloopEntityModel();
 
     /**
      * This is primarily for us as it hardcodes the Firmaciv namespace.
-     * Use the constructor taking a {@link ResourceLocation} to provide a fully custom path
-     *
-     * @param woodName The name of the wood
      */
-    public SloopRenderer(final EntityRendererProvider.Context context, final String woodName) {
-        this(context, new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/sloop/" + woodName + ".png"));
+    public SloopRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
+        this(context, new ResourceLocation(AlekiShips.MOD_ID,
+                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/normal.png"),
+                Helpers.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
+                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName() + ".png")));
     }
 
     /**
-     * Alternative constructor taking a resource location instead of a wood name
-     *
-     * @param sloopTexture The texture location. Must include file extension!
+     * @param sloopTexture  The texture location. Must include file extension!
+     * @param paintTextures The texture locations for when the sloop is painted. Must include file extension!
      */
-    public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture) {
+    public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture,
+            final EnumMap<DyeColor, ResourceLocation> paintTextures) {
         super(context);
         this.shadowRadius = 0.8F;
         this.sloopTexture = sloopTexture;
+        this.paintTextures = paintTextures;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
         this.sloopModel.setupAnim(sloopEntity, partialTicks, 0, -0.1F, 0, 0);
         final VertexConsumer vertexconsumer = bufferSource.getBuffer(
-                this.sloopModel.renderType(getTextureLocation(sloopEntity)));
+                this.sloopModel.renderType(this.getTextureLocation(sloopEntity)));
 
         if (sloopEntity.tickCount < 1) {
             poseStack.popPose();
@@ -102,63 +102,33 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         if (sloopEntity.getMainsailActive()) {
             this.sloopModel.getMainsailDeployedParts()
                     .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            if (sloopEntity.getMainsailDye().isEmpty()) {
-                this.sloopModel.getMainsail()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
+            this.sloopModel.getMainsail().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getMainsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         } else {
             this.sloopModel.getMainsailFurledParts()
                     .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            // TODO we do need to render this twice as the sail is included in this model part.
+            //  change the model (or don't it's probably not that big of a deal)
+            this.sloopModel.getMainsailFurledParts().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getMainsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
 
-        if (sloopEntity.getJibsailDye().isEmpty()) {
-            if (sloopEntity.getJibsailActive()) {
-
-                this.sloopModel.getJibsail()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-
-            } else {
-                this.sloopModel.getJibsailFurled()
-                        .render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
+        if (sloopEntity.getJibsailActive()) {
+            this.sloopModel.getJibsail().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getJibsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        } else {
+            this.sloopModel.getJibsailFurled().render(poseStack,
+                    bufferSource.getBuffer(RenderType.entityCutout(this.getJibsailTexture(sloopEntity))), packedLight,
+                    OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         }
+
         if (!sloopEntity.isUnderWater() && sloopEntity.getDamage() < sloopEntity.getDamageThreshold() * 0.9) {
             final VertexConsumer vertexconsumer1 = bufferSource.getBuffer(RenderType.waterMask());
             this.sloopModel.getWaterocclusion()
                     .render(poseStack, vertexconsumer1, packedLight, OverlayTexture.NO_OVERLAY);
-        }
-
-        if (!sloopEntity.getMainsailDye().isEmpty() && sloopEntity.getDyeColor(0) != null) {
-            final VertexConsumer mainsailVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityCutout(getMainsailTexture(sloopEntity)));
-            if (sloopEntity.getMainsailActive()) {
-                this.sloopModel.getMainsailDeployedParts()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-                this.sloopModel.getMainsail()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            } else {
-                this.sloopModel.getMainsailFurledParts()
-                        .render(poseStack, mainsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
-        }
-
-        if (!sloopEntity.getJibsailDye().isEmpty() && sloopEntity.getDyeColor(1) != null) {
-            final VertexConsumer jibsailVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityCutout(getJibsailTexture(sloopEntity)));
-            if (sloopEntity.getJibsailActive()) {
-                this.sloopModel.getJibsail()
-                        .render(poseStack, jibsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            } else {
-                this.sloopModel.getJibsailFurled()
-                        .render(poseStack, jibsailVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-            }
-        }
-
-        if (!sloopEntity.getPaint().isEmpty() && sloopEntity.getPaintColor() != null) {
-            final VertexConsumer paintVertexConsumer = bufferSource.getBuffer(
-                    RenderType.entityTranslucent(getPaintTexture(sloopEntity)));
-            this.sloopModel.renderToBuffer(poseStack, paintVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1,
-                    1, 0.9F);
         }
 
         if (sloopEntity.getDamage() > 0) {
@@ -176,18 +146,15 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(final SloopEntity sloopEntity) {
-        return this.sloopTexture;
+        final DyeColor paintColor = sloopEntity.getPaintColor();
+        return paintColor == null ? this.sloopTexture : this.paintTextures.get(paintColor);
     }
 
     public ResourceLocation getMainsailTexture(final SloopEntity sloopEntity) {
-        return SAIL_TEXTURES.get(sloopEntity.getDyeColor(0));
+        return SAIL_TEXTURES.get(sloopEntity.getMainsailDye());
     }
 
     public ResourceLocation getJibsailTexture(final SloopEntity sloopEntity) {
-        return SAIL_TEXTURES.get(sloopEntity.getDyeColor(1));
-    }
-
-    public ResourceLocation getPaintTexture(final SloopEntity sloopEntity) {
-        return SLOOP_PAINT_TEXTURES.get(sloopEntity.getPaintColor());
+        return SAIL_TEXTURES.get(sloopEntity.getJibsailDye());
     }
 }

@@ -52,8 +52,6 @@ public abstract class AbstractVehicle extends Entity {
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Float> DATA_ID_ACCELERATION = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<ItemStack> DATA_ID_PAINT = SynchedEntityData.defineId(AbstractVehicle.class,
-            EntityDataSerializers.ITEM_STACK);
 
     private float randomRotation;
 
@@ -197,7 +195,6 @@ public abstract class AbstractVehicle extends Entity {
         this.entityData.define(DATA_ID_DAMAGE, 0.0F);
         this.entityData.define(DATA_ID_DELTA_ROTATION, 0f);
         this.entityData.define(DATA_ID_ACCELERATION, 0f);
-        this.entityData.define(DATA_ID_PAINT, ItemStack.EMPTY);
     }
 
     @Override
@@ -770,18 +767,9 @@ public abstract class AbstractVehicle extends Entity {
         return this.entityData.get(DATA_ID_ACCELERATION);
     }
 
-    public ItemStack getPaint() {
-        return this.entityData.get(DATA_ID_PAINT);
-    }
-
-    public void setPaint(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_PAINT, itemStack.copy());
-    }
-
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
         this.setDeltaRotation(pCompound.getFloat("deltaRotation"));
-        this.setPaint(ItemStack.of(pCompound.getCompound("paint")));
         this.setHurtDir(pCompound.getInt("hurtDir"));
         this.setDamage(pCompound.getFloat("damage"));
         this.setHurtTime(pCompound.getInt("hurtTime"));
@@ -791,7 +779,6 @@ public abstract class AbstractVehicle extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
         pCompound.putFloat("deltaRotation", this.getDeltaRotation());
-        pCompound.put("paint", this.getPaint().save(new CompoundTag()));
         pCompound.putInt("hurtDir", this.getHurtDir());
         pCompound.putFloat("damage", this.getDamage());
         pCompound.putInt("hurtTime", this.getHurtTime());

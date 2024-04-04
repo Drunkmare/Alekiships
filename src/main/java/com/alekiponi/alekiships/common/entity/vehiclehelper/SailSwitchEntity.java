@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -30,25 +31,31 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
 
             if(index == 0){
                 //mainsail
-                if(stack.is(Items.WATER_BUCKET)){
-                    sloop.setMainsailDye(ItemStack.EMPTY);
+                if (stack.is(Items.WATER_BUCKET)) {
+                    sloop.clearMainsailDye();
                     return InteractionResult.SUCCESS;
                 }
-                if(!stack.is(sloop.getMainsailDye().getItem())){
-                    sloop.setMainsailDye(stack.split(1));
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
+                if (stack.is(Tags.Items.DYES)) {
+                    final DyeColor dyeColor = DyeColor.getColor(stack);
+                    if (dyeColor != null) {
+                        sloop.setMainsailDye(dyeColor);
+                        player.swing(hand);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
-            } else if(index == 1){
+            } else if (index == 1) {
                 //jibsail
-                if(stack.is(Items.WATER_BUCKET)){
-                    sloop.setJibsailDye(ItemStack.EMPTY);
+                if (stack.is(Items.WATER_BUCKET)) {
+                    sloop.clearJibsailDye();
                     return InteractionResult.SUCCESS;
                 }
-                if(!stack.is(sloop.getJibsailDye().getItem())){
-                    sloop.setJibsailDye(stack.split(1));
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
+                if (stack.is(Tags.Items.DYES)) {
+                    final DyeColor dyeColor = DyeColor.getColor(stack);
+                    if (dyeColor != null) {
+                        sloop.setJibsailDye(dyeColor);
+                        player.swing(hand);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
             }
         }

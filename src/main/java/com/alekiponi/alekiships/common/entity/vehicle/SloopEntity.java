@@ -7,16 +7,20 @@ import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
@@ -35,6 +39,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     public final int[] MASTS = {23};
 
     public final int[] CAN_ADD_CANNONS = {7,8,9,10,11,12};
+    protected static final byte NO_DYE = -1;
 
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
@@ -53,12 +58,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_TICKS_NO_RIDERS = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.INT);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            EntityDataSerializers.ITEM_STACK);
-
-    private static final EntityDataAccessor<ItemStack> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Byte> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
+            EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
+            EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(SloopEntity.class,
+            EntityDataSerializers.BYTE);
 
     public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
 
@@ -505,6 +510,28 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     }
 
     @Override
+    public InteractionResult interact(final Player player, final InteractionHand hand) {
+        final ItemStack heldItem = player.getItemInHand(hand);
+
+        if (heldItem.is(Tags.Items.DYES)) {
+            final DyeColor dyeColor = DyeColor.getColor(heldItem);
+            if (dyeColor != null && dyeColor != this.getPaintColor()) {
+                this.setPaintColor(dyeColor);
+                player.swing(hand);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        if (heldItem.is(Items.WATER_BUCKET)) {
+            this.clearPaint();
+            player.swing(hand);
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.interact(player, hand);
+    }
+
+    @Override
     protected void tickTurnSpeedFactor() {
         // TODO make this cleaner in the inheritance structure
         // shouldn't be used for larger boats...
@@ -519,8 +546,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         this.entityData.define(DATA_ID_JIBSAIL_ACTIVE, false);
         this.entityData.define(DATA_ID_TICKS_NO_RIDERS, 0);
         this.entityData.define(DATA_ID_MAINSHEET_LENGTH, 0f);
-        this.entityData.define(DATA_ID_JIBSAIL_DYE, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_MAINSAIL_DYE, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
+        this.entityData.define(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
+        this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
     }
 
     @Override
@@ -797,36 +825,54 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         return this.entityData.get(DATA_ID_RUDDER_ROTATION);
     }
 
-    public ItemStack getMainsailDye() {
-        return this.entityData.get(DATA_ID_MAINSAIL_DYE);
+    /**
+     * @return The color of the mainsail
+     */
+    public DyeColor getMainsailDye() {
+        return DyeColor.byId(this.entityData.get(DATA_ID_MAINSAIL_DYE));
     }
 
-    public void setMainsailDye(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE, itemStack.copy());
+    public void setMainsailDye(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) paintColor.getId());
     }
 
-    public ItemStack getJibsailDye() {
-        return this.entityData.get(DATA_ID_JIBSAIL_DYE);
+    public void clearMainsailDye() {
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
     }
 
-    public void setJibsailDye(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_JIBSAIL_DYE, itemStack.copy());
+    /**
+     * @return The color of the Jibsail
+     */
+    public DyeColor getJibsailDye() {
+        return DyeColor.byId(this.entityData.get(DATA_ID_JIBSAIL_DYE));
     }
 
-    public DyeColor getDyeColor(int sailIndex){
-        ItemStack stack = ItemStack.EMPTY;
-        if(sailIndex == 0){
-            stack = this.getMainsailDye();
-        } else if (sailIndex == 1){
-            stack = this.getJibsailDye();
-        }
-        if(!stack.isEmpty()){
-            if(stack.is(Tags.Items.DYES)){
-                return DyeColor.getColor(stack);
-            }
-        }
+    public void setJibsailDye(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) paintColor.getId());
+    }
 
-        return null;
+    public void clearJibsailDye() {
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
+    }
+
+    /**
+     * @return The paint color of the boat
+     */
+    @Nullable
+    public DyeColor getPaintColor() {
+        final byte colorIndex = this.entityData.get(DATA_ID_PAINT_COLOR);
+
+        if (colorIndex == NO_DYE) return null;
+
+        return DyeColor.byId(colorIndex);
+    }
+
+    public void setPaintColor(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_PAINT_COLOR, (byte) paintColor.getId());
+    }
+
+    public void clearPaint() {
+        this.entityData.set(DATA_ID_PAINT_COLOR, NO_DYE);
     }
 
     @Override
@@ -838,9 +884,18 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         this.setJibsailActive(pCompound.getBoolean("jibsailActive"));
         this.setTicksNoRiders(pCompound.getInt("ticksNoRiders"));
         this.setMainsheetLength(pCompound.getFloat("mainSheetLength"));
-        this.setJibsailDye(ItemStack.of(pCompound.getCompound("jibsailDye")));
-        this.setMainsailDye(ItemStack.of(pCompound.getCompound("mainsailDye")));
 
+        if (pCompound.contains("jibsailDye", Tag.TAG_BYTE)) {
+            this.setMainsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
+        }
+
+        if (pCompound.contains("mainsailDye", Tag.TAG_BYTE)) {
+            this.setMainsailDye(DyeColor.byId(pCompound.getByte("mainsailDye")));
+        }
+
+        if (pCompound.contains("paint", Tag.TAG_BYTE)) {
+            this.setPaintColor(DyeColor.byId(pCompound.getByte("paint")));
+        }
     }
 
     @Override
@@ -852,7 +907,27 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         pCompound.putBoolean("jibsailActive", this.getJibsailActive());
         pCompound.putInt("ticksNoRiders", this.getTicksNoRiders());
         pCompound.putFloat("mainSheetLength", this.getMainsheetLength());
-        pCompound.put("jibsailDye", this.getJibsailDye().save(new CompoundTag()));
-        pCompound.put("mainsailDye", this.getMainsailDye().save(new CompoundTag()));
+
+        {
+            final DyeColor paintColor = this.getJibsailDye();
+            if (paintColor != DyeColor.WHITE) {
+                pCompound.putByte("jibsailDye", (byte) paintColor.getId());
+            }
+        }
+
+        {
+            final DyeColor paintColor = this.getMainsailDye();
+            if (paintColor != DyeColor.WHITE) {
+                pCompound.putByte("mainsailDye", (byte) paintColor.getId());
+            }
+        }
+
+        {
+            final DyeColor paintColor = this.getPaintColor();
+            if (paintColor != null) {
+                pCompound.putByte("paint", (byte) paintColor.getId());
+            }
+        }
+
     }
 }
