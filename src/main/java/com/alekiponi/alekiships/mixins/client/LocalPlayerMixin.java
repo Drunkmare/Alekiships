@@ -12,26 +12,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
     @Shadow
-    private boolean handsBusy;
-
-    @Shadow
     public Input input;
+    @Shadow
+    private boolean handsBusy;
 
     public LocalPlayerMixin(ClientLevel level, GameProfile profile) {
         super(level, profile);
     }
 
-    @Inject(method = "rideTick", at = @At("HEAD"))
-    void injectMovementCapture(CallbackInfo ci) {
+    @Inject(method = "rideTick", at = @At("TAIL"))
+    void injectMovementCapture(final CallbackInfo ci) {
         if (this.getVehicle() instanceof EmptyCompartmentEntity compartmentEntity) {
             compartmentEntity.setInput(this.input.left, this.input.right, this.input.up, this.input.down);
             this.handsBusy |= this.input.left || this.input.right || this.input.up || this.input.down;
         }
     }
-
 }

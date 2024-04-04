@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
@@ -9,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -20,10 +20,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity {
-    private static final EntityDataAccessor<ItemStack> DATA_OARS = SynchedEntityData.defineId(RowboatEntity.class,
-            EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
+            EntityDataSerializers.BYTE);
     public final int PASSENGER_NUMBER = 6;
 
     public final int[] CLEATS = {5};
@@ -152,8 +153,15 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
             this.playSound(SoundEvents.WOOD_BREAK, 1.0F, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
-            spawnAtLocation(this.getOars().split(1));
-            spawnAtLocation(this.getOars().split(1));
+            switch (this.getOars()) {
+                case ZERO:
+                    break;
+                case TWO:
+                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
+                case ONE:
+                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
+                    break;
+            }
         }
 
         super.remove(removalReason);
@@ -162,7 +170,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected float getPaddleMultiplier() {
         float paddleMultiplier = 1.0f;
-        if (this.getOars().getCount() > 0) {
+        if (this.getOars() != Oars.ZERO) {
             paddleMultiplier = 1.6f;
         }
         return paddleMultiplier;
@@ -203,37 +211,41 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
         return null;
     }
 
-    public ItemStack getOars() {
-        return this.entityData.get(DATA_OARS);
+    public Oars getOars() {
+        return Oars.byId(this.entityData.get(DATA_ID_OARS));
     }
 
-    public void setOars(final ItemStack itemStack) {
-        this.entityData.set(DATA_OARS, itemStack.copy());
+    public void setOars(final Oars oars) {
+        this.entityData.set(DATA_ID_OARS, (byte) oars.ordinal());
     }
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        final ItemStack item = player.getItemInHand(hand);
-        if (item.is(AlekiShipsItems.OAR.get()) && this.getOars().getCount() < 2) {
+        final ItemStack heldItem = player.getItemInHand(hand);
+
+        if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars() != Oars.TWO) {
             this.addOar();
-            item.split(1);
+            heldItem.split(1);
             return InteractionResult.SUCCESS;
         }
-        super.interact(player,hand);
-        return InteractionResult.PASS;
+
+        return super.interact(player, hand);
     }
 
     public void addOar() {
-        ItemStack newItemStack = this.getOars();
-        int numberOfOars = newItemStack.getCount();
-        newItemStack = new ItemStack(AlekiShipsItems.OAR.get(), numberOfOars + 1);
-        this.setOars(newItemStack);
+        switch (this.getOars()) {
+            case ZERO -> this.setOars(Oars.ONE);
+            case ONE -> this.setOars(Oars.TWO);
+            case TWO -> {
+                // Intentionally empty
+            }
+        }
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_OARS, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_OARS, (byte) Oars.ZERO.ordinal());
     }
 
     @Override
@@ -244,17 +256,39 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setOars(ItemStack.of(compoundTag.getCompound("dataOars")));
+        this.setOars(Oars.byId(compoundTag.getByte("oars")));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put("dataOars", this.getOars().save(new CompoundTag()));
+        compoundTag.putByte("oars", (byte) this.getOars().getId());
     }
 
     @Override
     public float getStepHeight(){
         return 0.0f;
+    }
+
+    public enum Oars {
+        ZERO(0),
+        ONE(1),
+        TWO(2);
+
+        private static final IntFunction<Oars> BY_ID = ByIdMap.continuous(Oars::getId, values(),
+                ByIdMap.OutOfBoundsStrategy.ZERO);
+        private final int id;
+
+        Oars(final int id) {
+            this.id = id;
+        }
+
+        public static Oars byId(final int id) {
+            return BY_ID.apply(id);
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }

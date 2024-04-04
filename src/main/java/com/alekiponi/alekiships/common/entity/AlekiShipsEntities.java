@@ -30,8 +30,8 @@ public final class AlekiShipsEntities {
 
     private static final int LARGE_VEHICLE_TRACKING = 20;
     private static final int VEHICLE_HELPER_TRACKING = LARGE_VEHICLE_TRACKING + 1;
-    public static DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
-            MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
+            ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
@@ -157,8 +157,8 @@ public final class AlekiShipsEntities {
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
     public static final RegistryObject<EntityType<CannonballEntity>> CANNONBALL_ENTITY = register("cannonball",
-            EntityType.Builder.of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).setTrackingRange(32)
-                    .clientTrackingRange(32).noSummon());
+            EntityType.Builder.<CannonballEntity>of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
+                    .setTrackingRange(32).clientTrackingRange(32).noSummon());
 
     public static final RegistryObject<EntityType<CannonEntity>> CANNON_ENTITY = register("cannon",
             EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F));

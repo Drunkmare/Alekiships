@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> {
+public class ServerBoundSloopPacket {
     private final float sheetLength;
     private final float rudderAngle;
     private final int entityID;
@@ -34,10 +34,6 @@ public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> 
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerBoundSloopPacket decoder(FriendlyByteBuf buffer){
-        return new ServerBoundSloopPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);
@@ -50,16 +46,5 @@ public class ServerBoundSloopPacket implements Packet<ServerGamePacketListener> 
                 }
             }
         });
-    }
-
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf pBuffer) {
-
-    }
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener pHandler) {
-
     }
 }

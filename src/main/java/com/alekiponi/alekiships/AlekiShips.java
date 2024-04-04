@@ -2,17 +2,14 @@ package com.alekiponi.alekiships;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
-import com.alekiponi.alekiships.common.blockentity.AlekiShipsBlockEntities;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
-import com.alekiponi.alekiships.util.AlekiShipsInteractionManager;
+import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -31,17 +28,14 @@ public class AlekiShips {
     public AlekiShips() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        AlekiShipsTabs.register(eventBus);
-
-        AlekiShipsItems.register(eventBus);
-        AlekiShipsBlocks.register(eventBus);
-        AlekiShipsBlockEntities.register(eventBus);
+        AlekiShipsTabs.CREATIVE_MODE_TABS.register(eventBus);
+        AlekiShipsItems.ITEMS.register(eventBus);
+        AlekiShipsBlocks.BLOCKS.register(eventBus);
         AlekiShipsEntities.ENTITY_TYPES.register(eventBus);
 
         eventBus.addListener(this::setup);
-        MinecraftForge.EVENT_BUS.register(this);
-        eventBus.addListener(this::addCreative);
         AlekiShipsConfig.init();
+        PacketHandler.init();
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init();
@@ -49,15 +43,6 @@ public class AlekiShips {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            AlekiShipsInteractionManager.init();
-            VanillaWood.registerFrames();
-        });
+        event.enqueueWork(VanillaWood::registerFrames);
     }
-
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
-    }
-
-
 }

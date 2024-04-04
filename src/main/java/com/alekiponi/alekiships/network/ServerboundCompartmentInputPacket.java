@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacketListener> {
+public class ServerboundCompartmentInputPacket {
     private final boolean inputLeft;
     private final boolean inputRight;
     private final boolean inputUp;
@@ -43,10 +43,6 @@ public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacke
         buffer.writeInt(this.entityID);
     }
 
-    public static ServerboundCompartmentInputPacket decoder(FriendlyByteBuf buffer) {
-        return new ServerboundCompartmentInputPacket(buffer);
-    }
-
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             Entity entity = context.get().getSender().level().getEntity(this.entityID);
@@ -58,14 +54,5 @@ public class ServerboundCompartmentInputPacket implements Packet<ServerGamePacke
                 }
             }
         });
-    }
-
-
-    @Override
-    public void handle(@NotNull ServerGamePacketListener supplier) {
-    }
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf buffer) {
     }
 }

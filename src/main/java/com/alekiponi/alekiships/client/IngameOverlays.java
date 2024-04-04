@@ -14,8 +14,6 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.dries007.tfc.util.calendar.Calendars;
-import net.dries007.tfc.util.calendar.ICalendar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +49,7 @@ public enum IngameOverlays {
             "textures/gui/icons/sailing_icons.png");
     public static final ResourceLocation SPEEDOMETER_ICONS = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/gui/icons/speedometer_icons.png");
+    private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
     final IGuiOverlay overlay;
     private final String id;
 
@@ -116,11 +115,6 @@ public enum IngameOverlays {
 
                         stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
                         stack.scale(1.0F, 1.0F, 1.0F);
-                        long remainingTicks = (long) (ICalendar.TICKS_IN_DAY * 3) - (Calendars.SERVER.getTicks() - emptyCompartmentEntity.getPassengerRideTick());
-
-                        if (remainingTicks <= ICalendar.TICKS_IN_DAY) {
-                            string = restlessPassenger.getString() + " ";
-                        }
                         string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
                                 .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
                                 .getString() + " " + toEject.getString();
@@ -129,11 +123,6 @@ public enum IngameOverlays {
                     stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
                     stack.scale(1.0F, 1.0F, 1.0F);
                     if (emptyCompartmentEntity.getFirstPassenger() instanceof LivingEntity livingEntity) {
-                        long remainingTicks = (long) (ICalendar.TICKS_IN_DAY * 3) - (Calendars.SERVER.getTicks() - emptyCompartmentEntity.getPassengerRideTick());
-
-                        if (remainingTicks <= ICalendar.TICKS_IN_DAY) {
-                            string = restlessPassenger.getString() + " ";
-                        }
                         string += press.getString() + " " + mc.options.keyShift.getTranslatedKeyMessage()
                                 .getString() + " + " + mc.options.keyUse.getTranslatedKeyMessage()
                                 .getString() + " " + toEject.getString();
@@ -196,32 +185,13 @@ public enum IngameOverlays {
                     stack.translate((float) width / 2.0F, (float) height / 2.0F - 15.0F, 0.0F);
                     stack.scale(1.0F, 1.0F, 1.0F);
 
-                    Item cannonBall = cannon.cannonBallItem;
-                    Item gunpowder = cannon.getGunpowderItem();
-                    Item paper = cannon.getPaperItem();
-
-                    if(cannon.getCannonball().getCount() == 0){
-                        graphics.renderItem(cannonBall.getDefaultInstance(), 0,0);
-                    }
-                    if(cannon.getPaper().getCount() == 0 && cannon.needsPaperItem()){
-                        graphics.renderItem(paper.getDefaultInstance(), 16,0);
-                    }
-                    if(cannon.getGunpowder().getCount() == 0 && cannon.needsPaperItem()){
-                        graphics.renderItem(gunpowder.getDefaultInstance(), 32,0);
-                    }
-                    if(cannon.needsGunpowderItem() && cannon.needsPaperItem()){
-                        if(cannon.getPaper().getCount() == cannon.getCannonball().getCount() &&
-                                cannon.getCannonball().getCount() == cannon.getGunpowder().getCount() &&
-                                cannon.getGunpowder().getCount() == 1 && cannon.getFuseTime() < 0){
-                            graphics.renderItem(Items.FLINT_AND_STEEL.getDefaultInstance(), 0,0);
-                        }
-                    } else {
-                        if(cannon.getCannonball().getCount() == 1 && cannon.getFuseTime() < 0){
-                            graphics.renderItem(Items.FLINT_AND_STEEL.getDefaultInstance(), 0,0);
+                    if (!cannon.isLit()) {
+                        if (cannon.isLoaded()) {
+                            graphics.renderItem(FLINT_AND_STEEL, 0, 0);
+                        } else {
+                            graphics.renderFakeItem(cannon.nextRequiredItem(), 0, 0);
                         }
                     }
-
-
                 }
 
                 stack.popPose();
