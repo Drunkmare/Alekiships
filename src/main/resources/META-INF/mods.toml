@@ -31,12 +31,3 @@ description='''
     versionRange="[1.20.1,1.21.0)"
     ordering="NONE"
     side="BOTH"
-
-
-[[dependencies.alekiships]]
-    modId="tfc"
-    mandatory=true
-    versionRange="[0,)"
-    ordering="AFTER"
-    side="BOTH"
-
