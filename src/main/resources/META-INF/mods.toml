@@ -4,7 +4,7 @@ loaderVersion="[40,)"
 license="MIT"
 [[mods]]
 modId="alekiships"
-version="0.2.0-alpha"
+version="${file.jarVersion}"
 displayName="aleki's Nifty Ships"
 logoFile="icon.png"
 authors="alekiponi"
