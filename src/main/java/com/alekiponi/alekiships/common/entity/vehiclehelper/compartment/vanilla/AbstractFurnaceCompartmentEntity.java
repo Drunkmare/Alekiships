@@ -7,9 +7,11 @@ import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.SmokerCompartmentMenu;
+import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -24,10 +26,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.StackedContents;
@@ -43,6 +45,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,6 +70,11 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * counterparts you'll need to use or extend our menus as well
  */
 public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
+    public static final int SLOT_COUNT = 3;
+    public static final String BURN_TIME_KEY = "BurnTime";
+    public static final String COOK_TIME_KEY = "CookTime";
+    public static final String COOK_TIME_TOTAL_KEY = "CookTimeTotal";
+    public static final String RECIPES_USED_KEY = "RecipesUsed";
     protected static final int SLOT_INPUT = 0;
     protected static final int SLOT_FUEL = 1;
     protected static final int SLOT_RESULT = 2;
@@ -119,22 +127,24 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private LazyOptional<? extends IItemHandler>[] directionalHandlers = SidedInvWrapper.create(this, Direction.UP,
             Direction.DOWN, Direction.NORTH);
 
-    public AbstractFurnaceCompartmentEntity(final EntityType<? extends AbstractFurnaceCompartmentEntity> entityType,
-            final Level level, final RecipeType<? extends AbstractCookingRecipe> recipeType) {
-        super(entityType, level, 3);
+    protected AbstractFurnaceCompartmentEntity(
+            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
+            final RecipeType<? extends AbstractCookingRecipe> recipeType) {
+        super(compartmentType, level, SLOT_COUNT);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
     }
 
-    public AbstractFurnaceCompartmentEntity(
-            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> entityType, final Level level,
+    protected AbstractFurnaceCompartmentEntity(
+            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
             final RecipeType<? extends AbstractCookingRecipe> recipeType, final ItemStack itemStack) {
-        super(entityType, level, 3, itemStack);
+        super(compartmentType, level, SLOT_COUNT, itemStack);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(blockItem.getBlock().defaultBlockState());
+            this.setDisplayBlockState(
+                    blockItem.getBlock().defaultBlockState().setValue(AbstractFurnaceBlock.LIT, this.isLit()));
         }
     }
 
@@ -168,7 +178,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             --this.litTime;
         }
 
-        if (this.level().isClientSide()) return;
+        if (this.level().isClientSide()) {
+            if (!this.isRemoved() && AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, 10))
+                this.animateTick();
+            return;
+        }
 
         final ItemStack fuelStack = this.getItem(SLOT_FUEL);
         final boolean inputSlotEmpty = !this.getItem(SLOT_INPUT).isEmpty();
@@ -419,7 +433,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         this.loadCommonNBTData(compoundTag);
 
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override
@@ -428,7 +442,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.saveCommonNBTData(compoundTag);
 
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
@@ -448,15 +462,15 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private void loadCommonNBTData(final CompoundTag compoundTag) {
-        if (compoundTag.contains("BurnTime", Tag.TAG_INT)) this.litTime = compoundTag.getInt("BurnTime");
-        if (compoundTag.contains("CookTime", Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt("CookTime");
-        if (compoundTag.contains("CookTimeTotal", Tag.TAG_INT))
-            this.cookingTotalTime = compoundTag.getInt("CookTimeTotal");
+        if (compoundTag.contains(BURN_TIME_KEY, Tag.TAG_INT)) this.litTime = compoundTag.getInt(BURN_TIME_KEY);
+        if (compoundTag.contains(COOK_TIME_KEY, Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt(COOK_TIME_KEY);
+        if (compoundTag.contains(COOK_TIME_TOTAL_KEY, Tag.TAG_INT))
+            this.cookingTotalTime = compoundTag.getInt(COOK_TIME_TOTAL_KEY);
 
         this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
 
-        if (compoundTag.contains("RecipesUsed", Tag.TAG_COMPOUND)) {
-            final CompoundTag compoundtag = compoundTag.getCompound("RecipesUsed");
+        if (compoundTag.contains(RECIPES_USED_KEY, Tag.TAG_COMPOUND)) {
+            final CompoundTag compoundtag = compoundTag.getCompound(RECIPES_USED_KEY);
 
             for (final String recipeKey : compoundtag.getAllKeys()) {
                 this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
@@ -465,12 +479,12 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private void saveCommonNBTData(final CompoundTag compoundTag) {
-        compoundTag.putInt("BurnTime", this.litTime);
-        compoundTag.putInt("CookTime", this.cookingProgress);
-        compoundTag.putInt("CookTimeTotal", this.cookingTotalTime);
+        compoundTag.putInt(BURN_TIME_KEY, this.litTime);
+        compoundTag.putInt(COOK_TIME_KEY, this.cookingProgress);
+        compoundTag.putInt(COOK_TIME_TOTAL_KEY, this.cookingTotalTime);
         CompoundTag compoundtag = new CompoundTag();
         this.recipesUsed.forEach((recipeKey, integer) -> compoundtag.putInt(recipeKey.toString(), integer));
-        compoundTag.put("RecipesUsed", compoundtag);
+        compoundTag.put(RECIPES_USED_KEY, compoundtag);
     }
 
     @Override
@@ -483,6 +497,13 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     public ItemStack getPickResult() {
         return new ItemStack(this.getDisplayBlockState().getBlock());
     }
+
+    /**
+     * Called on the client to do animation stuff. This is attempting to replicate what
+     * {@link Block#animateTick(BlockState, Level, BlockPos, RandomSource)} does but you'll have to play with it
+     * as we call this every couple ticks
+     */
+    protected abstract void animateTick();
 
     @Override
     protected abstract AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory);

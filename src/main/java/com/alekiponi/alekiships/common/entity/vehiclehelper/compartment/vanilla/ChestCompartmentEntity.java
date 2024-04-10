@@ -8,7 +8,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -56,29 +55,30 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
         }
     };
 
-    public ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level) {
-        this(entityType, level, SLOT_COUNT);
+    public ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> compartmentType,
+            final Level level) {
+        this(compartmentType, level, SLOT_COUNT);
     }
 
-    public ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> entityType, final Level level,
-            final ItemStack itemStack) {
-        this(entityType, level, SLOT_COUNT, itemStack);
-    }
-
-    /**
-     * Protected constructor so children can have their own size
-     */
-    protected ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level,
-            final int slotCount) {
-        super(entityType, level, slotCount);
+    public ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> compartmentType,
+            final Level level, final ItemStack itemStack) {
+        this(compartmentType, level, SLOT_COUNT, itemStack);
     }
 
     /**
      * Protected constructor so children can have their own size
      */
-    protected ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> entityType,
+    protected ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> compartmentType,
+            final Level level, final int slotCount) {
+        super(compartmentType, level, slotCount);
+    }
+
+    /**
+     * Protected constructor so children can have their own size
+     */
+    protected ChestCompartmentEntity(final CompartmentType<? extends ChestCompartmentEntity> compartmentType,
             final Level level, final int slotCount, final ItemStack itemStack) {
-        super(entityType, level, slotCount, itemStack);
+        super(compartmentType, level, slotCount, itemStack);
     }
 
     @Override

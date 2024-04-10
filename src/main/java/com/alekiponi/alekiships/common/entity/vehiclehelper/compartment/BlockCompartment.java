@@ -1,6 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
@@ -17,6 +20,13 @@ import net.minecraft.world.level.block.state.BlockState;
  * of {@link EntityDataSerializers#BLOCK_STATE} or some other mechanism.
  */
 public interface BlockCompartment {
+
+    /**
+     * The NBT tag key that should be used for serializing the blockstate.
+     * You should use {@link NbtUtils#readBlockState(HolderGetter, CompoundTag)} and
+     * {@link NbtUtils#writeBlockState(BlockState)} to have user-friendly NBT
+     */
+    String HELD_BLOCK_KEY = "heldBlock";
 
     /**
      * Plays the hit sound of the held blockstate

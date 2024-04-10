@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -47,9 +48,9 @@ public abstract class AbstractCompartmentEntity extends Entity {
     protected int vehiclePassengerIndex = -1;
     private int notRidingTicks = 0;
 
-    public AbstractCompartmentEntity(final EntityType<? extends AbstractCompartmentEntity> entityType,
+    public AbstractCompartmentEntity(final CompartmentType<? extends AbstractCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level);
+        super(compartmentType, level);
     }
 
     @Override

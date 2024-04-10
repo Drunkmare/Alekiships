@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,17 +28,18 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             BlockCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
 
-    public BlockCompartmentEntity(final EntityType<? extends BlockCompartmentEntity> entityType, final Level level) {
-        super(entityType, level);
+    public BlockCompartmentEntity(final CompartmentType<? extends BlockCompartmentEntity> compartmentType,
+            final Level level) {
+        super(compartmentType, level);
     }
 
-    public BlockCompartmentEntity(final CompartmentType<? extends BlockCompartmentEntity> entityType, final Level level,
-            final ItemStack itemStack) {
-        super(entityType, level);
+    public BlockCompartmentEntity(final CompartmentType<? extends BlockCompartmentEntity> compartmentType,
+            final Level level, final ItemStack itemStack) {
+        super(compartmentType, level);
         if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
             if (SharedConstants.IS_RUNNING_IN_IDE) {
                 AlekiShips.LOGGER.warn("Inspect {} a dev likely broke the tag. Otherwise {} is at fault",
-                        AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS, entityType);
+                        AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS, compartmentType);
             }
             AlekiShips.LOGGER.debug("A block compartment was created using a stack of {} but it's not a BlockItem",
                     itemStack);
@@ -60,14 +60,14 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put("heldBlock", NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound("heldBlock")));
+                compoundTag.getCompound(HELD_BLOCK_KEY)));
     }
 
     @Override

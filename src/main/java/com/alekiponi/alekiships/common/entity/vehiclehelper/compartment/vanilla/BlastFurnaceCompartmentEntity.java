@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -11,14 +10,19 @@ import net.minecraft.world.level.Level;
 
 public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
-    public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,
+    public BlastFurnaceCompartmentEntity(final CompartmentType<? extends BlastFurnaceCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level, RecipeType.BLASTING);
+        super(compartmentType, level, RecipeType.BLASTING);
     }
 
-    public BlastFurnaceCompartmentEntity(final CompartmentType<? extends BlastFurnaceCompartmentEntity> entityType,
+    public BlastFurnaceCompartmentEntity(final CompartmentType<? extends BlastFurnaceCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        super(entityType, level, RecipeType.BLASTING, itemStack);
+        super(compartmentType, level, RecipeType.BLASTING, itemStack);
+    }
+
+    @Override
+    protected void animateTick() {
+        // TODO should spawn particles like the Blast Furnace block does. I'm too stupid for it - Traister
     }
 
     @Override

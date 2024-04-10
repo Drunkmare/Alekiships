@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -18,15 +17,15 @@ import org.jetbrains.annotations.Nullable;
 public class CartographyTableCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
     private static final Component CONTAINER_TITLE = Component.translatable("container.cartography_table");
 
-    public CartographyTableCompartmentEntity(final EntityType<? extends CartographyTableCompartmentEntity> entityType,
-            final Level level) {
-        super(entityType, level);
+    public CartographyTableCompartmentEntity(
+            final CompartmentType<? extends CartographyTableCompartmentEntity> compartmentType, final Level level) {
+        super(compartmentType, level);
     }
 
     public CartographyTableCompartmentEntity(
-            final CompartmentType<? extends CartographyTableCompartmentEntity> entityType, final Level level,
+            final CompartmentType<? extends CartographyTableCompartmentEntity> compartmentType, final Level level,
             final ItemStack itemStack) {
-        super(entityType, level, itemStack);
+        super(compartmentType, level, itemStack);
     }
 
     @Override

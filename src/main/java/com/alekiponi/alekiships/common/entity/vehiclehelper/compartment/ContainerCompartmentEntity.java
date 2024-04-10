@@ -12,10 +12,10 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
@@ -29,26 +29,34 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
+/**
+ * This can be thought of as similar to {@link AbstractMinecartContainer} but for compartments.
+ * You should be aware of {@link #loadFromStackNBT(CompoundTag)} which will be called to load the contents of an {@link ItemStack}s
+ * {@value BlockItem#BLOCK_ENTITY_TAG} tag if present on the stack passed into the constructor.
+ * <p>
+ * As this also implements {@link CompartmentCloneable} you may need to override {@link #saveForItemStack()} to ensure
+ * the compartment is correctly cloned in creative mode.
+ */
 public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements ContainerEntity, CompartmentCloneable {
 
+    public static final String CUSTOM_NAME_KEY = "CustomName";
     private final int slotCount;
     private NonNullList<ItemStack> itemStacks;
     @Nullable
     private ResourceLocation lootTable;
     private long lootTableSeed;
-
     private LazyOptional<?> itemHandler = LazyOptional.of(() -> new InvWrapper(this));
 
-    public ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    protected ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final int slotCount) {
-        super(entityType, level);
+        super(compartmentType, level);
         this.slotCount = slotCount;
         this.itemStacks = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     }
 
-    public ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
+    protected ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final int slotCount, final ItemStack itemStack) {
-        this(entityType, level, slotCount);
+        this(compartmentType, level, slotCount);
         if (itemStack.hasCustomHoverName()) {
             this.setCustomName(itemStack.getHoverName());
         }
@@ -62,18 +70,18 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
      */
     public void loadFromStackNBT(final CompoundTag compoundTag) {
         ContainerHelper.loadAllItems(compoundTag, this.getItemStacks());
-        if (compoundTag.contains("CustomName", Tag.TAG_STRING)) {
-            this.setCustomName(Component.Serializer.fromJson(compoundTag.getString("CustomName")));
+        if (compoundTag.contains(CUSTOM_NAME_KEY, Tag.TAG_STRING)) {
+            this.setCustomName(Component.Serializer.fromJson(compoundTag.getString(CUSTOM_NAME_KEY)));
         }
     }
 
     @Override
     public CompoundTag saveForItemStack() {
         final CompoundTag compoundTag = new CompoundTag();
-        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
+        ContainerHelper.saveAllItems(compoundTag, this.getItemStacks(), false);
 
         if (this.hasCustomName()) {
-            compoundTag.putString("CustomName", Component.Serializer.toJson(this.getCustomName()));
+            compoundTag.putString(CUSTOM_NAME_KEY, Component.Serializer.toJson(this.getCustomName()));
         }
         return compoundTag;
     }

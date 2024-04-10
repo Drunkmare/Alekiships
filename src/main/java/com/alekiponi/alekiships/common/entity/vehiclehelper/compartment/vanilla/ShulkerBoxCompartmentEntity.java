@@ -24,6 +24,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.ChestLidController;
@@ -38,6 +39,8 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
+    public static final String COLOR_KEY = "Color";
+    public static final int SLOT_COUNT = 27;
     private static final int NULL_COLOR = -1;
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -70,14 +73,14 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     @Nullable
     private DyeColor color;
 
-    public ShulkerBoxCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level) {
-        super(entityType, level, 27);
+        super(compartmentType, level, SLOT_COUNT);
     }
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> entityType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
-        super(entityType, level, 27, itemStack);
+        super(compartmentType, level, SLOT_COUNT, itemStack);
 
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             if (blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
@@ -143,16 +146,16 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         if (this.color == null) {
-            compoundTag.putInt("Color", NULL_COLOR);
+            compoundTag.putInt(COLOR_KEY, NULL_COLOR);
         } else {
-            compoundTag.putInt("Color", color.getId());
+            compoundTag.putInt(COLOR_KEY, color.getId());
         }
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        final int colorID = compoundTag.getInt("Color");
+        final int colorID = compoundTag.getInt(COLOR_KEY);
 
         if (NULL_COLOR != colorID) {
             this.color = DyeColor.byId(colorID);
@@ -186,6 +189,12 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
             this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
                     Blocks.AIR.defaultBlockState());
         }
+    }
+
+    @Override
+    public boolean canPlaceItem(final int slotIndex, final ItemStack itemStack) {
+        return !(Block.byItem(itemStack.getItem()) instanceof ShulkerBoxBlock) && itemStack.getItem()
+                .canFitInsideContainerItems();
     }
 
     @Override

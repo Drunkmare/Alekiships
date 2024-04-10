@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,14 +18,15 @@ public class SmithingTableCompartmentEntity extends SimpleBlockMenuCompartmentEn
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.cartography_table");
 
-    public SmithingTableCompartmentEntity(final EntityType<? extends SmithingTableCompartmentEntity> entityType,
-            final Level level) {
-        super(entityType, level);
+    public SmithingTableCompartmentEntity(
+            final CompartmentType<? extends SmithingTableCompartmentEntity> compartmentType, final Level level) {
+        super(compartmentType, level);
     }
 
-    public SmithingTableCompartmentEntity(final CompartmentType<? extends SmithingTableCompartmentEntity> entityType,
-            final Level level, final ItemStack itemStack) {
-        super(entityType, level, itemStack);
+    public SmithingTableCompartmentEntity(
+            final CompartmentType<? extends SmithingTableCompartmentEntity> compartmentType, final Level level,
+            final ItemStack itemStack) {
+        super(compartmentType, level, itemStack);
     }
 
     @Override
