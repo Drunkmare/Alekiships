@@ -20,26 +20,32 @@ buildscript {
 }
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 plugins {
+    id "idea"
+    id "java"
     id 'eclipse'
     id 'maven-publish'
     //id 'org.parchmentmc.librarian.forgegradle'
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = 'alekishipsilization-0.2.0-alpha-1.20.1'
-group = 'com.alekiponi.' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = ''
+base {
+    archivesName.set("AlekiShips-$minecraftVersion")
+    group = "com.alekiponi" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+    version = modVersion
+}
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+minecraft {
+    mappings channel: mappingsChannel, version: mappingsVersion
+
+    accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
 
     runs {
         client {
@@ -137,51 +143,47 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     maven {
         // tfc
-        url 'https://www.cursemaven.com'
+        url = 'https://www.cursemaven.com'
         content {
             includeGroup "curse.maven"
         }
     }
-
-    maven {
-        // Patchouli
+    maven { url = "https://dvs1.progwml6.com/files/maven/" } // JEI
+    maven { url = "https://modmaven.k-4u.nl" } // Mirror for JEI
+    maven { // Patchouli & Carryon
         name = "BlameJared"
         url = "https://maven.blamejared.com"
     }
 }
 
 dependencies {
+    //noinspection VulnerableLibrariesLocal  we can't do anything about these so make it shut up
+    minecraft("net.minecraftforge:forge:$minecraftVersion-$forgeVersion")
 
-    minecraft 'net.minecraftforge:forge:1.20.1-47.1.3'
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    // Mixin
+    annotationProcessor "org.spongepowered:mixin:$mixinVersion:processor"
 
-    // tfc
-    fg.deobf("curse.maven:terrafirmacraft-302973:4862659")
-    implementation fg.deobf("curse.maven:terrafirmacraft-302973:4862659")
+    // Patchouli
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion")
 
-    // patchouli
-    fg.deobf("curse.maven:patchouli-306770:4636277")
-    implementation fg.deobf("curse.maven:patchouli-306770:4636277")
+    // Carryon
+    runtimeOnly fg.deobf("tschipp.carryon:carryon-forge-$minecraftVersion:$carryonVersion")
 
-    fg.deobf("curse.maven:carry-on-274259:4882500")
-    runtimeOnly fg.deobf("curse.maven:carry-on-274259:4882500")
+    // Jade / The One Probe
+    compileOnly fg.deobf("curse.maven:jade-324717:$jadeFileID")
+    compileOnly fg.deobf("curse.maven:top-245211:$topFileID")
 
-    /*
-    fg.deobf("curse.maven:better-third-person-435044:4596768")
-    runtimeOnly fg.deobf("curse.maven:better-third-person-435044:4596768")
+    // Only use Jade at runtime
+    runtimeOnly fg.deobf("curse.maven:jade-324717:$jadeFileID")
 
-     */
+    // JEI
+    compileOnly fg.deobf("mezz.jei:jei-$minecraftVersion-forge-api:$jeiVersion")
+    compileOnly fg.deobf("mezz.jei:jei-$minecraftVersion-common-api:$jeiVersion")
+    runtimeOnly fg.deobf("mezz.jei:jei-$minecraftVersion-forge:$jeiVersion")
 
-    
-    fg.deobf("curse.maven:jei-238222:4712868")
-    runtimeOnly fg.deobf("curse.maven:jei-238222:4712868")
-
-
-    fg.deobf("curse.maven:alekis-easy-held-models-953157:4977248")
+    // Easy handheld models TODO (maybe we JIJ this?)
     runtimeOnly fg.deobf("curse.maven:alekis-easy-held-models-953157:4977248")
-
 }
-
 
 mixin {
     // MixinGradle Settings
@@ -204,6 +206,25 @@ jar {
     }
 }
 
+idea {
+    module {
+        excludeDirs.add(file("run"))
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+javadoc {
+    source = [sourceSets.main.allJava]
+    // prevent java 8's strict doclint for javadocs from failing builds
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 // Example configuration to allow publishing using the maven-publish plugin
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
@@ -213,13 +234,15 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
             artifact jar
+            artifact sourcesJar
         }
     }
     repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
+        maven { url = "file://${project.projectDir}/mcmodsrepo" }
     }
 }
 
