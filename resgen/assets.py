@@ -85,9 +85,6 @@ def generate(rm: ResourceManager):
     rm.item_model("cleat")
 
     # Items with generated models
-    rm.item("unfinished_barometer").with_item_model().with_lang("Unfinished Barometer")
-    rm.item("unfinished_nav_clock").with_item_model().with_lang("Unfinished Navigator's Timepiece")
-    rm.item("unfinished_sextant").with_item_model().with_lang("Unfinished Sextant")
     rm.item("cannon").with_item_model().with_lang("Cannon")
     rm.item("cannon_barrel").with_item_model().with_lang("Cannon Barrel")
     rm.item("cannonball").with_item_model().with_lang("Cannonball")
@@ -95,4 +92,3 @@ def generate(rm: ResourceManager):
     rm.item("small_triangular_sail").with_item_model().with_lang("Small Sail")
     rm.item("medium_triangular_sail").with_item_model().with_lang("Medium Sail")
     rm.item("large_triangular_sail").with_item_model().with_lang("Large Sail")
-    rm.item("rope_coil").with_item_model().with_lang("Jute Rope")

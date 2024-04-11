@@ -39,7 +39,6 @@ def generate(manager: ResourceManager):
     manager.block_tag("minecraft:mineable/pickaxe", "oarlock")
 
     # Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
-    manager.entity_tag("carryon:entity_blacklist", "cannonball", "kayak",
-                       "#alekiships:dugout_canoes", "#alekiships:sloops", "#alekiships:rowboats",
-                       "#alekiships:vehicle_helpers", "#alekiships:compartments",
+    manager.entity_tag("carryon:entity_blacklist", "cannonball", "#alekiships:sloops",
+                       "#alekiships:rowboats", "#alekiships:vehicle_helpers", "#alekiships:compartments",
                        *[f"sloop_construction/{wood}" for wood in constants.WOODS])
