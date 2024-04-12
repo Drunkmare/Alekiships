@@ -1,8 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -276,8 +275,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
             // Extract an item
             if (processState <= FULLY_PROCESSED) {
                 AlekiShipsHelper.giveItemToPlayer(player, this.getPlankAsItemStack());
-            } else {
-                AlekiShipsHelper.giveItemToPlayer(player, AlekiShipsItems.COPPER_BOLT.get().getDefaultInstance());
             }
 
             // Set ourselves back to our base

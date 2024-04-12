@@ -86,9 +86,5 @@ def generate(rm: ResourceManager):
 
     # Items with generated models
     rm.item("cannon").with_item_model().with_lang("Cannon")
-    rm.item("cannon_barrel").with_item_model().with_lang("Cannon Barrel")
     rm.item("cannonball").with_item_model().with_lang("Cannonball")
     rm.item("anchor").with_item_model().with_lang("Anchor")
-    rm.item("small_triangular_sail").with_item_model().with_lang("Small Sail")
-    rm.item("medium_triangular_sail").with_item_model().with_lang("Medium Sail")
-    rm.item("large_triangular_sail").with_item_model().with_lang("Large Sail")

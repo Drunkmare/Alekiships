@@ -1,8 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -60,8 +59,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
             // Extract an item
             if (processState <= FULLY_PROCESSED) {
                 AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
-            } else {
-                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(AlekiShipsItems.COPPER_BOLT.get()));
             }
 
             // Set ourselves back to our base

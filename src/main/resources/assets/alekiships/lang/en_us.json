@@ -99,9 +99,5 @@
   "block.alekiships.cleat": "Cleat",
   "item.alekiships.cannon": "Cannon",
   "item.alekiships.cannonball": "Cannonball",
-  "item.alekiships.cannon_barrel": "Cannon Barrel",
-  "item.alekiships.anchor": "Anchor",
-  "item.alekiships.small_triangular_sail": "Small Sail",
-  "item.alekiships.medium_triangular_sail": "Medium Sail",
-  "item.alekiships.large_triangular_sail": "Large Sail",
+  "item.alekiships.anchor": "Anchor"
 }

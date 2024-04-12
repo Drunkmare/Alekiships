@@ -16,18 +16,6 @@ def generate(rm: ResourceManager):
                        {"B": "minecraft:iron_block", "L": "#minecraft:wooden_slabs", "R": "minecraft:iron_nugget"},
                        "alekiships:cannon").with_advancement("alekiships:cannon")
 
-    rm.crafting_shaped("crafting/cannon", ["BBB", "LL ", "R R"],
-                       {"B": "minecraft:iron_block", "L": "#minecraft:wooden_slabs", "R": "minecraft:iron_nugget"},
-                       "alekiships:cannon").with_advancement("alekiships:cannon")
-
-    rm.crafting_shaped("crafting/small_triangular_sail", ["WSS", "WWS", "WWW"],
-                       {"W": "minecraft:white_wool", "S": "#forge:string"},
-                       "alekiships:small_triangular_sail").with_advancement("alekiships:small_triangular_sail")
-
-    rm.crafting_shaped("crafting/medium_triangular_sail", ["S  ", "WS ", "WWS"],
-                       {"W": "alekiships:small_triangular_sail", "S": "#forge:string"},
-                       "alekiships:medium_triangular_sail").with_advancement("alekiships:medium_triangular_sail")
-
     rm.crafting_shaped("crafting/anchor", ["NIN", " I ", "IBI"],
                        {"N": "minecraft:iron_nugget", "I": "minecraft:iron_ingot", "B": "minecraft:iron_block"},
                        "alekiships:anchor").with_advancement("alekiships:anchor")
