@@ -21,7 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 
-public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
+public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements ProcessedBoatFrame {
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
@@ -319,5 +319,20 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
 
     public ItemStack getPlankAsItemStack() {
         return new ItemStack(this.boatMaterial.getDeckItem());
+    }
+
+    @Override
+    public IntegerProperty getProcessingProperty() {
+        return FRAME_PROCESSED;
+    }
+
+    @Override
+    public int getProcessingLimit() {
+        return FULLY_PROCESSED;
+    }
+
+    @Override
+    public BoatMaterial getBoatMaterial() {
+        return this.boatMaterial;
     }
 }

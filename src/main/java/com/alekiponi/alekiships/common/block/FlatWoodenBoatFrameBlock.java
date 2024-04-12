@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
+public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
@@ -110,5 +110,20 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
 
     public ItemStack getPlankAsItemStack() {
         return new ItemStack(this.boatMaterial.getDeckItem());
+    }
+
+    @Override
+    public IntegerProperty getProcessingProperty() {
+        return FRAME_PROCESSED;
+    }
+
+    @Override
+    public int getProcessingLimit() {
+        return FULLY_PROCESSED;
+    }
+
+    @Override
+    public BoatMaterial getBoatMaterial() {
+        return this.boatMaterial;
     }
 }
