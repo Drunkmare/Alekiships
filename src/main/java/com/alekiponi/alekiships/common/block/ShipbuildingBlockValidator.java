@@ -59,7 +59,7 @@ public class ShipbuildingBlockValidator {
 
         if (!(blockState.getBlock() instanceof AngledWoodenBoatFrameBlock)) return false;
 
-        final AngledWoodenBoatFrameBlock.ConstantDirection localConstantDirection = AngledWoodenBoatFrameBlock.getConstantDirection(
+        final AngledWoodenBoatFrameBlock.ConstantDirection localConstantDirection = AngledWoodenBoatFrameBlock.ConstantDirection.getConstantDirection(
                 blockState);
         if (localConstantDirection == null) return false;
 
@@ -81,7 +81,7 @@ public class ShipbuildingBlockValidator {
         // angled validation
         if (!ProcessedBoatFrame.isFullyProcessed(blockState)) return false;
 
-        final AngledWoodenBoatFrameBlock.ConstantDirection rotatedValidatorDirection = AngledWoodenBoatFrameBlock.rotateConstantDirection(
+        final AngledWoodenBoatFrameBlock.ConstantDirection rotatedValidatorDirection = AngledWoodenBoatFrameBlock.ConstantDirection.rotateConstantDirection(
                 this.constantDirection, structureDirection);
         if (localConstantDirection != rotatedValidatorDirection) return false;
 

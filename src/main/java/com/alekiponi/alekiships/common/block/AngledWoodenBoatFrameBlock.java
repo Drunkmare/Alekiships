@@ -46,12 +46,162 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         SOUTH_AND_EAST,
         SOUTH_AND_WEST,
         NORTH_AND_SOUTH,
-        EAST_AND_WEST,
+        EAST_AND_WEST;
+
+        @Nullable
+        public static ConstantDirection getConstantDirection(BlockState state) {
+            if (!(state.getBlock() instanceof AngledWoodenBoatFrameBlock)) {
+                return null;
+            }
+            if (state.getValue(FACING) == Direction.SOUTH) {
+                if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
+                    return EAST_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
+                    return NORTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
+                    return NORTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
+                    return SOUTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
+                    return SOUTH_AND_EAST;
+                }
+            }
+            if (state.getValue(FACING) == Direction.NORTH) {
+                if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
+                    return EAST_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
+                    return SOUTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
+                    return SOUTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
+                    return NORTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
+                    return NORTH_AND_WEST;
+                }
+            }
+            if (state.getValue(FACING) == Direction.EAST) {
+                if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
+                    return NORTH_AND_SOUTH;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
+                    return NORTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
+                    return SOUTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
+                    return SOUTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
+                    return NORTH_AND_EAST;
+                }
+            }
+            if (state.getValue(FACING) == Direction.WEST) {
+                if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
+                    return NORTH_AND_SOUTH;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
+                    return SOUTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
+                    return NORTH_AND_EAST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
+                    return NORTH_AND_WEST;
+                }
+                if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
+                    return SOUTH_AND_WEST;
+                }
+            }
+            return null;
+        }
+
+        @Nullable
+        public static ConstantDirection rotateConstantDirection(ConstantDirection constantDirection, Direction direction){
+            if(direction == Direction.NORTH){
+                return constantDirection;
+            }
+            if(direction == Direction.SOUTH){
+                // clockwise twice / flip
+                if(constantDirection == NORTH_AND_SOUTH){
+                    return constantDirection;
+                }
+                if(constantDirection == EAST_AND_WEST){
+                    return constantDirection;
+                }
+
+                if(constantDirection == NORTH_AND_EAST){
+                    return SOUTH_AND_WEST;
+                }
+                if(constantDirection == NORTH_AND_WEST){
+                    return SOUTH_AND_EAST;
+                }
+                if(constantDirection == SOUTH_AND_EAST){
+                    return NORTH_AND_WEST;
+                }
+                if(constantDirection == SOUTH_AND_WEST){
+                    return NORTH_AND_EAST;
+                }
+            }
+            if(direction == Direction.EAST){
+                // clockwise once
+                if(constantDirection == NORTH_AND_SOUTH){
+                    return EAST_AND_WEST;
+                }
+                if(constantDirection == EAST_AND_WEST){
+                    return NORTH_AND_SOUTH;
+                }
+
+                if(constantDirection == NORTH_AND_EAST){
+                    return SOUTH_AND_EAST;
+                }
+                if(constantDirection == NORTH_AND_WEST){
+                    return NORTH_AND_EAST;
+                }
+                if(constantDirection == SOUTH_AND_EAST){
+                    return SOUTH_AND_WEST;
+                }
+                if(constantDirection == SOUTH_AND_WEST){
+                    return NORTH_AND_WEST;
+                }
+            }
+            if(direction == Direction.WEST){
+                // counterclockwise once
+                if(constantDirection == NORTH_AND_SOUTH){
+                    return EAST_AND_WEST;
+                }
+                if(constantDirection == EAST_AND_WEST){
+                    return NORTH_AND_SOUTH;
+                }
+
+                if(constantDirection == NORTH_AND_EAST){
+                    return NORTH_AND_WEST;
+                }
+                if(constantDirection == NORTH_AND_WEST){
+                    return SOUTH_AND_WEST;
+                }
+                if(constantDirection == SOUTH_AND_EAST){
+                    return NORTH_AND_EAST;
+                }
+                if(constantDirection == SOUTH_AND_WEST){
+                    return SOUTH_AND_EAST;
+                }
+            }
+            return null;
+        }
     }
 
     public static Direction[] getSolid(BlockState state){
         ConstantShape shape = ConstantShape.getConstantShape(state);
-        ConstantDirection directions = getConstantDirection(state);
+        ConstantDirection directions = ConstantDirection.getConstantDirection(state);
         if(shape == ConstantShape.STRAIGHT){
             return new Direction[]{state.getValue(FACING)};
         }
@@ -70,156 +220,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
             }
         }
         return new Direction[]{};
-    }
-
-    @Nullable
-    public static ConstantDirection getConstantDirection(BlockState state) {
-        if (!(state.getBlock() instanceof AngledWoodenBoatFrameBlock)) {
-            return null;
-        }
-        if (state.getValue(FACING) == Direction.SOUTH) {
-            if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
-                return ConstantDirection.EAST_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-        }
-        if (state.getValue(FACING) == Direction.NORTH) {
-            if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
-                return ConstantDirection.EAST_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-        }
-        if (state.getValue(FACING) == Direction.EAST) {
-            if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
-                return ConstantDirection.NORTH_AND_SOUTH;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-        }
-        if (state.getValue(FACING) == Direction.WEST) {
-            if (state.getValue(SHAPE) == StairsShape.STRAIGHT) {
-                return ConstantDirection.NORTH_AND_SOUTH;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_RIGHT) {
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.INNER_LEFT) {
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_RIGHT) {
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-            if (state.getValue(SHAPE) == StairsShape.OUTER_LEFT) {
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static ConstantDirection rotateConstantDirection(ConstantDirection constantDirection, Direction direction){
-        if(direction == Direction.NORTH){
-            return constantDirection;
-        }
-        if(direction == Direction.SOUTH){
-            // clockwise twice / flip
-            if(constantDirection == ConstantDirection.NORTH_AND_SOUTH){
-                return constantDirection;
-            }
-            if(constantDirection == ConstantDirection.EAST_AND_WEST){
-                return constantDirection;
-            }
-
-            if(constantDirection == ConstantDirection.NORTH_AND_EAST){
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.NORTH_AND_WEST){
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_EAST){
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_WEST){
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-        }
-        if(direction == Direction.EAST){
-            // clockwise once
-            if(constantDirection == ConstantDirection.NORTH_AND_SOUTH){
-                return ConstantDirection.EAST_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.EAST_AND_WEST){
-                return ConstantDirection.NORTH_AND_SOUTH;
-            }
-
-            if(constantDirection == ConstantDirection.NORTH_AND_EAST){
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-            if(constantDirection == ConstantDirection.NORTH_AND_WEST){
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_EAST){
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_WEST){
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-        }
-        if(direction == Direction.WEST){
-            // counterclockwise once
-            if(constantDirection == ConstantDirection.NORTH_AND_SOUTH){
-                return ConstantDirection.EAST_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.EAST_AND_WEST){
-                return ConstantDirection.NORTH_AND_SOUTH;
-            }
-
-            if(constantDirection == ConstantDirection.NORTH_AND_EAST){
-                return ConstantDirection.NORTH_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.NORTH_AND_WEST){
-                return ConstantDirection.SOUTH_AND_WEST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_EAST){
-                return ConstantDirection.NORTH_AND_EAST;
-            }
-            if(constantDirection == ConstantDirection.SOUTH_AND_WEST){
-                return ConstantDirection.SOUTH_AND_EAST;
-            }
-        }
-        return null;
     }
 
     @Override
