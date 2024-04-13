@@ -158,7 +158,7 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
                 .setValue(FACING, pContext.getHorizontalDirection().getOpposite());
 
         if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
-            Direction[] directions = AngledWoodenBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
+            Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
             if (directions.length == 0) {
                 return blockstate;
             }

@@ -38,29 +38,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         super.createBlockStateDefinition(builder.add(FRAME_PROCESSED));
     }
 
-    public static Direction[] getSolid(BlockState state){
-        ConstantShape shape = ConstantShape.getConstantShape(state);
-        ConstantDirection directions = ConstantDirection.getConstantDirection(state);
-        if(shape == ConstantShape.STRAIGHT){
-            return new Direction[]{state.getValue(FACING)};
-        }
-        if(shape == ConstantShape.INNER){
-            if(directions == ConstantDirection.NORTH_AND_EAST){
-                return new Direction[]{Direction.WEST, Direction.SOUTH};
-            }
-            if(directions == ConstantDirection.SOUTH_AND_EAST){
-                return new Direction[]{Direction.WEST, Direction.NORTH};
-            }
-            if(directions == ConstantDirection.NORTH_AND_WEST){
-                return new Direction[]{Direction.SOUTH, Direction.EAST};
-            }
-            if(directions == ConstantDirection.SOUTH_AND_WEST){
-                return new Direction[]{Direction.EAST, Direction.NORTH};
-            }
-        }
-        return new Direction[]{};
-    }
-
     @Override
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
                                  final Player player, final InteractionHand hand, final BlockHitResult hitResult) {

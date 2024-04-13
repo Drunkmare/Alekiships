@@ -222,7 +222,7 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
 
 
         if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
-            Direction[] directions = AngledWoodenBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
+            Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
             if (directions.length == 0) {
                 return blockstate;
             }
