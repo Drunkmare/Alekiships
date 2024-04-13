@@ -164,18 +164,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         return null;
     }
 
-    public static boolean isInner(BlockState state){
-        return state.getValue(SHAPE) == StairsShape.INNER_LEFT || state.getValue(SHAPE) == StairsShape.INNER_RIGHT;
-    }
-
-    public static boolean isOuter(BlockState state){
-        return state.getValue(SHAPE) == StairsShape.OUTER_LEFT || state.getValue(SHAPE) == StairsShape.OUTER_RIGHT;
-    }
-
-    public static boolean isStraight(BlockState state){
-        return state.getValue(SHAPE) == StairsShape.STRAIGHT;
-    }
-
     @Nullable
     public static ConstantDirection rotateConstantDirection(ConstantDirection constantDirection, Direction direction){
         if(direction == Direction.NORTH){

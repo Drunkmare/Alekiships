@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
@@ -35,6 +36,30 @@ public class AngledBoatFrameBlock extends SquaredAngleBlock {
     @Nullable
     public static AngledBoatFrameBlock getFrame(final Item item) {
         return ANGLED_FRAMES.get(item);
+    }
+
+    /**
+     * @return If the {@link #SHAPE} property is {@link StairsShape#INNER_LEFT} or {@link StairsShape#INNER_RIGHT}
+     */
+    public static boolean isInner(final BlockState blockState) {
+        return blockState.getValue(SHAPE) == StairsShape.INNER_LEFT || blockState.getValue(
+                SHAPE) == StairsShape.INNER_RIGHT;
+    }
+
+    /**
+     * @return If the {@link #SHAPE} property is {@link StairsShape#OUTER_LEFT} or {@link StairsShape#OUTER_RIGHT}
+     */
+    public static boolean isOuter(final BlockState blockState) {
+        return blockState.getValue(SHAPE) == StairsShape.OUTER_LEFT || blockState.getValue(
+                SHAPE) == StairsShape.OUTER_RIGHT;
+    }
+
+    /**
+     * @return If the {@link #SHAPE} property is {@link StairsShape#STRAIGHT}
+     */
+    @SuppressWarnings("unused")
+    public static boolean isStraight(final BlockState blockState) {
+        return blockState.getValue(SHAPE) == StairsShape.STRAIGHT;
     }
 
     @Override
