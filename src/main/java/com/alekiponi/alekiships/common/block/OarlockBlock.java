@@ -49,9 +49,9 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
                 thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
+            return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
         }
         return false;
     }

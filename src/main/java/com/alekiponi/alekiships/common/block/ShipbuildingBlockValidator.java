@@ -40,7 +40,7 @@ public class ShipbuildingBlockValidator {
         Use this constructor for straight angled frames
      */
     ShipbuildingBlockValidator(Direction direction) {
-        this.constantShape = AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
+        this.constantShape = AngledBoatFrameBlock.ConstantShape.STRAIGHT;
         this.direction = direction;
         this.validatingThisBlock = true;
     }
@@ -64,11 +64,11 @@ public class ShipbuildingBlockValidator {
         if (localConstantDirection == null) return false;
 
         // straight validation
-        if (this.constantShape == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT) {
+        if (this.constantShape == AngledBoatFrameBlock.ConstantShape.STRAIGHT) {
             if (direction == null) return false;
 
-            if (AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(
-                    blockState) != AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT) return false;
+            if (AngledBoatFrameBlock.ConstantShape.getConstantShape(
+                    blockState) != AngledBoatFrameBlock.ConstantShape.STRAIGHT) return false;
             final Direction rotatedDirection = switch (structureDirection) {
                 case SOUTH -> this.direction.getOpposite();
                 case EAST -> this.direction.getClockWise();
@@ -85,7 +85,7 @@ public class ShipbuildingBlockValidator {
                 this.constantDirection, structureDirection);
         if (localConstantDirection != rotatedValidatorDirection) return false;
 
-        return this.constantShape == AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(blockState);
+        return this.constantShape == AngledBoatFrameBlock.ConstantShape.getConstantShape(blockState);
     }
 
 }

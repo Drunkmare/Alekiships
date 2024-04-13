@@ -91,4 +91,23 @@ public class AngledBoatFrameBlock extends SquaredAngleBlock {
 
         return InteractionResult.PASS;
     }
+
+    public enum ConstantShape {
+        STRAIGHT,
+        INNER,
+        OUTER;
+
+        /**
+         * Compresses the five states of {@link StairsShape} to just 3
+         */
+        public static ConstantShape getConstantShape(final BlockState blockState) {
+            if (isInner(blockState)) {
+                return INNER;
+            }
+            if (isOuter(blockState)) {
+                return OUTER;
+            }
+            return STRAIGHT;
+        }
+    }
 }
