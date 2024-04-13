@@ -67,7 +67,7 @@ public class ShipbuildingBlockValidator {
         if (this.constantShape == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT) {
             if (direction == null) return false;
 
-            if (AngledWoodenBoatFrameBlock.getConstantShape(
+            if (AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(
                     blockState) != AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT) return false;
             final Direction rotatedDirection = switch (structureDirection) {
                 case SOUTH -> this.direction.getOpposite();
@@ -85,7 +85,7 @@ public class ShipbuildingBlockValidator {
                 this.constantDirection, structureDirection);
         if (localConstantDirection != rotatedValidatorDirection) return false;
 
-        return this.constantShape == AngledWoodenBoatFrameBlock.getConstantShape(blockState);
+        return this.constantShape == AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(blockState);
     }
 
 }

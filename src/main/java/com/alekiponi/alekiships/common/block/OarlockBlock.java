@@ -4,7 +4,6 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -50,8 +49,8 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
                 thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
+            return AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
                     thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
         }
         return false;

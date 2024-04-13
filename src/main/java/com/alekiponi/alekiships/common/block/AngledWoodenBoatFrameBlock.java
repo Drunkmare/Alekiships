@@ -52,21 +52,24 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
     public enum ConstantShape {
         STRAIGHT,
         INNER,
-        OUTER
-    }
+        OUTER;
 
-    public static ConstantShape getConstantShape(BlockState state){
-        if(isInner(state)){
-            return ConstantShape.INNER;
+        /**
+         * Compresses the five states of {@link StairsShape} to just 3
+         */
+        public static ConstantShape getConstantShape(final BlockState blockState) {
+            if (isInner(blockState)) {
+                return INNER;
+            }
+            if (isOuter(blockState)) {
+                return OUTER;
+            }
+            return STRAIGHT;
         }
-        if(isOuter(state)){
-            return ConstantShape.OUTER;
-        }
-        return ConstantShape.STRAIGHT;
     }
 
     public static Direction[] getSolid(BlockState state){
-        ConstantShape shape = getConstantShape(state);
+        ConstantShape shape = ConstantShape.getConstantShape(state);
         ConstantDirection directions = getConstantDirection(state);
         if(shape == ConstantShape.STRAIGHT){
             return new Direction[]{state.getValue(FACING)};
