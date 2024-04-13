@@ -48,30 +48,28 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
             if (processState <= FULLY_PROCESSED) {
-                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
+                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
             }
 
             // Set ourselves back to our base
             if (processState == 0) {
-                level.setBlock(blockPos, AlekiShipsBlocks.BOAT_FRAME_FLAT.get().defaultBlockState(),
-                        UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+                level.setBlockAndUpdate(blockPos, AlekiShipsBlocks.BOAT_FRAME_FLAT.get().defaultBlockState());
                 return InteractionResult.SUCCESS;
             }
 
-            level.setBlock(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1),
-                    UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+            level.setBlockAndUpdate(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1));
 
             return InteractionResult.SUCCESS;
         }
 
         // Should we do plank stuff
-        if (heldStack.is(this.getUnderlyingPlank().asItem())) {
+        if (heldStack.is(this.boatMaterial.getDeckItem())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
                 if(!player.getAbilities().instabuild){
                     heldStack.shrink(1);
                 }
-                level.setBlock(blockPos, blockState.cycle(FRAME_PROCESSED), UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+                level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
                 return InteractionResult.SUCCESS;
@@ -82,24 +80,12 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         return InteractionResult.PASS;
     }
 
-    public boolean requireBolts(){
-        return false;
-    }
-
     @Override
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(final BlockGetter blockGetter, final BlockPos blockPos,
             final BlockState blockState) {
         // We don't exist as an item so pass it the base version instead
         return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(blockGetter, blockPos, blockState);
-    }
-
-    public Block getUnderlyingPlank() {
-        return this.boatMaterial.getDeckBlock().getBlock();
-    }
-
-    public ItemStack getPlankAsItemStack() {
-        return new ItemStack(this.boatMaterial.getDeckItem());
     }
 
     @Override

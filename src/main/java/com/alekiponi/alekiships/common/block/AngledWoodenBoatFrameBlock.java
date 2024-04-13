@@ -264,7 +264,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
             if (processState <= FULLY_PROCESSED) {
-                AlekiShipsHelper.giveItemToPlayer(player, this.getPlankAsItemStack());
+                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
             }
 
             // Set ourselves back to our base
@@ -272,23 +272,23 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
                 final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState()
                         .setValue(SHAPE, blockState.getValue(SHAPE)).setValue(FACING, blockState.getValue(FACING));
 
-                level.setBlock(blockPos, newState, 10);
+                level.setBlockAndUpdate(blockPos, newState);
                 return InteractionResult.SUCCESS;
             }
 
-            level.setBlock(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1), 10);
+            level.setBlockAndUpdate(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1));
 
             return InteractionResult.SUCCESS;
         }
 
         // Should we do plank stuff
-        if (heldStack.is(this.getPlankAsItemStack().getItem())) {
+        if (heldStack.is(this.boatMaterial.getDeckItem())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
                 if(!player.getAbilities().instabuild){
                     heldStack.shrink(1);
                 }
-                level.setBlock(blockPos, blockState.cycle(FRAME_PROCESSED), 10);
+                level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
                 return InteractionResult.SUCCESS;
@@ -305,10 +305,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
                                        final BlockState blockState) {
         // We don't exist as an item so pass it the base version instead
         return AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().getCloneItemStack(blockGetter, blockPos, blockState);
-    }
-
-    public ItemStack getPlankAsItemStack() {
-        return new ItemStack(this.boatMaterial.getDeckItem());
     }
 
     @Override
