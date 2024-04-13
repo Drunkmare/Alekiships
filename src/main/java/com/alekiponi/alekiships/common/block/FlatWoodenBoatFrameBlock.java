@@ -34,16 +34,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         super.createBlockStateDefinition(builder.add(FRAME_PROCESSED));
     }
 
-    public static boolean validateProcessed(BlockState framestate, ItemStack plankitem) {
-        // check if the plank item matches
-        if (framestate.getBlock() instanceof FlatWoodenBoatFrameBlock wbfb && wbfb.getPlankAsItemStack()
-                .is(plankitem.getItem())) {
-            // check if the state matches
-            return framestate.getValue(FRAME_PROCESSED) == FULLY_PROCESSED;
-        }
-        return false;
-    }
-
     @Override
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
             final Player player, final InteractionHand hand, final BlockHitResult hitResult) {

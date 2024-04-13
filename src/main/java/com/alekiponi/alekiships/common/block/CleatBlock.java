@@ -165,13 +165,12 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
             origin = cleats[1].relative(structureDirection, 2).below();
         }
 
-        ItemStack plankItem = ShipbuildingMultiblocks.validatePlanks(level.getBlockState(thispos.below()));
-        BlockState framestate = level.getBlockState(thispos.below());
-        if (plankItem.isEmpty()) {
-            return;
-        }
+        final BlockState frameState = level.getBlockState(thispos.below());
+        final BoatMaterial boatMaterial = BoatFrame.fromBlockstate(frameState);
 
-        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, plankItem) && framestate.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
+        if (boatMaterial == null) return;
+
+        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, boatMaterial) && frameState.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
             // destroy cleats
             for (BlockPos pos : cleats) {
                 level.destroyBlock(pos, false);

@@ -141,13 +141,12 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         thispos = thispos.relative(structureDirection);
 
         BlockState frameState = level.getBlockState(thispos);
-        ItemStack plankItem = ShipbuildingMultiblocks.validatePlanks(frameState);
-        if (plankItem.isEmpty()) {
-            return false;
-        }
 
-        return ShipbuildingMultiblocks.validateShipHull(level, thispos, structureDirection, ShipbuildingMultiblocks.Multiblock.ROWBOAT, plankItem);
+        final BoatMaterial boatMaterial = BoatFrame.fromBlockstate(frameState);
+        if (boatMaterial == null) return false;
 
+        return ShipbuildingMultiblocks.validateShipHull(level, thispos, structureDirection,
+                ShipbuildingMultiblocks.Multiblock.ROWBOAT, boatMaterial);
     }
 
 
