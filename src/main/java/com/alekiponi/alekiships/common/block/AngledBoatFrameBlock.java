@@ -35,7 +35,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected static final VoxelShape[] SHAPES;
-    private static final IdentityHashMap<Item, AngledBoatFrameBlock> ANGLED_FRAMES = new IdentityHashMap<>();
     private static final int[] SHAPE_BY_STATE = new int[]{12, 5, 3, 10, 14, 13, 7, 11, 13, 7, 11, 14, 8, 4, 1, 2, 4, 1, 2, 8};
 
     static {
@@ -47,25 +46,13 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
         SHAPES = makeShapes(bottom, northWest, northEast, southWest, southEast);
     }
 
+    private final IdentityHashMap<Item, BoatFrame> boatFrames = new IdentityHashMap<>();
+
     public AngledBoatFrameBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(
                 this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHAPE, StairsShape.STRAIGHT)
                         .setValue(WATERLOGGED, false));
-    }
-
-    /**
-     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link AngledBoatFrameBlock}
-     * A given {@link Item} instance may only map to one {@link AngledBoatFrameBlock} instance but multiple
-     * {@link Item}s can map to the same {@link AngledBoatFrameBlock}.
-     */
-    public static void registerFrame(final Item item, final AngledBoatFrameBlock frameBlock) {
-        ANGLED_FRAMES.put(item, frameBlock);
-    }
-
-    @Nullable
-    public static AngledBoatFrameBlock getFrame(final Item item) {
-        return ANGLED_FRAMES.get(item);
     }
 
     /**
@@ -211,6 +198,26 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
         return blockState.getBlock() instanceof AngledBoatFrameBlock;
     }
 
+    /**
+     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link BoatFrame}
+     * A given {@link Item} instance may only map to one {@link BoatFrame} instance but multiple
+     * {@link Item}s can map to the same {@link BoatFrame}.
+     *
+     * @apiNote This is for the particular frame instance
+     */
+    public final void registerFrame(final Item item, final BoatFrame boatFrame) {
+        assert boatFrame instanceof Block : "Registered Frames must be implemented on a Block";
+        boatFrames.put(item, boatFrame);
+    }
+
+    /**
+     * Gets the registered {@link BoatFrame} for the given item. If {@code null} then there is no valid mapping
+     */
+    @Nullable
+    private BoatFrame getFrame(final Item item) {
+        return boatFrames.get(item);
+    }
+
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
@@ -218,25 +225,21 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        final AngledBoatFrameBlock frameBlock = getFrame(heldStack.getItem());
+        final BoatFrame frameBlock = getFrame(heldStack.getItem());
 
-        if (frameBlock != null) {
-            final BlockState frameState = frameBlock.withPropertiesOf(blockState);
+        if (frameBlock == null) return InteractionResult.PASS;
 
-            level.setBlockAndUpdate(blockPos, frameState);
+        final BlockState frameBlockstate = frameBlock.withPropertiesOf(blockState);
 
-            if (!player.getAbilities().instabuild) {
-                heldStack.shrink(1);
-            }
+        level.setBlockAndUpdate(blockPos, frameBlockstate);
 
-            final SoundType soundType = frameState.getSoundType(level, blockPos, player);
+        if (!player.getAbilities().instabuild) heldStack.shrink(1);
 
-            level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-                    (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
-            return InteractionResult.SUCCESS;
-        }
+        final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
 
-        return InteractionResult.PASS;
+        level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
+                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
