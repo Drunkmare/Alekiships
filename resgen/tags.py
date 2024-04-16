@@ -6,8 +6,8 @@ import constants
 def generate(manager: ResourceManager):
     # Tags with all wood types
     for wood in constants.WOODS:
-        manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame_angled/{wood}",
-                          f"wood/watercraft_frame_flat/{wood}")
+        manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame/angled/{wood}",
+                          f"wood/watercraft_frame/flat/{wood}")
         manager.entity_tag("sloops", f"sloop/{wood}")
         manager.entity_tag("rowboats", f"rowboat/{wood}")
 

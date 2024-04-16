@@ -16,16 +16,16 @@ def generate(rm: ResourceManager):
                            f"alekiships:block/watercraft_frame/flat/template/{progress}")
 
             for shape in ["straight", "inner", "outer"]:
-                rm.block_model(f"wood/watercraft_frame_angled/{wood}/{shape}/{progress}",
+                rm.block_model(f"wood/watercraft_frame/angled/{wood}/{shape}/{progress}",
                                {"plank": f"minecraft:block/{wood}_planks"},
-                               f"alekiships:block/watercraft_frame_angled/template/{shape}/{progress}")
+                               f"alekiships:block/watercraft_frame/angled/template/{shape}/{progress}")
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_flat/{wood}",
+        rm.blockstate_multipart(f"wood/watercraft_frame/flat/{wood}",
                                 *blockStates.getWoodFrameFlatMultipart(wood)).with_lang(
             f"{wood_name} Flat Shipwright's Scaffolding").with_block_loot(
             *lootTables.boat_frame_flat(wood))
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_angled/{wood}",
+        rm.blockstate_multipart(f"wood/watercraft_frame/angled/{wood}",
                                 *blockStates.getWoodFrameMultipart(wood)).with_lang(
             f"{wood_name} Sloped Shipwright's Scaffolding").with_block_loot(
             *lootTables.boat_frame(wood))
@@ -35,7 +35,7 @@ def generate(rm: ResourceManager):
         "Sloped Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_angled")
 
     # Need to manually make the model
-    rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame_angled/straight",
+    rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame/angled/straight",
                   no_textures=True)
 
     # Basic flat frame

@@ -28,7 +28,7 @@ public final class AlekiShipsBlocks {
 
     public static final EnumMap<VanillaWood, RegistryObject<AngledWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_ANGLED = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class,
-            vanillaWood -> registerBlock("wood/watercraft_frame_angled/" + vanillaWood.getSerializedName(),
+            vanillaWood -> registerBlock("wood/watercraft_frame/angled/" + vanillaWood.getSerializedName(),
                     () -> new AngledWoodenBoatFrameBlock(vanillaWood,
                             BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get()))));
 
@@ -38,7 +38,7 @@ public final class AlekiShipsBlocks {
 
     public static final EnumMap<VanillaWood, RegistryObject<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class,
-            vanillaWood -> registerBlock("wood/watercraft_frame_flat/" + vanillaWood.getSerializedName(),
+            vanillaWood -> registerBlock("wood/watercraft_frame/flat/" + vanillaWood.getSerializedName(),
                     () -> new FlatWoodenBoatFrameBlock(vanillaWood,
                             BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()))));
 
