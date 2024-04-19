@@ -214,7 +214,7 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
      * Gets the registered {@link BoatFrame} for the given item. If {@code null} then there is no valid mapping
      */
     @Nullable
-    private BoatFrame getFrame(final Item item) {
+    protected BoatFrame getFrame(final Item item) {
         return boatFrames.get(item);
     }
 
