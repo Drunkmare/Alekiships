@@ -1,0 +1,59 @@
+{
+    "sources": [
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/oak",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/spruce",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/birch",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/acacia",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/cherry",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/jungle",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/dark_oak",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/crimson",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/warped",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/mangrove",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/sloop/bamboo",
+			"paintPrefix": "alekiships:entity/watercraft/sloop/paint"
+        }
+    ]
+}

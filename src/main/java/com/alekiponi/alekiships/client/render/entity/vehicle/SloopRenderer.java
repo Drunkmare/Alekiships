@@ -1,7 +1,10 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
+import com.alekiponi.alekiships.client.render.ShipSheets;
+import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -29,6 +32,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = AlekiShipsHelper.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
+    private static final BoatAtlasHolder SLOOP_ATLAS = BoatAtlases.getSloopAtlas();
     protected final ResourceLocation sloopTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
     protected final SloopEntityModel sloopModel = new SloopEntityModel();
@@ -38,14 +42,14 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
      */
     public SloopRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/normal.png"),
+                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName()),
                 AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName() + ".png")));
+                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
     }
 
     /**
-     * @param sloopTexture  The texture location. Must include file extension!
-     * @param paintTextures The texture locations for when the sloop is painted. Must include file extension!
+     * @param sloopTexture  The texture location
+     * @param paintTextures The texture locations for when the sloop is painted
      */
     public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture,
             final EnumMap<DyeColor, ResourceLocation> paintTextures) {
@@ -71,8 +75,9 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         }
 
         this.sloopModel.setupAnim(sloopEntity, partialTicks, 0, -0.1F, 0, 0);
-        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
-                this.sloopModel.renderType(this.getTextureLocation(sloopEntity)));
+
+        final VertexConsumer vertexconsumer = SLOOP_ATLAS.getSprite(this.getTextureLocation(sloopEntity))
+                .wrap(bufferSource.getBuffer(this.sloopModel.renderType(ShipSheets.SLOOP_SHEET)));
 
         if (sloopEntity.tickCount < 1) {
             poseStack.popPose();
