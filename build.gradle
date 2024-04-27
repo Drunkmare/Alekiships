@@ -167,6 +167,9 @@ dependencies {
     // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion")
 
+    // Lets us easily use atlas viewer in dev for our boat atlases
+    runtimeOnly fg.deobf("curse.maven:atlasviewer-633577:4762356")
+
     // Carryon
     runtimeOnly fg.deobf("tschipp.carryon:carryon-forge-$minecraftVersion:$carryonVersion")
     // Carryon needs mixin extras at runtime
