@@ -9,7 +9,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.CartographyTableMenu;
+import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ public class SmithingTableCompartmentEntity extends SimpleBlockMenuCompartmentEn
     @Override
     public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
             final Player player) {
-        return new CartographyTableMenu(id, playerInventory, this.getContainerLevelAccess()) {
+        return new SmithingMenu(id, playerInventory, this.getContainerLevelAccess()) {
             @Override
             public boolean stillValid(final Player player) {
                 return SmithingTableCompartmentEntity.super.stillValid(player);
