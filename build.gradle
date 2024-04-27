@@ -148,6 +148,7 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven { url = 'https://jitpack.io' } // Mixin Extras
     maven { url = "https://dvs1.progwml6.com/files/maven/" } // JEI
     maven { url = "https://modmaven.k-4u.nl" } // Mirror for JEI
     maven { // Patchouli & Carryon
@@ -168,6 +169,9 @@ dependencies {
 
     // Carryon
     runtimeOnly fg.deobf("tschipp.carryon:carryon-forge-$minecraftVersion:$carryonVersion")
+    // Carryon needs mixin extras at runtime
+    runtimeOnly "io.github.llamalad7:mixinextras-common:$mixinextrasVersion"
+    runtimeOnly "io.github.llamalad7:mixinextras-forge:$mixinextrasVersion"
 
     // Jade / The One Probe
     compileOnly fg.deobf("curse.maven:jade-324717:$jadeFileID")
