@@ -1,0 +1,59 @@
+{
+    "sources": [
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/oak",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/spruce",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/birch",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/acacia",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/cherry",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/jungle",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/dark_oak",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/crimson",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/warped",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/mangrove",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        },
+        {
+            "type": "alekiships:boat_texture_generator",
+            "woodTexture": "alekiships:entity/watercraft/rowboat/bamboo",
+			"paintPrefix": "alekiships:entity/watercraft/rowboat/paint"
+        }
+    ]
+}

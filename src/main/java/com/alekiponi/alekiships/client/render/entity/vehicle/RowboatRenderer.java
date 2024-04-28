@@ -1,7 +1,10 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
+import com.alekiponi.alekiships.client.render.ShipSheets;
+import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -26,6 +29,7 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/rowboat/damage_overlay.png");
+    private static final BoatAtlasHolder ROWBOAT_ATLAS = BoatAtlases.getRowboatAtlas();
     protected final RowboatEntityModel rowboatModel = new RowboatEntityModel();
     protected final ResourceLocation rowboatTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
@@ -35,14 +39,14 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
      */
     public RowboatRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/normal.png"),
+                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName()),
                 AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName() + ".png")));
+                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
     }
 
     /**
-     * @param rowboatTexture The texture location. Must include file extension!
-     * @param paintTextures  The texture locations for when the rowboat is painted. Must include file extension!
+     * @param rowboatTexture The texture location
+     * @param paintTextures  The texture locations for when the rowboat is painted
      */
     public RowboatRenderer(final EntityRendererProvider.Context context, final ResourceLocation rowboatTexture,
             final EnumMap<DyeColor, ResourceLocation> paintTextures) {
@@ -69,8 +73,8 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
         this.rowboatModel.setupAnim(rowboatEntity, partialTicks, 0, -0.1F, 0, 0);
 
-        final VertexConsumer baseVertexConsumer = bufferSource.getBuffer(
-                this.rowboatModel.renderType(this.getTextureLocation(rowboatEntity)));
+        final VertexConsumer baseVertexConsumer = ROWBOAT_ATLAS.getSprite(this.getTextureLocation(rowboatEntity))
+                .wrap(bufferSource.getBuffer(this.rowboatModel.renderType(ShipSheets.ROWBOAT_SHEET)));
 
         if (rowboatEntity.tickCount < 1) {
             poseStack.popPose();
