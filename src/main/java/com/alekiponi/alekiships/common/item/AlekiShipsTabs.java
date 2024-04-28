@@ -29,10 +29,5 @@ public class AlekiShipsTabs {
 
                         pOutput.accept(AlekiShipsBlocks.BOAT_FRAME_ANGLED.get());
                         pOutput.accept(AlekiShipsBlocks.BOAT_FRAME_FLAT.get());
-
-                        pOutput.accept(AlekiShipsItems.SMALL_TRIANGULAR_SAIL.get());
-                        pOutput.accept(AlekiShipsItems.MEDIUM_TRIANGULAR_SAIL.get());
-                        pOutput.accept(AlekiShipsItems.LARGE_TRIANGULAR_SAIL.get());
-
                     }).build());
 }

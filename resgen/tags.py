@@ -6,8 +6,8 @@ import constants
 def generate(manager: ResourceManager):
     # Tags with all wood types
     for wood in constants.WOODS:
-        manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame_angled/{wood}",
-                          f"wood/watercraft_frame_flat/{wood}")
+        manager.block_tag("wooden_watercraft_frames", f"wood/watercraft_frame/angled/{wood}",
+                          f"wood/watercraft_frame/flat/{wood}")
         manager.entity_tag("sloops", f"sloop/{wood}")
         manager.entity_tag("rowboats", f"rowboat/{wood}")
 
@@ -39,7 +39,6 @@ def generate(manager: ResourceManager):
     manager.block_tag("minecraft:mineable/pickaxe", "oarlock")
 
     # Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
-    manager.entity_tag("carryon:entity_blacklist", "cannonball", "kayak",
-                       "#alekiships:dugout_canoes", "#alekiships:sloops", "#alekiships:rowboats",
-                       "#alekiships:vehicle_helpers", "#alekiships:compartments",
+    manager.entity_tag("carryon:entity_blacklist", "cannonball", "#alekiships:sloops",
+                       "#alekiships:rowboats", "#alekiships:vehicle_helpers", "#alekiships:compartments",
                        *[f"sloop_construction/{wood}" for wood in constants.WOODS])

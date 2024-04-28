@@ -1,10 +1,8 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
-import com.alekiponi.alekiships.util.AlekiShipsTags;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -12,8 +10,8 @@ public class ShipbuildingMultiblocks {
     public static ShipbuildingBlockValidator[][] sloopMultiblock = {
             {
                     new ShipbuildingBlockValidator(false),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST),
                     new ShipbuildingBlockValidator(false),
             },
             {
@@ -23,10 +21,10 @@ public class ShipbuildingMultiblocks {
                     new ShipbuildingBlockValidator(false),
             },
             {
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.OUTER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.OUTER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.OUTER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.OUTER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST),
             },
             {
                     new ShipbuildingBlockValidator(Direction.WEST),
@@ -47,25 +45,25 @@ public class ShipbuildingMultiblocks {
                     new ShipbuildingBlockValidator(Direction.EAST),
             },
             {
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
                     new ShipbuildingBlockValidator(Direction.SOUTH),
                     new ShipbuildingBlockValidator(Direction.SOUTH),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
             },
     };
 
     public static ShipbuildingBlockValidator[][] rowboatMultiblock = {
             {
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST)
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST)
             },
             {
                     new ShipbuildingBlockValidator(Direction.WEST),
                     new ShipbuildingBlockValidator(Direction.EAST)
             },
             {
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape.INNER, AngledWoodenBoatFrameBlock.ConstantDirection.NORTH_AND_WEST)
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST)
             }
     };
 
@@ -74,61 +72,40 @@ public class ShipbuildingMultiblocks {
         SLOOP
     }
 
-    public static boolean validateShipHull(Level level, BlockPos thispos, Direction structureDirection, Multiblock multiblock, ItemStack plankItem) {
-        Direction crossDirection = structureDirection.getClockWise();
 
-        ShipbuildingBlockValidator[][] thisMultiblock;
-        switch (multiblock) {
-            case ROWBOAT -> {
-                thisMultiblock = rowboatMultiblock;
-            }
-            case SLOOP -> {
-                thisMultiblock = sloopMultiblock;
-            }
-            default -> {
-                thisMultiblock = new ShipbuildingBlockValidator[0][0];
-            }
-        }
+    public static boolean validateShipHull(final Level level, final BlockPos startPos,
+            final Direction structureDirection, final Multiblock multiblock, final BoatMaterial boatMaterial) {
+        final Direction crossDirection = structureDirection.getClockWise();
+
+        final ShipbuildingBlockValidator[][] multiblockValidators = switch (multiblock) {
+            case ROWBOAT -> rowboatMultiblock;
+            case SLOOP -> sloopMultiblock;
+        };
+
         boolean success = true;
-        for (int y = 0; y < thisMultiblock.length; y++) {
-            for (int x = 0; x < thisMultiblock[0].length; x++) {
-                BlockState state = level.getBlockState(thispos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x));
-                if (!thisMultiblock[y][x].validate(state, plankItem, structureDirection)) {
+
+        for (int y = 0; y < multiblockValidators.length; y++) {
+            for (int x = 0; x < multiblockValidators[0].length; x++) {
+                final BlockState blockState = level.getBlockState(
+                        startPos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x));
+                if (!multiblockValidators[y][x].validate(blockState, structureDirection, boatMaterial)) {
                     success = false;
                     break;
                 }
             }
         }
-        if(success){
-            for (int y = 0; y < thisMultiblock.length; y++) {
-                for (int x = 0; x < thisMultiblock[0].length; x++) {
-                    if(thisMultiblock[y][x].shouldDestroy()){
-                        level.destroyBlock(thispos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x), false);
-                    }
+
+        if (!success) return false;
+
+        for (int y = 0; y < multiblockValidators.length; y++) {
+            for (int x = 0; x < multiblockValidators[0].length; x++) {
+                if (multiblockValidators[y][x].shouldDestroy()) {
+                    level.destroyBlock(startPos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x), false);
                 }
             }
         }
 
-        return success;
-    }
-
-    public static ItemStack validatePlanks(BlockState frameState) {
-        ItemStack plankItem = ItemStack.EMPTY;
-        if (frameState.getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock) {
-            plankItem = woodenBoatFrameBlock.getPlankAsItemStack();
-            if (AlekiShipsConfig.SERVER.shipWoodRestriction.get()) {
-                if (!plankItem.is(AlekiShipsTags.Items.PLANKS_THAT_MAKE_SHIPS)) {
-                    return ItemStack.EMPTY;
-                }
-            } else {
-                if (!plankItem.is(AlekiShipsTags.Items.PLANKS)) {
-                    return ItemStack.EMPTY;
-                }
-            }
-        } else {
-            return ItemStack.EMPTY;
-        }
-        return plankItem;
+        return true;
     }
 
 }

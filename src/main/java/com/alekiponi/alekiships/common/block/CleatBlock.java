@@ -4,7 +4,6 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -47,9 +46,9 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
                 thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
+            return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
         }
         return false;
     }
@@ -165,13 +164,12 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
             origin = cleats[1].relative(structureDirection, 2).below();
         }
 
-        ItemStack plankItem = ShipbuildingMultiblocks.validatePlanks(level.getBlockState(thispos.below()));
-        BlockState framestate = level.getBlockState(thispos.below());
-        if (plankItem.isEmpty()) {
-            return;
-        }
+        final BlockState frameState = level.getBlockState(thispos.below());
+        final BoatMaterial boatMaterial = BoatFrame.fromBlockstate(frameState);
 
-        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, plankItem) && framestate.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
+        if (boatMaterial == null) return;
+
+        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, boatMaterial) && frameState.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
             // destroy cleats
             for (BlockPos pos : cleats) {
                 level.destroyBlock(pos, false);
@@ -224,7 +222,7 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
 
 
         if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
-            Direction[] directions = AngledWoodenBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
+            Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
             if (directions.length == 0) {
                 return blockstate;
             }

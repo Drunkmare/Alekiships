@@ -34,7 +34,7 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected static final VoxelShape HALF_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
-    private static final IdentityHashMap<Item, FlatBoatFrameBlock> FLAT_FRAMES = new IdentityHashMap<>();
+    private final IdentityHashMap<Item, BoatFrame> boatFrames = new IdentityHashMap<>();
 
     public FlatBoatFrameBlock(final Properties properties) {
         super(properties);
@@ -42,17 +42,21 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
     }
 
     /**
-     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link FlatBoatFrameBlock}
-     * A given {@link Item} instance may only map to one {@link FlatBoatFrameBlock} instance but multiple
-     * {@link Item}s can map to the same {@link FlatBoatFrameBlock}.
+     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link BoatFrame}
+     * A given {@link Item} instance may only map to one {@link BoatFrame} instance but multiple
+     * {@link Item}s can map to the same {@link BoatFrame}.
      */
-    public static void registerFrame(final Item item, final FlatBoatFrameBlock frameBlock) {
-        FLAT_FRAMES.put(item, frameBlock);
+    public final void registerFrame(final Item item, final BoatFrame boatFrame) {
+        assert boatFrame instanceof Block : "Registered Frames must be implemented on a Block";
+        boatFrames.put(item, boatFrame);
     }
 
+    /**
+     * Gets the registered {@link BoatFrame} for the given item. If {@code null} then there is no valid mapping
+     */
     @Nullable
-    public static FlatBoatFrameBlock getFrame(final Item item) {
-        return FLAT_FRAMES.get(item);
+    protected BoatFrame getFrame(final Item item) {
+        return boatFrames.get(item);
     }
 
     @Override
@@ -67,26 +71,21 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        final FlatBoatFrameBlock frameBlock = getFrame(heldStack.getItem());
+        final BoatFrame frameBlock = getFrame(heldStack.getItem());
 
-        if (frameBlock != null) {
-            final BlockState newBlockState = frameBlock.defaultBlockState()
-                    .setValue(WATERLOGGED, blockState.getValue(WATERLOGGED));
+        if (frameBlock == null) return InteractionResult.PASS;
 
-            level.setBlockAndUpdate(blockPos, newBlockState);
+        final BlockState frameBlockstate = frameBlock.withPropertiesOf(blockState);
 
-            if (!player.getAbilities().instabuild) {
-                heldStack.shrink(1);
-            }
+        level.setBlockAndUpdate(blockPos, frameBlockstate);
 
-            final SoundType soundType = newBlockState.getSoundType(level, blockPos, player);
+        if (!player.getAbilities().instabuild) heldStack.shrink(1);
 
-            level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-                    (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
-            return InteractionResult.SUCCESS;
-        }
+        final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
 
-        return InteractionResult.PASS;
+        level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
+                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

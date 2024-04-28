@@ -20,12 +20,15 @@ import java.util.function.Supplier;
 public final class AlekiShipsBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
             AlekiShips.MOD_ID);
-    public static final RegistryObject<Block> BOAT_FRAME_ANGLED = registerBlockWithItem("watercraft_frame_angled",
-            () -> new AngledBoatFrameBlock(BlockBehaviour.Properties.copy(Blocks.BAMBOO_PLANKS).instabreak().noOcclusion().sound(SoundType.SCAFFOLDING)));
+
+    public static final RegistryObject<AngledBoatFrameBlock> BOAT_FRAME_ANGLED = registerBlockWithItem(
+            "watercraft_frame_angled", () -> new AngledBoatFrameBlock(
+                    BlockBehaviour.Properties.copy(Blocks.BAMBOO_PLANKS).instabreak().noOcclusion()
+                            .sound(SoundType.SCAFFOLDING)));
 
     public static final EnumMap<VanillaWood, RegistryObject<AngledWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_ANGLED = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class,
-            vanillaWood -> registerBlock("wood/watercraft_frame_angled/" + vanillaWood.getSerializedName(),
+            vanillaWood -> registerBlock("wood/watercraft_frame/angled/" + vanillaWood.getSerializedName(),
                     () -> new AngledWoodenBoatFrameBlock(vanillaWood,
                             BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get()))));
 
@@ -33,15 +36,17 @@ public final class AlekiShipsBlocks {
             "watercraft_frame_flat",
             () -> new FlatBoatFrameBlock(BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get())));
 
-    public static final EnumMap<VanillaWood, RegistryObject<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = AlekiShipsHelper.mapOfKeys( VanillaWood.class,
-            vanillaWood -> registerBlock("wood/watercraft_frame_flat/" + vanillaWood.getSerializedName(),
-                    () -> new FlatWoodenBoatFrameBlock(vanillaWood, BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()))));
+    public static final EnumMap<VanillaWood, RegistryObject<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = AlekiShipsHelper.mapOfKeys(
+            VanillaWood.class,
+            vanillaWood -> registerBlock("wood/watercraft_frame/flat/" + vanillaWood.getSerializedName(),
+                    () -> new FlatWoodenBoatFrameBlock(vanillaWood,
+                            BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()))));
 
-    public static final RegistryObject<Block> OARLOCK = registerBlockWithItem("oarlock", () -> new OarlockBlock(
-            BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final RegistryObject<OarlockBlock> OARLOCK = registerBlockWithItem("oarlock",
+            () -> new OarlockBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
 
-    public static final RegistryObject<Block> CLEAT = registerBlockWithItem("cleat", () -> new CleatBlock(
-            BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final RegistryObject<CleatBlock> CLEAT = registerBlockWithItem("cleat",
+            () -> new CleatBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);

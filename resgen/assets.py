@@ -16,16 +16,16 @@ def generate(rm: ResourceManager):
                            f"alekiships:block/watercraft_frame/flat/template/{progress}")
 
             for shape in ["straight", "inner", "outer"]:
-                rm.block_model(f"wood/watercraft_frame_angled/{wood}/{shape}/{progress}",
+                rm.block_model(f"wood/watercraft_frame/angled/{wood}/{shape}/{progress}",
                                {"plank": f"minecraft:block/{wood}_planks"},
-                               f"alekiships:block/watercraft_frame_angled/template/{shape}/{progress}")
+                               f"alekiships:block/watercraft_frame/angled/template/{shape}/{progress}")
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_flat/{wood}",
+        rm.blockstate_multipart(f"wood/watercraft_frame/flat/{wood}",
                                 *blockStates.getWoodFrameFlatMultipart(wood)).with_lang(
             f"{wood_name} Flat Shipwright's Scaffolding").with_block_loot(
             *lootTables.boat_frame_flat(wood))
 
-        rm.blockstate_multipart(f"wood/watercraft_frame_angled/{wood}",
+        rm.blockstate_multipart(f"wood/watercraft_frame/angled/{wood}",
                                 *blockStates.getWoodFrameMultipart(wood)).with_lang(
             f"{wood_name} Sloped Shipwright's Scaffolding").with_block_loot(
             *lootTables.boat_frame(wood))
@@ -35,7 +35,7 @@ def generate(rm: ResourceManager):
         "Sloped Shipwright's Scaffolding").with_block_loot("alekiships:watercraft_frame_angled")
 
     # Need to manually make the model
-    rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame_angled/straight",
+    rm.item_model("watercraft_frame_angled", parent="alekiships:block/watercraft_frame/angled/straight",
                   no_textures=True)
 
     # Basic flat frame
@@ -85,20 +85,6 @@ def generate(rm: ResourceManager):
     rm.item_model("cleat")
 
     # Items with generated models
-    rm.item("unfinished_barometer").with_item_model().with_lang("Unfinished Barometer")
-    rm.item("unfinished_nav_clock").with_item_model().with_lang("Unfinished Navigator's Timepiece")
-    rm.item("unfinished_sextant").with_item_model().with_lang("Unfinished Sextant")
     rm.item("cannon").with_item_model().with_lang("Cannon")
     rm.item("cannonball").with_item_model().with_lang("Cannonball")
-    rm.item("cannon_barrel").with_item_model().with_lang("Cannon Barrel")
     rm.item("anchor").with_item_model().with_lang("Anchor")
-    rm.item("small_triangular_sail").with_item_model().with_lang("Small Sail")
-    rm.item("medium_triangular_sail").with_item_model().with_lang("Medium Sail")
-    rm.item("large_triangular_sail").with_item_model().with_lang("Large Sail")
-    rm.item("rope_coil").with_item_model().with_lang("Jute Rope")
-
-    rm.item("sloop_icon_only").with_item_model().with_lang("ICON ONLY")
-    rm.item("canoe_icon_only").with_item_model().with_lang("ICON ONLY")
-    rm.item("canoe_with_paddle_icon_only").with_item_model().with_lang("ICON ONLY")
-    rm.item("kayak_with_paddle_icon_only").with_item_model().with_lang("ICON ONLY")
-    rm.item("rowboat_icon_only").with_item_model().with_lang("ICON ONLY")

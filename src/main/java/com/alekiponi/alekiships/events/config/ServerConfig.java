@@ -4,34 +4,12 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.function.Function;
 
-public class ServerConfig {
-    public final ForgeConfigSpec.BooleanValue canoeWoodRestriction;
+// TODO remove if this continues to be empty
+public final class ServerConfig {
 
-    public final ForgeConfigSpec.BooleanValue shipWoodRestriction;
-    public final ForgeConfigSpec.BooleanValue forceReducedDebugInfo;
-    public final ForgeConfigSpec.BooleanValue disableVanillaBoatFunctionality;
-
-    ServerConfig(ForgeConfigSpec.Builder innerBuilder) {
-        Function<String, ForgeConfigSpec.Builder> builder = (name) -> {
-            return innerBuilder.translation("firmaciv.config.server." + name);
-        };
-        innerBuilder.push("general");
-        this.canoeWoodRestriction = builder.apply("canoeWoodRestriction")
-                .comment(
-                        "Force creation of canoes from specified wood types. Turning this to false will make canoes craftable from any wood type.")
-                .define("canoeWoodRestriction", true);
-
-        this.shipWoodRestriction = builder.apply("shipWoodRestriction")
-                .comment(
-                        "Force creation of ships and rowboats from specified wood types. Turning this to false will make ships and rowboats craftable from any wood type.")
-                .define("shipWoodRestriction", true);
-
-        this.forceReducedDebugInfo = builder.apply("forceReducedDebugInfo").comment("Force reduceDebugInfo gamerule.")
-                .define("forceReducedDebugInfo", false);
-
-        this.disableVanillaBoatFunctionality = builder.apply("disableVanillaBoatFunctionality")
-                .comment("Disables vanilla boats from working.")
-                .define("disableVanillaBoatFunctionality", false);
-
+    ServerConfig(final ForgeConfigSpec.Builder innerBuilder) {
+        //noinspection unused
+        final Function<String, ForgeConfigSpec.Builder> builder = (name) -> innerBuilder.translation(
+                "firmaciv.config.server." + name);
     }
 }

@@ -1,8 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
+public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
@@ -35,16 +34,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         super.createBlockStateDefinition(builder.add(FRAME_PROCESSED));
     }
 
-    public static boolean validateProcessed(BlockState framestate, ItemStack plankitem) {
-        // check if the plank item matches
-        if (framestate.getBlock() instanceof FlatWoodenBoatFrameBlock wbfb && wbfb.getPlankAsItemStack()
-                .is(plankitem.getItem())) {
-            // check if the state matches
-            return framestate.getValue(FRAME_PROCESSED) == FULLY_PROCESSED;
-        }
-        return false;
-    }
-
     @Override
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
             final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
@@ -59,32 +48,28 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
             if (processState <= FULLY_PROCESSED) {
-                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.getUnderlyingPlank()));
-            } else {
-                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(AlekiShipsItems.COPPER_BOLT.get()));
+                AlekiShipsHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
             }
 
             // Set ourselves back to our base
             if (processState == 0) {
-                level.setBlock(blockPos, AlekiShipsBlocks.BOAT_FRAME_FLAT.get().defaultBlockState(),
-                        UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+                level.setBlockAndUpdate(blockPos, AlekiShipsBlocks.BOAT_FRAME_FLAT.get().defaultBlockState());
                 return InteractionResult.SUCCESS;
             }
 
-            level.setBlock(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1),
-                    UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+            level.setBlockAndUpdate(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1));
 
             return InteractionResult.SUCCESS;
         }
 
         // Should we do plank stuff
-        if (heldStack.is(this.getUnderlyingPlank().asItem())) {
+        if (heldStack.is(this.boatMaterial.getDeckItem())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
                 if(!player.getAbilities().instabuild){
                     heldStack.shrink(1);
                 }
-                level.setBlock(blockPos, blockState.cycle(FRAME_PROCESSED), UPDATE_CLIENTS | UPDATE_IMMEDIATE);
+                level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
                 return InteractionResult.SUCCESS;
@@ -95,10 +80,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         return InteractionResult.PASS;
     }
 
-    public boolean requireBolts(){
-        return false;
-    }
-
     @Override
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(final BlockGetter blockGetter, final BlockPos blockPos,
@@ -107,11 +88,18 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
         return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(blockGetter, blockPos, blockState);
     }
 
-    public Block getUnderlyingPlank() {
-        return this.boatMaterial.getDeckBlock().getBlock();
+    @Override
+    public IntegerProperty getProcessingProperty() {
+        return FRAME_PROCESSED;
     }
 
-    public ItemStack getPlankAsItemStack() {
-        return new ItemStack(this.boatMaterial.getDeckItem());
+    @Override
+    public int getProcessingLimit() {
+        return FULLY_PROCESSED;
+    }
+
+    @Override
+    public BoatMaterial getBoatMaterial() {
+        return this.boatMaterial;
     }
 }

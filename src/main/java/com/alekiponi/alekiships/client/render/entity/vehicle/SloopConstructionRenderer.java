@@ -22,8 +22,8 @@ import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import static com.alekiponi.alekiships.common.block.SquaredAngleBlock.FACING;
-import static com.alekiponi.alekiships.common.block.SquaredAngleBlock.SHAPE;
+import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.FACING;
+import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.SHAPE;
 
 @OnlyIn(Dist.CLIENT)
 public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstructionEntity> {

@@ -4,7 +4,6 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -50,9 +49,9 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         if (pLevel.getBlockState(thispos.below())
                 .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
                 thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.INNER || AngledWoodenBoatFrameBlock.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledWoodenBoatFrameBlock.ConstantShape.STRAIGHT;
+            return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
         }
         return false;
     }
@@ -141,13 +140,12 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         thispos = thispos.relative(structureDirection);
 
         BlockState frameState = level.getBlockState(thispos);
-        ItemStack plankItem = ShipbuildingMultiblocks.validatePlanks(frameState);
-        if (plankItem.isEmpty()) {
-            return false;
-        }
 
-        return ShipbuildingMultiblocks.validateShipHull(level, thispos, structureDirection, ShipbuildingMultiblocks.Multiblock.ROWBOAT, plankItem);
+        final BoatMaterial boatMaterial = BoatFrame.fromBlockstate(frameState);
+        if (boatMaterial == null) return false;
 
+        return ShipbuildingMultiblocks.validateShipHull(level, thispos, structureDirection,
+                ShipbuildingMultiblocks.Multiblock.ROWBOAT, boatMaterial);
     }
 
 
@@ -160,7 +158,7 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
                 .setValue(FACING, pContext.getHorizontalDirection().getOpposite());
 
         if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
-            Direction[] directions = AngledWoodenBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
+            Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
             if (directions.length == 0) {
                 return blockstate;
             }
