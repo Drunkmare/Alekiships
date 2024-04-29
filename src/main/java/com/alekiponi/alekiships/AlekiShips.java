@@ -6,9 +6,11 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
+import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -43,6 +45,10 @@ public class AlekiShips {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(VanillaWood::registerFrames);
+        event.enqueueWork(() -> {
+            VanillaWood.registerFrames();
+            EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.DYE_COLOR);
+            EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
+        });
     }
 }

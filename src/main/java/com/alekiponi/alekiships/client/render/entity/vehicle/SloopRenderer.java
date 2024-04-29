@@ -151,8 +151,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(final SloopEntity sloopEntity) {
-        final DyeColor paintColor = sloopEntity.getPaintColor();
-        return paintColor == null ? this.sloopTexture : this.paintTextures.get(paintColor);
+        return sloopEntity.getPaintColor().map(this.paintTextures::get).orElse(this.sloopTexture);
     }
 
     public ResourceLocation getMainsailTexture(final SloopEntity sloopEntity) {
