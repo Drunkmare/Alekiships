@@ -52,15 +52,16 @@ public enum IngameOverlays {
     public static final Component PRESS_BUTTON = Component.translatable("press_button");
     public static final Component EJECT_PASSENGERS = Component.translatable("eject_passengers");
     private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
+    public static final int MAGIC_STRING_COLOR = 16777215;
     private final IGuiOverlay overlay;
     private final String id;
 
-    IngameOverlays(IGuiOverlay overlay) {
+    IngameOverlays(final IGuiOverlay overlay) {
         this.id = this.name().toLowerCase(Locale.ROOT);
         this.overlay = overlay;
     }
 
-    public static void registerOverlays(RegisterGuiOverlaysEvent event) {
+    public static void registerOverlays(final RegisterGuiOverlaysEvent event) {
         above(event, VanillaGuiOverlay.CROSSHAIR, COMPARTMENT_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, VEHICLE_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, PASSENGER_STATUS);
@@ -137,7 +138,7 @@ public enum IngameOverlays {
             stack.pushPose();
             final String countString = String.valueOf(itemStack.getCount());
             stack.translate(0, 0, 200);
-            graphics.drawString(mc.font, countString, 19 - 2 - mc.font.width(countString), 6 + 3, 16777215, true);
+            graphics.drawString(mc.font, countString, 17 - mc.font.width(countString), 9, MAGIC_STRING_COLOR, true);
             stack.popPose();
         }
 
@@ -267,6 +268,7 @@ public enum IngameOverlays {
             stack.translate(0.5F, 0, 0);
         }
 
+        // TODO This is very hard to read and has NPE warnings. I don't want to screw this up somehow -Traister101
         if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity && emptyCompartmentEntity.isPassenger() && !emptyCompartmentEntity.isVehicle()) {
             if (emptyCompartmentEntity.getTrueVehicle() != null && emptyCompartmentEntity.getTrueVehicle()
                     .getPilotVehiclePartAsEntity() != null) {
@@ -380,7 +382,8 @@ public enum IngameOverlays {
         }
     }
 
-    public static boolean setup(ForgeGui gui, Minecraft minecraft) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean setup(final ForgeGui gui, final Minecraft minecraft) {
         if (!minecraft.options.hideGui && minecraft.getCameraEntity() instanceof Player) {
             gui.setupOverlayRenderState(true, false);
             return true;
