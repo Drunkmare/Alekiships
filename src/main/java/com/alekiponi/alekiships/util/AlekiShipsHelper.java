@@ -11,10 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -279,5 +276,29 @@ public class AlekiShipsHelper {
             final Predicate<E> keyPredicate, final Function<E, V> valueMapper) {
         return Arrays.stream(enumClass.getEnumConstants()).filter(keyPredicate).collect(
                 Collectors.toMap(Function.identity(), valueMapper, (v, v2) -> v, () -> new EnumMap<>(enumClass)));
+    }
+
+    /**
+     * Safely grab the entity out of a nullable hit result.
+     * <p>
+     * Null always means there wasn't an {@link EntityHitResult} to get the entity from
+     * <p>
+     * Example usage:
+     * <pre>
+     * {@code
+     * final Entity entity = AlekiShipsHelper.getEntity(Minecraft.getInstance().hitResult);
+     * if (entity != null) {
+     *     // Something that uses the entity
+     * }
+     * }
+     * </pre>
+     */
+    @Nullable
+    public static Entity getEntity(final @Nullable HitResult hitResult) {
+        if (hitResult == null) return null;
+
+        if (hitResult.getType() != HitResult.Type.ENTITY) return null;
+
+        return ((EntityHitResult) hitResult).getEntity();
     }
 }
