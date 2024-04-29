@@ -167,6 +167,11 @@ dependencies {
     // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion")
 
+    // Flywheel
+    implementation(jarJar(fg.deobf("com.jozufozu.flywheel:flywheel-forge-$flywheelMinecraftVersion:$flywheelVersion"))) {
+        jarJar.ranged(it as Dependency, "[1.0,2.0)")
+    }
+
     // Lets us easily use atlas viewer in dev for our boat atlases
     runtimeOnly fg.deobf("curse.maven:atlasviewer-633577:4762356")
 
