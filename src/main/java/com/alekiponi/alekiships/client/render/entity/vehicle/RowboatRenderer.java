@@ -120,7 +120,6 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(final RowboatEntity rowboatEntity) {
-        final DyeColor paintColor = rowboatEntity.getPaintColor();
-        return paintColor == null ? this.rowboatTexture : this.paintTextures.get(paintColor);
+        return rowboatEntity.getPaintColor().map(this.paintTextures::get).orElse(this.rowboatTexture);
     }
 }

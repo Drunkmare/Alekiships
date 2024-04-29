@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -23,14 +24,14 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity {
-    protected static final byte NO_DYE = -1;
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Byte> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
-            EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
+            CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
     public final int PASSENGER_NUMBER = 6;
 
     public final int[] CLEATS = {5};
@@ -231,10 +232,13 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
 
         if (heldItem.is(Tags.Items.DYES)) {
             final DyeColor dyeColor = DyeColor.getColor(heldItem);
-            if (dyeColor != null && dyeColor != this.getPaintColor()) {
-                this.setPaintColor(dyeColor);
-                player.swing(hand);
-                return InteractionResult.SUCCESS;
+            if (dyeColor != null) {
+                final Optional<DyeColor> paintColor = this.getPaintColor();
+                if (paintColor.isEmpty() || paintColor.get() != dyeColor) {
+                    this.setPaintColor(dyeColor);
+                    player.swing(hand);
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
 
@@ -267,30 +271,25 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
-        this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
+        this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
     /**
      * @return The paint color of the boat. {@code null} for no color
      */
-    @Nullable
-    public DyeColor getPaintColor() {
-        final byte colorIndex = this.entityData.get(DATA_ID_PAINT_COLOR);
-
-        if (colorIndex == NO_DYE) return null;
-
-        return DyeColor.byId(colorIndex);
+    public Optional<DyeColor> getPaintColor() {
+        return this.entityData.get(DATA_ID_PAINT_COLOR);
     }
 
     /**
      * @param paintColor A {@link DyeColor}
      */
     public void setPaintColor(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_PAINT_COLOR, (byte) paintColor.getId());
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of( paintColor));
     }
 
     public void clearPaint() {
-        this.entityData.set(DATA_ID_PAINT_COLOR, NO_DYE);
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
     @Override
@@ -313,12 +312,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
         super.addAdditionalSaveData(compoundTag);
         compoundTag.putByte("oars", (byte) this.getOars().getId());
 
-        {
-            final DyeColor paintColor = this.getPaintColor();
-            if (paintColor != null) {
-                compoundTag.putByte("paint", (byte) paintColor.getId());
-            }
-        }
+        this.getPaintColor().ifPresent(dyeColor -> compoundTag.putByte("paint", (byte) dyeColor.getId()));
     }
 
     @Override
