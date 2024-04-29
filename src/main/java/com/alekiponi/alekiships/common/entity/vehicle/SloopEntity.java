@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.BoatMaterial;
@@ -28,6 +29,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class SloopEntity extends AbstractAlekiBoatEntity {
 
@@ -39,7 +41,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     public final int[] MASTS = {23};
 
     public final int[] CAN_ADD_CANNONS = {7,8,9,10,11,12};
-    protected static final byte NO_DYE = -1;
 
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
@@ -58,12 +59,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_TICKS_NO_RIDERS = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Byte> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Byte> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Byte> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(SloopEntity.class,
-            EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<DyeColor> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
+            CustomEntityDataSerializers.DYE_COLOR);
+    private static final EntityDataAccessor<DyeColor> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
+            CustomEntityDataSerializers.DYE_COLOR);
+    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(SloopEntity.class,
+            CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
 
     public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
 
@@ -515,10 +516,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
         if (heldItem.is(Tags.Items.DYES)) {
             final DyeColor dyeColor = DyeColor.getColor(heldItem);
-            if (dyeColor != null && dyeColor != this.getPaintColor()) {
-                this.setPaintColor(dyeColor);
-                player.swing(hand);
-                return InteractionResult.SUCCESS;
+            if (dyeColor != null) {
+                final Optional<DyeColor> paintColor = this.getPaintColor();
+                if (paintColor.isEmpty() || paintColor.get() != dyeColor) {
+                    this.setPaintColor(dyeColor);
+                    player.swing(hand);
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
 
@@ -546,9 +550,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
         this.entityData.define(DATA_ID_JIBSAIL_ACTIVE, false);
         this.entityData.define(DATA_ID_TICKS_NO_RIDERS, 0);
         this.entityData.define(DATA_ID_MAINSHEET_LENGTH, 0f);
-        this.entityData.define(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
-        this.entityData.define(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
-        this.entityData.define(DATA_ID_PAINT_COLOR, NO_DYE);
+        this.entityData.define(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
+        this.entityData.define(DATA_ID_MAINSAIL_DYE, DyeColor.WHITE);
+        this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
     @Override
@@ -829,50 +833,45 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
      * @return The color of the mainsail
      */
     public DyeColor getMainsailDye() {
-        return DyeColor.byId(this.entityData.get(DATA_ID_MAINSAIL_DYE));
+        return this.entityData.get(DATA_ID_MAINSAIL_DYE);
     }
 
     public void setMainsailDye(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) paintColor.getId());
+        this.entityData.set(DATA_ID_MAINSAIL_DYE,  paintColor);
     }
 
     public void clearMainsailDye() {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE, (byte) DyeColor.WHITE.getId());
+        this.entityData.set(DATA_ID_MAINSAIL_DYE,  DyeColor.WHITE);
     }
 
     /**
      * @return The color of the Jibsail
      */
     public DyeColor getJibsailDye() {
-        return DyeColor.byId(this.entityData.get(DATA_ID_JIBSAIL_DYE));
+        return this.entityData.get(DATA_ID_JIBSAIL_DYE);
     }
 
     public void setJibsailDye(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) paintColor.getId());
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, paintColor);
     }
 
     public void clearJibsailDye() {
-        this.entityData.set(DATA_ID_JIBSAIL_DYE, (byte) DyeColor.WHITE.getId());
+        this.entityData.set(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
     }
 
     /**
      * @return The paint color of the boat
      */
-    @Nullable
-    public DyeColor getPaintColor() {
-        final byte colorIndex = this.entityData.get(DATA_ID_PAINT_COLOR);
-
-        if (colorIndex == NO_DYE) return null;
-
-        return DyeColor.byId(colorIndex);
+    public Optional<DyeColor> getPaintColor() {
+        return this.entityData.get(DATA_ID_PAINT_COLOR);
     }
 
     public void setPaintColor(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_PAINT_COLOR, (byte) paintColor.getId());
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
     }
 
     public void clearPaint() {
-        this.entityData.set(DATA_ID_PAINT_COLOR, NO_DYE);
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
     @Override
@@ -922,12 +921,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
             }
         }
 
-        {
-            final DyeColor paintColor = this.getPaintColor();
-            if (paintColor != null) {
-                pCompound.putByte("paint", (byte) paintColor.getId());
-            }
-        }
-
+        this.getPaintColor().ifPresent(dyeColor -> pCompound.putByte("paint", (byte) dyeColor.getId()));
     }
 }
