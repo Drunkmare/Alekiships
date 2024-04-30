@@ -4,14 +4,9 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import com.alekiponi.alekiships.util.VanillaWood;
-import com.ibm.icu.impl.Row;
+import com.jozufozu.flywheel.api.instance.Instancer;
 import com.jozufozu.flywheel.api.material.Material;
-import com.jozufozu.flywheel.api.model.Model;
-import com.jozufozu.flywheel.api.visual.DynamicVisual;
 import com.jozufozu.flywheel.api.visual.VisualFrameContext;
 import com.jozufozu.flywheel.api.visual.VisualTickContext;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
@@ -20,8 +15,6 @@ import com.jozufozu.flywheel.lib.instance.TransformedInstance;
 import com.jozufozu.flywheel.lib.material.CutoutShaders;
 import com.jozufozu.flywheel.lib.material.SimpleMaterial;
 import com.jozufozu.flywheel.lib.model.ModelCache;
-import com.jozufozu.flywheel.lib.model.ModelHolder;
-import com.jozufozu.flywheel.lib.model.SimpleModel;
 import com.jozufozu.flywheel.lib.model.SingleMeshModel;
 import com.jozufozu.flywheel.lib.model.part.ModelPartConverter;
 import com.jozufozu.flywheel.lib.visual.SimpleDynamicVisual;
@@ -32,124 +25,108 @@ import com.jozufozu.flywheel.lib.visual.components.HitboxComponent;
 import com.jozufozu.flywheel.lib.visual.components.ShadowComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Math;
 
-import java.util.EnumMap;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T> implements SimpleTickableVisual, SimpleDynamicVisual {
 
+    public static final Material ROWBOAT = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH)
+            .texture(ShipSheets.ROWBOAT_SHEET).mipmap(false).backfaceCulling(false).build();
+    private final static ModelCache<ResourceLocation> ROWBOAT_MODELS = new ModelCache<>(sprite -> new SingleMeshModel(
+            ModelPartConverter.convert(RowboatEntityModel.LAYER_LOCATION,
+                    BoatAtlases.getRowboatAtlas().getSprite(sprite)), ROWBOAT));
     private final PoseStack poseStack = new PoseStack();
-    public static final ModelHolder ROWBOAT_MODEL = createBodyModelHolder(RowboatEntityModel.LAYER_LOCATION);
+    private TransformedInstance boatModel;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<DyeColor> lastPaintColor;
 
-    private static final ModelCache<Material> ROWBOAT_MODELS = new ModelCache<>(texture -> {
-        return (createBodyModelHolder(RowboatEntityModel.LAYER_LOCATION).get());
-    });
-
-    protected final ResourceLocation rowboatTexture;
-    protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
-
-    private static final BoatAtlasHolder ROWBOAT_ATLAS = BoatAtlases.getRowboatAtlas();
-    public RowboatVisual(VisualizationContext context, T entity, final VanillaWood vanillaWood) {
-
-        this(context, entity, new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName()),
-                AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
-    }
-
-    private TransformedInstance body;
-
-    public RowboatVisual(VisualizationContext context, T entity, ResourceLocation rowboatTexture, final EnumMap<DyeColor, ResourceLocation> paintTextures) {
+    public RowboatVisual(final VisualizationContext context, final T entity) {
         super(context, entity);
-        this.rowboatTexture = rowboatTexture;
-        this.paintTextures = paintTextures;
-    }
-
-    private static ModelHolder createBodyModelHolder(ModelLayerLocation layer) {
-        return new ModelHolder(() -> {
-            return new SingleMeshModel(ModelPartConverter.convert(layer), SimpleMaterial.builder()
-                    .cutout(CutoutShaders.ONE_TENTH)
-                    .texture(ShipSheets.ROWBOAT_SHEET)
-                    .mipmap(false)
-                    .backfaceCulling(false)
-                    .build()
-            );
-        });
     }
 
     @Override
-    public void init(float partialTick){
-        addComponent(new ShadowComponent(visualizationContext, entity).radius(1));
-        addComponent(new FireComponent(visualizationContext, entity));
-        addComponent(new HitboxComponent(visualizationContext,entity));
+    public void init(final float partialTick) {
+        // Debug command /summon alekiships:rowboat/oak ~ ~ ~ {"paint":0b}
+        this.addComponent(new ShadowComponent(this.visualizationContext, this.entity).radius(1));
+        this.addComponent(new FireComponent(this.visualizationContext, this.entity));
+        this.addComponent(new HitboxComponent(this.visualizationContext, this.entity));
 
-        Material texture;
+        this.lastPaintColor = this.entity.getPaintColor();
 
-        texture = (Material) ROWBOAT_ATLAS.getSprite(entity.getPaintColor().map(this.paintTextures::get).orElse(this.rowboatTexture));
+        this.boatModel = this.createBoatInstance(this.getResourceLocation());
 
-        body = createBodyInstance();
-
-        updateInstances(partialTick);
-        updateLight();
+        this.updateInstances(partialTick);
+        this.updateLight();
 
         super.init(partialTick);
     }
 
-    private TransformedInstance createBodyInstance() {
-        return instancerProvider.instancer(InstanceTypes.TRANSFORMED, ROWBOAT_MODEL.get())
-                .createInstance();
+    private ResourceLocation getResourceLocation() {
+        return this.lastPaintColor.map(ShipSheets.ROWBOAT_TEXTURE_LOCATION::get)
+                .orElse(new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/rowboat/oak"));
+    }
+
+    private TransformedInstance createBoatInstance(final ResourceLocation resourceLocation) {
+        return this.getInstancer(resourceLocation).createInstance();
+    }
+
+    private Instancer<TransformedInstance> getInstancer(final ResourceLocation resourceLocation) {
+        return this.instancerProvider.instancer(InstanceTypes.TRANSFORMED, ROWBOAT_MODELS.get(resourceLocation));
     }
 
     @Override
-    public void beginFrame(VisualFrameContext context) {
+    public void beginFrame(final VisualFrameContext context) {
         super.beginFrame(context);
 
-        if (!isVisible(context.frustum())) {
+        if (!this.isVisible(context.frustum())) {
             return;
         }
 
-        updateInstances(context.partialTick());
+        this.updateInstances(context.partialTick());
     }
 
-    private void updateInstances(float partialTick){
-        poseStack.setIdentity();
+    private void updateInstances(final float partialTick) {
+        this.poseStack.setIdentity();
 
-        double posX = Mth.lerp(partialTick, entity.xOld, entity.getX());
-        double posY = Mth.lerp(partialTick, entity.yOld, entity.getY());
-        double posZ = Mth.lerp(partialTick, entity.zOld, entity.getZ());
+        final double posX = Mth.lerp(partialTick, this.entity.xOld, this.entity.getX());
+        final double posY = Mth.lerp(partialTick, this.entity.yOld, this.entity.getY());
+        final double posZ = Mth.lerp(partialTick, this.entity.zOld, this.entity.getZ());
 
-        poseStack.translate(posX - renderOrigin.getX(), posY - renderOrigin.getY(), posZ - renderOrigin.getZ());
+        this.poseStack.translate(posX - this.renderOrigin.getX(), posY - this.renderOrigin.getY(),
+                posZ - this.renderOrigin.getZ());
 
-        float yaw = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
+        final float yaw = Mth.lerp(partialTick, this.entity.yRotO, this.entity.getYRot());
 
-        poseStack.translate(0, 0.4375D, 0);
-        poseStack.mulPose(Axis.YP.rotationDegrees(180 - yaw));
+        this.poseStack.translate(0, 0.4375D, 0);
+        this.poseStack.mulPose(Axis.YP.rotationDegrees(180 - yaw));
+        this.poseStack.translate(0, 1.0625f, 0);
 
-        poseStack.translate(0, 1.0625f, 0);
-        poseStack.scale(-1, -1, 1);
-        poseStack.mulPose(Axis.YP.rotationDegrees(0));
+        this.poseStack.scale(-1, -1, 1);
+        this.poseStack.mulPose(Axis.YP.rotationDegrees(0));
 
-        body.setTransform(poseStack)
-                .setChanged();
+        this.boatModel.setTransform(poseStack).setChanged();
     }
 
     public void updateLight() {
-        relight(entity.blockPosition(), body);
+        this.relight(this.entity.blockPosition(), this.boatModel);
     }
 
     @Override
-    public void tick(VisualTickContext ctx) {
-
+    public void tick(final VisualTickContext unused) {
+        final Optional<DyeColor> paintColor = this.entity.getPaintColor();
+        if (paintColor != this.lastPaintColor) {
+            this.lastPaintColor = paintColor;
+            final ResourceLocation resourceLocation = this.getResourceLocation();
+            this.getInstancer(resourceLocation).stealInstance(this.boatModel);
+        }
     }
 
     @Override
     protected void _delete() {
-        body.delete();
+        super._delete();
+        this.boatModel.delete();
     }
 }
