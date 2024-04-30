@@ -1,11 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -25,15 +28,16 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
-public abstract class AbstractCompartmentEntity extends Entity {
+public abstract class AbstractCompartmentEntity extends Entity implements IHaveIcons {
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_HURT_DIR = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.FLOAT);
-    private static final float DAMAGE_TO_BREAK = 8.0f;
+    private static final float DAMAGE_TO_BREAK = 10.0f;
     private static final float DAMAGE_RECOVERY = 0.5f;
     public int lifespan = 6000;
     protected int lerpSteps;
@@ -203,7 +207,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild;
 
         // Don't kill
-        if (!instantKill && !(this.getDamage() > 10)) {
+        if (!instantKill && !(this.getDamage() > DAMAGE_TO_BREAK)) {
             this.playHurtSound(damageSource);
             return true;
         }
@@ -303,6 +307,11 @@ public abstract class AbstractCompartmentEntity extends Entity {
         COMPACT,
         STANDING,
         STANDARD
+    }
+
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player){
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+        return states;
     }
 
     @Override

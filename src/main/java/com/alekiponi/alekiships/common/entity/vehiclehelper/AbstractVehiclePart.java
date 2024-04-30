@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -157,5 +158,14 @@ public abstract class AbstractVehiclePart extends AbstractInvisibleHelper {
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putFloat("compartmentRotation", this.getCompartmentRotation());
+    }
+
+    @Override
+    public Component getName() {
+        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
+            return vehicle.getName();
+        } else {
+            return super.getName();
+        }
     }
 }

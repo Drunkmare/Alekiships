@@ -314,8 +314,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     @Override
     public void tick() {
 
-        if (this.status == Status.IN_WATER || this.status == Status.IN_AIR) {
-            if (this.status == Status.IN_WATER) {
+        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
+            if (this.status == Medium.IN_WATER) {
                 this.setDeltaRotation((float) (-1 * this.getRudderRotation() * 0.25f *
                         (Mth.clamp(this.getDeltaMovement().length(), 0.05f, 1))));
                 this.setDeltaRotation(Mth.clamp(this.getDeltaRotation(), -1f, 1f));
@@ -598,11 +598,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
     @Override
     protected void tickControlBoat() {
-        if (getControllingCompartment() != null) {
-            boolean inputUp = this.getControllingCompartment().getInputUp();
-            boolean inputDown = this.getControllingCompartment().getInputDown();
-            boolean inputLeft = this.getControllingCompartment().getInputLeft();
-            boolean inputRight = this.getControllingCompartment().getInputRight();
+        if (getPilotCompartment() != null) {
+            boolean inputUp = this.getPilotCompartment().getInputUp();
+            boolean inputDown = this.getPilotCompartment().getInputDown();
+            boolean inputLeft = this.getPilotCompartment().getInputLeft();
+            boolean inputRight = this.getPilotCompartment().getInputRight();
 
             float rudder = this.getRudderRotation();
             if (inputLeft) {
@@ -664,11 +664,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     }
 
     protected void tickSailBoat() {
-        if (getControllingCompartment() != null) {
-            boolean inputUp = this.getControllingCompartment().getInputUp();
-            boolean inputDown = this.getControllingCompartment().getInputDown();
-            boolean inputLeft = this.getControllingCompartment().getInputLeft();
-            boolean inputRight = this.getControllingCompartment().getInputRight();
+        if (getPilotCompartment() != null) {
+            boolean inputUp = this.getPilotCompartment().getInputUp();
+            boolean inputDown = this.getPilotCompartment().getInputDown();
+            boolean inputLeft = this.getPilotCompartment().getInputLeft();
+            boolean inputRight = this.getPilotCompartment().getInputRight();
             float sheet = this.getMainsheetLength();
             if (inputUp) {
                 if (sheet < 45) {
@@ -689,7 +689,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
     protected void tickWindInput() {
         super.tickWindInput();
-        if (this.status == Status.IN_WATER || this.status == Status.IN_AIR) {
+        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
             float windFunction = (float) (Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.02, 1.0) * 0.45);
 
             float sailForce = this.getMainsailWindAngleAndForce()[1];

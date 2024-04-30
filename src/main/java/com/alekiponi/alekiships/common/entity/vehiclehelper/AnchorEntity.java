@@ -1,12 +1,17 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
 
 public class AnchorEntity extends Entity {
 

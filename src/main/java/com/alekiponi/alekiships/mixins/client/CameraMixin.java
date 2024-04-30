@@ -65,7 +65,7 @@ public abstract class CameraMixin {
                         Mth.lerp((double)pPartialTick, boat.yo + heightModifier, boat.getY() + heightModifier) + (double)Mth.lerp(pPartialTick, this.eyeHeightOld, this.eyeHeight),
                         Mth.lerp((double)pPartialTick, boat.zo, boat.getZ()));
                 if(boat instanceof RowboatEntity rowboatEntity){
-                    if(rowboatEntity.getControllingCompartment() != null && rowboatEntity.getControllingCompartment().equals(compartment)){
+                    if(rowboatEntity.getPilotCompartment() != null && rowboatEntity.getPilotCompartment().equals(compartment)){
                         this.setRotation(this.yRot + 180.0F, this.xRot);
                     }
                     if (pThirdPersonReverse){

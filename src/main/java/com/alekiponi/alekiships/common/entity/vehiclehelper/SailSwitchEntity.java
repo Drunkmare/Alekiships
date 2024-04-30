@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -10,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
+
+import java.util.ArrayList;
 
 public class SailSwitchEntity extends AbstractSwitchEntity{
 
@@ -63,4 +67,25 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
         return super.interact(player, hand);
     }
 
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+        ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
+
+        if (handItem.is(Tags.Items.DYES) || handItem.is(Items.WATER_BUCKET)){
+            // TODO don't show this when you're holding the same dye color that the sail already is
+            states.add(IngameOverlays.IconState.BRUSH);
+            return states;
+        }
+
+        if(this.getRootVehicle() instanceof AbstractVehicle){
+            if(this.getSwitched()){
+                states.add(IngameOverlays.IconState.SAIL_ARROW_DOWN);
+            } else {
+                states.add(IngameOverlays.IconState.SAIL_ARROW_UP);
+            }
+        }
+
+        return states;
+    }
 }

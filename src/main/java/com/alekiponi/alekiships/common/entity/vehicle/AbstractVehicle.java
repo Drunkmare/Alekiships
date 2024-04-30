@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCollisionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
@@ -41,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class AbstractVehicle extends Entity {
+public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(
@@ -80,9 +82,9 @@ public abstract class AbstractVehicle extends Entity {
     protected double waterLevel;
     protected float landFriction;
     @Nullable
-    protected Status status;
+    protected Medium status;
     @Nullable
-    protected Status oldStatus;
+    protected Medium oldStatus;
     protected double lastYd;
 
     public AbstractVehicle(final EntityType entityType, final Level level) {
@@ -350,7 +352,7 @@ public abstract class AbstractVehicle extends Entity {
     }
 
     protected void tickTakeEntitiesForARide(){
-        if(this instanceof AbstractAlekiBoatEntity && (this.status == Status.UNDER_WATER || this.status == Status.UNDER_FLOWING_WATER)){
+        if(this instanceof AbstractAlekiBoatEntity && (this.status == Medium.UNDER_WATER || this.status == Medium.UNDER_FLOWING_WATER)){
             return;
         }
         if(this.getDeltaMovement().length() > 0.01){
@@ -427,8 +429,8 @@ public abstract class AbstractVehicle extends Entity {
 
     }
 
-    protected Status getStatus() {
-        final Status underwater = this.isUnderwater();
+    protected Medium getStatus() {
+        final Medium underwater = this.isUnderwater();
 
         if (underwater != null) {
             this.waterLevel = this.getBoundingBox().maxY;
@@ -436,17 +438,17 @@ public abstract class AbstractVehicle extends Entity {
         }
 
         if (this.checkInWater()) {
-            return Status.IN_WATER;
+            return Medium.IN_WATER;
         }
 
         final float groundFriction = this.getGroundFriction();
 
         if (0 < groundFriction) {
             this.landFriction = groundFriction;
-            return Status.ON_LAND;
+            return Medium.ON_LAND;
         }
 
-        return Status.IN_AIR;
+        return Medium.IN_AIR;
     }
 
     public float getWaterLevelAbove() {
@@ -554,7 +556,7 @@ public abstract class AbstractVehicle extends Entity {
     }
 
     @Nullable
-    protected Status isUnderwater() {
+    protected Medium isUnderwater() {
         final AABB aabb = this.getBoundingBox();
         final double d0 = aabb.maxY + 0.001D;
         final int i = Mth.floor(aabb.minX);
@@ -574,7 +576,7 @@ public abstract class AbstractVehicle extends Entity {
                     if (fluidstate.is(FluidTags.WATER) &&
                             d0 < mutableBlockPos.getY() + fluidstate.getHeight(this.level(), mutableBlockPos)) {
                         if (!fluidstate.isSource()) {
-                            return Status.UNDER_FLOWING_WATER;
+                            return Medium.UNDER_FLOWING_WATER;
                         }
 
                         isUnderwater = true;
@@ -583,7 +585,7 @@ public abstract class AbstractVehicle extends Entity {
             }
         }
 
-        return isUnderwater ? Status.UNDER_WATER : null;
+        return isUnderwater ? Medium.UNDER_WATER : null;
     }
 
     public final List<net.minecraft.world.entity.Entity> getTruePassengers() {
@@ -698,7 +700,7 @@ public abstract class AbstractVehicle extends Entity {
 
         if (this.fallDistance > 3) {
 
-            if (this.status != Status.ON_LAND) {
+            if (this.status != Medium.ON_LAND) {
                 this.resetFallDistance();
                 return;
             }
@@ -814,7 +816,7 @@ public abstract class AbstractVehicle extends Entity {
     }
 
     @Nullable
-    public EmptyCompartmentEntity getControllingCompartment() {
+    public EmptyCompartmentEntity getPilotCompartment() {
         final net.minecraft.world.entity.Entity vehiclePart = this.getPilotVehiclePartAsEntity();
 
         if (!(vehiclePart instanceof AbstractVehiclePart) || !vehiclePart.isVehicle()) {
@@ -838,7 +840,7 @@ public abstract class AbstractVehicle extends Entity {
 
     @Override
     public boolean isUnderWater() {
-        return this.status == Status.UNDER_WATER || this.status == Status.UNDER_FLOWING_WATER;
+        return this.status == Medium.UNDER_WATER || this.status == Medium.UNDER_FLOWING_WATER;
     }
 
     public double getSmoothSpeedMS(){
@@ -910,6 +912,12 @@ public abstract class AbstractVehicle extends Entity {
         }*/
         return originalCollision;
     }
+
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        return new ArrayList<IngameOverlays.IconState>();
+    }
+
     @Override
     public void onAboveBubbleCol(boolean pDownwards) {
     }
@@ -918,7 +926,7 @@ public abstract class AbstractVehicle extends Entity {
     public void onInsideBubbleColumn(boolean pDownwards) {
     }
 
-    public static enum Status {
+    public static enum Medium {
         IN_WATER,
         UNDER_WATER,
         UNDER_FLOWING_WATER,

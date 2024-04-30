@@ -1,7 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -9,8 +11,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
+
+import java.util.ArrayList;
 
 public class WindlassSwitchEntity extends AbstractSwitchEntity {
 
@@ -101,6 +109,22 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
 
     public boolean getAnchored() {
         return this.entityData.get(DATA_ID_ANCHORED);
+    }
+
+
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+
+        if(this.getRootVehicle() instanceof AbstractVehicle){
+            if(this.getSwitched()){
+                states.add(IngameOverlays.IconState.ANCHOR_ARROW_DOWN);
+            } else {
+                states.add(IngameOverlays.IconState.ANCHOR_ARROW_UP);
+            }
+        }
+
+        return states;
     }
 
 }

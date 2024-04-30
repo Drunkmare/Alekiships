@@ -1,5 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.network.ClientBoundCleatLinkPacket;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -28,9 +31,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class VehicleCleatEntity extends net.minecraft.world.entity.Entity {
+public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implements IHaveIcons {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_LEASHHOLDER_ID = SynchedEntityData.defineId(
             VehicleCleatEntity.class, EntityDataSerializers.INT);
@@ -292,5 +296,14 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity {
 
     public int getLeashHolderId() {
         return this.entityData.get(DATA_ID_LEASHHOLDER_ID);
+    }
+
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+        if (this.isPassenger() && !this.isLeashed() && this.getRootVehicle() instanceof AbstractVehicle){
+            states.add(IngameOverlays.IconState.LEAD);
+        }
+        return states;
     }
 }

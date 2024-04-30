@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
@@ -21,11 +22,13 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -162,7 +165,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
 
         if (this.getDamage() > this.getDamageThreshold()) {
-            if (this.status == Status.IN_WATER) {
+            if (this.status == Medium.IN_WATER) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.1, 0));
             }
             for (Entity entity : this.getPassengers()) {
@@ -173,7 +176,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
         }
 
-        if ((this.status == Status.UNDER_FLOWING_WATER || this.status == Status.UNDER_WATER) && this.getDamage() <= this.getDamageThreshold() && this.tickCount % 10 == 0) {
+        if ((this.status == Medium.UNDER_FLOWING_WATER || this.status == Medium.UNDER_WATER) && this.getDamage() <= this.getDamageThreshold() && this.tickCount % 10 == 0) {
             this.hurt(this.damageSources().drown(), this.getDamageRecovery());
         }
 
@@ -234,7 +237,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     protected void tickWindInput() {
-        if (this.status == Status.IN_WATER || this.status == Status.IN_AIR) {
+        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
             double windFunction = Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.001, 0.002 * this.getBoundingBox().getXsize());
 
             float windDifference = Mth.degreesDifference(this.getLocalWindAngleAndSpeed()[0], Mth.wrapDegrees(this.getYRot()));
@@ -253,7 +256,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                             Mth.cos(this.getLocalWindAngleAndSpeed()[0] * ((float) Math.PI / 180F)) * windFunction * 0.55));
 
 
-            if (this.status == Status.IN_WATER) {
+            if (this.status == Medium.IN_WATER) {
                 if (windDifference > 1) {
                     this.setDeltaRotation(this.getDeltaRotation() - 0.1f);
                 } else if (windDifference < -1) {
@@ -304,26 +307,26 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         double d2 = 0.0D;
         this.invFriction = 0.05F;
-        if (this.oldStatus == Status.IN_AIR && this.status != Status.IN_AIR && this.status != Status.ON_LAND) {
+        if (this.oldStatus == Medium.IN_AIR && this.status != Medium.IN_AIR && this.status != Medium.ON_LAND) {
             this.waterLevel = this.getY(1.0D);
             this.setPos(this.getX(), (double) (this.getWaterLevelAbove() - this.getBbHeight()) + 0.101D, this.getZ());
             this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
             this.lastYd = 0.0D;
-            this.status = Status.IN_WATER;
+            this.status = Medium.IN_WATER;
         } else {
 
-            if (this.status == Status.IN_WATER) {
+            if (this.status == Medium.IN_WATER) {
                 d2 = ((this.waterLevel - this.getY()) / (double) this.getBbHeight()) + 0.1;
                 this.invFriction = 0.9F;
-            } else if (this.status == Status.UNDER_FLOWING_WATER) {
+            } else if (this.status == Medium.UNDER_FLOWING_WATER) {
                 d1 = -7.0E-4D;
                 this.invFriction = 0.9F;
-            } else if (this.status == Status.UNDER_WATER) {
+            } else if (this.status == Medium.UNDER_WATER) {
                 d2 = 0.01F;
                 this.invFriction = 0.45F;
-            } else if (this.status == Status.IN_AIR) {
+            } else if (this.status == Medium.IN_AIR) {
                 this.invFriction = 0.9F;
-            } else if (this.status == Status.ON_LAND) {
+            } else if (this.status == Medium.ON_LAND) {
                 this.invFriction = this.landFriction;
                 if (invFriction > 0.5F) {
                     invFriction = 0.5F;
@@ -363,10 +366,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     protected void tickTurnSpeedFactor() {
-        if (this.getControllingCompartment() != null) {
+        if (this.getPilotCompartment() != null) {
             double turnSpeedFactor = this.getDeltaMovement().length() * 12.0F;
 
-            if (this.getControllingCompartment().getInputLeft() || this.getControllingCompartment()
+            if (this.getPilotCompartment().getInputLeft() || this.getPilotCompartment()
                     .getInputRight()) {
                 this.setDeltaRotation(((this.invFriction / 3.0F)) * this.getDeltaRotation());
                 this.setDeltaRotation((float) (turnSpeedFactor * this.getDeltaRotation()));
@@ -378,11 +381,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     protected void tickControlBoat() {
-        if (getControllingCompartment() != null) {
-            boolean inputUp = this.getControllingCompartment().getInputUp();
-            boolean inputDown = this.getControllingCompartment().getInputDown();
-            boolean inputLeft = this.getControllingCompartment().getInputLeft();
-            boolean inputRight = this.getControllingCompartment().getInputRight();
+        if (getPilotCompartment() != null) {
+            boolean inputUp = this.getPilotCompartment().getInputUp();
+            boolean inputDown = this.getPilotCompartment().getInputDown();
+            boolean inputLeft = this.getPilotCompartment().getInputLeft();
+            boolean inputRight = this.getPilotCompartment().getInputRight();
             float acceleration = 0;
             float paddleMultiplier = this.getPaddleMultiplier();
 
@@ -472,7 +475,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
                         }
                     }
-                    if (leashHolder instanceof HangingEntity && this.status != Status.ON_LAND) {
+                    if (leashHolder instanceof HangingEntity && this.status != Medium.ON_LAND) {
                         Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
                         Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.005f, this.getDeltaMovement().y,
                                 vectorToVehicle.z * -0.005f);
@@ -542,10 +545,34 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         return InteractionResult.PASS;
     }
 
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+        ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
+
+        if(this.isTiny()){
+            return states;
+        }
+
+        for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.is(this.getDropItem())) {
+                states.add(IngameOverlays.IconState.HAMMER);
+                return states;
+            }
+
+            if (itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) {
+                states.add(IngameOverlays.IconState.BRUSH);
+                return states;
+            }
+        }
+
+        return states;
+    }
+
     protected abstract float getMomentumSubtractor();
 
     protected void tickEffects() {
-        if (this.status == Status.IN_WATER && !this.getPassengers().isEmpty()) {
+        if (this.status == Medium.IN_WATER && !this.getPassengers().isEmpty()) {
             if (Math.abs(this.getDeltaRotation()) > 2) {
                 this.level().addParticle(ParticleTypes.SPLASH, this.getX() + (double) this.random.nextFloat(),
                         this.getY() + 0.7D, this.getZ() + (double) this.random.nextFloat(), 0.0D, 0.0D, 0.0D);
@@ -553,16 +580,16 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                     this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), this.getSwimSound(),
                             this.getSoundSource(), 0.2F, 0.8F + 0.4F * this.random.nextFloat(), false);
                 }
-                if (this.getControllingCompartment() != null && Math.abs(
-                        this.getDeltaRotation()) > 5 && (this.getControllingCompartment()
-                        .getInputRight() || this.getControllingCompartment().getInputLeft())) {
+                if (this.getPilotCompartment() != null && Math.abs(
+                        this.getDeltaRotation()) > 5 && (this.getPilotCompartment()
+                        .getInputRight() || this.getPilotCompartment().getInputLeft())) {
                     this.level()
                             .playLocalSound(this.getX(), this.getY(), this.getZ(), this.getSwimHighSpeedSplashSound(),
                                     this.getSoundSource(), 0.2F, 0.8F + 0.4F * this.random.nextFloat(), false);
 
 
                     Vec3 splashOffset = this.getDeltaMovement().yRot(45);
-                    if (this.getControllingCompartment().getInputLeft()) {
+                    if (this.getPilotCompartment().getInputLeft()) {
                         splashOffset = this.getDeltaMovement().yRot(-45);
                     }
                     splashOffset.normalize();
