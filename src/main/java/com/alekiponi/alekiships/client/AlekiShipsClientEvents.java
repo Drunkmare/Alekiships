@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.client;
 
+import com.alekiponi.alekiships.client.render.flywheel.Flywheel;
 import com.alekiponi.alekiships.client.render.texture.atlas.BoatTextureSource;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -17,7 +18,7 @@ public class AlekiShipsClientEvents {
     }
 
     private static void clientSetup(final FMLClientSetupEvent event) {
-
+        Flywheel.init();
     }
 
     private static void onRegisterReloadListeners(final RegisterClientReloadListenersEvent event) {
