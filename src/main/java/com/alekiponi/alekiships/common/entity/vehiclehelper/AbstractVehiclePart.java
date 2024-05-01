@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -82,21 +83,24 @@ public abstract class AbstractVehiclePart extends AbstractInvisibleHelper {
     }
 
     protected boolean tickAddCleat(AbstractVehicle vehicle) {
-        for (int i : vehicle.getCleatIndices()) {
-            if (vehicle.getPassengers().get(i).is(this) && !vehicle.getPassengers().get(i).isVehicle()) {
+        if(vehicle instanceof IHaveCleats){
+            for (int i : ((IHaveCleats)vehicle).getCleatIndices()) {
+                if (vehicle.getPassengers().get(i).is(this) && !vehicle.getPassengers().get(i).isVehicle()) {
 
-                final VehicleCleatEntity cleat = AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get()
-                        .create(this.level());
-                assert cleat != null;
-                cleat.setPos(this.getX(), this.getY(), this.getZ());
-                cleat.setYRot(this.getVehicle().getYRot());
-                if (!cleat.startRiding(this)) {
-                    AlekiShips.LOGGER.error("New Cleat: {} unable to ride Vehicle Part: {}", cleat, this);
+                    final VehicleCleatEntity cleat = AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get()
+                            .create(this.level());
+                    assert cleat != null;
+                    cleat.setPos(this.getX(), this.getY(), this.getZ());
+                    cleat.setYRot(this.getVehicle().getYRot());
+                    if (!cleat.startRiding(this)) {
+                        AlekiShips.LOGGER.error("New Cleat: {} unable to ride Vehicle Part: {}", cleat, this);
+                    }
+                    this.level().addFreshEntity(cleat);
+                    return true;
                 }
-                this.level().addFreshEntity(cleat);
-                return true;
             }
         }
+
         return false;
     }
 

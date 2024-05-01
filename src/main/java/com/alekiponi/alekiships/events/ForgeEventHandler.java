@@ -2,6 +2,8 @@ package com.alekiponi.alekiships.events;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
@@ -35,21 +37,24 @@ public class ForgeEventHandler {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event){
+    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
 
-        if(player.level().getServer().isSingleplayer() && player.level().getServer().isSingleplayerOwner(player.getGameProfile())){
+        if (player.level().getServer().isSingleplayer() && player.level().getServer().isSingleplayerOwner(player.getGameProfile())) {
             // do singleplayer behavior
-        } else if(player.getVehicle() instanceof EmptyCompartmentEntity compartment){
+        } else if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
             // do multiplayer behavior
             player.stopRiding();
             player.setPos(compartment.getRootVehicle().getDismountLocationForPassenger(player));
-            if(compartment.isPassenger() && compartment.getRootVehicle() instanceof AbstractAlekiBoatEntity boat){
-                for(SailSwitchEntity sail : boat.getSailSwitches()){
+            if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveSailSwitches boat) {
+                for (SailSwitchEntity sail : boat.getSailSwitches()) {
                     sail.setSwitched(false);
                 }
-                for(WindlassSwitchEntity windlass : boat.getWindlasses()){
-                    windlass.setSwitched(true);
+            }
+
+            if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveAnchorWindlass boat) {
+                for (WindlassSwitchEntity windlass : boat.getWindlasses()) {
+                    windlass.setSwitched(false);
                 }
             }
         }

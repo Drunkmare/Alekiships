@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
@@ -31,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity {
+public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants {
 
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
@@ -314,8 +315,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     @Override
     public void tick() {
 
-        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
-            if (this.status == Medium.IN_WATER) {
+        if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
+            if (this.status == MediumStatus.IN_WATER) {
                 this.setDeltaRotation((float) (-1 * this.getRudderRotation() * 0.25f *
                         (Mth.clamp(this.getDeltaMovement().length(), 0.05f, 1))));
                 this.setDeltaRotation(Mth.clamp(this.getDeltaRotation(), -1f, 1f));
@@ -399,7 +400,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     }
 
     @Override
-    protected void tickCleatInput() {
+    public void tickCleatInput() {
         if (this.getMainsailActive() || this.getJibsailActive()) {
             return;
         }
@@ -689,7 +690,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
 
     protected void tickWindInput() {
         super.tickWindInput();
-        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
+        if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
             float windFunction = (float) (Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.02, 1.0) * 0.45);
 
             float sailForce = this.getMainsailWindAngleAndForce()[1];
@@ -760,10 +761,15 @@ public class SloopEntity extends AbstractAlekiBoatEntity {
     }
 
     @Override
-    protected void tickAnchorInput() {
+    public void tickAnchorInput() {
         if(this.getMainsailActive() || this.getJibsailActive()){
             return;
-        } super.tickAnchorInput();
+        }
+        for (WindlassSwitchEntity windlass : this.getWindlasses()) {
+            if (windlass.getAnchored()) {
+                this.setDeltaMovement(Vec3.ZERO);
+            }
+        }
     }
 
     public float[] getMainsailWindAngleAndForce() {

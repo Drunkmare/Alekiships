@@ -1,7 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 
-public class VehicleCollisionEntity extends AbstractInvisibleHelper implements IHaveIcons {
+public class VehicleCollisionEntity extends AbstractInvisibleHelper implements IHaveIcons, IHelperEntity {
 
     public VehicleCollisionEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

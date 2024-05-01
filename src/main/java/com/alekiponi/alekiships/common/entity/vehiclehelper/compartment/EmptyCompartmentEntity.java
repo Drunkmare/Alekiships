@@ -6,6 +6,9 @@ import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -166,21 +169,30 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     @Override
     public void tick() {
         if (this.getTrueVehicle() != null) {
-            if (tickCount < 10 && this.getTrueVehicle()
-                    .getPilotVehiclePartAsEntity() != null && !this.getTrueVehicle().pilotCompartmentAcceptsNonPlayers()) {
-                canAddNonPlayers = !(this.getTrueVehicle().getPilotVehiclePartAsEntity() == this.getVehicle());
+            AbstractVehicle vehicle = this.getTrueVehicle();
+
+            if (tickCount < 10 && vehicle
+                    .getPilotVehiclePartAsEntity() != null && !vehicle.pilotCompartmentAcceptsNonPlayers()) {
+                canAddNonPlayers = !(vehicle.getPilotVehiclePartAsEntity() == this.getVehicle());
             }
             if (tickCount < 10 && this.isPassenger()) {
-                for (AbstractCompartmentEntity compartment : this.getTrueVehicle().getCanAddOnlyBlocks()) {
-                    if (compartment.getVehicle() == this.getVehicle()) {
-                        canAddOnlyBlocks = true;
+                if(vehicle instanceof IHaveBlockOnlyCompartments){
+                    for (AbstractCompartmentEntity compartment : ((IHaveBlockOnlyCompartments)vehicle).getCanAddOnlyBlocks()) {
+                        if (compartment.getVehicle() == this.getVehicle()) {
+                            canAddOnlyBlocks = true;
+                        }
                     }
                 }
-                for (AbstractCompartmentEntity compartment : this.getTrueVehicle().getCanAddCannons()) {
-                    if (compartment.getVehicle() == this.getVehicle()) {
-                        canAddCannons = true;
+
+                if(vehicle instanceof ICannonable){
+                    for (AbstractCompartmentEntity compartment : ((ICannonable)vehicle).getCanAddCannons()) {
+                        if (compartment.getVehicle() == this.getVehicle()) {
+                            canAddCannons = true;
+                        }
                     }
                 }
+
+
             }
         }
 
@@ -456,7 +468,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        if (this.getTrueVehicle() != null && this.getTrueVehicle().isTiny()) {
+        if (this.getTrueVehicle() != null && this.getTrueVehicle() instanceof IAmTiny) {
             return super.hurt(damageSource, amount);
         }
         return false;

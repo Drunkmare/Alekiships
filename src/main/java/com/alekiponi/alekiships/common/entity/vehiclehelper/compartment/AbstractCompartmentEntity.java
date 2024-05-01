@@ -1,14 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,7 +18,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -217,7 +216,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
             this.destroy(damageSource);
         }
 
-        if (this.getTrueVehicle() != null && this.getTrueVehicle().isTiny()) {
+        if (this.getTrueVehicle() != null && this.getTrueVehicle() instanceof IAmTiny) {
             AbstractVehicle vehicle = this.getTrueVehicle();
             vehicle.spawnAtLocation(vehicle.getDropItem());
             vehicle.remove(RemovalReason.KILLED);
@@ -302,13 +301,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         return RidingPose.STANDARD;
     }
 
-    public static enum RidingPose{
-        ULTRA_COMPACT,
-        COMPACT,
-        STANDING,
-        STANDARD
-    }
-
     public ArrayList<IngameOverlays.IconState> getIconStates(Player player){
         ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
         return states;
@@ -318,7 +310,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     public boolean isPickable() {
         return !this.isRemoved();
     }
-
 
     public boolean shouldFaceOtherWay(){
         return false;
@@ -345,5 +336,12 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
             final float pitch) {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
+    }
+
+    public static enum RidingPose{
+        ULTRA_COMPACT,
+        COMPACT,
+        STANDING,
+        STANDARD
     }
 }

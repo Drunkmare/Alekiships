@@ -2,8 +2,8 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -34,7 +34,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
+public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements IHaveCleats {
     public static final int PADDLE_LEFT = 0;
     public static final int PADDLE_RIGHT = 1;
     public static final double PADDLE_SOUND_TIME = Math.PI / 4;
@@ -50,9 +50,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             AbstractAlekiBoatEntity.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
-
-
-    protected static final float PADDLE_SPEED = ((float) Math.PI / 8F);
 
     public final int WIND_UPDATE_TICKS = 40;
 
@@ -82,68 +79,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.entityData.define(DATA_ID_IMMOBILE, false);
     }
 
-    public abstract int[] getWindlassIndices();
-
-    public abstract int[] getSailSwitchIndices();
-
-    public abstract int[] getMastIndices();
-
-    public int[] getConstructionIndices(){
-        return new int[0];
-    }
-
-    public abstract int[] getCanAddCannonsIndices();
-
     public float renderSizeForCompartments(){
         return 0.6875f;
-    }
-
-    public ArrayList<AbstractCompartmentEntity> getCanAddCannons(){
-        ArrayList<AbstractCompartmentEntity> list = new ArrayList<AbstractCompartmentEntity>();
-        if(this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getCanAddCannonsIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof AbstractCompartmentEntity compartment) {
-                    list.add(compartment);
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<SailSwitchEntity> getSailSwitches() {
-        ArrayList<SailSwitchEntity> list = new ArrayList<SailSwitchEntity>();
-        if (this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getSailSwitchIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof SailSwitchEntity switchEntity) {
-                    list.add(switchEntity);
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<WindlassSwitchEntity> getWindlasses() {
-        ArrayList<WindlassSwitchEntity> list = new ArrayList<WindlassSwitchEntity>();
-        if (this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getWindlassIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof WindlassSwitchEntity windlass) {
-                    list.add(windlass);
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<MastEntity> getMasts() {
-        ArrayList<MastEntity> list = new ArrayList<MastEntity>();
-        if (this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getMastIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof MastEntity mast) {
-                    list.add(mast);
-                }
-            }
-        }
-        return list;
     }
 
     @Override
@@ -165,7 +102,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
 
         if (this.getDamage() > this.getDamageThreshold()) {
-            if (this.status == Medium.IN_WATER) {
+            if (this.status == MediumStatus.IN_WATER) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.1, 0));
             }
             for (Entity entity : this.getPassengers()) {
@@ -176,7 +113,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
         }
 
-        if ((this.status == Medium.UNDER_FLOWING_WATER || this.status == Medium.UNDER_WATER) && this.getDamage() <= this.getDamageThreshold() && this.tickCount % 10 == 0) {
+        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.getDamage() <= this.getDamageThreshold() && this.tickCount % 10 == 0) {
             this.hurt(this.damageSources().drown(), this.getDamageRecovery());
         }
 
@@ -237,7 +174,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     protected void tickWindInput() {
-        if (this.status == Medium.IN_WATER || this.status == Medium.IN_AIR) {
+        if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
             double windFunction = Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.001, 0.002 * this.getBoundingBox().getXsize());
 
             float windDifference = Mth.degreesDifference(this.getLocalWindAngleAndSpeed()[0], Mth.wrapDegrees(this.getYRot()));
@@ -256,7 +193,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                             Mth.cos(this.getLocalWindAngleAndSpeed()[0] * ((float) Math.PI / 180F)) * windFunction * 0.55));
 
 
-            if (this.status == Medium.IN_WATER) {
+            if (this.status == MediumStatus.IN_WATER) {
                 if (windDifference > 1) {
                     this.setDeltaRotation(this.getDeltaRotation() - 0.1f);
                 } else if (windDifference < -1) {
@@ -307,26 +244,26 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         double d2 = 0.0D;
         this.invFriction = 0.05F;
-        if (this.oldStatus == Medium.IN_AIR && this.status != Medium.IN_AIR && this.status != Medium.ON_LAND) {
+        if (this.oldStatus == MediumStatus.IN_AIR && this.status != MediumStatus.IN_AIR && this.status != MediumStatus.ON_LAND) {
             this.waterLevel = this.getY(1.0D);
             this.setPos(this.getX(), (double) (this.getWaterLevelAbove() - this.getBbHeight()) + 0.101D, this.getZ());
             this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
             this.lastYd = 0.0D;
-            this.status = Medium.IN_WATER;
+            this.status = MediumStatus.IN_WATER;
         } else {
 
-            if (this.status == Medium.IN_WATER) {
+            if (this.status == MediumStatus.IN_WATER) {
                 d2 = ((this.waterLevel - this.getY()) / (double) this.getBbHeight()) + 0.1;
                 this.invFriction = 0.9F;
-            } else if (this.status == Medium.UNDER_FLOWING_WATER) {
+            } else if (this.status == MediumStatus.UNDER_FLOWING_WATER) {
                 d1 = -7.0E-4D;
                 this.invFriction = 0.9F;
-            } else if (this.status == Medium.UNDER_WATER) {
+            } else if (this.status == MediumStatus.UNDER_WATER) {
                 d2 = 0.01F;
                 this.invFriction = 0.45F;
-            } else if (this.status == Medium.IN_AIR) {
+            } else if (this.status == MediumStatus.IN_AIR) {
                 this.invFriction = 0.9F;
-            } else if (this.status == Medium.ON_LAND) {
+            } else if (this.status == MediumStatus.ON_LAND) {
                 this.invFriction = this.landFriction;
                 if (invFriction > 0.5F) {
                     invFriction = 0.5F;
@@ -438,7 +375,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     @Override
-    protected void tickCleatInput() {
+    public void tickCleatInput() {
         for (VehicleCleatEntity cleat : this.getCleats()) {
             if (cleat.isLeashed()) {
                 net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
@@ -475,7 +412,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
                         }
                     }
-                    if (leashHolder instanceof HangingEntity && this.status != Medium.ON_LAND) {
+                    if (leashHolder instanceof HangingEntity && this.status != MediumStatus.ON_LAND) {
                         Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
                         Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.005f, this.getDeltaMovement().y,
                                 vectorToVehicle.z * -0.005f);
@@ -508,13 +445,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     }
 
-    protected void tickAnchorInput() {
-        for (WindlassSwitchEntity windlass : this.getWindlasses()) {
-            if (windlass.getAnchored()) {
-                this.setDeltaMovement(Vec3.ZERO);
-            }
-        }
-    }
+    public void tickAnchorInput() {}
 
     protected abstract float getPaddleMultiplier();
 
@@ -550,7 +481,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
         ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
 
-        if(this.isTiny()){
+        if(this instanceof IAmTiny){
             return states;
         }
 
@@ -572,7 +503,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected abstract float getMomentumSubtractor();
 
     protected void tickEffects() {
-        if (this.status == Medium.IN_WATER && !this.getPassengers().isEmpty()) {
+        if (this.status == MediumStatus.IN_WATER && !this.getPassengers().isEmpty()) {
             if (Math.abs(this.getDeltaRotation()) > 2) {
                 this.level().addParticle(ParticleTypes.SPLASH, this.getX() + (double) this.random.nextFloat(),
                         this.getY() + 0.7D, this.getZ() + (double) this.random.nextFloat(), 0.0D, 0.0D, 0.0D);

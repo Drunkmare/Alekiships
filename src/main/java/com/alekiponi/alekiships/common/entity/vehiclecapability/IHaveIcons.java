@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.common.entity;
+package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import net.minecraft.world.entity.player.Player;

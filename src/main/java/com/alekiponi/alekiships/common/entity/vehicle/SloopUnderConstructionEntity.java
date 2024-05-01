@@ -112,8 +112,36 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
             EntityDataSerializers.INT);
 
     @Override
+    public int[] getColliderIndices() {
+        return new int[0];
+    }
+
+    @Override
+    public int[] getConstructionIndices() {
+        return new int[0];
+    }
+    @Override
+    public float renderSizeForCompartments() {
+        return 0;
+    }
+
+    @Override
+    public int getCompartmentRotation(int i) {
+        return 0;
+    }
+
+    @Override
+    public float getPassengerSizeLimit() {
+        return 0;
+    }
+
+    @Override
+    public int[][] getCompartmentRotationsArray() {
+        return new int[0][];
+    }
+
+    @Override
     protected void defineSynchedData() {
-        super.defineSynchedData();
         this.entityData.define(DATA_ID_KEEL, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_DECK, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_BOWSPRIT, ItemStack.EMPTY);
@@ -226,7 +254,6 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
         this.setKeel(ItemStack.of(compoundTag.getCompound("keel")));
         this.setDeck(ItemStack.of(compoundTag.getCompound("deck")));
         this.setBowsprit(ItemStack.of(compoundTag.getCompound("bowsprit")));
@@ -243,7 +270,6 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
         compoundTag.put("keel", this.getKeel().save(new CompoundTag()));
         compoundTag.put("deck", this.getDeck().save(new CompoundTag()));
         compoundTag.put("bowsprit", this.getBowsprit().save(new CompoundTag()));
@@ -343,6 +369,16 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
             }
         }
         return new Vec3(localX, localY, localZ);
+    }
+
+    @Override
+    public float getDamageThreshold() {
+        return 40;
+    }
+
+    @Override
+    public float getDamageRecovery() {
+        return 10;
     }
 
     public Item getCurrentRequiredItem() {
@@ -617,59 +653,5 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         }
         super.tick();
 
-    }
-
-    @Override
-    public int[] getCleatIndices() {
-        return new int[0];
-    }
-
-    protected float getMomentumSubtractor() {
-        return 0;
-    }
-
-    @Override
-    public int[] getColliderIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public int[] getCanAddOnlyBlocksIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public float renderSizeForCompartments() {
-        return 0;
-    }
-
-    @Override
-    public int getCompartmentRotation(int i) {
-        return 0;
-    }
-
-    @Override
-    public float getPassengerSizeLimit() {
-        return 0;
-    }
-
-    @Override
-    public int[][] getCompartmentRotationsArray() {
-        return new int[0][];
-    }
-
-    @Override
-    protected void tickCleatInput() {
-
-    }
-
-    @Override
-    public float getDamageThreshold() {
-        return 20;
-    }
-
-    @Override
-    public float getDamageRecovery() {
-        return 0;
     }
 }

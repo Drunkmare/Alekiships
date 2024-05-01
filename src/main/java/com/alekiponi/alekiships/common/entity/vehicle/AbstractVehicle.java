@@ -1,14 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IAllowFallDamage;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCollisionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
-import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
 import net.minecraft.client.player.LocalPlayer;
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class AbstractVehicle extends Entity implements IHaveIcons {
+public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(
@@ -54,22 +54,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Float> DATA_ID_ACCELERATION = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
-
-    private float randomRotation;
-
-    public final int MAX_PASSENGER_NUMBER = 0;
-
-    public final int[] CLEATS = {};
-
-    public final int[] COLLIDERS = {};
-
-    public final int[] CAN_ADD_ONLY_BLOCKS = {};
-
-    public final int[][] COMPARTMENT_ROTATIONS = {};
-    protected final float DAMAGE_THRESHOLD = 80.0f;
-    protected final float PASSENGER_SIZE_LIMIT = 0.9F;
-    protected final float DAMAGE_RECOVERY = 2.0f;
-
     protected AbstractCompartmentEntity.RidingPose ridingPoses[];
     private final LinkedList<Double> speedOverTime;
     protected float invFriction;
@@ -82,15 +66,14 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     protected double waterLevel;
     protected float landFriction;
     @Nullable
-    protected Medium status;
+    protected MediumStatus status;
     @Nullable
-    protected Medium oldStatus;
+    protected MediumStatus oldStatus;
     protected double lastYd;
 
     public AbstractVehicle(final EntityType entityType, final Level level) {
         super(entityType, level);
         this.blocksBuilding = true;
-        this.randomRotation = 0;
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
         for(AbstractCompartmentEntity.RidingPose pose : poses){
             pose = AbstractCompartmentEntity.RidingPose.STANDARD;
@@ -104,23 +87,11 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
 
     public abstract int getMaxPassengers();
 
-    public abstract int[] getCleatIndices();
-
-    public abstract int[] getColliderIndices();
-
-    public abstract int[] getConstructionIndices();
-
-    public abstract int[] getCanAddOnlyBlocksIndices();
-
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
         return ridingPoses;
     }
 
     public abstract float renderSizeForCompartments();
-
-    public boolean isTiny(){
-        return false;
-    }
 
     public boolean pilotCompartmentAcceptsNonPlayers(){
         return false;
@@ -134,52 +105,11 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
         return new float[]{1,1};
     }
 
-    public ArrayList<VehicleCleatEntity> getCleats(){
-        ArrayList<VehicleCleatEntity> list = new ArrayList<VehicleCleatEntity>();
-        if(this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getCleatIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof VehicleCleatEntity cleat) {
-                    list.add(cleat);
-                }
-            }
-        }
-        return list;
-    }
-
-
-
-    public ArrayList<VehicleCollisionEntity> getColliders(){
-        ArrayList<VehicleCollisionEntity> list = new ArrayList<VehicleCollisionEntity>();
-        if(this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getColliderIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof VehicleCollisionEntity collider) {
-                    list.add(collider);
-                }
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<AbstractCompartmentEntity> getCanAddOnlyBlocks(){
-        ArrayList<AbstractCompartmentEntity> list = new ArrayList<AbstractCompartmentEntity>();
-        if(this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getCanAddOnlyBlocksIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof AbstractCompartmentEntity compartment) {
-                    list.add(compartment);
-                }
-            }
-        }
-        return list;
-    }
-
-
     public abstract int getCompartmentRotation(int i);
 
     public abstract float getPassengerSizeLimit();
 
     public abstract int[][] getCompartmentRotationsArray();
-
-
 
     @Override
     protected float getEyeHeight(final Pose pose, final EntityDimensions entityDimensions) {
@@ -212,8 +142,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     public boolean canBeCollidedWith() {
         return true;
     }
-
-
 
     @Override
     public boolean isPushable() {
@@ -313,46 +241,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
         return this.getDirection().getClockWise();
     }
 
-    protected void tickDestroyPlants() {
-        final BlockPos.MutableBlockPos blockPos = this.blockPosition().mutable();
-
-        final int size;
-        {
-            int sizeTemp = (int) Math.ceil(this.getBoundingBox().getXsize());
-            if (sizeTemp % 2 != 0) {
-                sizeTemp++;
-            }
-            size = sizeTemp / 2;
-        }
-
-        // Move to our destroy "origin"
-        blockPos.move(-size, 0, -size);
-
-        for (int x = -size; x <= size; x++) {
-            for (int z = -size; z <= size; z++) {
-                for (int y = 0; y < 2; y++) {
-                    final BlockState blockState = this.level().getBlockState(blockPos);
-                    if (blockState.is(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED)) {
-                        // TODO this.level().removeBlock(blockPos false) will remove the block without drops & without sound
-                        this.level().destroyBlock(blockPos, false);
-                    }
-                    // Move down a block
-                    blockPos.setY(blockPos.getY() - 1);
-                }
-                // Move us back to our y "origin"
-                blockPos.setY(blockPos.getY() + 2);
-                // Move positive z
-                blockPos.setZ(blockPos.getZ() + 1);
-            }
-            // Move us back to our z "origin"
-            blockPos.setZ(blockPos.getZ() - (1 + size * 2));
-            // Move positive x
-            blockPos.setX(blockPos.getX() + 1);
-        }
-    }
-
     protected void tickTakeEntitiesForARide(){
-        if(this instanceof AbstractAlekiBoatEntity && (this.status == Medium.UNDER_WATER || this.status == Medium.UNDER_FLOWING_WATER)){
+        if(this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)){
             return;
         }
         if(this.getDeltaMovement().length() > 0.01){
@@ -407,7 +297,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
         return entitiesToTakeWith;
     }
 
-    protected abstract void tickCleatInput();
     protected void tickLerp() {
 
         if (this.isControlledByLocalInstance()) {
@@ -429,8 +318,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
 
     }
 
-    protected Medium getStatus() {
-        final Medium underwater = this.isUnderwater();
+    protected MediumStatus getStatus() {
+        final MediumStatus underwater = this.isUnderwater();
 
         if (underwater != null) {
             this.waterLevel = this.getBoundingBox().maxY;
@@ -438,17 +327,17 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
         }
 
         if (this.checkInWater()) {
-            return Medium.IN_WATER;
+            return MediumStatus.IN_WATER;
         }
 
         final float groundFriction = this.getGroundFriction();
 
         if (0 < groundFriction) {
             this.landFriction = groundFriction;
-            return Medium.ON_LAND;
+            return MediumStatus.ON_LAND;
         }
 
-        return Medium.IN_AIR;
+        return MediumStatus.IN_AIR;
     }
 
     public float getWaterLevelAbove() {
@@ -556,7 +445,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     }
 
     @Nullable
-    protected Medium isUnderwater() {
+    protected MediumStatus isUnderwater() {
         final AABB aabb = this.getBoundingBox();
         final double d0 = aabb.maxY + 0.001D;
         final int i = Mth.floor(aabb.minX);
@@ -576,7 +465,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
                     if (fluidstate.is(FluidTags.WATER) &&
                             d0 < mutableBlockPos.getY() + fluidstate.getHeight(this.level(), mutableBlockPos)) {
                         if (!fluidstate.isSource()) {
-                            return Medium.UNDER_FLOWING_WATER;
+                            return MediumStatus.UNDER_FLOWING_WATER;
                         }
 
                         isUnderwater = true;
@@ -585,7 +474,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
             }
         }
 
-        return isUnderwater ? Medium.UNDER_WATER : null;
+        return isUnderwater ? MediumStatus.UNDER_WATER : null;
     }
 
     public final List<net.minecraft.world.entity.Entity> getTruePassengers() {
@@ -621,17 +510,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
             vehicleParts.add((AbstractVehiclePart) vehiclePart);
         }
         return vehicleParts;
-    }
-
-    public boolean isBeingTowed() {
-        if (this.getPassengers().size() == this.getMaxPassengers()) {
-            for (int i : this.getCleatIndices()) {
-                if (this.getPassengers().get(i).getFirstPassenger() instanceof VehicleCleatEntity vehicleCleat) {
-                    return vehicleCleat.isLeashed() && this.getDeltaMovement().length() != 0;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -688,41 +566,42 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     @Override
     protected void checkFallDamage(final double fallDistance, final boolean onGround, final BlockState blockState,
                                    final BlockPos blockPos) {
-        this.lastYd = this.getDeltaMovement().y;
-        if (this.isPassenger()) return;
+        if (this instanceof IAllowFallDamage){
+            this.lastYd = this.getDeltaMovement().y;
+            if (this.isPassenger()) return;
 
-        if (!onGround) {
-            if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && fallDistance < 0) {
-                this.fallDistance -= (float) fallDistance;
-            }
-            return;
-        }
-
-        if (this.fallDistance > 3) {
-
-            if (this.status != Medium.ON_LAND) {
-                this.resetFallDistance();
+            if (!onGround) {
+                if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && fallDistance < 0) {
+                    this.fallDistance -= (float) fallDistance;
+                }
                 return;
             }
 
-            this.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
-            if (!this.level().isClientSide && !this.isRemoved()) {
-                for (net.minecraft.world.entity.Entity passenger : this.getTruePassengers()) {
-                    passenger.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
+            if (this.fallDistance > 3) {
+
+                if (this.status != MediumStatus.ON_LAND) {
+                    this.resetFallDistance();
+                    return;
                 }
-                for (net.minecraft.world.entity.Entity passenger : this.getPassengers()) {
-                    if (passenger.isVehicle()) {
-                        passenger.getFirstPassenger().kill();
+
+                this.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
+                if (!this.level().isClientSide && !this.isRemoved()) {
+                    for (net.minecraft.world.entity.Entity passenger : this.getTruePassengers()) {
+                        passenger.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
+                    }
+                    for (net.minecraft.world.entity.Entity passenger : this.getPassengers()) {
+                        if (passenger.isVehicle()) {
+                            passenger.getFirstPassenger().kill();
+                        }
+                    }
+                    this.kill();
+                    if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                        this.spawnAtLocation(this.getDropItem());
                     }
                 }
-                this.kill();
-                if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                    this.spawnAtLocation(this.getDropItem());
-                }
             }
+            this.resetFallDistance();
         }
-
-        this.resetFallDistance();
     }
 
     public float getDamage() {
@@ -840,7 +719,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
 
     @Override
     public boolean isUnderWater() {
-        return this.status == Medium.UNDER_WATER || this.status == Medium.UNDER_FLOWING_WATER;
+        return this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER;
     }
 
     public double getSmoothSpeedMS(){
@@ -926,7 +805,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons {
     public void onInsideBubbleColumn(boolean pDownwards) {
     }
 
-    public static enum Medium {
+    public static enum MediumStatus {
         IN_WATER,
         UNDER_WATER,
         UNDER_FLOWING_WATER,

@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
@@ -27,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity {
+public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleats, IHaveBlockOnlyCompartments {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
@@ -65,21 +67,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
     @Override
     public int[] getCleatIndices() {
         return this.CLEATS;
-    }
-
-    @Override
-    public int[] getSailSwitchIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public int[] getMastIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public int[] getCanAddCannonsIndices() {
-        return new int[0];
     }
 
     @Override
@@ -290,11 +277,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity {
 
     public void clearPaint() {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.empty());
-    }
-
-    @Override
-    public int[] getWindlassIndices() {
-        return new int[0];
     }
 
     @Override

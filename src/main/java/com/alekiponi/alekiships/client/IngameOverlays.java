@@ -7,7 +7,7 @@ package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
@@ -35,7 +35,6 @@ import java.util.Locale;
 
 public enum IngameOverlays {
     COMPARTMENT_STATUS(IngameOverlays::renderEntityIcons),
-    //VEHICLE_STATUS(IngameOverlays::renderVehicleStatus),
     PASSENGER_STATUS(IngameOverlays::renderPassengerStatus),
     SAILING_ELEMENT(IngameOverlays::renderSailingElement),
     SLOOP_CONSTRUCTION(IngameOverlays::renderSloopConstructionStatus),
@@ -61,7 +60,6 @@ public enum IngameOverlays {
 
     public static void registerOverlays(final RegisterGuiOverlaysEvent event) {
         above(event, VanillaGuiOverlay.CROSSHAIR, COMPARTMENT_STATUS);
-        //above(event, VanillaGuiOverlay.CROSSHAIR, VEHICLE_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, PASSENGER_STATUS);
         above(event, VanillaGuiOverlay.CROSSHAIR, SLOOP_CONSTRUCTION);
         above(event, VanillaGuiOverlay.CROSSHAIR, CANNON_LOAD_STATE);

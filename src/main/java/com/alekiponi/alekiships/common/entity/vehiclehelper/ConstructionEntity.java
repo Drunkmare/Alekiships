@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractUnderConstructionEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -9,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class ConstructionEntity extends Entity {
+public class ConstructionEntity extends Entity implements IHelperEntity {
 
     public ConstructionEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

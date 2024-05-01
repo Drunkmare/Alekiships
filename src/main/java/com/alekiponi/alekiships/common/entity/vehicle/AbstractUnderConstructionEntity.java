@@ -1,30 +1,25 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractUnderConstructionEntity extends AbstractVehicle{
+public abstract class AbstractUnderConstructionEntity extends AbstractVehicle implements IHaveConstructionEntity {
 
     public AbstractUnderConstructionEntity(EntityType entityType, Level level) {
         super(entityType, level);
     }
 
-    @Override
     public int getMaxPassengers() {
         return 1;
     }
 
-    @Override
-    public int[] getCleatIndices() {
-        return new int[0];
-    }
-
-    @Override
     public void tick() {
         if (this.getPassengers().size() < this.getMaxPassengers()) {
             final AbstractVehiclePart newPart = AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get().create(this.level());
@@ -35,55 +30,11 @@ public abstract class AbstractUnderConstructionEntity extends AbstractVehicle{
 
         super.tick();
     }
-    @Override
+
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         return InteractionResult.PASS;
     }
 
     public abstract void interactFromConstructionEntity(final Player player, final InteractionHand hand);
 
-    @Override
-    public int[] getColliderIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public int[] getConstructionIndices() {
-        return new int[]{0};
-    }
-
-    @Override
-    public int[] getCanAddOnlyBlocksIndices() {
-        return new int[0];
-    }
-
-    @Override
-    public int getCompartmentRotation(int i) {
-        return 0;
-    }
-
-    @Override
-    public float getPassengerSizeLimit() {
-        return 0;
-    }
-
-    @Override
-    public int[][] getCompartmentRotationsArray() {
-        return new int[0][];
-    }
-
-    @Override
-    protected void tickCleatInput() {
-
-    }
-
-    @Override
-    public float getDamageThreshold() {
-        return 0;
-    }
-
-    @Override
-    public float getDamageRecovery() {
-        return 0;
-    }
 }
