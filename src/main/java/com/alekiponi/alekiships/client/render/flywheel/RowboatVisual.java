@@ -6,7 +6,6 @@ import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.ShipSheets;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.jozufozu.flywheel.api.instance.Instancer;
-import com.jozufozu.flywheel.api.material.Material;
 import com.jozufozu.flywheel.api.visual.VisualFrameContext;
 import com.jozufozu.flywheel.api.visual.VisualTickContext;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
@@ -33,11 +32,9 @@ import java.util.Optional;
 
 public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T> implements SimpleTickableVisual, SimpleDynamicVisual {
 
-    public static final Material ROWBOAT = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH)
-            .texture(ShipSheets.ROWBOAT_SHEET).mipmap(false).backfaceCulling(false).build();
     private final static ModelCache<ResourceLocation> ROWBOAT_MODELS = new ModelCache<>(sprite -> new SingleMeshModel(
             ModelPartConverter.convert(RowboatEntityModel.LAYER_LOCATION,
-                    BoatAtlases.getRowboatAtlas().getSprite(sprite)), ROWBOAT));
+                    BoatAtlases.getRowboatAtlas().getSprite(sprite)), Materials.ROWBOAT));
     private final PoseStack poseStack = new PoseStack();
     private TransformedInstance boatModel;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -120,7 +117,8 @@ public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T
         if (paintColor != this.lastPaintColor) {
             this.lastPaintColor = paintColor;
             final ResourceLocation resourceLocation = this.getResourceLocation();
-            this.getInstancer(resourceLocation).stealInstance(this.boatModel);
+//            this.getInstancer(resourceLocation).stealInstance(this.boatModel);
+            this.boatModel = this.createBoatInstance(resourceLocation);
         }
     }
 
