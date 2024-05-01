@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.client.render.flywheel;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
-import com.alekiponi.alekiships.client.render.ShipSheets;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.jozufozu.flywheel.api.instance.Instancer;
 import com.jozufozu.flywheel.api.visual.VisualFrameContext;
@@ -11,13 +10,12 @@ import com.jozufozu.flywheel.api.visual.VisualTickContext;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
 import com.jozufozu.flywheel.lib.instance.InstanceTypes;
 import com.jozufozu.flywheel.lib.instance.TransformedInstance;
-import com.jozufozu.flywheel.lib.material.CutoutShaders;
-import com.jozufozu.flywheel.lib.material.SimpleMaterial;
 import com.jozufozu.flywheel.lib.model.ModelCache;
 import com.jozufozu.flywheel.lib.model.SingleMeshModel;
 import com.jozufozu.flywheel.lib.model.part.ModelPartConverter;
 import com.jozufozu.flywheel.lib.visual.SimpleDynamicVisual;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisual;
+import com.jozufozu.flywheel.lib.visual.SimpleEntityVisualizer;
 import com.jozufozu.flywheel.lib.visual.SimpleTickableVisual;
 import com.jozufozu.flywheel.lib.visual.components.FireComponent;
 import com.jozufozu.flywheel.lib.visual.components.HitboxComponent;
@@ -28,20 +26,39 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 
+import java.util.EnumMap;
 import java.util.Optional;
 
-public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T> implements SimpleTickableVisual, SimpleDynamicVisual {
+public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements SimpleTickableVisual, SimpleDynamicVisual {
 
     private final static ModelCache<ResourceLocation> ROWBOAT_MODELS = new ModelCache<>(sprite -> new SingleMeshModel(
             ModelPartConverter.convert(RowboatEntityModel.LAYER_LOCATION,
                     BoatAtlases.getRowboatAtlas().getSprite(sprite)), Materials.ROWBOAT));
     private final PoseStack poseStack = new PoseStack();
+    private final ResourceLocation unpaintedTexture;
+    private final EnumMap<DyeColor, ResourceLocation> paintedTextures;
     private TransformedInstance boatModel;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<DyeColor> lastPaintColor;
 
-    public RowboatVisual(final VisualizationContext context, final T entity) {
-        super(context, entity);
+    private RowboatVisual(final VisualizationContext context, final RowboatEntity rowboatEntity,
+            final ResourceLocation unpaintedTexture, final EnumMap<DyeColor, ResourceLocation> paintedTextures) {
+        super(context, rowboatEntity);
+        this.unpaintedTexture = unpaintedTexture;
+        this.paintedTextures = paintedTextures;
+    }
+
+    /**
+     * Creates a factory that captures the passed in base texture location and map of paint textures to prevent
+     * accidental creation on each invocation of the factory.
+     *
+     * @param baseTexture     The base texture of the rowboat (no paint)
+     * @param paintedTextures The painted texture of the rowboat
+     * @return A factory for the rowboat visual that uses the passed textures
+     */
+    public static SimpleEntityVisualizer.Factory<RowboatEntity> create(final ResourceLocation baseTexture,
+            final EnumMap<DyeColor, ResourceLocation> paintedTextures) {
+        return (context, entity) -> new RowboatVisual(context, entity, baseTexture, paintedTextures);
     }
 
     @Override
@@ -53,25 +70,12 @@ public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T
 
         this.lastPaintColor = this.entity.getPaintColor();
 
-        this.boatModel = this.createBoatInstance(this.getResourceLocation());
+        this.boatModel = this.getInstancer().createInstance();
 
         this.updateInstances(partialTick);
         this.updateLight();
 
         super.init(partialTick);
-    }
-
-    private ResourceLocation getResourceLocation() {
-        return this.lastPaintColor.map(ShipSheets.ROWBOAT_TEXTURE_LOCATION::get)
-                .orElse(new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/rowboat/oak"));
-    }
-
-    private TransformedInstance createBoatInstance(final ResourceLocation resourceLocation) {
-        return this.getInstancer(resourceLocation).createInstance();
-    }
-
-    private Instancer<TransformedInstance> getInstancer(final ResourceLocation resourceLocation) {
-        return this.instancerProvider.instancer(InstanceTypes.TRANSFORMED, ROWBOAT_MODELS.get(resourceLocation));
     }
 
     @Override
@@ -114,12 +118,21 @@ public class RowboatVisual<T extends RowboatEntity> extends SimpleEntityVisual<T
     @Override
     public void tick(final VisualTickContext unused) {
         final Optional<DyeColor> paintColor = this.entity.getPaintColor();
-        if (paintColor != this.lastPaintColor) {
+        if (!paintColor.equals(this.lastPaintColor)) {
+            AlekiShips.LOGGER.debug("Last paint = {}. New paint = {}", this.lastPaintColor, paintColor);
             this.lastPaintColor = paintColor;
-            final ResourceLocation resourceLocation = this.getResourceLocation();
-//            this.getInstancer(resourceLocation).stealInstance(this.boatModel);
-            this.boatModel = this.createBoatInstance(resourceLocation);
+            // TODO For some reason ghosting??
+            this.getInstancer().stealInstance(this.boatModel);
         }
+    }
+
+    private Instancer<TransformedInstance> getInstancer() {
+        return this.instancerProvider.instancer(InstanceTypes.TRANSFORMED,
+                ROWBOAT_MODELS.get(this.getResourceLocation()));
+    }
+
+    private ResourceLocation getResourceLocation() {
+        return this.lastPaintColor.map(this.paintedTextures::get).orElse(this.unpaintedTexture);
     }
 
     @Override
