@@ -187,7 +187,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
         return 0.005f;
     }
 
-
     @Override
     public int getCompartmentRotation(int i) {
         return COMPARTMENT_ROTATIONS[i][0];

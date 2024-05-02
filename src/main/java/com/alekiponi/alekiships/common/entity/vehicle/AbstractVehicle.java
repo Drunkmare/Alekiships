@@ -108,11 +108,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return new float[]{1, 1};
     }
 
-    public abstract int getCompartmentRotation(int i);
-
     public abstract float getPassengerSizeLimit();
-
-    public abstract int[][] getCompartmentRotationsArray();
 
     @Override
     protected float getEyeHeight(final Pose pose, final EntityDimensions entityDimensions) {

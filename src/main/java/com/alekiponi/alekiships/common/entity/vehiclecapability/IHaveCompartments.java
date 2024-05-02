@@ -10,6 +10,11 @@ import java.util.ArrayList;
 public interface IHaveCompartments {
     int[] getCompartmentIndices();
 
+    // TODO make this into generic helper rotation
+    int[][] getCompartmentRotationsArray();
+
+    int getCompartmentRotation(int i);
+
     private ArrayList<AbstractCompartmentEntity> getCompartments(AbstractVehicle vehicle) {
         ArrayList<AbstractCompartmentEntity> list = new ArrayList<AbstractCompartmentEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public interface IHaveCleats {
     int[] getCleatIndices();
 
+    //int[][] getCleatRotations();
+
     private ArrayList<VehicleCleatEntity> getCleats(AbstractVehicle vehicle) {
         ArrayList<VehicleCleatEntity> list = new ArrayList<VehicleCleatEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
