@@ -39,9 +39,9 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     public final int BOOM_ITEM_NUMER = 8;
 
-    public final int MAINSAIL_ITEM_NUMBER = 1;
+    public final int MAINSAIL_ITEM_NUMBER = 16;
 
-    public final int JIBSAIL_ITEM_NUMBER = 1;
+    public final int JIBSAIL_ITEM_NUMBER = 8;
 
     public final int STERN_RAILING_ITEM_NUMBER = 8;
 
@@ -245,7 +245,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     }
 
     public ConstructionState getConstructionStage() {
-        return ConstructionState.ANCHOR.getByOrdinal(this.entityData.get(DATA_ID_CONSTRUCTION_STAGE));
+        return ConstructionState.getByOrdinal(this.entityData.get(DATA_ID_CONSTRUCTION_STAGE));
     }
 
     public void setConstructionStage(ConstructionState stage) {
