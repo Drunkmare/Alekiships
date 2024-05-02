@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 
@@ -24,5 +25,20 @@ public interface IHaveAnchorWindlass {
         return getWindlasses((AbstractVehicle) this);
     }
 
-    void tickAnchorInput();
+    default void tickAnchorInput() {
+        for (WindlassSwitchEntity windlass : this.getWindlasses()) {
+            if (windlass.getAnchored()) {
+                ((AbstractVehicle)this).setDeltaMovement(Vec3.ZERO);
+            }
+        }
+    }
+
+    default boolean isAnchorDown(){
+        for (WindlassSwitchEntity windlass : this.getWindlasses()) {
+            if (windlass.getAnchored()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

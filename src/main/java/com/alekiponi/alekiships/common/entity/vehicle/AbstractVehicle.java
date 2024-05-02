@@ -298,7 +298,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
     }
 
-    protected List<Entity> collectEntitesToTakeWith() {
+    public List<Entity> collectEntitesToTakeWith() {
         List<Entity> entities = this.level()
                 .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0).move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this));
 
@@ -340,7 +340,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     }
 
-    protected MediumStatus getStatus() {
+    public MediumStatus getStatus() {
         final MediumStatus underwater = this.isUnderwater();
 
         if (underwater != null) {

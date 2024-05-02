@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants {
+public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
 
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
@@ -402,118 +402,15 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
         }
 
         super.tick();
+
     }
 
     @Override
     public void tickCleatInput() {
-        if (this.getMainsailActive() || this.getJibsailActive()) {
+        if (this.getJibsailActive() || this.getMainsailActive()) {
             return;
         }
-        int count = 0;
-        ArrayList<VehicleCleatEntity> cleats = this.getCleats();
-        ArrayList<VehicleCleatEntity> leashedCleats = new ArrayList<VehicleCleatEntity>();
-        for (VehicleCleatEntity cleat : cleats) {
-            if (cleat.isLeashed() && !this.collectEntitesToTakeWith().contains(cleat.getLeashHolder())) {
-                leashedCleats.add(cleat);
-                count++;
-            }
-        }
-        if (count == 2) {
-            VehicleCleatEntity cleat1 = leashedCleats.get(0);
-            VehicleCleatEntity cleat2 = leashedCleats.get(1);
-            net.minecraft.world.entity.Entity leashHolder1 = cleat1.getLeashHolder();
-            net.minecraft.world.entity.Entity leashHolder2 = cleat2.getLeashHolder();
-            if (leashHolder1 != null && leashHolder2 != null) {
-                if (leashHolder1.is(leashHolder2)) {
-                    count = 1;
-                } else {
-                    double d0 = leashHolder1.getX() - leashHolder2.getX();
-                    double d2 = leashHolder1.getZ() - leashHolder2.getZ();
-
-                    float finalRotation = Mth.wrapDegrees(
-                            (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F);
-
-                    float approach = Mth.approachDegrees(this.getYRot(), finalRotation, 0.25f);
-                    if (Mth.degreesDifferenceAbs(this.getYRot(), finalRotation) < 1.0) {
-                        this.setDeltaRotation(0);
-                        this.setYRot(this.getYRot());
-                    } else {
-                        this.setDeltaRotation(-1 * (this.getYRot() - approach));
-                    }
-
-                    Vec3 averageLeashHolderPosition =
-                            new Vec3(
-                                    (leashHolder1.getPosition(0).x + leashHolder2.getPosition(0).x) / 2.0,
-                                    0,
-                                    (leashHolder1.getPosition(0).z + leashHolder2.getPosition(0).z) / 2.0);
-
-                    Vec3 averageCleatPosition = new Vec3(
-                            (cleat1.getPosition(0).x + cleat2.getPosition(0).x) / 2.0,
-                            0,
-                            (cleat1.getPosition(0).z + cleat2.getPosition(0).z) / 2.0);
-
-                    Vec3 vectorToVehicle = averageCleatPosition.vectorTo(averageLeashHolderPosition).normalize();
-
-                    Vec3 movementVector = vectorToVehicle.multiply(0.008, 0, 0.008).add(0, this.getDeltaMovement().y, 0);
-
-                    if (averageCleatPosition.distanceTo(averageLeashHolderPosition) > 1.0) {
-                        this.setDeltaMovement(movementVector);
-                    } else {
-                        this.setDeltaMovement(Vec3.ZERO);
-                    }
-
-                }
-            }
-
-        }
-        if (count == 1) {
-            VehicleCleatEntity cleat = leashedCleats.get(0);
-            net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
-            if (leashHolder != null) {
-                if (leashHolder instanceof Player) {
-                    if (this.distanceTo(leashHolder) > 4f) {
-                        Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(this.getPosition(0)).normalize();
-                        Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.03f, this.getDeltaMovement().y,
-                                vectorToVehicle.z * -0.03f);
-                        double vehicleSize = Mth.clamp(this.getBbWidth(), 1, 100);
-                        movementVector = movementVector.multiply(1 / vehicleSize, 0, 1 / vehicleSize);
-
-                        this.setDeltaMovement(movementVector);
-
-                    }
-                }
-                if (leashHolder instanceof HangingEntity) {
-                    Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(this.getPosition(0)).normalize();
-                    Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.001f, this.getDeltaMovement().y,
-                            vectorToVehicle.z * -0.001f);
-
-                    if (cleat.distanceTo(leashHolder) > 1) {
-                        this.setDeltaMovement(movementVector);
-                    } else {
-                        this.setDeltaMovement(Vec3.ZERO);
-                    }
-
-
-                }
-            }
-        }
-        if (count != 1 && count != 2) {
-            for (VehicleCleatEntity cleat : leashedCleats) {
-                net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
-                if (leashHolder != null) {
-                    Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(this.getPosition(0)).normalize();
-                    Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.01f / count, this.getDeltaMovement().y,
-                            vectorToVehicle.z * -0.01f / count);
-
-                    if (cleat.distanceTo(leashHolder) > 1) {
-                        this.setDeltaMovement(movementVector);
-                    } else {
-                        this.setDeltaMovement(Vec3.ZERO);
-                    }
-                }
-            }
-        }
-
+        IHaveFourCleats.super.tickCleatInput();
     }
 
     @Override
@@ -725,8 +622,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
-
-
             }
             if (this.getJibsailActive()) {
                 windFunction = (float) (Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.02, 1.0) * 0.1);
@@ -757,10 +652,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
             }
-            for (WindlassSwitchEntity windlass : this.getWindlasses()) {
-                if (windlass.getAnchored()) {
-                    this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1, 0.5));
-                }
+            if (isAnchorDown() ) {
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1, 0.5));
             }
         }
     }
@@ -770,11 +663,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
         if (this.getMainsailActive() || this.getJibsailActive()) {
             return;
         }
-        for (WindlassSwitchEntity windlass : this.getWindlasses()) {
-            if (windlass.getAnchored()) {
-                this.setDeltaMovement(Vec3.ZERO);
-            }
-        }
+        IHaveAnchorWindlass.super.tickAnchorInput();
     }
 
     public float[] getMainsailWindAngleAndForce() {

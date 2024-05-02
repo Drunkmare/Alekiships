@@ -34,7 +34,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements IHaveCleats {
+public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public static final int PADDLE_LEFT = 0;
     public static final int PADDLE_RIGHT = 1;
     public static final double PADDLE_SOUND_TIME = Math.PI / 4;
@@ -132,8 +132,12 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements
         this.tickLerp();
 
         this.tickWindInput();
-        this.tickCleatInput();
-        this.tickAnchorInput();
+        if(this instanceof IHaveCleats){
+            ((IHaveCleats)this).tickCleatInput();
+        }
+        if(this instanceof IHaveAnchorWindlass){
+            ((IHaveAnchorWindlass)this).tickAnchorInput();
+        }
 
         this.tickFloatBoat();
         this.tickControlBoat();
@@ -373,79 +377,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements
 
         }
     }
-
-    @Override
-    public void tickCleatInput() {
-        for (VehicleCleatEntity cleat : this.getCleats()) {
-            if (cleat.isLeashed()) {
-                net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
-                if (leashHolder != null) {
-                    if (leashHolder instanceof Player player) {
-                        if (this.collectEntitesToTakeWith().contains(player)) {
-                            return;
-                        }
-                        if (cleat.distanceTo(leashHolder) > 4f) {
-                            Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
-                            Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.04f, this.getDeltaMovement().y,
-                                    vectorToVehicle.z * -0.04f);
-                            double vehicleSize = Mth.clamp(this.getBbWidth(), 1, 100);
-                            movementVector = movementVector.multiply(1 / vehicleSize, 0, 1 / vehicleSize);
-
-                            double d0 = leashHolder.getPosition(0).x - this.getX();
-                            double d2 = leashHolder.getPosition(0).z - this.getZ();
-
-                            float finalRotation = Mth.wrapDegrees(
-                                    (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F);
-
-                            double difference = (leashHolder.getY()) - this.getY();
-
-
-                            if (leashHolder.getY() > this.getY() && difference >= 0.4 && difference <= 1.0 && this.getDeltaMovement()
-                                    .length() < 0.02f) {
-                                this.setPos(this.getX(), this.getY() + 0.55f, this.getZ());
-                            }
-
-                            float approach = Mth.approachDegrees(this.getYRot(), finalRotation, 6);
-
-                            this.setDeltaMovement(this.getDeltaMovement().add(movementVector));
-                            this.setDeltaRotation(-1 * (this.getYRot() - approach));
-
-                        }
-                    }
-                    if (leashHolder instanceof HangingEntity && this.status != MediumStatus.ON_LAND) {
-                        Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
-                        Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.005f, this.getDeltaMovement().y,
-                                vectorToVehicle.z * -0.005f);
-                        double d0 = leashHolder.getPosition(0).x - this.getX();
-                        double d2 = leashHolder.getPosition(0).z - this.getZ();
-
-                        float finalRotation = Mth.wrapDegrees(
-                                (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F);
-
-                        float approach = Mth.approachDegrees(this.getYRot(), finalRotation, 0.5f);
-                        if (Mth.degreesDifferenceAbs(this.getYRot(), finalRotation) < 4) {
-                            this.setDeltaRotation(0);
-                            this.setYRot(this.getYRot());
-                        } else {
-                            this.setDeltaRotation(-1 * (this.getYRot() - approach));
-                        }
-                        if (cleat.distanceTo(leashHolder) > 2) {
-                            this.setDeltaMovement(movementVector);
-                        } else {
-                            Player player = this.level().getNearestPlayer(this, 6 * 16);
-                            this.setDeltaMovement(Vec3.ZERO);
-                        }
-
-
-                    }
-                }
-
-            }
-        }
-
-    }
-
-    public void tickAnchorInput() {}
 
     protected abstract float getPaddleMultiplier();
 

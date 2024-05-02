@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleats, IHaveBlockOnlyCompartments {
+public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveCleats {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
