@@ -37,7 +37,7 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
     private final EnumMap<DyeColor, ResourceLocation> paintedTextures;
     private TransformedInstance boatModel;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<DyeColor> lastPaintColor;
+    private Optional<DyeColor> lastPaintColor = this.entity.getPaintColor();
 
     private RowboatVisual(final VisualizationContext context, final RowboatEntity rowboatEntity,
             final ResourceLocation unpaintedTexture, final EnumMap<DyeColor, ResourceLocation> paintedTextures) {
@@ -64,8 +64,6 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
         this.addComponent(new ShadowComponent(this.visualizationContext, this.entity).radius(1));
         this.addComponent(new FireComponent(this.visualizationContext, this.entity));
         this.addComponent(new HitboxComponent(this.visualizationContext, this.entity));
-
-        this.lastPaintColor = this.entity.getPaintColor();
 
         this.boatModel = this.getInstancer().createInstance();
 
@@ -105,11 +103,10 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
         this.poseStack.scale(-1, -1, 1);
         this.poseStack.mulPose(Axis.YP.rotationDegrees(0));
 
-        this.boatModel.setTransform(poseStack).setChanged();
-    }
+        this.boatModel.setTransform(this.poseStack).setChanged();
 
-    public void updateLight() {
-        this.relight(this.entity.blockPosition(), this.boatModel);
+        // TODO I think the rowboat model has to change in order to render the oars separately from the
+        //  rest of the boat. Like paint it should be cached and updated when the oars change
     }
 
     @Override
@@ -121,13 +118,17 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
         }
     }
 
+    private void updateLight() {
+        this.relight(this.entity.blockPosition(), this.boatModel);
+    }
+
     private Instancer<TransformedInstance> getInstancer() {
         return this.instancerProvider.instancer(InstanceTypes.TRANSFORMED,
                 ROWBOAT_MODELS.get(this.getResourceLocation()));
     }
 
     private ResourceLocation getResourceLocation() {
-        return this.lastPaintColor.map(this.paintedTextures::get).orElse(this.unpaintedTexture);
+        return this.entity.getPaintColor().map(this.paintedTextures::get).orElse(this.unpaintedTexture);
     }
 
     @Override
