@@ -9,7 +9,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.PacketHandler;
@@ -355,7 +355,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
         if (this.canAddNonPlayers() && !this.canAddOnlyBLocks() && heldStack.is(
                 AlekiShipsItems.CANNON.get()) && this.getRootVehicle() instanceof SloopEntity) {
-            if (this.getVehicle() instanceof AbstractVehiclePart part && this.canAddCannons) {
+            if (this.getVehicle() instanceof VehiclePart part && this.canAddCannons) {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(this.level());
                 cannon.moveTo(this.getPosition(0));
                 cannon.setYRot(-this.getYRot() - 180);

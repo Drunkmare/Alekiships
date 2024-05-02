@@ -40,8 +40,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     public final int[] SAIL_SWITCHES = {17, 24};
     public final int[] WINDLASSES = {22};
     public final int[] MASTS = {23};
-
-    public final int[] CAN_ADD_CANNONS = {7,8,9,10,11,12};
+    public final int[] CAN_ADD_CANNONS = {7, 8, 9, 10, 11, 12};
+    public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
+    public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
@@ -69,7 +70,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
     public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
 
-    public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
 
     protected final float PASSENGER_SIZE_LIMIT = 1.4F;
 
@@ -79,7 +79,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     private final BoatMaterial boatMaterial;
 
     public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
-            final BoatMaterial boatMaterial) {
+                       final BoatMaterial boatMaterial) {
         super(entityType, level);
         this.boatMaterial = boatMaterial;
     }
@@ -111,6 +111,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     }
 
     @Override
+    public int[] getCompartmentIndices() {
+        return COMPARTMENTS;
+    }
+
+    @Override
     public int[] getCanAddCannonsIndices() {
         return CAN_ADD_CANNONS;
     }
@@ -135,8 +140,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
         return COMPARTMENT_ROTATIONS;
     }
 
-    public float[] getDefaultColliderDimensions(){
-        return new float[]{1.5f,0.75f};
+    public float[] getDefaultColliderDimensions() {
+        return new float[]{1.5f, 0.75f};
     }
 
     @Override
@@ -156,37 +161,37 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
             case 1 -> {
                 // hold aft port
                 localZ = -0.4075f;
-                localX = 1.2555f - (30.0f/16.0f);
+                localX = 1.2555f - (30.0f / 16.0f);
                 localY += holdLevel;
             }
             case 2 -> {
                 // hold aft starboard
                 localZ = 0.4075f;
-                localX = 1.2555f - (30.0f/16.0f);
+                localX = 1.2555f - (30.0f / 16.0f);
                 localY += holdLevel;
             }
             case 3 -> {
                 // hold mid port
                 localZ = -0.4075f;
-                localX = 1.2555f - (15f/16.0f);
+                localX = 1.2555f - (15f / 16.0f);
                 localY += holdLevel;
             }
             case 4 -> {
                 //hold mid starboard
                 localZ = 0.4075f;
-                localX = 1.2555f - (15f/16.0f);
+                localX = 1.2555f - (15f / 16.0f);
                 localY += holdLevel;
             }
             case 5 -> {
                 //hold fore port
                 localZ = -0.4075f;
-                localX = 1.2555f - (0.0f/16.0f);
+                localX = 1.2555f - (0.0f / 16.0f);
                 localY += holdLevel;
             }
             case 6 -> {
                 //hold fore starboard
                 localZ = 0.4075f;
-                localX = 1.2555f - (0.0f/16.0f);
+                localX = 1.2555f - (0.0f / 16.0f);
                 localY += holdLevel;
             }
             case 7 -> {
@@ -366,7 +371,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
         }
 
-        if(this.everyNthTickUnique(2)){
+        if (this.everyNthTickUnique(2)) {
             this.tickDestroyPlants();
             int ind = 0;
             for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
@@ -379,7 +384,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
                 ind++;
 
             }
-            if (this.getEntitiesToTakeWith().isEmpty() && this.getTruePassengers().isEmpty()) {
+            if (this.collectEntitesToTakeWith().isEmpty() && this.collectLivingPassengers().isEmpty()) {
                 this.setTicksNoRiders(this.getTicksNoRiders() + 2);
                 if (this.getTicksNoRiders() >= SAIL_TOGGLE_TICKS) {
                     for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
@@ -408,7 +413,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
         ArrayList<VehicleCleatEntity> cleats = this.getCleats();
         ArrayList<VehicleCleatEntity> leashedCleats = new ArrayList<VehicleCleatEntity>();
         for (VehicleCleatEntity cleat : cleats) {
-            if (cleat.isLeashed() && !this.getEntitiesToTakeWith().contains(cleat.getLeashHolder())) {
+            if (cleat.isLeashed() && !this.collectEntitesToTakeWith().contains(cleat.getLeashHolder())) {
                 leashedCleats.add(cleat);
                 count++;
             }
@@ -583,7 +588,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     public EmptyCompartmentEntity getSailingCompartment() {
         final net.minecraft.world.entity.Entity vehiclePart = this.getSailingVehiclePartAsEntity();
 
-        if (!(vehiclePart instanceof AbstractVehiclePart) || !vehiclePart.isVehicle()) {
+        if (!(vehiclePart instanceof VehiclePart) || !vehiclePart.isVehicle()) {
             return null;
         }
 
@@ -762,7 +767,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
     @Override
     public void tickAnchorInput() {
-        if(this.getMainsailActive() || this.getJibsailActive()){
+        if (this.getMainsailActive() || this.getJibsailActive()) {
             return;
         }
         for (WindlassSwitchEntity windlass : this.getWindlasses()) {
@@ -843,11 +848,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     }
 
     public void setMainsailDye(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE,  paintColor);
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, paintColor);
     }
 
     public void clearMainsailDye() {
-        this.entityData.set(DATA_ID_MAINSAIL_DYE,  DyeColor.WHITE);
+        this.entityData.set(DATA_ID_MAINSAIL_DYE, DyeColor.WHITE);
     }
 
     /**
@@ -929,4 +934,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
         this.getPaintColor().ifPresent(dyeColor -> pCompound.putByte("paint", (byte) dyeColor.getId()));
     }
+
+
 }

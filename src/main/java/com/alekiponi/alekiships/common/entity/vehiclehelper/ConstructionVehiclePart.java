@@ -7,7 +7,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-public class ConstructionVehiclePart extends AbstractVehiclePart {
+public class ConstructionVehiclePart extends VehiclePart {
 
     public ConstructionVehiclePart(EntityType<?> entityType, Level level) {
         super(entityType, level);

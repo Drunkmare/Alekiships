@@ -1,8 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.network.ClientBoundCleatLinkPacket;
 import com.alekiponi.alekiships.network.PacketHandler;
@@ -35,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implements IHaveIcons, IHelperEntity {
+public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implements IHaveIcons {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_LEASHHOLDER_ID = SynchedEntityData.defineId(
             VehicleCleatEntity.class, EntityDataSerializers.INT);

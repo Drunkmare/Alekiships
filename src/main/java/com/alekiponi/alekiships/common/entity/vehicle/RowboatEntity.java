@@ -41,6 +41,8 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     public final int[][] COMPARTMENT_ROTATIONS = {{0, 180}};
 
     public final int[] CAN_ADD_ONLY_BLOCKS = {2, 1};
+
+    public final int[] COMPARTMENTS = {0, 1, 2, 3, 4};
     protected final float PASSENGER_SIZE_LIMIT = 1.4F;
 
     protected final float DAMAGE_THRESHOLD = 128.0f;
@@ -49,7 +51,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
 
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
-            final BoatMaterial boatMaterial) {
+                         final BoatMaterial boatMaterial) {
         super(entityType, level);
         this.boatMaterial = boatMaterial;
     }
@@ -75,20 +77,25 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     }
 
     @Override
+    public int[] getCompartmentIndices() {
+        return this.COMPARTMENTS;
+    }
+
+    @Override
     public int[] getCanAddOnlyBlocksIndices() {
         return CAN_ADD_ONLY_BLOCKS;
     }
 
-    public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
+    public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-        for(int i = 0; i < this.getMaxPassengers(); i ++){
+        for (int i = 0; i < this.getMaxPassengers(); i++) {
             poses[i] = AbstractCompartmentEntity.RidingPose.COMPACT;
         }
         poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
         return poses;
     }
 
-    protected Vec3 positionRiderByIndex(int index){
+    protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
         float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
@@ -171,7 +178,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     }
 
     @Override
-    protected float getTurnSpeed(){
+    protected float getTurnSpeed() {
         return 0.7f;
     }
 
@@ -194,15 +201,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     @Override
     public Item getDropItem() {
         return this.boatMaterial.getDeckItem();
-    }
-
-    @Nullable
-    @Override
-    public Entity getPilotVehiclePartAsEntity() {
-        if (this.isVehicle() && this.getPassengers().size() == this.getMaxPassengers()) {
-            return this.getPassengers().get(0);
-        }
-        return null;
     }
 
     public Oars getOars() {
@@ -272,7 +270,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
      * @param paintColor A {@link DyeColor}
      */
     public void setPaintColor(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of( paintColor));
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
     }
 
     public void clearPaint() {
@@ -298,7 +296,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     }
 
     @Override
-    public float getStepHeight(){
+    public float getStepHeight() {
         return 0.0f;
     }
 

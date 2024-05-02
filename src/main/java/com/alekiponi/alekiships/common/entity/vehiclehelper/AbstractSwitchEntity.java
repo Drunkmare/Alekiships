@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 
-public abstract class AbstractSwitchEntity extends AbstractInvisibleHelper implements IHaveIcons, IHelperEntity {
+public abstract class AbstractSwitchEntity extends AbstractInvisibleHelper implements IHaveIcons {
 
     public AbstractSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

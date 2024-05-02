@@ -69,10 +69,10 @@ public final class RenderEventHandler {
                 BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.LOOM_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
 
-        event.registerEntityRenderer(AlekiShipsEntities.BOAT_VEHICLE_PART.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.VEHICLE_PART.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.SAIL_SWITCH_ENTITY.get(), NoopRenderer::new);
-        event.registerEntityRenderer(AlekiShipsEntities.VEHICLE_COLLISION_ENTITY.get(), NoopRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.WINDLASS_SWITCH_ENTITY.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.MAST_ENTITY.get(), NoopRenderer::new);
 

@@ -284,6 +284,11 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         compoundTag.putInt("stage", this.getConstructionStage().ordinal());
     }
 
+    @Override
+    public int[] getCompartmentIndices() {
+        return new int[0];
+    }
+
     public static enum ConstructionState {
         KEEL,
         DECK,

@@ -1,12 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractInvisibleHelper extends Entity implements IHelperEntity {
+public abstract class AbstractInvisibleHelper extends Entity {
 
     public AbstractInvisibleHelper(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

@@ -1,11 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IAllowFallDamage;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCollisionEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -22,6 +22,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +44,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders {
+public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(
@@ -71,38 +72,40 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected MediumStatus oldStatus;
     protected double lastYd;
 
+    private boolean hasAllParts = false;
+
     public AbstractVehicle(final EntityType entityType, final Level level) {
         super(entityType, level);
         this.blocksBuilding = true;
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-        for(AbstractCompartmentEntity.RidingPose pose : poses){
+        for (AbstractCompartmentEntity.RidingPose pose : poses) {
             pose = AbstractCompartmentEntity.RidingPose.STANDARD;
         }
         this.ridingPoses = poses;
         this.speedOverTime = new LinkedList<Double>();
-        for(int i = 0; i < 5; i ++){
+        for (int i = 0; i < 5; i++) {
             this.speedOverTime.add(0.0);
         }
     }
 
     public abstract int getMaxPassengers();
 
-    public AbstractCompartmentEntity.RidingPose[] getRidingPoses(){
+    public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
         return ridingPoses;
     }
 
     public abstract float renderSizeForCompartments();
 
-    public boolean pilotCompartmentAcceptsNonPlayers(){
+    public boolean pilotCompartmentAcceptsNonPlayers() {
         return false;
     }
 
-    public boolean renderCleatKnotSides(){
+    public boolean renderCleatKnotSides() {
         return true;
     }
 
-    public float[] getDefaultColliderDimensions(){
-        return new float[]{1,1};
+    public float[] getDefaultColliderDimensions() {
+        return new float[]{1, 1};
     }
 
     public abstract int getCompartmentRotation(int i);
@@ -117,8 +120,29 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    protected net.minecraft.world.entity.Entity.MovementEmission getMovementEmission() {
-        return net.minecraft.world.entity.Entity.MovementEmission.EVENTS;
+    public void tick() {
+        super.tick();
+        if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers()) {
+            addVehicleParts();
+        } else {
+            hasAllParts = true;
+        }
+    }
+
+    private void addVehicleParts() {
+        final VehiclePart newPart = AlekiShipsEntities.VEHICLE_PART.get().create(this.level());
+        newPart.setPos(this.getX(), this.getY(), this.getZ());
+        this.level().addFreshEntity(newPart);
+        newPart.startRiding(this);
+    }
+
+    public boolean hasAllParts() {
+        return hasAllParts;
+    }
+
+    @Override
+    protected Entity.MovementEmission getMovementEmission() {
+        return Entity.MovementEmission.EVENTS;
     }
 
     protected void defineSynchedData() {
@@ -130,11 +154,11 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    public boolean canCollideWith(final net.minecraft.world.entity.Entity other) {
+    public boolean canCollideWith(final Entity other) {
         return canVehicleCollide(this, other);
     }
 
-    public static boolean canVehicleCollide(final net.minecraft.world.entity.Entity vehicle, final net.minecraft.world.entity.Entity entity) {
+    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
         return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
     }
 
@@ -153,16 +177,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected Vec3 getRelativePortalPosition(final Direction.Axis axis, final BlockUtil.FoundRectangle portal) {
         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(
                 super.getRelativePortalPosition(axis, portal));
-    }
-
-    @Nullable
-    public net.minecraft.world.entity.Entity getCompAsEntityFromIndex(int index) {
-        if (this.getPassengers().size() == this.getMaxPassengers()) {
-            if (this.getPassengers().get(index).isVehicle()) {
-                return this.getPassengers().get(index).getFirstPassenger();
-            }
-        }
-        return null;
     }
 
     @Override
@@ -190,7 +204,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
             this.discard();
         }
         if (this.getDamage() > getDamageThreshold()) {
-            for(Entity entity : this.getPassengers()){
+            for (Entity entity : this.getPassengers()) {
                 entity.kill();
             }
         }
@@ -199,7 +213,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    public void push(final net.minecraft.world.entity.Entity entity) {
+    public void push(final Entity entity) {
         if (entity instanceof AbstractVehicle) {
             if (entity.getBoundingBox().minY < this.getBoundingBox().maxY) {
                 super.push(entity);
@@ -241,34 +255,34 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return this.getDirection().getClockWise();
     }
 
-    protected void tickTakeEntitiesForARide(){
-        if(this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)){
+    protected void tickTakeEntitiesForARide() {
+        if (this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)) {
             return;
         }
-        if(this.getDeltaMovement().length() > 0.01){
-            List<Entity> entitiesToTakeWith = this.getEntitiesToTakeWith();
+        if (this.getDeltaMovement().length() > 0.01) {
+            List<Entity> entitiesToTakeWith = this.collectEntitesToTakeWith();
 
             if (!entitiesToTakeWith.isEmpty()) {
                 for (final Entity entity : entitiesToTakeWith) {
-                    if (this.level().isClientSide() && entity instanceof LocalPlayer player && !entity.isPassenger() && (Math.abs(this.getBoundingBox().maxY-player.getBoundingBox().minY) < 0.01)) {
-                        if(this.getSmoothSpeedMS() > 4){
-                            if(!player.input.jumping || Math.abs(player.getDeltaMovement().y) > 0.05 ){
+                    if (this.level().isClientSide() && entity instanceof LocalPlayer player && !entity.isPassenger() && (Math.abs(this.getBoundingBox().maxY - player.getBoundingBox().minY) < 0.01)) {
+                        if (this.getSmoothSpeedMS() > 4) {
+                            if (!player.input.jumping || Math.abs(player.getDeltaMovement().y) > 0.05) {
                                 player.setPos(this.getDismountLocationForPassenger(player));
                             }
                             //player.setPos(player.getPosition(0).add(this.getDeltaMovement()));
                         } else {
-                            if(player.input.jumping || player.input.left || player.input.right || player.input.up || player.input.down){
-                                player.setDeltaMovement(player.getDeltaMovement().multiply(1.0,1,1.0).add(this.getDeltaMovement().multiply(0.45,0,0.45)));
+                            if (player.input.jumping || player.input.left || player.input.right || player.input.up || player.input.down) {
+                                player.setDeltaMovement(player.getDeltaMovement().multiply(1.0, 1, 1.0).add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
                             } else {
                                 player.setPos(player.getPosition(0).add(this.getDeltaMovement()));
-                                if(player.getDeltaMovement().length() > this.getDeltaMovement().length()+0.01){
+                                if (player.getDeltaMovement().length() > this.getDeltaMovement().length() + 0.01) {
                                     player.setDeltaMovement(Vec3.ZERO);
                                 }
                             }
                         }
 
                     }
-                    if (!(entity instanceof AbstractVehicle) && !entity.isPassenger() && !(entity instanceof Player))  {
+                    if (!(entity instanceof AbstractVehicle) && !entity.isPassenger() && !(entity instanceof Player)) {
                         entity.setDeltaMovement(entity.getDeltaMovement().add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
                     }
                 }
@@ -276,11 +290,11 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
     }
 
-    protected List<Entity> getEntitiesToTakeWith(){
+    protected List<Entity> collectEntitesToTakeWith() {
         List<Entity> entities = this.level()
                 .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0).move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this));
 
-        for (VehicleCollisionEntity collider : this.getColliders()) {
+        for (VehicleColliderEntity collider : this.getColliders()) {
             entities.addAll(this.level()
                     .getEntities(collider, collider.getBoundingBox().inflate(0, -collider.getBoundingBox().getYsize() + 2, 0).move(0, collider.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this)));
         }
@@ -288,8 +302,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         entities = entities.stream().distinct().collect(Collectors.toList());
 
         List<Entity> entitiesToTakeWith = new ArrayList<>();
-        for(Entity entity : entities){
-            if(!entity.isPassenger() && !(entity instanceof AbstractVehicle)){
+        for (Entity entity : entities) {
+            if (!entity.isPassenger() && !(entity instanceof AbstractVehicle)) {
                 entitiesToTakeWith.add(entity);
             }
         }
@@ -377,7 +391,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
 
-
     public float getGroundFriction() {
         AABB aabb = this.getBoundingBox();
         AABB aabb1 = new AABB(aabb.minX, aabb.minY - 0.001D, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
@@ -444,6 +457,25 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return flag;
     }
 
+    /*
+    @Nullable
+    public Entity getNewHelperForPart(AbstractVehiclePart part) {
+        int i = 0;
+        for (AbstractVehiclePart part1 : this.collectVehicleParts()) {
+            if (part1.is(part) && !part.isVehicle()) {
+                return getNewHelperForIndex(i);
+            }
+            i++;
+        }
+        return null;
+    }
+
+    @Nullable
+    public Entity getNewHelperForIndex(int index) {
+
+        return null;
+    }*/
+
     @Nullable
     protected MediumStatus isUnderwater() {
         final AABB aabb = this.getBoundingBox();
@@ -477,13 +509,13 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return isUnderwater ? MediumStatus.UNDER_WATER : null;
     }
 
-    public final List<net.minecraft.world.entity.Entity> getTruePassengers() {
-        final List<net.minecraft.world.entity.Entity> truePassengers = Lists.newArrayList();
+    public final List<Entity> collectLivingPassengers() {
+        final List<Entity> truePassengers = Lists.newArrayList();
 
-        for (final net.minecraft.world.entity.Entity vehiclePart : this.getPassengers()) {
+        for (final Entity vehiclePart : this.getPassengers()) {
             if (vehiclePart.isVehicle() && vehiclePart.getFirstPassenger() instanceof AbstractCompartmentEntity compartmentEntity) {
                 if (compartmentEntity.isVehicle()) {
-                    if(compartmentEntity.getFirstPassenger() instanceof LivingEntity){
+                    if (compartmentEntity.getFirstPassenger() instanceof LivingEntity) {
                         truePassengers.add(compartmentEntity.getFirstPassenger());
                     }
                 }
@@ -492,10 +524,10 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return truePassengers;
     }
 
-    public final List<AbstractCompartmentEntity> getCompartments() {
+    public final List<AbstractCompartmentEntity> collectCompartments() {
         final List<AbstractCompartmentEntity> compartments = Lists.newArrayList();
 
-        for (final net.minecraft.world.entity.Entity vehiclePart : this.getPassengers()) {
+        for (final Entity vehiclePart : this.getPassengers()) {
             if (vehiclePart.isVehicle() && vehiclePart.getFirstPassenger() instanceof AbstractCompartmentEntity compartmentEntity) {
                 compartments.add(compartmentEntity);
             }
@@ -503,31 +535,53 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return compartments;
     }
 
-    public final List<AbstractVehiclePart> getVehicleParts() {
-        final List<AbstractVehiclePart> vehicleParts = Lists.newArrayList();
+    public final List<VehiclePart> collectVehicleParts() {
+        final List<VehiclePart> vehicleParts = Lists.newArrayList();
 
-        for (final net.minecraft.world.entity.Entity vehiclePart : this.getPassengers()) {
-            vehicleParts.add((AbstractVehiclePart) vehiclePart);
+        for (final Entity vehiclePart : this.getPassengers()) {
+            vehicleParts.add((VehiclePart) vehiclePart);
         }
         return vehicleParts;
     }
 
+    public final List<Entity> collectVehicleHelpers() {
+        final List<Entity> helpers = Lists.newArrayList();
+
+        for (final VehiclePart part : this.collectVehicleParts()) {
+            if(part.isVehicle()){
+                helpers.add(part.getFirstPassenger());
+            }
+        }
+        return helpers;
+    }
+
+    public final int countVehicleHelpers() {
+        int count = 0;
+
+        for (final VehiclePart part : this.collectVehicleParts()) {
+            if(part.isVehicle()){
+                count++;
+            }
+        }
+        return count;
+    }
+
     @Override
-    protected void positionRider(final net.minecraft.world.entity.Entity passenger, final net.minecraft.world.entity.Entity.MoveFunction moveFunction) {
+    protected void positionRider(final Entity passenger, final Entity.MoveFunction moveFunction) {
         if (this.hasPassenger(passenger)) {
-            if (!(passenger instanceof AbstractVehiclePart)) {
+            if (!(passenger instanceof VehiclePart)) {
                 passenger.stopRiding();
             }
 
             final Vec3 position = positionRiderByIndex(this.getPassengers().indexOf(passenger));
-            final Vec3 vec3 = this.positionLocally((float) position.x, (float)position.y, (float)position.z);
-            moveFunction.accept(passenger, this.getX() + vec3.x, this.getY() + position.y, this.getZ() + vec3.z);
-            passenger.setPos(this.getX() + vec3.x, this.getY() + position.y, this.getZ() + vec3.z);
+            final Vec3 vec3 = this.positionLocally(position);
+            moveFunction.accept(passenger, this.getX() + vec3.x, this.getY() + vec3.y, this.getZ() + vec3.z);
+            passenger.setPos(this.getX() + vec3.x, this.getY() + vec3.y, this.getZ() + vec3.z);
             passenger.setYRot(this.getYRot());
         }
     }
 
-    protected Vec3 positionRiderByIndex(int index){
+    protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
         float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
@@ -547,14 +601,15 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     protected Vec3 positionLocally(float localX, float localY, float localZ) {
-        return (new Vec3(localX, 0, localZ)).yRot(
+        return (new Vec3(localX, localY, localZ)).yRot(
                 -this.getYRot() * ((float) Math.PI / 180F) - ((float) Math.PI / 2F));
     }
+
     protected Vec3 positionLocally(Vec3 vec) {
         return (positionLocally((float) vec.x, (float) vec.y, (float) vec.z));
     }
 
-    protected void clampRotation(final net.minecraft.world.entity.Entity entity) {
+    protected void clampRotation(final Entity entity) {
         entity.setYBodyRot(this.getYRot());
         float f = Mth.wrapDegrees(entity.getYRot() - this.getYRot());
         float f1 = Mth.clamp(f, -105.0F, 105.0F);
@@ -566,7 +621,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     @Override
     protected void checkFallDamage(final double fallDistance, final boolean onGround, final BlockState blockState,
                                    final BlockPos blockPos) {
-        if (this instanceof IAllowFallDamage){
+        if (this instanceof IAllowFallDamage) {
             this.lastYd = this.getDeltaMovement().y;
             if (this.isPassenger()) return;
 
@@ -586,10 +641,10 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
                 this.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
                 if (!this.level().isClientSide && !this.isRemoved()) {
-                    for (net.minecraft.world.entity.Entity passenger : this.getTruePassengers()) {
+                    for (Entity passenger : this.collectLivingPassengers()) {
                         passenger.causeFallDamage(this.fallDistance, 1, this.damageSources().fall());
                     }
-                    for (net.minecraft.world.entity.Entity passenger : this.getPassengers()) {
+                    for (Entity passenger : this.getPassengers()) {
                         if (passenger.isVehicle()) {
                             passenger.getFirstPassenger().kill();
                         }
@@ -666,18 +721,18 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    protected boolean canAddPassenger(final net.minecraft.world.entity.Entity passenger) {
-        if(this.getDamage() > this.getDamageThreshold()){
+    protected boolean canAddPassenger(final Entity passenger) {
+        if (this.getDamage() > this.getDamageThreshold()) {
             return false;
         }
-        return this.getPassengers().size() < this.getMaxPassengers() && !this.isRemoved() && passenger instanceof AbstractVehiclePart;
+        return this.getPassengers().size() < this.getMaxPassengers() && !this.isRemoved() && passenger instanceof VehiclePart;
     }
 
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
-        net.minecraft.world.entity.Entity entity = this.getPilotVehiclePartAsEntity();
-        if (entity instanceof AbstractVehiclePart vehiclePart) {
+        Entity entity = this.getPilotVehiclePartAsEntity();
+        if (entity instanceof VehiclePart vehiclePart) {
             entity = vehiclePart.getFirstPassenger();
             if (entity instanceof EmptyCompartmentEntity emptyCompartmentEntity) {
                 entity = emptyCompartmentEntity.getControllingPassenger();
@@ -696,9 +751,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     @Nullable
     public EmptyCompartmentEntity getPilotCompartment() {
-        final net.minecraft.world.entity.Entity vehiclePart = this.getPilotVehiclePartAsEntity();
+        final Entity vehiclePart = this.getPilotVehiclePartAsEntity();
 
-        if (!(vehiclePart instanceof AbstractVehiclePart) || !vehiclePart.isVehicle()) {
+        if (!(vehiclePart instanceof VehiclePart) || !vehiclePart.isVehicle()) {
             return null;
         }
 
@@ -710,7 +765,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Nullable
-    public net.minecraft.world.entity.Entity getPilotVehiclePartAsEntity() {
+    public Entity getPilotVehiclePartAsEntity() {
         if (this.isVehicle() && this.getPassengers().size() == this.getMaxPassengers()) {
             return this.getPassengers().get(0);
         }
@@ -722,27 +777,27 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER;
     }
 
-    public double getSmoothSpeedMS(){
-        if(this.everyNthTickUnique(3)){
-            double speed = this.getDeltaMovement().length()*20;
+    public double getSmoothSpeedMS() {
+        if (this.everyNthTickUnique(3)) {
+            double speed = this.getDeltaMovement().length() * 20;
             this.speedOverTime.poll();
             this.speedOverTime.offer(speed);
         }
         double average = 0;
-        for(double d : speedOverTime){
+        for (double d : speedOverTime) {
             average += d;
         }
-        average = average/speedOverTime.size();
+        average = average / speedOverTime.size();
         return average;
     }
 
-    public boolean everyNthTickUnique(int n){
+    public boolean everyNthTickUnique(int n) {
         return AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, n);
     }
 
     @Override
-    protected void addPassenger(net.minecraft.world.entity.Entity passenger) {
-        if (passenger instanceof AbstractVehiclePart) {
+    protected void addPassenger(Entity passenger) {
+        if (passenger instanceof VehiclePart) {
             super.addPassenger(passenger);
         }
     }
@@ -762,7 +817,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     @NotNull
     @Override
-    protected Vec3 collide(Vec3 pVec){
+    protected Vec3 collide(Vec3 pVec) {
         // TODO make this work by applying the angular velocity to each collider and by making collision affect deltaRotation
         Vec3 originalCollision = super.collide(pVec);
         /*

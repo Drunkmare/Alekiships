@@ -1,16 +1,15 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractUnderConstructionEntity extends AbstractVehicle implements IHaveConstructionEntity {
+public abstract class AbstractUnderConstructionEntity extends AbstractVehicle implements IHaveConstructionEntities {
 
     public AbstractUnderConstructionEntity(EntityType entityType, Level level) {
         super(entityType, level);
@@ -22,7 +21,7 @@ public abstract class AbstractUnderConstructionEntity extends AbstractVehicle im
 
     public void tick() {
         if (this.getPassengers().size() < this.getMaxPassengers()) {
-            final AbstractVehiclePart newPart = AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get().create(this.level());
+            final VehiclePart newPart = AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get().create(this.level());
             newPart.setPos(this.getX(), this.getY(), this.getZ());
             this.level().addFreshEntity(newPart);
             newPart.startRiding(this);

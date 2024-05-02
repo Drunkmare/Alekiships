@@ -87,7 +87,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements
     public void tick() {
 
         if (this.getPassengers().size() < this.getMaxPassengers()) {
-            final AbstractVehiclePart newPart = AlekiShipsEntities.BOAT_VEHICLE_PART.get().create(this.level());
+            final VehiclePart newPart = AlekiShipsEntities.VEHICLE_PART.get().create(this.level());
             newPart.setPos(this.getX(), this.getY(), this.getZ());
             this.level().addFreshEntity(newPart);
             newPart.startRiding(this);
@@ -381,7 +381,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle implements
                 net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
                 if (leashHolder != null) {
                     if (leashHolder instanceof Player player) {
-                        if (this.getEntitiesToTakeWith().contains(player)) {
+                        if (this.collectEntitesToTakeWith().contains(player)) {
                             return;
                         }
                         if (cleat.distanceTo(leashHolder) > 4f) {

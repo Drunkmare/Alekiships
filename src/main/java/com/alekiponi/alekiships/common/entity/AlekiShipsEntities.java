@@ -123,8 +123,8 @@ public final class AlekiShipsEntities {
                     CompartmentType.Builder.of(LoomCompartmentEntity::new, LoomCompartmentEntity::new)),
             itemStack -> itemStack.is(Items.LOOM));
 
-    public static final RegistryObject<EntityType<BoatVehiclePart>> BOAT_VEHICLE_PART = register("vehicle_part_boat",
-            EntityType.Builder.of(BoatVehiclePart::new, MobCategory.MISC).sized(0, 0)
+    public static final RegistryObject<EntityType<VehiclePart>> VEHICLE_PART = register("vehicle_part",
+            EntityType.Builder.of(VehiclePart::new, MobCategory.MISC).sized(0, 0)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
     public static final RegistryObject<EntityType<ConstructionVehiclePart>> CONSTRUCTION_VEHICLE_PART = register(
@@ -136,9 +136,9 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(VehicleCleatEntity::new, MobCategory.MISC).sized(0.4F, 0.2F)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
-    public static final RegistryObject<EntityType<VehicleCollisionEntity>> VEHICLE_COLLISION_ENTITY = register(
+    public static final RegistryObject<EntityType<VehicleColliderEntity>> VEHICLE_COLLIDER_ENTITY = register(
             "vehicle_collider",
-            EntityType.Builder.of(VehicleCollisionEntity::new, MobCategory.MISC).sized(1, 1).noSummon());
+            EntityType.Builder.of(VehicleColliderEntity::new, MobCategory.MISC).sized(1, 1).noSummon());
 
     public static final RegistryObject<EntityType<SailSwitchEntity>> SAIL_SWITCH_ENTITY = register(
             "vehicle_switch_sail",
