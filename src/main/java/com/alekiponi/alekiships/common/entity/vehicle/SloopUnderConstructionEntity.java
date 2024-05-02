@@ -39,9 +39,9 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     public final int BOOM_ITEM_NUMER = 8;
 
-    public final int MAINSAIL_ITEM_NUMBER = 1;
+    public final int MAINSAIL_ITEM_NUMBER = 16;
 
-    public final int JIBSAIL_ITEM_NUMBER = 1;
+    public final int JIBSAIL_ITEM_NUMBER = 8;
 
     public final int STERN_RAILING_ITEM_NUMBER = 8;
 
@@ -245,7 +245,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     }
 
     public ConstructionState getConstructionStage() {
-        return ConstructionState.ANCHOR.getByOrdinal(this.entityData.get(DATA_ID_CONSTRUCTION_STAGE));
+        return ConstructionState.getByOrdinal(this.entityData.get(DATA_ID_CONSTRUCTION_STAGE));
     }
 
     public void setConstructionStage(ConstructionState stage) {
@@ -282,6 +282,11 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         compoundTag.put("anchor", this.getAnchor().save(new CompoundTag()));
         compoundTag.put("rigging", this.getRigging().save(new CompoundTag()));
         compoundTag.putInt("stage", this.getConstructionStage().ordinal());
+    }
+
+    @Override
+    public int[] getCompartmentIndices() {
+        return new int[0];
     }
 
     public static enum ConstructionState {

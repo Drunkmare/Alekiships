@@ -1,9 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCollisionEntity;
-import net.minecraft.world.entity.Entity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntity;
 
 import java.util.ArrayList;
 
@@ -11,11 +9,11 @@ public interface IHaveColliders {
 
     public abstract int[] getColliderIndices();
 
-    default ArrayList<VehicleCollisionEntity> getColliders(AbstractVehicle vehicle) {
-        ArrayList<VehicleCollisionEntity> list = new ArrayList<VehicleCollisionEntity>();
+    default ArrayList<VehicleColliderEntity> getColliders(AbstractVehicle vehicle) {
+        ArrayList<VehicleColliderEntity> list = new ArrayList<VehicleColliderEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             for (int i : this.getColliderIndices()) {
-                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof VehicleCollisionEntity collider) {
+                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof VehicleColliderEntity collider) {
                     list.add(collider);
                 }
             }
@@ -23,7 +21,7 @@ public interface IHaveColliders {
         return list;
     }
 
-    public default ArrayList<VehicleCollisionEntity> getColliders(){
+    public default ArrayList<VehicleColliderEntity> getColliders(){
         return getColliders((AbstractVehicle) this);
     }
 

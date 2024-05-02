@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.CleatKnotEntityModel;
 import com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
@@ -36,31 +35,41 @@ public class VehicleCleatRenderer extends EntityRenderer<VehicleCleatEntity> {
 
         super.render(cleat, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
         final float rotation;
-        if (cleat.getVehicle().getVehicle() instanceof AbstractAlekiBoatEntity trueVehicle) {
+        
+        if (cleat.getVehicle().getVehicle() instanceof AbstractVehicle trueVehicle) {
             rotation = trueVehicle.getYRot();
         } else {
             rotation = entityYaw;
         }
-        poseStack.pushPose();
-        poseStack.translate(0, 1.5f, 0);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180));
 
-        if ((cleat.getVehicle().isPassenger() && cleat.getVehicle().getVehicle() instanceof RowboatEntity)) {
-            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
-        } else {
-            poseStack.mulPose(Axis.YP.rotationDegrees(rotation + 90));
+
+        if(cleat.getRootVehicle() instanceof AbstractVehicle vehicle){
+            poseStack.pushPose();
+            poseStack.translate(0, 1.5f, 0);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+
+            if (vehicle instanceof RowboatEntity) {
+                poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+            } else {
+                poseStack.mulPose(Axis.YP.rotationDegrees(rotation + 90));
+            }
+
+            this.model.setupAnim(cleat, 0, 0, 0, 0, 0);
+            final VertexConsumer vertexconsumer = bufferSource.getBuffer(
+                    this.model.renderType(this.getTextureLocation(cleat)));
+
+            this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+
+            if (vehicle.renderCleatKnotSides()) {
+                model.getSides().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
+            }
+
+            poseStack.popPose();
+            AlekiShipsRenderHelper.renderRope(cleat, partialTicks, poseStack, bufferSource, entity,
+                    this.getBlockLightLevel(cleat, BlockPos.containing(cleat.getEyePosition(partialTicks))));
         }
-        this.model.setupAnim(cleat, 0, 0, 0, 0, 0);
-        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
-                this.model.renderType(this.getTextureLocation(cleat)));
-        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-        if (!(cleat.getVehicle().isPassenger() && cleat.getVehicle()
-                .getVehicle() instanceof AbstractVehicle vehicle && vehicle.renderCleatKnotSides())) {
-            model.getSides().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
-        }
-        poseStack.popPose();
-        AlekiShipsRenderHelper.renderRope(cleat, partialTicks, poseStack, bufferSource, entity,
-                this.getBlockLightLevel(cleat, BlockPos.containing(cleat.getEyePosition(partialTicks))));
+
+
     }
 
     @Override

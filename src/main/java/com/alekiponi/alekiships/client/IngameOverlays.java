@@ -7,7 +7,7 @@ package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;

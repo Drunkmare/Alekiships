@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.mixins.client;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -48,23 +49,23 @@ public abstract class CameraMixin {
 
         if(pEntity.getVehicle() instanceof EmptyCompartmentEntity compartment && pDetached && !pThirdPersonReverse){
             if(compartment.getTrueVehicle() != null){
-                AbstractAlekiBoatEntity boat = compartment.getTrueVehicle();
+                AbstractVehicle vehicle = compartment.getTrueVehicle();
 
-                double boatSize = boat.getBbWidth();
+                double boatSize = vehicle.getBbWidth();
                 double cameraDistance = 4.0f;
                 if(boatSize >1){
                     cameraDistance = cameraDistance * (boatSize);
                 }
                 this.setRotation(pEntity.getViewYRot(pPartialTick), pEntity.getViewXRot(pPartialTick));
                 double heightModifier = 0;
-                if(boat instanceof SloopEntity){
+                if(vehicle instanceof SloopEntity){
                     heightModifier = 3;
                 }
                 this.setPosition(
-                        Mth.lerp((double)pPartialTick, boat.xo, boat.getX()),
-                        Mth.lerp((double)pPartialTick, boat.yo + heightModifier, boat.getY() + heightModifier) + (double)Mth.lerp(pPartialTick, this.eyeHeightOld, this.eyeHeight),
-                        Mth.lerp((double)pPartialTick, boat.zo, boat.getZ()));
-                if(boat instanceof RowboatEntity rowboatEntity){
+                        Mth.lerp((double)pPartialTick, vehicle.xo, vehicle.getX()),
+                        Mth.lerp((double)pPartialTick, vehicle.yo + heightModifier, vehicle.getY() + heightModifier) + (double)Mth.lerp(pPartialTick, this.eyeHeightOld, this.eyeHeight),
+                        Mth.lerp((double)pPartialTick, vehicle.zo, vehicle.getZ()));
+                if(vehicle instanceof RowboatEntity rowboatEntity){
                     if(rowboatEntity.getPilotCompartment() != null && rowboatEntity.getPilotCompartment().equals(compartment)){
                         this.setRotation(this.yRot + 180.0F, this.xRot);
                     }

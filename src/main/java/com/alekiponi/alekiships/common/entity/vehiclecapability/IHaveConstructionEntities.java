@@ -2,14 +2,12 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
 
-public interface IHaveConstructionEntity {
+public interface IHaveConstructionEntities {
 
-    public abstract int[] getConstructionIndices();
+    int[] getConstructionIndices();
 
     default ArrayList<ConstructionEntity> getConstructionEntities(AbstractVehicle vehicle){
         ArrayList<ConstructionEntity> list = new ArrayList<ConstructionEntity>();

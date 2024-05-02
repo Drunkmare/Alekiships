@@ -1,9 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCollisionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
-import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
 

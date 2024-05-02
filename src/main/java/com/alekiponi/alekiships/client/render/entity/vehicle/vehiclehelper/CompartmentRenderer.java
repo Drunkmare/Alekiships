@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -30,7 +30,7 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
         }
 
         final float rotation;
-        if (compartmentEntity.getTrueVehicle() != null && compartmentEntity.getVehicle() instanceof AbstractVehiclePart vehiclePart && compartmentEntity.tickCount < 2) {
+        if (compartmentEntity.getTrueVehicle() != null && compartmentEntity.getVehicle() instanceof VehiclePart vehiclePart && compartmentEntity.tickCount < 2) {
             rotation = compartmentEntity.getTrueVehicle().getYRot() + vehiclePart.getCompartmentRotation();
         } else {
             rotation = entityYaw;

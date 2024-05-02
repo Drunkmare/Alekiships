@@ -8,7 +8,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.Abstract
 import java.util.ArrayList;
 
 public interface IHaveMasts {
-
     public int[] getMastIndices();
 
     public default ArrayList<MastEntity> getMasts(AbstractVehicle vehicle) {

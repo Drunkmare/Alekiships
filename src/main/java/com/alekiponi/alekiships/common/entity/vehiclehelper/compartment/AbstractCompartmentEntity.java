@@ -2,10 +2,9 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractVehiclePart;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +45,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     protected double lerpYRot;
     protected double lerpXRot;
     @Nullable
-    protected AbstractVehiclePart ridingThisPart = null;
+    protected VehiclePart ridingThisPart = null;
 
     protected int vehiclePassengerIndex = -1;
     private int notRidingTicks = 0;
@@ -84,8 +83,8 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     @Override
     public void tick() {
-        if (ridingThisPart == null && this.isPassenger() && this.getVehicle() instanceof AbstractVehiclePart) {
-            ridingThisPart = (AbstractVehiclePart) this.getVehicle();
+        if (ridingThisPart == null && this.isPassenger() && this.getVehicle() instanceof VehiclePart) {
+            ridingThisPart = (VehiclePart) this.getVehicle();
         }
         if(vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers().size() == vehicle.getMaxPassengers()){
             vehiclePassengerIndex = vehicle.getPassengers().indexOf(this.getVehicle());
@@ -266,9 +265,9 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     }
 
     @Nullable
-    public AbstractAlekiBoatEntity getTrueVehicle() {
-        if (this.getRootVehicle() instanceof AbstractAlekiBoatEntity firmacivBoatEntity) {
-            return firmacivBoatEntity;
+    public AbstractVehicle getTrueVehicle() {
+        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
+            return vehicle;
         }
         return null;
     }

@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHelperEntity;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -12,7 +11,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MastEntity extends AbstractInvisibleHelper implements IHelperEntity {
+public class MastEntity extends Entity {
     public MastEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }

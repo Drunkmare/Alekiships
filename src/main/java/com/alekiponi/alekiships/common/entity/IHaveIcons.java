@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.common.entity.vehiclecapability;
+package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface IHaveIcons {
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player);
+    ArrayList<IngameOverlays.IconState> getIconStates(Player player);
 
 }
