@@ -1,3 +1,1 @@
-Firma: Civilization is an Addon/Expansion for TerraFirmaCraft.
-
-It is themed around adding features to TerraFirmaCraft that focus on organic multiplayer experiences where players working together will be able to accomplish more than the sum of their parts.
+The next generation of ship mod is here! Build in-world, place containers onboard, fire cannons, sail the seas with
