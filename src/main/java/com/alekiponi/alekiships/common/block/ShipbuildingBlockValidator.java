@@ -57,9 +57,11 @@ public class ShipbuildingBlockValidator {
 
         if (boatFrame.getBoatMaterial() != boatMaterial) return false;
 
-        if (!(blockState.getBlock() instanceof AngledWoodenBoatFrameBlock)) return false;
+        if (boatFrame instanceof FlatBoatFrameBlock) return ProcessedBoatFrame.isFullyProcessed(blockState);
 
-        final AngledWoodenBoatFrameBlock.ConstantDirection localConstantDirection = AngledBoatFrameBlock.ConstantDirection.getConstantDirection(
+        if (!(blockState.getBlock() instanceof AngledBoatFrameBlock)) return false;
+
+        final AngledBoatFrameBlock.ConstantDirection localConstantDirection = AngledBoatFrameBlock.ConstantDirection.getConstantDirection(
                 blockState);
         if (localConstantDirection == null) return false;
 
