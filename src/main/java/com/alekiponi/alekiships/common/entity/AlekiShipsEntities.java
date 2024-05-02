@@ -127,11 +127,6 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(VehiclePart::new, MobCategory.MISC).sized(0, 0)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
 
-    public static final RegistryObject<EntityType<ConstructionVehiclePart>> CONSTRUCTION_VEHICLE_PART = register(
-            "vehicle_part_construction",
-            EntityType.Builder.of(ConstructionVehiclePart::new, MobCategory.MISC).sized(0, 0)
-                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
-
     public static final RegistryObject<EntityType<VehicleCleatEntity>> VEHICLE_CLEAT_ENTITY = register("vehicle_cleat",
             EntityType.Builder.of(VehicleCleatEntity::new, MobCategory.MISC).sized(0.4F, 0.2F)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
