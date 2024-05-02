@@ -18,6 +18,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,6 +35,10 @@ import net.minecraft.world.level.block.WaterlilyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -41,7 +47,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
@@ -194,14 +202,17 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild;
 
         if (instantKill) {
-            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                this.spawnAtLocation(this.getDropItem());
-            }
+            // TODO still drop loot when killed in creative?
             this.discard();
         }
         if (this.getDamage() > getDamageThreshold()) {
             for (Entity entity : this.getPassengers()) {
                 entity.kill();
+            }
+            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    this.dropAllDestructionLoot(damageSource, serverLevel);
+                }
             }
         }
 
@@ -219,6 +230,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
     }
 
+    @Deprecated
     public Item getDropItem() {
         return Items.AIR;
     }
@@ -647,7 +659,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
                     }
                     this.kill();
                     if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                        this.spawnAtLocation(this.getDropItem());
+                        if (this.level() instanceof ServerLevel serverLevel) {
+                            this.dropAllDestructionLoot(this.damageSources().fall(), serverLevel);
+                        }
                     }
                 }
             }
@@ -803,6 +817,41 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return new ItemStack(this.getDropItem());
     }
 
+    /**
+     * Drops all destruction loot when the vehicle is destroyed
+     *
+     * @param damageSource The cause of the Destruction
+     */
+    protected void dropAllDestructionLoot(final DamageSource damageSource, final ServerLevel serverLevel) {
+        this.dropFromLootTable(serverLevel, damageSource);
+        this.dropCustomDestructionLoot(damageSource);
+    }
+
+    /**
+     * Drop extra items that might not always drop such as the Oars in the {@link RowboatEntity}
+     *
+     * @param damageSource The cause of the Destruction
+     */
+    protected void dropCustomDestructionLoot(final DamageSource damageSource) {
+    }
+
+    /**
+     * Drops the loot in the vehicle loot table. Allows for data-packable vehicle loot most helpful
+     * with vehicles that should drop multiple things such as the {@link SloopEntity}
+     */
+    protected void dropFromLootTable(final ServerLevel serverLevel, final DamageSource damageSource) {
+        final ResourceLocation resourcelocation = this.getLootTable();
+        final LootTable loottable = serverLevel.getServer().getLootData().getLootTable(resourcelocation);
+        final LootParams.Builder lootBuilder = (new LootParams.Builder(serverLevel)).withParameter(
+                        LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.ORIGIN, this.position())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
+                .withOptionalParameter(LootContextParams.KILLER_ENTITY, damageSource.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, damageSource.getDirectEntity());
+
+        final LootParams lootparams = lootBuilder.create(LootContextParamSets.ENTITY);
+        loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
+    }
+
     @Override
     public AABB getBoundingBoxForCulling() {
         float bbRadius = this.getBbWidth() * 3 + 1;
@@ -854,6 +903,20 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     @Override
     public void onInsideBubbleColumn(boolean pDownwards) {
+    }
+
+    /**
+     * @return The loot table that should be used
+     */
+    public ResourceLocation getLootTable() {
+        return this.getType().getDefaultLootTable();
+    }
+
+    /**
+     * @return The seed to be used for the loot
+     */
+    public long getLootTableSeed() {
+        return 0;
     }
 
     public static enum MediumStatus {
