@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MastEntity extends AbstractInvisibleHelper {
+public class MastEntity extends Entity {
     public MastEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }

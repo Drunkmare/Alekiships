@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 
-public class VehicleColliderEntity extends AbstractInvisibleHelper implements IHaveIcons {
+public class VehicleColliderEntity extends Entity implements IHaveIcons {
 
     public VehicleColliderEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

@@ -20,13 +20,6 @@ public abstract class AbstractUnderConstructionEntity extends AbstractVehicle im
     }
 
     public void tick() {
-        if (this.getPassengers().size() < this.getMaxPassengers()) {
-            final VehiclePart newPart = AlekiShipsEntities.CONSTRUCTION_VEHICLE_PART.get().create(this.level());
-            newPart.setPos(this.getX(), this.getY(), this.getZ());
-            this.level().addFreshEntity(newPart);
-            newPart.startRiding(this);
-        }
-
         super.tick();
     }
 
