@@ -1,12 +1,10 @@
 package com.alekiponi.alekiships.client.render.flywheel;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.jozufozu.flywheel.api.instance.Instancer;
-import com.jozufozu.flywheel.api.visual.VisualFrameContext;
-import com.jozufozu.flywheel.api.visual.VisualTickContext;
+import com.jozufozu.flywheel.api.visual.DynamicVisual;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
 import com.jozufozu.flywheel.lib.instance.InstanceTypes;
 import com.jozufozu.flywheel.lib.instance.TransformedInstance;
@@ -17,9 +15,9 @@ import com.jozufozu.flywheel.lib.visual.SimpleDynamicVisual;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisual;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisualizer;
 import com.jozufozu.flywheel.lib.visual.SimpleTickableVisual;
-import com.jozufozu.flywheel.lib.visual.components.FireComponent;
-import com.jozufozu.flywheel.lib.visual.components.HitboxComponent;
-import com.jozufozu.flywheel.lib.visual.components.ShadowComponent;
+import com.jozufozu.flywheel.lib.visual.component.FireComponent;
+import com.jozufozu.flywheel.lib.visual.component.HitboxComponent;
+import com.jozufozu.flywheel.lib.visual.component.ShadowComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.resources.ResourceLocation;
@@ -63,7 +61,6 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
 
     @Override
     public void init(final float partialTick) {
-        // Debug command /summon alekiships:rowboat/oak ~ ~ ~ {"paint":0b}
         this.addComponent(new ShadowComponent(this.visualizationContext, this.entity).radius(1));
         this.addComponent(new FireComponent(this.visualizationContext, this.entity));
         this.addComponent(new HitboxComponent(this.visualizationContext, this.entity));
@@ -79,7 +76,7 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
     }
 
     @Override
-    public void beginFrame(final VisualFrameContext context) {
+    public void beginFrame(final DynamicVisual.Context context) {
         super.beginFrame(context);
 
         if (!this.isVisible(context.frustum())) {
@@ -116,12 +113,10 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
     }
 
     @Override
-    public void tick(final VisualTickContext unused) {
+    public void tick() {
         final Optional<DyeColor> paintColor = this.entity.getPaintColor();
         if (!paintColor.equals(this.lastPaintColor)) {
-            AlekiShips.LOGGER.debug("Last paint = {}. New paint = {}", this.lastPaintColor, paintColor);
             this.lastPaintColor = paintColor;
-            // TODO For some reason ghosting??
             this.getInstancer().stealInstance(this.boatModel);
         }
     }
