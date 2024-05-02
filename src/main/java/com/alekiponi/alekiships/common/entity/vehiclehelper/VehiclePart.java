@@ -79,7 +79,6 @@ public class VehiclePart extends AbstractInvisibleHelper {
     }
 
     protected void tickAddAppropriateHelper(AbstractVehicle vehicle) {
-        boolean alreadyHasPassenger = false;
 
         //Try adding a collider
         if (tickAddCollider(vehicle)) {
