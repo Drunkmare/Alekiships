@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -147,15 +148,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
             this.playSound(SoundEvents.WOOD_BREAK, 1.0F, this.level().getRandom().nextFloat() * 0.1F + 0.9F);
-            switch (this.getOars()) {
-                case ZERO:
-                    break;
-                case TWO:
-                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
-                case ONE:
-                    this.spawnAtLocation(AlekiShipsItems.OAR.get());
-                    break;
-            }
         }
 
         super.remove(removalReason);
@@ -194,6 +186,20 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveCleat
     @Override
     public Item getDropItem() {
         return this.boatMaterial.getDeckItem();
+    }
+
+    @Override
+    protected void dropCustomDestructionLoot(final DamageSource damageSource) {
+        super.dropCustomDestructionLoot(damageSource);
+        switch (this.getOars()) {
+            case ZERO:
+                break;
+            case TWO:
+                this.spawnAtLocation(AlekiShipsItems.OAR.get());
+            case ONE:
+                this.spawnAtLocation(AlekiShipsItems.OAR.get());
+                break;
+        }
     }
 
     @Nullable
