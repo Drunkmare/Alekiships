@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
@@ -96,6 +97,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         this.oldStatus = this.status;
         this.status = this.getStatus();
+
+        AlekiShips.LOGGER.debug("Status: " + this.status.name());
 
         if (this.getHurtTime() > 0) {
             this.setHurtTime(this.getHurtTime() - 1);

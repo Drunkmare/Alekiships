@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
 import net.minecraft.client.player.LocalPlayer;
@@ -47,9 +48,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
@@ -354,7 +357,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
         final float groundFriction = this.getGroundFriction();
 
-        if (0 < groundFriction) {
+        if (groundFriction > 0) {
             this.landFriction = groundFriction;
             return MediumStatus.ON_LAND;
         }
@@ -398,9 +401,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return l + 1;
     }
 
-
-    public float getGroundFriction() {
-        AABB aabb = this.getBoundingBox();
+    public float getGroundFriction(AABB aabb) {
         AABB aabb1 = new AABB(aabb.minX, aabb.minY - 0.001D, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
         int i = Mth.floor(aabb1.minX) - 1;
         int j = Mth.ceil(aabb1.maxX) + 1;
@@ -436,8 +437,26 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return f / k1;
     }
 
-    protected boolean checkInWater() {
-        AABB aabb = this.getBoundingBox();
+    protected float getGroundFriction(){
+        ArrayList<Float> groundFrictions = new ArrayList<Float>();
+
+        groundFrictions.add(getGroundFriction(this.getBoundingBox()));
+
+        for(VehicleColliderEntity collider : this.getColliders()){
+            groundFrictions.add(getGroundFriction(collider.getBoundingBox()));
+        }
+
+        float finalFriction = 0;
+        for(float friction : groundFrictions){
+            if(friction > finalFriction){
+                finalFriction = friction;
+            }
+        }
+
+        return finalFriction;
+    }
+
+    protected boolean checkInWater(AABB aabb) {
         int i = Mth.floor(aabb.minX);
         int j = Mth.ceil(aabb.maxX);
         int k = Mth.floor(aabb.minY);
@@ -465,28 +484,26 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return flag;
     }
 
-    /*
-    @Nullable
-    public Entity getNewHelperForPart(AbstractVehiclePart part) {
-        int i = 0;
-        for (AbstractVehiclePart part1 : this.collectVehicleParts()) {
-            if (part1.is(part) && !part.isVehicle()) {
-                return getNewHelperForIndex(i);
-            }
-            i++;
+    protected boolean checkInWater(){
+        int boxes = this.getColliderIndices().length + 1;
+        int count = 0;
+
+        if(checkInWater(this.getBoundingBox())){
+            count++;
         }
-        return null;
+
+        for(VehicleColliderEntity collider : this.getColliders()){
+            if(checkInWater(collider.getBoundingBox())){
+                count++;
+            }
+        }
+
+        return count == boxes;
     }
 
     @Nullable
-    public Entity getNewHelperForIndex(int index) {
-
-        return null;
-    }*/
-
-    @Nullable
-    protected MediumStatus isUnderwater() {
-        final AABB aabb = this.getBoundingBox();
+    protected MediumStatus isUnderwater(AABB aabb) {
+        //final AABB aabb = this.getBoundingBox();
         final double d0 = aabb.maxY + 0.001D;
         final int i = Mth.floor(aabb.minX);
         final int j = Mth.ceil(aabb.maxX);
@@ -504,9 +521,10 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
                     final FluidState fluidstate = this.level().getFluidState(mutableBlockPos);
                     if (fluidstate.is(FluidTags.WATER) &&
                             d0 < mutableBlockPos.getY() + fluidstate.getHeight(this.level(), mutableBlockPos)) {
+                        /*
                         if (!fluidstate.isSource()) {
                             return MediumStatus.UNDER_FLOWING_WATER;
-                        }
+                        }*/
 
                         isUnderwater = true;
                     }
@@ -515,6 +533,29 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
 
         return isUnderwater ? MediumStatus.UNDER_WATER : null;
+    }
+
+    @Nullable
+    protected MediumStatus isUnderwater(){
+
+        int boxes = this.getColliderIndices().length + 1;
+        int count = 0;
+
+        if(isUnderwater(this.getBoundingBox()) == MediumStatus.UNDER_WATER){
+            count++;
+        }
+
+        for(VehicleColliderEntity collider : this.getColliders()){
+            if(isUnderwater(collider.getBoundingBox()) == MediumStatus.UNDER_WATER){
+                count++;
+            }
+        }
+
+        if(count == boxes){
+            return MediumStatus.UNDER_WATER;
+        }
+
+        return null;
     }
 
     public final List<Entity> collectLivingPassengers() {
@@ -556,7 +597,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         final List<Entity> helpers = Lists.newArrayList();
 
         for (final VehiclePart part : this.collectVehicleParts()) {
-            if(part.isVehicle()){
+            if (part.isVehicle()) {
                 helpers.add(part.getFirstPassenger());
             }
         }
@@ -567,7 +608,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         int count = 0;
 
         for (final VehiclePart part : this.collectVehicleParts()) {
-            if(part.isVehicle()){
+            if (part.isVehicle()) {
                 count++;
             }
         }
@@ -860,36 +901,119 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return new AABB(startingPoint, endingPoint);
     }
 
+
     @NotNull
     @Override
     protected Vec3 collide(Vec3 pVec) {
+
         // TODO make this work by applying the angular velocity to each collider and by making collision affect deltaRotation
-        Vec3 originalCollision = super.collide(pVec);
-        /*
-        if(originalCollision.horizontalDistance() == 0){
+        Vec3 originalCollision = getThisCollision(pVec);
+
+        if (originalCollision.horizontalDistance() == 0) {
             return originalCollision;
         }
         ArrayList<Vec3> addedCollisions = new ArrayList<>();
-        for(VehicleCollisionEntity collider : this.getColliders()){
+        for (VehicleColliderEntity collider : this.getColliders()) {
+
+
+            /*
+            ;
             // apply angular velocity to pVec
+
             // apply collision to deltaRotation
 
             AABB aabb = collider.getBoundingBox();
             List<VoxelShape> list = collider.level().getEntityCollisions(collider, aabb.expandTowards(pVec));
             Vec3 vec3 = pVec.lengthSqr() == 0.0D ? pVec : collideBoundingBox(collider, pVec, aabb, this.level(), list);
 
-            addedCollisions.add(vec3);
+             */
+
+            addedCollisions.add(collider.getCollision());
         }
 
         // resolve collisions
         //addedCollisions.add(originalCollision);
-        Vec3 finalCollision = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-        for(Vec3 collision : addedCollisions){
-            if(collision.horizontalDistance() < finalCollision.horizontalDistance()){
+        Vec3 finalCollision = originalCollision;
+        float finalCollisionY = (float) originalCollision.y();
+        for (Vec3 collision : addedCollisions) {
+            if (collision.horizontalDistance() < finalCollision.horizontalDistance()) {
                 finalCollision = collision;
             }
-        }*/
-        return originalCollision;
+            if(Mth.abs((float) collision.y()) < Mth.abs(finalCollisionY)){
+                finalCollisionY = (float) collision.y();
+            }
+        }
+        finalCollision = new Vec3(originalCollision.x, finalCollisionY, originalCollision.z);
+
+        /*
+
+        if (finalCollision == originalCollision) {
+            return finalCollision;
+        } else {
+            finalCollision
+        }
+
+         */
+
+        return finalCollision;
+    }
+
+    protected Vec3 getThisCollision(Vec3 pVec) {
+        AABB aabb = this.getBoundingBox();
+        List<VoxelShape> list = getEntityCollisions(this, aabb.expandTowards(pVec));
+        Vec3 vec3 = pVec.lengthSqr() == 0.0D ? pVec : collideBoundingBox(this, pVec, aabb, this.level(), list);
+        boolean flag = pVec.x != vec3.x;
+        boolean flag1 = pVec.y != vec3.y;
+        boolean flag2 = pVec.z != vec3.z;
+        boolean flag3 = this.onGround() || flag1 && pVec.y < 0.0D;
+        float stepHeight = getStepHeight();
+        if (stepHeight > 0.0F && flag3 && (flag || flag2)) {
+            Vec3 vec31 = collideBoundingBox(this, new Vec3(pVec.x, (double) stepHeight, pVec.z), aabb, this.level(), list);
+            Vec3 vec32 = collideBoundingBox(this, new Vec3(0.0D, (double) stepHeight, 0.0D), aabb.expandTowards(pVec.x, 0.0D, pVec.z), this.level(), list);
+            if (vec32.y < (double) stepHeight) {
+                Vec3 vec33 = collideBoundingBox(this, new Vec3(pVec.x, 0.0D, pVec.z), aabb.move(vec32), this.level(), list).add(vec32);
+                if (vec33.horizontalDistanceSqr() > vec31.horizontalDistanceSqr()) {
+                    vec31 = vec33;
+                }
+            }
+
+            if (vec31.horizontalDistanceSqr() > vec3.horizontalDistanceSqr()) {
+                return vec31.add(collideBoundingBox(this, new Vec3(0.0D, -vec31.y + pVec.y, 0.0D), aabb.move(vec31), this.level(), list));
+            }
+        }
+
+        return vec3;
+    }
+
+
+    private static List<VoxelShape> getEntityCollisions(@Nullable Entity collider, AABB pCollisionBox) {
+        if(collider instanceof VehicleColliderEntity || collider instanceof AbstractVehicle){
+            if (pCollisionBox.getSize() < 1.0E-7D) {
+                return List.of();
+            } else {
+                Predicate<Entity> predicate = collider == null ? EntitySelector.CAN_BE_COLLIDED_WITH : EntitySelector.NO_SPECTATORS.and(collider::canCollideWith);
+                List<Entity> list = collider.level().getEntities(collider, pCollisionBox.inflate(1.0E-7D), predicate);
+
+                list.removeIf(entity -> entity.getRootVehicle().is(collider.getRootVehicle()));
+
+                if (list.isEmpty()) {
+                    return List.of();
+                } else {
+                    ImmutableList.Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(list.size());
+
+                    for(Entity entity : list) {
+                        builder.add(Shapes.create(entity.getBoundingBox()));
+                    }
+
+                    return builder.build();
+                }
+            }
+        }
+        return List.of();
+    }
+
+    public final AABB getOuterBoundingBox() {
+        return getBoundingBox().inflate(10, 0, 10);
     }
 
     @Override
