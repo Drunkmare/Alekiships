@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
+import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.entity.CannonRenderer;
 import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
@@ -22,6 +23,7 @@ public final class RenderEventHandler {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(RowboatEntityModel.LAYER_LOCATION, RowboatEntityModel::createBodyLayer);
+        event.registerLayerDefinition(SloopEntityModel.LAYER_LOCATION, SloopEntityModel::createBodyLayer);
     }
 
     @SubscribeEvent

@@ -9,4 +9,6 @@ public final class Materials {
 
     public static final Material ROWBOAT = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH)
             .texture(ShipSheets.ROWBOAT_SHEET).mipmap(false).backfaceCulling(false).build();
+    public static final Material SLOOP = SimpleMaterial.builder().cutout(CutoutShaders.ONE_TENTH)
+            .texture(ShipSheets.SLOOP_SHEET).mipmap(false).backfaceCulling(false).build();
 }

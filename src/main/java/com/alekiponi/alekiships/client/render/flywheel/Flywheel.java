@@ -17,6 +17,9 @@ public class Flywheel {
             builder(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get()).factory(
                     RowboatVisual.create(getRowboatBaseTexture(vanillaWood), AlekiShipsHelper.mapOfKeys(DyeColor.class,
                             dyeColor -> getRowboatPaintTexture(vanillaWood, dyeColor)))).apply();
+            builder(AlekiShipsEntities.SLOOPS.get(vanillaWood).get()).factory(
+                    SloopVisual.create(getSloopBaseTexture(vanillaWood), AlekiShipsHelper.mapOfKeys(DyeColor.class,
+                            dyeColor -> getSloopPaintTexture(vanillaWood, dyeColor)))).apply();
         }
     }
 
@@ -30,4 +33,13 @@ public class Flywheel {
                 "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName());
     }
 
+    private static ResourceLocation getSloopPaintTexture(final VanillaWood vanillaWood, final DyeColor dyeColor) {
+        return new ResourceLocation(AlekiShips.MOD_ID,
+                "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName());
+    }
+
+    private static ResourceLocation getSloopBaseTexture(final VanillaWood vanillaWood) {
+        return new ResourceLocation(AlekiShips.MOD_ID,
+                "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName());
+    }
 }
