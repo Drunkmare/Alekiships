@@ -4,7 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
+import com.alekiponi.alekiships.client.resources.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
