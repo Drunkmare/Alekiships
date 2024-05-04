@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 public class VehicleColliderEntity extends Entity implements IHaveIcons {
 
@@ -76,9 +77,10 @@ public class VehicleColliderEntity extends Entity implements IHaveIcons {
     }
 
     public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
+        /*
         if (entity instanceof AbstractAlekiBoatEntity || entity instanceof AbstractCompartmentEntity) {
             return false;
-        }
+        }*/
 
         return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
     }
@@ -149,7 +151,7 @@ public class VehicleColliderEntity extends Entity implements IHaveIcons {
     }
 
 
-    private static List<VoxelShape> getEntityCollisions(@Nullable Entity collider, AABB pCollisionBox) {
+    public static List<VoxelShape> getEntityCollisions(@Nullable Entity collider, AABB pCollisionBox) {
         if(collider instanceof VehicleColliderEntity || collider instanceof AbstractVehicle){
             if (pCollisionBox.getSize() < 1.0E-7D) {
                 return List.of();
@@ -157,7 +159,9 @@ public class VehicleColliderEntity extends Entity implements IHaveIcons {
                 Predicate<Entity> predicate = collider == null ? EntitySelector.CAN_BE_COLLIDED_WITH : EntitySelector.NO_SPECTATORS.and(collider::canCollideWith);
                 List<Entity> list = collider.level().getEntities(collider, pCollisionBox.inflate(1.0E-7D), predicate);
 
-                list.removeIf(entity -> entity.getRootVehicle().is(collider.getRootVehicle()));
+                list.removeIf(entity -> collider.isPassengerOfSameVehicle(entity));
+                list.removeIf(entity -> entity instanceof AbstractVehicle);
+                list.removeIf(entity -> entity instanceof VehicleColliderEntity);
 
                 if (list.isEmpty()) {
                     return List.of();
@@ -176,7 +180,7 @@ public class VehicleColliderEntity extends Entity implements IHaveIcons {
     }
 
 
-    /*
+
     public Vec3 getDeltaMovement() {
         if(!(this.getRootVehicle() instanceof AbstractVehicle vehicle)){
             return super.getDeltaMovement();
@@ -187,7 +191,9 @@ public class VehicleColliderEntity extends Entity implements IHaveIcons {
         double deltaRotation = vehicle.getDeltaRotation();
         Vec3 angularDeltaMovement = Vec3.ZERO;
         movement = movement.add(angularDeltaMovement);
-    }*/
+
+        return movement;
+    }
 
     @Override
     public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {

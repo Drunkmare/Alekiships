@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntity.getEntityCollisions;
+
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
@@ -983,33 +985,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
 
         return vec3;
-    }
-
-
-    private static List<VoxelShape> getEntityCollisions(@Nullable Entity collider, AABB pCollisionBox) {
-        if(collider instanceof VehicleColliderEntity || collider instanceof AbstractVehicle){
-            if (pCollisionBox.getSize() < 1.0E-7D) {
-                return List.of();
-            } else {
-                Predicate<Entity> predicate = collider == null ? EntitySelector.CAN_BE_COLLIDED_WITH : EntitySelector.NO_SPECTATORS.and(collider::canCollideWith);
-                List<Entity> list = collider.level().getEntities(collider, pCollisionBox.inflate(1.0E-7D), predicate);
-
-                list.removeIf(entity -> entity.getRootVehicle().is(collider.getRootVehicle()));
-
-                if (list.isEmpty()) {
-                    return List.of();
-                } else {
-                    ImmutableList.Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(list.size());
-
-                    for(Entity entity : list) {
-                        builder.add(Shapes.create(entity.getBoundingBox()));
-                    }
-
-                    return builder.build();
-                }
-            }
-        }
-        return List.of();
     }
 
     public final AABB getOuterBoundingBox() {
