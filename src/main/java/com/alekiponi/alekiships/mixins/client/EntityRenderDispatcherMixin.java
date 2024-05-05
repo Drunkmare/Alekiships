@@ -20,11 +20,11 @@ import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
 
-    @Inject(method = "renderHitbox", at = @At(value = "HEAD")/*, cancellable = true*/)
+    @Inject(method = "renderHitbox", at = @At(value = "HEAD"), cancellable = true)
     private static void injectSwitchHitboxRendering(PoseStack pPoseStack, VertexConsumer pBuffer, Entity pEntity, float pPartialTicks, CallbackInfo ci){
-        if(pEntity instanceof IPolygonalHitbox iPolygonalHitbox){
+        if(pEntity instanceof IPolygonalHitbox){
             renderPolygonalHitbox(pPoseStack, pBuffer, pEntity, pPartialTicks);
-            //ci.cancel();
+            ci.cancel();
         }
     }
 

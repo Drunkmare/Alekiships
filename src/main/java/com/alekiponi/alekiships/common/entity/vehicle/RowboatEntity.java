@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPolygonalHitbox;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
@@ -30,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveCleats {
+public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveCleats, IPolygonalHitbox {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
@@ -312,6 +313,41 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     @Override
     public float getStepHeight() {
         return 0.0f;
+    }
+
+
+    protected Vec3 positionLocally(float localX, float localY, float localZ) {
+        return (new Vec3(localX, localY, localZ)).yRot(
+                -this.getYRot() * ((float) Math.PI / 180F) - ((float) Math.PI / 2F));
+    }
+
+    protected Vec3 positionLocally(Vec3 vec) {
+        return (positionLocally((float) vec.x, (float) vec.y, (float) vec.z));
+    }
+
+
+    private final Vec3[] relativeHitboxVertices = new Vec3[]{
+
+            new Vec3(31/16f,0,5/16f),
+            new Vec3(7/16f,0,17/16f),
+            new Vec3(-23/16f,0,13/16f),
+            new Vec3(-23/16f,0,-13/16f),
+            new Vec3(7/16f,0,-17/16f),
+            new Vec3(31/16f,0,-5/16f)
+    };
+
+    @Override
+    public double[][] getPlanarVertices() {
+        double[][] vertices = new double[][]{
+                {positionLocally(relativeHitboxVertices[0]).x, positionLocally(relativeHitboxVertices[0]).z},
+                {positionLocally(relativeHitboxVertices[1]).x, positionLocally(relativeHitboxVertices[1]).z},
+                {positionLocally(relativeHitboxVertices[2]).x, positionLocally(relativeHitboxVertices[2]).z},
+                {positionLocally(relativeHitboxVertices[3]).x, positionLocally(relativeHitboxVertices[3]).z},
+                {positionLocally(relativeHitboxVertices[4]).x, positionLocally(relativeHitboxVertices[4]).z},
+                {positionLocally(relativeHitboxVertices[5]).x, positionLocally(relativeHitboxVertices[5]).z}
+        };
+
+        return vertices;
     }
 
     public enum Oars {
