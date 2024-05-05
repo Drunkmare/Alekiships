@@ -7,9 +7,10 @@
     "minecraft.PlayerMixin"
   ],
   "client": [
-    "minecraft.PlayerModelMixin",
+    "client.CameraMixin",
+    "client.EntityRenderDispatcherMixin",
     "client.LocalPlayerMixin",
-    "client.CameraMixin"
+    "minecraft.PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

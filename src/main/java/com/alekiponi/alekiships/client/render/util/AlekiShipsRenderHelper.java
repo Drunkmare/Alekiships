@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.client.render.util;
 
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPolygonalHitbox;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
@@ -77,7 +79,11 @@ public class AlekiShipsRenderHelper {
         pPoseStack.popPose();
     }
 
-    public static void renderLinePolygon(PoseStack pPoseStack, VertexConsumer pConsumer, double[][] pBottomVertices, float pMinY, float pMaxY, float pRed, float pGreen, float pBlue, float pAlpha, float pRed2, float pGreen2, float pBlue2) {
+    public static void renderLinePolygon(PoseStack pPoseStack, VertexConsumer pConsumer, double[][] pBottomVertices, double pMinY, double pMaxY, float pRed, float pGreen, float pBlue, float pAlpha) {
+        renderLinePolygon(pPoseStack, pConsumer, pBottomVertices, pMinY, pMaxY, pRed, pGreen, pBlue, pAlpha, pRed, pGreen, pBlue);
+    }
+
+    public static void renderLinePolygon(PoseStack pPoseStack, VertexConsumer pConsumer, double[][] pBottomVertices, double pMinY, double pMaxY, float pRed, float pGreen, float pBlue, float pAlpha, float pRed2, float pGreen2, float pBlue2) {
         Matrix4f lastPose = pPoseStack.last().pose();
         Matrix3f lastNormal = pPoseStack.last().normal();
 
@@ -98,8 +104,8 @@ public class AlekiShipsRenderHelper {
         edges[0][1] = vertices[0];
 
         for(int i = 1; i < vertexCount; i++){
-            edges[i][0] = vertices[i];
-            edges[i][1] = vertices[i+1];
+            edges[i][0] = vertices[i-1];
+            edges[i][1] = vertices[i];
         }
 
         // for each edge, generate a normal which is perpendicular to the vector between the two vertices in the side
@@ -107,45 +113,126 @@ public class AlekiShipsRenderHelper {
 
         for(int i = 0; i < vertexCount; i ++){
             normals[i] = leftHandPerpendicular(vectorTo(edges[i][0], edges[i][1])).normalized();
+            //normals[i] = vectorTo(edges[i][0], edges[i][1]).normalized();
         }
+
+
 
 
         for(int i = 0; i < vertexCount; i++){
 
-            // create i given horizontal sides
+            // create i given horizontal sides, bottom
 
-            pConsumer.vertex(lastPose, edges[i][0].x, edges[i][0].y /* game Z */, minY )
+            pConsumer.vertex(lastPose, edges[i][0].x, minY, edges[i][0].y )
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, normals[i].x, 0.0F, normals[i].y)
                     .endVertex();
 
-            pConsumer.vertex(lastPose, edges[i][0].x, edges[i][0].y /* game Z */, maxY )
+            pConsumer.vertex(lastPose, edges[i][0].x,  minY, edges[i][0].y )
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, normals[i].x, 0.0F, normals[i].y)
                     .endVertex();
 
-            pConsumer.vertex(lastPose, edges[i][1].x, edges[i][1].y /* game Z */, minY )
+            // create i given horizontal sides, top
+
+            pConsumer.vertex(lastPose, edges[i][1].x,  maxY, edges[i][1].y )
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, normals[i].x, 0.0F, normals[i].y)
                     .endVertex();
 
-            pConsumer.vertex(lastPose, edges[i][1].x, edges[i][1].y /* game Z */, maxY )
+            pConsumer.vertex(lastPose, edges[i][1].x,  maxY, edges[i][1].y )
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, normals[i].x, 0.0F, normals[i].y)
                     .endVertex();
+
 
             // add the vertices for the top and bottom sides
 
-            pConsumer.vertex(lastPose, vertices[i].x, vertices[i].y /* game Z */, maxY )
+            pConsumer.vertex(lastPose, vertices[i].x,  maxY, vertices[i].y)
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, 0, 1.0F, 0)
                     .endVertex();
 
-            pConsumer.vertex(lastPose, vertices[i].x, vertices[i].y /* game Z */, minY )
+            pConsumer.vertex(lastPose, vertices[i].x, minY, vertices[i].y )
                     .color(pRed, pGreen2, pBlue2, pAlpha)
                     .normal(lastNormal, 0, -1.0F, 0)
                     .endVertex();
+
+
         }
+
+
+
+        pConsumer.vertex(lastPose, vertices[vertexCount-1].x,  maxY, vertices[vertexCount-1].y)
+                .color(pRed, pGreen2, pBlue2, pAlpha)
+                .normal(lastNormal, 0, 1.0F, 0)
+                .endVertex();
+
+        for(int i = 0; i < vertexCount; i++){
+
+            // add the vertices for the top and bottom sides
+
+            pConsumer.vertex(lastPose, vertices[i].x,  maxY, vertices[i].y)
+                    .color(pRed, pGreen2, pBlue2, pAlpha)
+                    .normal(lastNormal, 0, 1.0F, 0)
+                    .endVertex();
+
+            pConsumer.vertex(lastPose, vertices[i].x,  maxY, vertices[i].y)
+                    .color(pRed, pGreen2, pBlue2, pAlpha)
+                    .normal(lastNormal, 0, 1.0F, 0)
+                    .endVertex();
+        }
+
+        pConsumer.vertex(lastPose, vertices[0].x,  maxY, vertices[0].y)
+                .color(pRed, pGreen2, pBlue2, pAlpha)
+                .normal(lastNormal, 0, 1.0F, 0)
+                .endVertex();
+
+
+        pConsumer.vertex(lastPose, vertices[vertexCount-1].x, minY, vertices[vertexCount-1].y )
+                .color(pRed, pGreen2, pBlue2, pAlpha)
+                .normal(lastNormal, 0, -1.0F, 0)
+                .endVertex();
+
+        for(int i = 0; i < vertexCount; i++){
+
+            // add the vertices for the top and bottom sides
+
+            pConsumer.vertex(lastPose, vertices[i].x, minY, vertices[i].y )
+                    .color(pRed, pGreen2, pBlue2, pAlpha)
+                    .normal(lastNormal, 0, -1.0F, 0)
+                    .endVertex();
+
+            pConsumer.vertex(lastPose, vertices[i].x, minY, vertices[i].y )
+                    .color(pRed, pGreen2, pBlue2, pAlpha)
+                    .normal(lastNormal, 0, -1.0F, 0)
+                    .endVertex();
+
+        }
+
+        pConsumer.vertex(lastPose, vertices[0].x, minY, vertices[0].y )
+                .color(pRed, pGreen2, pBlue2, pAlpha)
+                .normal(lastNormal, 0, -1.0F, 0)
+                .endVertex();
+
+
+
+
+
+    }
+
+    public static void renderPolygonalHitbox(PoseStack pPoseStack, VertexConsumer pBuffer, Entity pEntity, float pPartialTicks){
+        AABB aabb = pEntity.getBoundingBox().move(-pEntity.getX(), -pEntity.getY(), -pEntity.getZ());
+
+        AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, ((IPolygonalHitbox)pEntity).getPlanarVertices(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
+
+        /*
+        Vec3 vec3 = pEntity.getViewVector(pPartialTicks);
+        Matrix4f matrix4f = pPoseStack.last().pose();
+        Matrix3f matrix3f = pPoseStack.last().normal();
+        pBuffer.vertex(matrix4f, 0.0F, pEntity.getEyeHeight(), 0.0F).color(0, 0, 255, 255).normal(matrix3f, (float)vec3.x, (float)vec3.y, (float)vec3.z).endVertex();
+        pBuffer.vertex(matrix4f, (float)(vec3.x * 2.0D), (float)((double)pEntity.getEyeHeight() + vec3.y * 2.0D), (float)(vec3.z * 2.0D)).color(0, 0, 255, 255).normal(matrix3f, (float)vec3.x, (float)vec3.y, (float)vec3.z).endVertex();
+*/
     }
 
     public static Vec2 vectorTo(Vec2 pVec1, Vec2 pVec2) {

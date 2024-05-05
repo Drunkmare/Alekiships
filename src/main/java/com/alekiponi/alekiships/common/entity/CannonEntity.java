@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPolygonalHitbox;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -28,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
-public class CannonEntity extends Entity {
+public class CannonEntity extends Entity implements IPolygonalHitbox {
     public static final byte EVENT_LIGHT = 10;
     public static final String FUSE_KEY = "Fuse";
     public static final String CANNONBALL_KEY = "Cannonball";
@@ -349,5 +350,39 @@ public class CannonEntity extends Entity {
 
     public boolean isLit() {
         return this.fuse > -1;
+    }
+
+    protected Vec3 positionLocally(float localX, float localY, float localZ) {
+        return (new Vec3(localX, localY, localZ)).yRot(
+                -this.getYRot() * ((float) Math.PI / 180F) - ((float) Math.PI / 2F));
+    }
+
+    protected Vec3 positionLocally(Vec3 vec) {
+        return (positionLocally((float) vec.x, (float) vec.y, (float) vec.z));
+    }
+
+
+    private final Vec3[] relativeHitboxVertices = new Vec3[]{
+            new Vec3(0.5,0,1),
+            new Vec3(1,0,0),
+            new Vec3(0.5,0,-1),
+            new Vec3(-0.5,0,-1),
+            new Vec3(-1,0,0),
+            new Vec3(-0.5,0,1)
+    };
+
+    @Override
+    public double[][] getPlanarVertices() {
+        double[][] vertices = new double[][]{
+                {positionLocally(relativeHitboxVertices[0]).x, positionLocally(relativeHitboxVertices[0]).z},
+                {positionLocally(relativeHitboxVertices[1]).x, positionLocally(relativeHitboxVertices[1]).z},
+                {positionLocally(relativeHitboxVertices[2]).x, positionLocally(relativeHitboxVertices[2]).z},
+                {positionLocally(relativeHitboxVertices[3]).x, positionLocally(relativeHitboxVertices[3]).z},
+                {positionLocally(relativeHitboxVertices[4]).x, positionLocally(relativeHitboxVertices[4]).z},
+                {positionLocally(relativeHitboxVertices[5]).x, positionLocally(relativeHitboxVertices[5]).z}
+
+        };
+
+        return vertices;
     }
 }
