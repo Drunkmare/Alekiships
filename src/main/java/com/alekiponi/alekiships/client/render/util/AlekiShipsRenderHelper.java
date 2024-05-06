@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.util;
 
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IPolygonalHitbox;
+import com.alekiponi.alekiships.common.entity.OBBEntity;
+import com.alekiponi.alekiships.common.physics.OBB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
@@ -15,6 +16,9 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+
+import static com.alekiponi.alekiships.common.physics.Vec2Helper.leftHandPerpendicular;
+import static com.alekiponi.alekiships.common.physics.Vec2Helper.vectorTo;
 
 public class AlekiShipsRenderHelper {
     public static void addVertexPair(VertexConsumer pConsumer, Matrix4f pMatrix, float p_174310_, float p_174311_,
@@ -117,8 +121,6 @@ public class AlekiShipsRenderHelper {
         }
 
 
-
-
         for(int i = 0; i < vertexCount; i++){
 
             // create i given horizontal sides, bottom
@@ -215,17 +217,13 @@ public class AlekiShipsRenderHelper {
                 .normal(lastNormal, 0, -1.0F, 0)
                 .endVertex();
 
-
-
-
-
     }
 
-    public static void renderPolygonalHitbox(PoseStack pPoseStack, VertexConsumer pBuffer, Entity pEntity, float pPartialTicks){
+    public static void renderPolygonalHitbox(PoseStack pPoseStack, VertexConsumer pBuffer, OBBEntity pEntity, float pPartialTicks){
         AABB aabb = pEntity.getBoundingBox().move(-pEntity.getX(), -pEntity.getY(), -pEntity.getZ());
+        OBB obb = pEntity.getPolyBoundingBox();
 
-        AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, ((IPolygonalHitbox)pEntity).getPlanarVertices(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
-
+        AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, obb.getLowerVerticesForRender(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
 
         Vec3 vec3 = pEntity.getViewVector(pPartialTicks);
         Matrix4f matrix4f = pPoseStack.last().pose();
@@ -235,16 +233,6 @@ public class AlekiShipsRenderHelper {
 
     }
 
-    public static Vec2 vectorTo(Vec2 pVec1, Vec2 pVec2) {
-        return new Vec2(pVec2.x - pVec1.x, pVec2.y - pVec1.y);
-    }
 
-    public static Vec2 rightHandPerpendicular(Vec2 pVec1) {
-        return new Vec2(-pVec1.y, pVec1.x);
-    }
-
-    public static Vec2 leftHandPerpendicular(Vec2 pVec1) {
-        return new Vec2(pVec1.y, -pVec1.x);
-    }
 
 }

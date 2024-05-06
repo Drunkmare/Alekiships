@@ -1,5 +1,6 @@
-package com.alekiponi.alekiships.common.physics;
+package com.alekiponi.alekiships.common.entity;
 
+import com.alekiponi.alekiships.common.physics.OBB;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -18,6 +19,9 @@ public class EntityPolygonDimensions extends EntityDimensions {
 
     }
 
+    public Vec2[] getPlanarVertices(){
+        return PLANAR_XZ_VERTICES;
+    }
     public EntityPolygonDimensions(float pWidth, float pHeight, boolean pFixed) {
         super(pWidth, pHeight, pFixed);
     }

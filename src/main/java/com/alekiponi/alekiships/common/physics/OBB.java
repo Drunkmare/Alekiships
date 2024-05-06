@@ -1,13 +1,14 @@
 package com.alekiponi.alekiships.common.physics;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 
-import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper.vectorTo;
+import static com.alekiponi.alekiships.common.physics.Vec2Helper.positionLocallyYrot;
+import static com.alekiponi.alekiships.common.physics.Vec2Helper.vectorTo;
+import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYrot;
 
 public class OBB {
 
@@ -15,7 +16,7 @@ public class OBB {
     Vec2[] LOWER_VERTICES;
     Vec3 ORIGIN;
     Vec3 ORIENTATION;
-    double YAW;
+    float YAW;
     double HEIGHT;
 
     public OBB(Vec2[] planarXZVertices) {
@@ -26,11 +27,11 @@ public class OBB {
         this(planarXZVertices.toArray(planarXZVertices.toArray(new Vec2[planarXZVertices.size()])), origin, height);
     }
 
-    public OBB(Vec2[] planarXZVertices, Vec3 origin, double height, Vec3 orientation) {
+    public OBB(Vec2[] planarXZVertices, Vec3 origin, double height, float yaw) {
 
         this(planarXZVertices, origin, height);
 
-        ORIENTATION = orientation;
+        YAW = yaw;
 
     }
 
@@ -44,16 +45,20 @@ public class OBB {
 
         ORIENTATION = Vec3.ZERO;
 
-        double halfWidth = getMaxHorizontalExtent(planarXZVertices)/2d;
-        double halfHeight = height/2d;
+        double halfWidth = getMaxHorizontalExtent(planarXZVertices) / 2d;
+        double halfHeight = height / 2d;
 
-        EXTENT = new AABB(origin.x-halfWidth, origin.y-halfHeight, origin.z-halfWidth, origin.x + halfWidth, origin.y+halfHeight, origin.z+halfWidth);
+        EXTENT = new AABB(origin.x - halfWidth, origin.y - halfHeight, origin.z - halfWidth, origin.x + halfWidth, origin.y + halfHeight, origin.z + halfWidth);
 
+    }
+
+    public AABB getExtent() {
+        return EXTENT;
     }
 
     public double[][] planarVertices() {
         double[][] vertices = new double[LOWER_VERTICES.length][2];
-        for (int i = 0; i < LOWER_VERTICES.length; i++){
+        for (int i = 0; i < LOWER_VERTICES.length; i++) {
             vertices[i][0] = LOWER_VERTICES[i].x;
             vertices[i][1] = LOWER_VERTICES[i].y;
         }
@@ -92,7 +97,7 @@ public class OBB {
             if (i < LOWER_VERTICES.length) {
                 allVertices[i] = lowerVertices[i];
             } else {
-                allVertices[i] = upperVertices[i-LOWER_VERTICES.length];
+                allVertices[i] = upperVertices[i - LOWER_VERTICES.length];
             }
         }
 
@@ -102,11 +107,11 @@ public class OBB {
     public Vec3[] getLowerVerticesInWorld() {
         //TODO orientation
         Vec3[] allVertices = new Vec3[LOWER_VERTICES.length * 2];
-        double halfHeight = HEIGHT/2d;
+        double halfHeight = HEIGHT / 2d;
 
         for (int i = 0; i < LOWER_VERTICES.length; i++) {
             allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y - halfHeight, LOWER_VERTICES[i].y + ORIGIN.z);
-            allVertices[i] = positionLocally(allVertices[i]);
+            allVertices[i] = positionLocallyYrot(allVertices[i], YAW);
         }
 
         return allVertices;
@@ -115,32 +120,39 @@ public class OBB {
     public Vec3[] getUpperVerticesInWorld() {
         //TODO orientation
         Vec3[] allVertices = new Vec3[LOWER_VERTICES.length * 2];
-        double halfHeight = HEIGHT/2d;
+        double halfHeight = HEIGHT / 2d;
 
         for (int i = 0; i < LOWER_VERTICES.length; i++) {
             allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y + halfHeight, LOWER_VERTICES[i].y + ORIGIN.z);
-            allVertices[i] = positionLocally(allVertices[i]);
+            allVertices[i] = positionLocallyYrot(allVertices[i], YAW);
         }
 
         return allVertices;
     }
 
-    protected Vec3 positionLocally(float localX, float localY, float localZ) {
-        return (new Vec3(localX, localY, localZ)).yRot(
-                (float) (-YAW * ((float) Math.PI / 180F) - ((float) Math.PI / 2F)));
+    public double[][] getLowerVerticesForRender() {
+        double[][] vertices = new double[LOWER_VERTICES.length][2];
+        for (int i = 0; i < LOWER_VERTICES.length; i++) {
+            vertices[i][0] = positionLocallyYrot(LOWER_VERTICES[i], YAW).x;
+            vertices[i][1] = positionLocallyYrot(LOWER_VERTICES[i], YAW).y;
+        }
+        return vertices;
     }
-
-    protected Vec3 positionLocally(Vec3 vec) {
-        return (positionLocally((float) vec.x, (float) vec.y, (float) vec.z));
-    }
-
 
     public OBB move(double pX, double pY, double pZ) {
-        return new OBB(LOWER_VERTICES, new Vec3(ORIGIN.x+pX, ORIGIN.y + pY, ORIGIN.z + pZ), HEIGHT);
+        return new OBB(LOWER_VERTICES, new Vec3(ORIGIN.x + pX, ORIGIN.y + pY, ORIGIN.z + pZ), HEIGHT);
     }
 
     public OBB move(Vec3 pVec) {
         return this.move(pVec.x, pVec.y, pVec.z);
+    }
+
+    public OBB rotateToY(float yaw){
+        return new OBB(LOWER_VERTICES, ORIGIN, HEIGHT, yaw);
+    }
+
+    public OBB rotateByY(float yaw){
+        return new OBB(LOWER_VERTICES, ORIGIN, HEIGHT, YAW+yaw);
     }
 
 }

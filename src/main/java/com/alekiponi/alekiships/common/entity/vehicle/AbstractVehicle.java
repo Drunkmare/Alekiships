@@ -52,6 +52,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYrot;
+
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
@@ -609,12 +611,11 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     protected Vec3 positionLocally(float localX, float localY, float localZ) {
-        return (new Vec3(localX, localY, localZ)).yRot(
-                -this.getYRot() * ((float) Math.PI / 180F) - ((float) Math.PI / 2F));
+        return positionLocallyYrot(localX, localY, localZ, this.getYRot());
     }
 
     protected Vec3 positionLocally(Vec3 vec) {
-        return (positionLocally((float) vec.x, (float) vec.y, (float) vec.z));
+        return positionLocallyYrot(vec, this.getYRot());
     }
 
     protected void clampRotation(final Entity entity) {
