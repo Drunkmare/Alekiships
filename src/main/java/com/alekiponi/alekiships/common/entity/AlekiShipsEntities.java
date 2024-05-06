@@ -36,12 +36,11 @@ public final class AlekiShipsEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
-
     static EntityPolygonDimensions sloopDimensions = new EntityPolygonDimensions(new Vec2[]{
             new Vec2(10,10),
-            new Vec2(-10,10),
             new Vec2(10,-10),
-            new Vec2(-10,-10)
+            new Vec2(-10,-10),
+            new Vec2(-10,10)
     }, 0.75F, true);
 
     static EntityPolygonDimensions rowboatDimensions = new EntityPolygonDimensions(new Vec2[]{
@@ -51,7 +50,7 @@ public final class AlekiShipsEntities {
             new Vec2(-23/16f,-13/16f),
             new Vec2(7/16f,-17/16f),
             new Vec2(31/16f,-5/16f)
-    }, 0.75F, true);
+    }, 0.625F, true);
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
                     EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, rowboatDimensions, vanillaWood),
@@ -67,9 +66,10 @@ public final class AlekiShipsEntities {
                     (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, sloopDimensions, vanillaWood),
                     MobCategory.MISC)));
 
+    /*
     public static final RegistryObject<EntityType<TestSailingShipEntity>> TEST_SAILING_SHIP = register("test_sailing_ship",
-            EntityType.Builder.of(TestSailingShipEntity::new, MobCategory.MISC).sized(5F, 1F)
-                    .setTrackingRange(LARGE_VEHICLE_TRACKING));
+            EntityType.Builder.of(TestSailingShipEntity(), MobCategory.MISC).sized(5F, 1F)
+                    .setTrackingRange(LARGE_VEHICLE_TRACKING));*/
 
     public static final RegistryObject<CompartmentType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_empty", CompartmentType.Builder.createBasic(EmptyCompartmentEntity::new));
@@ -190,13 +190,13 @@ public final class AlekiShipsEntities {
 
     private static <E extends RowboatEntity> RegistryObject<EntityType<E>> registerRowboat(
             final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
-        return register("rowboat/" + vanillaWood.getSerializedName(), builder.sized(1.875F, 0.625F));
+        return register("rowboat/" + vanillaWood.getSerializedName(), builder.sized(rowboatDimensions.width, rowboatDimensions.height));
     }
 
     private static <E extends SloopEntity> RegistryObject<EntityType<E>> registerSloop(final VanillaWood vanillaWood,
             final EntityType.Builder<E> builder) {
         return register("sloop/" + vanillaWood.getSerializedName(),
-                builder.sized(3F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune());
+                builder.sized(sloopDimensions.width, sloopDimensions.height).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune());
     }
 
     private static <E extends SloopUnderConstructionEntity> RegistryObject<EntityType<E>> registerSloopConstruction(
