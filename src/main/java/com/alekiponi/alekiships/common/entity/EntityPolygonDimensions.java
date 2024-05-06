@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.physics.OBB;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,14 @@ public class EntityPolygonDimensions extends EntityDimensions {
 
         PLANAR_XZ_VERTICES = planarXZVertices;
 
+    }
+
+    public OBB makePolyBoundingBox(Vec3 pPos, float yaw) {
+        return this.makePolyBoundingBox(pPos.x, pPos.y, pPos.z, yaw);
+    }
+
+    public OBB makePolyBoundingBox(double pX, double pY, double pZ, float yaw) {
+        return new OBB(getPlanarVertices(), pX, pY, pZ, this.height, yaw);
     }
 
     public Vec2[] getPlanarVertices(){

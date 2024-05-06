@@ -35,6 +35,30 @@ public class OBB {
 
     }
 
+    public OBB(Vec2[] planarXZVertices, double x, double y, double z, double height, float yaw) {
+
+        this(planarXZVertices, new Vec3(x, y, z), height, yaw);
+
+    }
+
+    public OBB(OBB obb, Vec3 origin) {
+
+        this(obb, origin, obb.YAW);
+
+    }
+
+    public OBB(OBB obb, float yaw) {
+
+        this(obb, obb.ORIGIN, yaw);
+
+    }
+
+    public OBB(OBB obb, Vec3 origin, float yaw) {
+
+        this(obb.getPlanarVertices(), origin, obb.getHeight(), yaw);
+
+    }
+
     public OBB(Vec2[] planarXZVertices, Vec3 origin, double height) {
 
         LOWER_VERTICES = planarXZVertices;
@@ -46,14 +70,21 @@ public class OBB {
         ORIENTATION = Vec3.ZERO;
 
         double halfWidth = getMaxHorizontalExtent(planarXZVertices) / 2d;
-        double halfHeight = height / 2d;
 
-        EXTENT = new AABB(origin.x - halfWidth, origin.y - halfHeight, origin.z - halfWidth, origin.x + halfWidth, origin.y + halfHeight, origin.z + halfWidth);
+        EXTENT = new AABB(origin.x - halfWidth, origin.y, origin.z - halfWidth, origin.x + halfWidth, origin.y + HEIGHT, origin.z + halfWidth);
 
     }
 
     public AABB getExtent() {
         return EXTENT;
+    }
+
+    public double getHeight() {
+        return HEIGHT;
+    }
+
+    public double getWidth(){
+        return getMaxHorizontalExtent(LOWER_VERTICES);
     }
 
     public double[][] planarVertices() {
@@ -75,11 +106,10 @@ public class OBB {
     public static float getMaxHorizontalExtent(Vec2[] vertices) {
         float maxExtent = Float.MIN_VALUE;
 
-        for (Vec2 vertex1 : vertices) {
-            for (Vec2 vertex2 : vertices) {
-                maxExtent = Math.max(vectorTo(vertex1, vertex2).length(), maxExtent);
-            }
+        for (Vec2 vertex : vertices) {
+            maxExtent = Math.max(vertex.length() * 2, maxExtent);
         }
+
         return maxExtent;
     }
 
@@ -107,10 +137,9 @@ public class OBB {
     public Vec3[] getLowerVerticesInWorld() {
         //TODO orientation
         Vec3[] allVertices = new Vec3[LOWER_VERTICES.length * 2];
-        double halfHeight = HEIGHT / 2d;
 
         for (int i = 0; i < LOWER_VERTICES.length; i++) {
-            allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y - halfHeight, LOWER_VERTICES[i].y + ORIGIN.z);
+            allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y, LOWER_VERTICES[i].y + ORIGIN.z);
             allVertices[i] = positionLocallyYrot(allVertices[i], YAW);
         }
 
@@ -120,10 +149,9 @@ public class OBB {
     public Vec3[] getUpperVerticesInWorld() {
         //TODO orientation
         Vec3[] allVertices = new Vec3[LOWER_VERTICES.length * 2];
-        double halfHeight = HEIGHT / 2d;
 
         for (int i = 0; i < LOWER_VERTICES.length; i++) {
-            allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y + halfHeight, LOWER_VERTICES[i].y + ORIGIN.z);
+            allVertices[i] = new Vec3(LOWER_VERTICES[i].x + ORIGIN.x, ORIGIN.y + HEIGHT, LOWER_VERTICES[i].y + ORIGIN.z);
             allVertices[i] = positionLocallyYrot(allVertices[i], YAW);
         }
 
@@ -140,19 +168,19 @@ public class OBB {
     }
 
     public OBB move(double pX, double pY, double pZ) {
-        return new OBB(LOWER_VERTICES, new Vec3(ORIGIN.x + pX, ORIGIN.y + pY, ORIGIN.z + pZ), HEIGHT);
+        return new OBB(this, new Vec3(ORIGIN.x + pX, ORIGIN.y + pY, ORIGIN.z + pZ));
     }
 
     public OBB move(Vec3 pVec) {
         return this.move(pVec.x, pVec.y, pVec.z);
     }
 
-    public OBB rotateToY(float yaw){
-        return new OBB(LOWER_VERTICES, ORIGIN, HEIGHT, yaw);
+    public OBB rotateToY(float yaw) {
+        return new OBB(this, yaw);
     }
 
-    public OBB rotateByY(float yaw){
-        return new OBB(LOWER_VERTICES, ORIGIN, HEIGHT, YAW+yaw);
+    public OBB rotateByY(float yaw) {
+        return new OBB(this, YAW + yaw);
     }
 
 }
