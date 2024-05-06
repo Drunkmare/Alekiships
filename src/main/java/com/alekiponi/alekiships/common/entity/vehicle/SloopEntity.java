@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -78,9 +79,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     protected final float DAMAGE_RECOVERY = 5.333f;
     private final BoatMaterial boatMaterial;
 
-    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level, EntityPolygonDimensions dimensions,
                        final BoatMaterial boatMaterial) {
-        super(entityType, level);
+        super(entityType, level, dimensions);
         this.boatMaterial = boatMaterial;
     }
 
@@ -652,7 +653,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
             }
-            if (isAnchorDown() ) {
+            if (isAnchorDown()) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1, 0.5));
             }
         }

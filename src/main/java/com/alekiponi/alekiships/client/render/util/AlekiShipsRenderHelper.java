@@ -225,12 +225,14 @@ public class AlekiShipsRenderHelper {
 
         AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, obb.getLowerVerticesForRender(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
 
+        /*
         Vec3 vec3 = pEntity.getViewVector(pPartialTicks);
         Matrix4f matrix4f = pPoseStack.last().pose();
         Matrix3f matrix3f = pPoseStack.last().normal();
         pBuffer.vertex(matrix4f, 0.0F, pEntity.getEyeHeight(), 0.0F).color(0, 0, 255, 255).normal(matrix3f, (float)vec3.x, (float)vec3.y, (float)vec3.z).endVertex();
         pBuffer.vertex(matrix4f, (float)(vec3.x * 2.0D), (float)((double)pEntity.getEyeHeight() + vec3.y * 2.0D), (float)(vec3.z * 2.0D)).color(0, 0, 255, 255).normal(matrix3f, (float)vec3.x, (float)vec3.y, (float)vec3.z).endVertex();
 
+         */
     }
 
 

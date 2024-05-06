@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -64,8 +65,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected int windLerpTicks = 0;
 
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
-        super(entityType, level);
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, EntityPolygonDimensions dimensions) {
+        super(entityType, level, dimensions);
     }
 
     protected void defineSynchedData() {

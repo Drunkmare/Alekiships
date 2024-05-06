@@ -19,6 +19,13 @@ public class EntityPolygonDimensions extends EntityDimensions {
 
     }
 
+    public EntityPolygonDimensions(Vec2[] planarXZVertices, float pHeight, boolean pFixed) {
+        super(OBB.getMaxHorizontalExtent(planarXZVertices), pHeight, pFixed);
+
+        PLANAR_XZ_VERTICES = planarXZVertices;
+
+    }
+
     public Vec2[] getPlanarVertices(){
         return PLANAR_XZ_VERTICES;
     }

@@ -16,10 +16,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
 
@@ -32,19 +36,35 @@ public final class AlekiShipsEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
+
+    static EntityPolygonDimensions sloopDimensions = new EntityPolygonDimensions(new Vec2[]{
+            new Vec2(10,10),
+            new Vec2(-10,10),
+            new Vec2(10,-10),
+            new Vec2(-10,-10)
+    }, 0.75F, true);
+
+    static EntityPolygonDimensions rowboatDimensions = new EntityPolygonDimensions(new Vec2[]{
+            new Vec2(31/16f,5/16f),
+            new Vec2(7/16f,17/16f),
+            new Vec2(-23/16f,13/16f),
+            new Vec2(-23/16f,-13/16f),
+            new Vec2(7/16f,-17/16f),
+            new Vec2(31/16f,-5/16f)
+    }, 0.75F, true);
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, rowboatDimensions, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloop(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, sloopDimensions, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
-                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
+                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, sloopDimensions, vanillaWood),
                     MobCategory.MISC)));
 
     public static final RegistryObject<EntityType<TestSailingShipEntity>> TEST_SAILING_SHIP = register("test_sailing_ship",

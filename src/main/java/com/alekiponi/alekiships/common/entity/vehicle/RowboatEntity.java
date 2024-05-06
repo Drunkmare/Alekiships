@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
@@ -51,9 +52,9 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     private final BoatMaterial boatMaterial;
 
 
-    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level, EntityPolygonDimensions dimensions,
                          final BoatMaterial boatMaterial) {
-        super(entityType, level);
+        super(entityType, level, dimensions);
         this.boatMaterial = boatMaterial;
     }
 
