@@ -37,6 +37,7 @@ public final class AlekiShipsEntities {
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
     static EntityPolygonDimensions sloopDimensions = new EntityPolygonDimensions(new Vec2[]{
+            new Vec2(0,15),
             new Vec2(10,10),
             new Vec2(10,-10),
             new Vec2(-10,-10),
