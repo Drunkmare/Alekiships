@@ -1,8 +1,8 @@
 package com.alekiponi.alekiships.client.render.flywheel;
 
 import com.alekiponi.alekiships.client.BoatAtlases;
-import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.jozufozu.flywheel.api.instance.Instancer;
 import com.jozufozu.flywheel.api.visual.DynamicVisual;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
@@ -27,11 +27,11 @@ import net.minecraft.world.item.DyeColor;
 import java.util.EnumMap;
 import java.util.Optional;
 
-public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements SimpleTickableVisual, SimpleDynamicVisual {
+public class SloopVisual extends SimpleEntityVisual<SloopEntity> implements SimpleTickableVisual, SimpleDynamicVisual {
 
-    private final static ModelCache<ResourceLocation> ROWBOAT_MODELS = new ModelCache<>(sprite -> new SingleMeshModel(
-            ModelPartConverter.convert(RowboatEntityModel.LAYER_LOCATION,
-                    BoatAtlases.getRowboatAtlas().getSprite(sprite)), Materials.ROWBOAT));
+    private final static ModelCache<ResourceLocation> SLOOP_MODELS = new ModelCache<>(sprite -> new SingleMeshModel(
+            ModelPartConverter.convert(SloopEntityModel.LAYER_LOCATION, BoatAtlases.getSloopAtlas().getSprite(sprite)),
+            Materials.SLOOP));
     private final PoseStack poseStack = new PoseStack();
     private final ResourceLocation unpaintedTexture;
     private final EnumMap<DyeColor, ResourceLocation> paintedTextures;
@@ -39,9 +39,9 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<DyeColor> lastPaintColor = this.entity.getPaintColor();
 
-    private RowboatVisual(final VisualizationContext context, final RowboatEntity rowboatEntity,
+    private SloopVisual(final VisualizationContext ctx, final SloopEntity entity,
             final ResourceLocation unpaintedTexture, final EnumMap<DyeColor, ResourceLocation> paintedTextures) {
-        super(context, rowboatEntity);
+        super(ctx, entity);
         this.unpaintedTexture = unpaintedTexture;
         this.paintedTextures = paintedTextures;
     }
@@ -50,13 +50,13 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
      * Creates a factory that captures the passed in base texture location and map of paint textures to prevent
      * accidental creation on each invocation of the factory.
      *
-     * @param baseTexture     The base texture of the rowboat (no paint)
-     * @param paintedTextures The painted texture of the rowboat
-     * @return A factory for the rowboat visual that uses the passed textures
+     * @param baseTexture     The base texture of the sloop (no paint)
+     * @param paintedTextures The painted textures of the sloop
+     * @return A factory for the sloop visual that uses the passed textures
      */
-    public static SimpleEntityVisualizer.Factory<RowboatEntity> create(final ResourceLocation baseTexture,
+    public static SimpleEntityVisualizer.Factory<SloopEntity> create(final ResourceLocation baseTexture,
             final EnumMap<DyeColor, ResourceLocation> paintedTextures) {
-        return (context, entity) -> new RowboatVisual(context, entity, baseTexture, paintedTextures);
+        return (context, entity) -> new SloopVisual(context, entity, baseTexture, paintedTextures);
     }
 
     @Override
@@ -103,10 +103,9 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
         this.poseStack.scale(-1, -1, 1);
         this.poseStack.mulPose(Axis.YP.rotationDegrees(0));
 
+        // TODO renders the entire sloop model including the open and closed version of the sails.
+        //  They also don't animate
         this.boatModel.setTransform(this.poseStack).setChanged();
-
-        // TODO I think the rowboat model has to change in order to render the oars separately from the
-        //  rest of the boat. Like paint it should be cached and updated when the oars change
     }
 
     @Override
@@ -124,7 +123,7 @@ public class RowboatVisual extends SimpleEntityVisual<RowboatEntity> implements 
 
     private Instancer<TransformedInstance> getInstancer() {
         return this.instancerProvider.instancer(InstanceTypes.TRANSFORMED,
-                ROWBOAT_MODELS.get(this.getResourceLocation()));
+                SLOOP_MODELS.get(this.getResourceLocation()));
     }
 
     private ResourceLocation getResourceLocation() {
