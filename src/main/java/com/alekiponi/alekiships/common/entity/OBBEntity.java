@@ -7,6 +7,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.Util;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +30,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.alekiponi.alekiships.common.physics.OBB.intersects;
 
 public abstract class OBBEntity extends Entity {
 
@@ -66,31 +69,25 @@ public abstract class OBBEntity extends Entity {
                 .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0).move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.NO_SPECTATORS);
 
         entities.removeIf(entity -> entity.getRootVehicle().is(this));
+        entities.removeIf(entity -> entity instanceof OBBEntity);
 
         for(Entity entity : entities){
-            if(this.getOBB().intersects(entity.getBoundingBox())){
+            if(intersects(this.getOBB(), entity.getBoundingBox())){
                 isColliding = true;
                 break;
             }
         }
 
+        /*
+        for(Entity entity : entities){
+            if(entity instanceof LocalPlayer player){
+                Vec3 pos = OBB.collide(this.getOBB(), player.getBoundingBox());
+                pos = pos.multiply(1,0,1).add(0,player.position().y,0);
+                player.setPos(pos);
+            }
+        }*/
+
         super.tick();
-
-
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-
-    }
-
-    @Override
-    protected void defineSynchedData() {
 
     }
 

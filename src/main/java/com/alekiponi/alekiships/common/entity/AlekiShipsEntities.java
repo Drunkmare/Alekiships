@@ -33,25 +33,19 @@ public final class AlekiShipsEntities {
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
     static EntityOBBDimensions sloopDimensions = new EntityOBBDimensions(new Vec2[]{
-            new Vec2(5,15),
-            new Vec2(10,10),
-            new Vec2(10,-10),
-            new Vec2(-10,-10),
-            new Vec2(-10,10),
-            new Vec2(-5,15),
+            new Vec2(2,3),
+            new Vec2(2,-3.25f),
+            new Vec2(-2,-3.25f),
+            new Vec2(-2,3),
     }, 0.75F, true);
 
     static EntityOBBDimensions rowboatDimensions = new EntityOBBDimensions(new Vec2[]{
 
-
-
-            /*
             new Vec2(-1.0f, 1.5f),
             new Vec2(1.0f, 1.5f),
             new Vec2(1.0f, -1.5f),
             new Vec2(-1.0f, -1.5f),
 
-             */
 
 
             /*
@@ -64,8 +58,9 @@ public final class AlekiShipsEntities {
 
              */
 
-            /*
 
+
+            /*
             new Vec2(-0.3125f, 1.9375f),
             new Vec2(0.3125f, 1.9375f),
             new Vec2(1.0625f, 0.4375f),
@@ -74,13 +69,18 @@ public final class AlekiShipsEntities {
             new Vec2(-1.0625f, 0.4375f),
 
              */
-            
+
+
+
+            /*
             new Vec2(-1.0625f, 0.4375f),
             new Vec2(-0.3125f, 1.9375f),
             new Vec2(0.3125f, 1.9375f),
             new Vec2(1.0625f, 0.4375f),
             new Vec2(1.0625f, -1.4375f),
             new Vec2(-1.0625f, -1.4375f)
+
+             */
 
 
     }, 0.625F, true);

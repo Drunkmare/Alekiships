@@ -36,7 +36,7 @@ public class OBB {
 
         EXTENT = new AABB(origin.x - halfWidth, origin.y, origin.z - halfWidth, origin.x + halfWidth, origin.y + HEIGHT, origin.z + halfWidth);
 
-        YAW = yaw;
+        YAW = Mth.wrapDegrees(yaw);
 
         VERTICES_IN_WORLD = collectAllVerticesInWorld();
 
@@ -67,10 +67,10 @@ public class OBB {
                 new Vec3(Mth.lerp(0.5D, aabb.minX, aabb.maxX), aabb.minY, Mth.lerp(0.5D, aabb.minZ, aabb.maxZ)), aabb.getYsize());
     }*/
 
-    public static OBB createFromAABB(AABB aabb){
+    public static OBB createFromAABB(AABB aabb) {
         Vec3 origin = new Vec3(Mth.lerp(0.5D, aabb.minX, aabb.maxX), aabb.minY, Mth.lerp(0.5D, aabb.minZ, aabb.maxZ));
-        double halfXSize = aabb.getXsize()/2f;
-        double halfZSize = aabb.getZsize()/2f;
+        double halfXSize = aabb.getXsize() / 2f;
+        double halfZSize = aabb.getZsize() / 2f;
         double height = aabb.getYsize();
         Vec2[] vertices = new Vec2[]{
                 new Vec2((float) halfXSize, (float) halfZSize),
@@ -180,7 +180,9 @@ public class OBB {
 
     public Vec3[] getLowerVerticesInWorld() {
         Vec3[] vertices = new Vec3[this.vertexCount()];
-        if (this.vertexCount() >= 0) System.arraycopy(this.VERTICES_IN_WORLD, 0, vertices, 0, this.vertexCount());
+        for (int i = 0; i < vertexCount(); i++) {
+            vertices[i] = VERTICES_IN_WORLD[i];
+        }
         return vertices;
     }
 
@@ -189,7 +191,7 @@ public class OBB {
 
         for (int i = 0; i < VERTICES.length; i++) {
             Vec3 vertex = yRotDegrees(new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y), -YAW);
-            allVertices[i] = new Vec3(vertex.x + ORIGIN.x, ORIGIN.y+HEIGHT, vertex.z + ORIGIN.z);
+            allVertices[i] = new Vec3(vertex.x + ORIGIN.x, ORIGIN.y + HEIGHT, vertex.z + ORIGIN.z);
         }
 
         return allVertices;
@@ -232,7 +234,7 @@ public class OBB {
         return VERTICES.length;
     }
 
-    public float getYaw(){
+    public float getYaw() {
         return YAW;
     }
 
@@ -240,17 +242,22 @@ public class OBB {
         return this.intersects(createFromAABB(pAABB));
     }
 
+    public static boolean intersects(OBB pOBB, AABB pAABB) {
+        return intersects(pOBB, createFromAABB(pAABB));
+    }
+
     public boolean intersects(double pX1, double pY1, double pZ1, double pX2, double pY2, double pZ2) {
         return this.intersects(new AABB(pX1, pY1, pZ1, pX2, pY2, pZ2));
     }
 
     public boolean intersects(OBB other) {
-        if(other.getOrigin().y > this.getOrigin().y + this.getHeight() || other.getOrigin().y + other.getHeight() < this.getOrigin().y){
+        return intersects(this, other);
+    }
+
+    public static boolean intersects(OBB obb1, OBB obb2) {
+        if (obb2.getOrigin().y > obb1.getOrigin().y + obb1.getHeight() || obb2.getOrigin().y + obb2.getHeight() < obb1.getOrigin().y) {
             return false;
         }
-
-        OBB obb1 = this;
-        OBB obb2 = other;
 
         // https://github.com/OneLoneCoder/Javidx9/blob/master/PixelGameEngine/SmallerProjects/OneLoneCoder_PGE_PolygonCollisions1.cpp
 
@@ -258,8 +265,12 @@ public class OBB {
 
         for (int selector = 0; selector < 2; selector++) {
             if (selector == 1) {
-                obb1 = other;
-                obb2 = this;
+                OBB obb = obb1;
+                obb1 = obb2;
+                obb2 = obb;
+            } else {
+                obb1 = obb1;
+                obb2 = obb2;
             }
 
             for (int i = 0; i < obb1.vertexCount(); i++) {
@@ -267,32 +278,102 @@ public class OBB {
                 int j = (i + 1) % obb1.vertexCount();
 
                 Vec2 axisProj = new Vec2(-(obb1.vertexL2D(j).y - obb1.vertexL2D(i).y), (obb1.vertexL2D(j).x - obb1.vertexL2D(i).x));
-                float d = Mth.sqrt(axisProj.x * axisProj.x + axisProj.y * axisProj.y);
+                float d = Mth.sqrt((axisProj.x * axisProj.x + axisProj.y * axisProj.y));
                 axisProj = new Vec2(axisProj.x / d, axisProj.y / d);
 
-                // Work out min and max 1D points for r1
-                float min_r1 = Float.MAX_VALUE, max_r1 = Float.MIN_VALUE;
-                for (int p = 0; p < obb1.vertexCount(); p++) {
-                    float q = (obb1.vertexL2D(p).x * axisProj.x + obb1.vertexL2D(p).y * axisProj.y);
-                    min_r1 = Math.min(min_r1, q);
-                    max_r1 = Math.max(max_r1, q);
+                // Work out min and max 1D points for Obb1
+                float minObb1 = Float.MAX_VALUE, maxObb1 = Float.MIN_VALUE;
+                for (int vertex = 0; vertex < obb1.vertexCount(); vertex++) {
+                    float q = (obb1.vertexL2D(vertex).x * axisProj.x + obb1.vertexL2D(vertex).y * axisProj.y);
+                    minObb1 = Math.min(minObb1, q);
+                    maxObb1 = Math.max(maxObb1, q);
                 }
 
-                // Work out min and max 1D points for r2
-                float min_r2 = Float.MAX_VALUE, max_r2 = Float.MIN_VALUE;
-                for (int p = 0; p < obb2.vertexCount(); p++) {
-                    float q = (obb2.vertexL2D(p).x * axisProj.x + obb2.vertexL2D(p).y * axisProj.y);
-                    min_r2 = Math.min(min_r2, q);
-                    max_r2 = Math.max(max_r2, q);
+                // Work out min and max 1D points for Obb2
+                float minObb2 = Float.MAX_VALUE, maxObb2 = Float.MIN_VALUE;
+                for (int vertex = 0; vertex < obb2.vertexCount(); vertex++) {
+                    float projectedPoint = (obb2.vertexL2D(vertex).x * axisProj.x + obb2.vertexL2D(vertex).y * axisProj.y);
+                    minObb2 = Math.min(minObb2, projectedPoint);
+                    maxObb2 = Math.max(maxObb2, projectedPoint);
                 }
 
-                if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
+                if (!(maxObb2 >= minObb1 && maxObb1 >= minObb2)) {
                     return false;
+                }
+
             }
 
         }
 
         return true;
+
+    }
+
+    public static Vec3 collide(OBB obb1, AABB obb2) {
+        return collide(obb1, createFromAABB(obb2));
+    }
+
+    public static Vec3 collide(OBB obb1, OBB obb2) {
+        Vec3 collision = Vec3.ZERO;
+        if (obb2.getOrigin().y > obb1.getOrigin().y + obb1.getHeight() || obb2.getOrigin().y + obb2.getHeight() < obb1.getOrigin().y) {
+            return collision;
+        }
+
+        // https://github.com/OneLoneCoder/Javidx9/blob/master/PixelGameEngine/SmallerProjects/OneLoneCoder_PGE_PolygonCollisions1.cpp
+
+        // https://www.youtube.com/watch?v=7Ik2vowGcU0
+
+        float overlap = Float.MAX_VALUE;
+
+        for (int selector = 0; selector < 2; selector++) {
+            if (selector == 1) {
+                OBB obb = obb1;
+                obb1 = obb2;
+                obb2 = obb;
+            }
+
+            for (int i = 0; i < obb1.vertexCount(); i++) {
+
+                int j = (i + 1) % obb1.vertexCount();
+
+                Vec2 axisProj = new Vec2(-(obb1.vertexL2D(j).y - obb1.vertexL2D(i).y), (obb1.vertexL2D(j).x - obb1.vertexL2D(i).x));
+                float d = Mth.sqrt((axisProj.x * axisProj.x + axisProj.y * axisProj.y));
+                axisProj = new Vec2(axisProj.x / d, axisProj.y / d);
+
+                // Work out min and max 1D points for Obb1
+                float minObb1 = Float.MAX_VALUE, maxObb1 = Float.MIN_VALUE;
+                for (int vertex = 0; vertex < obb1.vertexCount(); vertex++) {
+                    float q = (obb1.vertexL2D(vertex).x * axisProj.x + obb1.vertexL2D(vertex).y * axisProj.y);
+                    minObb1 = Math.min(minObb1, q);
+                    maxObb1 = Math.max(maxObb1, q);
+                }
+
+                // Work out min and max 1D points for Obb2
+                float minObb2 = Float.MAX_VALUE, maxObb2 = Float.MIN_VALUE;
+                for (int vertex = 0; vertex < obb2.vertexCount(); vertex++) {
+                    float projectedPoint = (obb2.vertexL2D(vertex).x * axisProj.x + obb2.vertexL2D(vertex).y * axisProj.y);
+                    minObb2 = Math.min(minObb2, projectedPoint);
+                    maxObb2 = Math.max(maxObb2, projectedPoint);
+                }
+
+                overlap = Math.min(Math.min(maxObb1, maxObb2) - Math.max(minObb1, minObb2), overlap);
+
+                if (!(maxObb2 >= minObb1 && maxObb1 >= minObb2)) {
+                    return collision;
+                }
+
+            }
+
+        }
+
+        Vec2 vec2 = new Vec2((float) (obb1.getOrigin().x - obb2.getOrigin().x), (float) (obb1.getOrigin().z - obb2.getOrigin().z));
+        float s = (float) Math.sqrt(collision.x * collision.x + collision.z * collision.z);
+        float x = (float) (overlap * collision.x / s);
+        float y = (float) (overlap * collision.y / s);
+
+        collision = new Vec3(x, obb2.getOrigin().y, y);
+
+        return collision;
 
     }
 
@@ -308,7 +389,7 @@ public class OBB {
         return getUpperVerticesInWorld()[i];
     }
 
-    public Vec3 getOrigin(){
+    public Vec3 getOrigin() {
         return ORIGIN;
     }
 

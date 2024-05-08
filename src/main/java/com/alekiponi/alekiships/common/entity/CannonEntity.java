@@ -220,12 +220,13 @@ public class CannonEntity extends Entity {
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
         final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild;
 
-        if (instantKill) {
+        if (!instantKill) {
             if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                 this.spawnAtLocation(this.getDropItem());
             }
-            this.discard();
+
         }
+        this.discard();
         if (this.getDamage() > 20) {
             this.destroy(damageSource);
             this.remove(RemovalReason.KILLED);
