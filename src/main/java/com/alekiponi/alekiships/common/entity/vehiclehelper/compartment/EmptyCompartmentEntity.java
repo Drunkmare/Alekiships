@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
@@ -176,16 +177,16 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 canAddNonPlayers = !(vehicle.getPilotVehiclePartAsEntity() == this.getVehicle());
             }
             if (tickCount < 10 && this.isPassenger()) {
-                if(vehicle instanceof IHaveBlockOnlyCompartments){
-                    for (AbstractCompartmentEntity compartment : ((IHaveBlockOnlyCompartments)vehicle).getCanAddOnlyBlocks()) {
+                if (vehicle instanceof IHaveBlockOnlyCompartments) {
+                    for (AbstractCompartmentEntity compartment : ((IHaveBlockOnlyCompartments) vehicle).getCanAddOnlyBlocks()) {
                         if (compartment.getVehicle() == this.getVehicle()) {
                             canAddOnlyBlocks = true;
                         }
                     }
                 }
 
-                if(vehicle instanceof ICannonable){
-                    for (AbstractCompartmentEntity compartment : ((ICannonable)vehicle).getCanAddCannons()) {
+                if (vehicle instanceof ICannonable) {
+                    for (AbstractCompartmentEntity compartment : ((ICannonable) vehicle).getCanAddCannons()) {
                         if (compartment.getVehicle() == this.getVehicle()) {
                             canAddCannons = true;
                         }
@@ -203,26 +204,29 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 }
             }
 
-            final List<Entity> list = this.level()
-                    .getEntities(this, this.getBoundingBox().inflate(0.2, -0.01, 0.2), EntitySelector.pushableBy(this));
 
-            if (!list.isEmpty() && this.canAddNonPlayers() && !this.canAddOnlyBLocks() && !this.level()
-                    .isClientSide() && this.getTrueVehicle() != null) {
-                for (final Entity entity : list) {
-                    if (!entity.hasPassenger(this)) {
-                        float maxSize = 0.6f;
-                        maxSize = this.getTrueVehicle().getPassengerSizeLimit();
-                        if (this.getPassengers()
-                                .size() == 0 && !entity.isPassenger() && entity.getBbWidth() <= maxSize) {
-                            if (entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)) {
-                                entity.startRiding(this);
+            if (this.getPassengers().isEmpty()) {
+                final List<Entity> list = this.level()
+                        .getEntities(this, this.getBoundingBox().inflate(0.2, -0.01, 0.2), EntitySelector.pushableBy(this));
+
+                if (!list.isEmpty() && this.canAddNonPlayers() && !this.canAddOnlyBLocks() && !this.level()
+                        .isClientSide() && this.getTrueVehicle() != null) {
+                    for (final Entity entity : list) {
+                        if (!entity.hasPassenger(this)) {
+                            float maxSize = 0.6f;
+                            maxSize = this.getTrueVehicle().getPassengerSizeLimit();
+                            if (!entity.isPassenger() && entity.getBbWidth() <= maxSize) {
+                                if (entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)) {
+                                    entity.startRiding(this);
+                                }
+
                             }
-
                         }
-                    }
 
+                    }
                 }
             }
+
         }
 
 
@@ -354,14 +358,16 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         final ItemStack heldStack = player.getItemInHand(hand);
 
         if (this.canAddNonPlayers() && !this.canAddOnlyBLocks() && heldStack.is(
-                AlekiShipsItems.CANNON.get()) && this.getRootVehicle() instanceof SloopEntity) {
-            if (this.getVehicle() instanceof VehiclePart part && this.canAddCannons) {
+                AlekiShipsItems.CANNON.get()) && this.getTrueVehicle() instanceof ICannonable) {
+            if (this.getVehicle() instanceof VehiclePart && this.canAddCannons) {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(this.level());
                 cannon.moveTo(this.getPosition(0));
                 cannon.setYRot(-this.getYRot() - 180);
-                cannon.startRiding(this);
                 if (!this.level().isClientSide()) {
                     this.level().addFreshEntity(cannon);
+                    if (!cannon.startRiding(this)) {
+                        AlekiShips.LOGGER.error("New Cannon: {} unable to ride Compartment: {}", cannon, this);
+                    }
                 }
                 player.awardStat(Stats.ITEM_USED.get(AlekiShipsItems.CANNON.get()));
                 if (!player.getAbilities().instabuild) {
@@ -407,10 +413,10 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         }
 
         if (!this.level().isClientSide && !this.canAddOnlyBLocks()) {
-            return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return player.startRiding(this) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
 
-        return InteractionResult.FAIL;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -521,7 +527,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 return states;
             }
 
-            if(handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS) || handItem.is(AlekiShipsItems.CANNON.get()) || this.canAddOnlyBLocks()){
+            if (handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS) || handItem.is(AlekiShipsItems.CANNON.get()) || this.canAddOnlyBLocks()) {
                 states.add(IngameOverlays.IconState.BLOCK);
                 return states;
             }

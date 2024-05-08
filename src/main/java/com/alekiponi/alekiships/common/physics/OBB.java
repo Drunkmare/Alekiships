@@ -8,7 +8,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 
 import static com.alekiponi.alekiships.common.physics.Vec2Helper.positionLocallyYrot;
-import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYrot;
+import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYRot;
+import static com.alekiponi.alekiships.common.physics.Vec3Helper.yRotDegrees;
 
 public class OBB {
 
@@ -170,7 +171,7 @@ public class OBB {
         Vec3[] allVertices = new Vec3[VERTICES.length];
 
         for (int i = 0; i < VERTICES.length; i++) {
-            Vec3 vertex = new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y).yRot((float) Math.toRadians(-YAW));
+            Vec3 vertex = yRotDegrees(new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y), -YAW);
             allVertices[i] = new Vec3(vertex.x + ORIGIN.x, ORIGIN.y, vertex.z + ORIGIN.z);
         }
 
@@ -187,7 +188,7 @@ public class OBB {
         Vec3[] allVertices = new Vec3[VERTICES.length];
 
         for (int i = 0; i < VERTICES.length; i++) {
-            Vec3 vertex = new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y).yRot((float) Math.toRadians(-YAW));
+            Vec3 vertex = yRotDegrees(new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y), -YAW);
             allVertices[i] = new Vec3(vertex.x + ORIGIN.x, ORIGIN.y+HEIGHT, vertex.z + ORIGIN.z);
         }
 
@@ -204,7 +205,7 @@ public class OBB {
     public double[][] collectLowerVerticesForRender() {
         double[][] vertices = new double[VERTICES.length][2];
         for (int i = 0; i < VERTICES.length; i++) {
-            Vec3 vertex = new Vec3(VERTICES[i].x, 0, VERTICES[i].y).yRot((float) Math.toRadians(-YAW));
+            Vec3 vertex = yRotDegrees(new Vec3(VERTICES[i].x, ORIGIN.y, VERTICES[i].y), -YAW);
             vertices[i][0] = vertex.x;
             vertices[i][1] = vertex.z;
         }

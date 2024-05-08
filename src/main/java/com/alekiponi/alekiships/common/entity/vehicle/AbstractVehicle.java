@@ -10,6 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntit
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.physics.Vec3Helper;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
@@ -54,7 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYrot;
+import static com.alekiponi.alekiships.common.physics.Vec3Helper.positionLocallyYRot;
 
 public abstract class AbstractVehicle extends OBBEntity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
@@ -613,11 +614,11 @@ public abstract class AbstractVehicle extends OBBEntity implements IHaveIcons, I
     }
 
     protected Vec3 positionLocally(float localX, float localY, float localZ) {
-        return positionLocallyYrot(localX, localY, localZ, this.getYRot());
+        return Vec3Helper.positionLocallyYRot(localX, localY, localZ, this.getYRot());
     }
 
     protected Vec3 positionLocally(Vec3 vec) {
-        return positionLocallyYrot(vec, this.getYRot());
+        return positionLocallyYRot(vec, this.getYRot());
     }
 
     protected void clampRotation(final Entity entity) {

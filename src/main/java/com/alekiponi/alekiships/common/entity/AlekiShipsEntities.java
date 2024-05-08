@@ -54,20 +54,6 @@ public final class AlekiShipsEntities {
              */
 
 
-
-            /*
-            new Vec2(1f, 2f),
-            new Vec2(2f, 0f),
-            new Vec2(1f, -2f),
-            new Vec2(-1f, -2f),
-            new Vec2(-2f, 0f),
-            new Vec2(-1f, 2f)
-
-             */
-
-
-
-
             /*
             new Vec2(0.5f, 1.5f),
             new Vec2(1f, 1f),
@@ -88,16 +74,13 @@ public final class AlekiShipsEntities {
             new Vec2(-1.0625f, 0.4375f),
 
              */
-
-
+            
             new Vec2(-1.0625f, 0.4375f),
             new Vec2(-0.3125f, 1.9375f),
             new Vec2(0.3125f, 1.9375f),
             new Vec2(1.0625f, 0.4375f),
             new Vec2(1.0625f, -1.4375f),
             new Vec2(-1.0625f, -1.4375f)
-
-
 
 
     }, 0.625F, true);
