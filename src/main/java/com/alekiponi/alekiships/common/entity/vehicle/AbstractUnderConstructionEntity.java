@@ -1,9 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -12,7 +10,7 @@ import net.minecraft.world.level.Level;
 
 public abstract class AbstractUnderConstructionEntity extends AbstractVehicle implements IHaveConstructionEntities {
 
-    public AbstractUnderConstructionEntity(EntityType entityType, Level level, EntityPolygonDimensions dimensions) {
+    public AbstractUnderConstructionEntity(EntityType entityType, Level level, EntityOBBDimensions dimensions) {
         super(entityType, level, dimensions);
     }
 

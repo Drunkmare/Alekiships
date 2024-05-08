@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.TestSailingShipEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
@@ -17,13 +16,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
 
@@ -36,21 +32,74 @@ public final class AlekiShipsEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
-    static EntityPolygonDimensions sloopDimensions = new EntityPolygonDimensions(new Vec2[]{
-            new Vec2(0,15),
+    static EntityOBBDimensions sloopDimensions = new EntityOBBDimensions(new Vec2[]{
+            new Vec2(5,15),
             new Vec2(10,10),
             new Vec2(10,-10),
             new Vec2(-10,-10),
-            new Vec2(-10,10)
+            new Vec2(-10,10),
+            new Vec2(-5,15),
     }, 0.75F, true);
 
-    static EntityPolygonDimensions rowboatDimensions = new EntityPolygonDimensions(new Vec2[]{
-            new Vec2(31/16f,5/16f),
-            new Vec2(7/16f,17/16f),
-            new Vec2(-23/16f,13/16f),
-            new Vec2(-23/16f,-13/16f),
-            new Vec2(7/16f,-17/16f),
-            new Vec2(31/16f,-5/16f)
+    static EntityOBBDimensions rowboatDimensions = new EntityOBBDimensions(new Vec2[]{
+
+
+
+            /*
+            new Vec2(-1.0f, 1.5f),
+            new Vec2(1.0f, 1.5f),
+            new Vec2(1.0f, -1.5f),
+            new Vec2(-1.0f, -1.5f),
+
+             */
+
+
+
+            /*
+            new Vec2(1f, 2f),
+            new Vec2(2f, 0f),
+            new Vec2(1f, -2f),
+            new Vec2(-1f, -2f),
+            new Vec2(-2f, 0f),
+            new Vec2(-1f, 2f)
+
+             */
+
+
+
+
+            /*
+            new Vec2(0.5f, 1.5f),
+            new Vec2(1f, 1f),
+            new Vec2(1f, -1f),
+            new Vec2(-1f, -1f),
+            new Vec2(-1f, 1f),
+            new Vec2(-0.5f, 1.5f)
+
+             */
+
+            /*
+
+            new Vec2(-0.3125f, 1.9375f),
+            new Vec2(0.3125f, 1.9375f),
+            new Vec2(1.0625f, 0.4375f),
+            new Vec2(0.8125f, -1.4375f),
+            new Vec2(-0.8125f, -1.4375f),
+            new Vec2(-1.0625f, 0.4375f),
+
+             */
+
+
+            new Vec2(-1.0625f, 0.4375f),
+            new Vec2(-0.3125f, 1.9375f),
+            new Vec2(0.3125f, 1.9375f),
+            new Vec2(1.0625f, 0.4375f),
+            new Vec2(1.0625f, -1.4375f),
+            new Vec2(-1.0625f, -1.4375f)
+
+
+
+
     }, 0.625F, true);
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,

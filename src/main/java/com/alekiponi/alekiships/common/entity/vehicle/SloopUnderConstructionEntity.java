@@ -1,8 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
@@ -23,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -53,7 +51,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     public final int RIGGING_ITEM_NUMBER = 8;
 
     public SloopUnderConstructionEntity(final EntityType<? extends SloopUnderConstructionEntity> entityType,
-                                        final Level level, EntityPolygonDimensions dimensions, final BoatMaterial boatMaterial) {
+                                        final Level level, EntityOBBDimensions dimensions, final BoatMaterial boatMaterial) {
         super(entityType, level, dimensions);
         this.boatMaterial = boatMaterial;
     }

@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.entity.OBBEntity;
 import com.alekiponi.alekiships.common.physics.OBB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -221,9 +222,20 @@ public class AlekiShipsRenderHelper {
 
     public static void renderPolygonalHitbox(PoseStack pPoseStack, VertexConsumer pBuffer, OBBEntity pEntity, float pPartialTicks){
         AABB aabb = pEntity.getBoundingBox().move(-pEntity.getX(), -pEntity.getY(), -pEntity.getZ());
-        OBB obb = pEntity.getPolyBoundingBox();
+        OBB obb = pEntity.getOBB();
 
-        AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, obb.getLowerVerticesForRender(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
+        //pPoseStack.pushPose();
+
+        //pPoseStack.mulPose(Axis.YP.rotationDegrees(-obb.getYaw()));
+
+        if(pEntity.isColliding()){
+            AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, obb.collectLowerVerticesForRender(), aabb.minY, aabb.maxY, 1.0f, 0f,0f,1.0f);
+        } else {
+            AlekiShipsRenderHelper.renderLinePolygon(pPoseStack, pBuffer, obb.collectLowerVerticesForRender(), aabb.minY, aabb.maxY, 1.0f, 1.0f,1.0f,1.0f);
+        }
+
+        //pPoseStack.popPose();
+
 
         /*
         Vec3 vec3 = pEntity.getViewVector(pPartialTicks);

@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.OBBEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
@@ -86,7 +86,7 @@ public abstract class AbstractVehicle extends OBBEntity implements IHaveIcons, I
 
     private boolean hasAllParts = false;
 
-    public AbstractVehicle(final EntityType entityType, final Level level, EntityPolygonDimensions dimensions) {
+    public AbstractVehicle(final EntityType entityType, final Level level, EntityOBBDimensions dimensions) {
         super(entityType, level, dimensions);
         this.blocksBuilding = true;
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];

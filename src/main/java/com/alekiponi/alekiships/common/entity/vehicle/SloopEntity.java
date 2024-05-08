@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -18,7 +18,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -30,7 +29,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
@@ -79,7 +77,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     protected final float DAMAGE_RECOVERY = 5.333f;
     private final BoatMaterial boatMaterial;
 
-    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level, EntityPolygonDimensions dimensions,
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level, EntityOBBDimensions dimensions,
                        final BoatMaterial boatMaterial) {
         super(entityType, level, dimensions);
         this.boatMaterial = boatMaterial;

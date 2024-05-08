@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -20,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -65,7 +64,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected int windLerpTicks = 0;
 
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, EntityPolygonDimensions dimensions) {
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, EntityOBBDimensions dimensions) {
         super(entityType, level, dimensions);
     }
 

@@ -2,17 +2,16 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.physics.OBB;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class EntityPolygonDimensions extends EntityDimensions {
+public class EntityOBBDimensions extends EntityDimensions {
 
     Vec2[] PLANAR_XZ_VERTICES;
-    public EntityPolygonDimensions(ArrayList<Vec2> planarXZVertices, float pHeight, boolean pFixed) {
+    public EntityOBBDimensions(ArrayList<Vec2> planarXZVertices, float pHeight, boolean pFixed) {
         super(OBB.getMaxHorizontalExtent(planarXZVertices), pHeight, pFixed);
 
         PLANAR_XZ_VERTICES = new Vec2[planarXZVertices.size()];
@@ -20,8 +19,15 @@ public class EntityPolygonDimensions extends EntityDimensions {
 
     }
 
-    public EntityPolygonDimensions(Vec2[] planarXZVertices, float pHeight, boolean pFixed) {
+    public EntityOBBDimensions(Vec2[] planarXZVertices, float pHeight, boolean pFixed) {
         super(OBB.getMaxHorizontalExtent(planarXZVertices), pHeight, pFixed);
+        // TODO catch non-convex polygons
+        /*
+        if(// the OBB is convex){
+            // construct
+        else {
+            throw new IllegalArgumentException("An OBB must always be convex");
+        }*/
 
         PLANAR_XZ_VERTICES = planarXZVertices;
 
@@ -38,7 +44,7 @@ public class EntityPolygonDimensions extends EntityDimensions {
     public Vec2[] getPlanarVertices(){
         return PLANAR_XZ_VERTICES;
     }
-    public EntityPolygonDimensions(float pWidth, float pHeight, boolean pFixed) {
+    public EntityOBBDimensions(float pWidth, float pHeight, boolean pFixed) {
         super(pWidth, pHeight, pFixed);
     }
 

@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.common.entity.EntityPolygonDimensions;
+import com.alekiponi.alekiships.common.entity.EntityOBBDimensions;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
@@ -52,7 +52,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     private final BoatMaterial boatMaterial;
 
 
-    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level, EntityPolygonDimensions dimensions,
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level, EntityOBBDimensions dimensions,
                          final BoatMaterial boatMaterial) {
         super(entityType, level, dimensions);
         this.boatMaterial = boatMaterial;
@@ -209,6 +209,25 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
         }
     }
 
+    @Override
+    public boolean canCollideWith(final Entity other) {
+        return canVehicleCollide(this, other);
+    }
+
+    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return false;
+    }
+
+    @Override
+    public boolean isPushable() {
+        return false;
+    }
+
     @Nullable
     @Override
     public Entity getPilotVehiclePartAsEntity() {
@@ -313,30 +332,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     @Override
     public float getStepHeight() {
         return 0.0f;
-    }
-
-
-    private final Vec3[] relativeHitboxVertices = new Vec3[]{
-
-            new Vec3(31/16f,0,5/16f),
-            new Vec3(7/16f,0,17/16f),
-            new Vec3(-23/16f,0,13/16f),
-            new Vec3(-23/16f,0,-13/16f),
-            new Vec3(7/16f,0,-17/16f),
-            new Vec3(31/16f,0,-5/16f)
-    };
-
-    public double[][] getPlanarVertices() {
-        double[][] vertices = new double[][]{
-                {positionLocally(relativeHitboxVertices[0]).x, positionLocally(relativeHitboxVertices[0]).z},
-                {positionLocally(relativeHitboxVertices[1]).x, positionLocally(relativeHitboxVertices[1]).z},
-                {positionLocally(relativeHitboxVertices[2]).x, positionLocally(relativeHitboxVertices[2]).z},
-                {positionLocally(relativeHitboxVertices[3]).x, positionLocally(relativeHitboxVertices[3]).z},
-                {positionLocally(relativeHitboxVertices[4]).x, positionLocally(relativeHitboxVertices[4]).z},
-                {positionLocally(relativeHitboxVertices[5]).x, positionLocally(relativeHitboxVertices[5]).z}
-        };
-
-        return vertices;
     }
 
     public enum Oars {
