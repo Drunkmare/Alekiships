@@ -85,15 +85,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Override
     public void tick() {
-
-        if (this.getPassengers().size() < this.getMaxPassengers()) {
-            final VehiclePart newPart = AlekiShipsEntities.VEHICLE_PART.get().create(this.level());
-            newPart.setPos(this.getX(), this.getY(), this.getZ());
-            this.level().addFreshEntity(newPart);
-            newPart.startRiding(this);
-        }
-
-
         this.oldStatus = this.status;
         this.status = this.getStatus();
 
