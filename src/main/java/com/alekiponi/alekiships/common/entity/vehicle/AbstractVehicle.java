@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.WaterlilyBlock;
@@ -44,6 +46,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.world.ForgeChunkManager;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -78,11 +82,13 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected MediumStatus status;
     @Nullable
     protected MediumStatus oldStatus;
+    protected EntityDimensions extentDimensions;
+    protected AABB extent;
     protected double lastYd;
 
     private boolean hasAllParts = false;
 
-    public AbstractVehicle(final EntityType entityType, final Level level) {
+    public AbstractVehicle(final EntityType entityType, final Level level, EntityDimensions extent) {
         super(entityType, level);
         this.blocksBuilding = true;
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
@@ -94,6 +100,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         for (int i = 0; i < 5; i++) {
             this.speedOverTime.add(0.0);
         }
+        this.extentDimensions = extent;
+        this.extent = extentDimensions.makeBoundingBox(0, 0, 0);
     }
 
     public abstract int getMaxPassengers();
@@ -131,6 +139,54 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         } else {
             hasAllParts = true;
         }
+        if (!this.level().isClientSide() && this.extentTouchingUnloadedChunk()) {
+            loadAdditionalChunks();
+        }
+    }
+
+    public boolean extentTouchingUnloadedChunk() {
+        AABB aabb = this.getExtent().inflate(1.0D);
+        int i = Mth.floor(aabb.minX);
+        int j = Mth.ceil(aabb.maxX);
+        int k = Mth.floor(aabb.minZ);
+        int l = Mth.ceil(aabb.maxZ);
+        return !this.level().hasChunksAt(i, k, j, l);
+    }
+
+    public void loadAdditionalChunks() {
+        if (this.level().isClientSide()) {
+            return;
+        }
+        int chunkX = this.chunkPosition().x;
+        int chunkZ = this.chunkPosition().z;
+        int chunks = (int) Math.ceil(this.getExtent().getSize() / 16f) + 2;
+        for (int x = 0; x < chunks; x++) {
+            for (int z = 0; z < chunks; z++) {
+                ForgeChunkManager.forceChunk((ServerLevel) this.level(), AlekiShips.MOD_ID, (Entity) this, chunkX, chunkZ, true, true);
+                chunkZ += z;
+            }
+            chunkX += x;
+        }
+    }
+
+    public AABB makeExtent() {
+        if(extentDimensions == null){
+            return new AABB(0,0,0,0,0,0);
+        }
+        return this.extentDimensions.makeBoundingBox(this.position());
+    }
+
+    public AABB getExtent() {
+        return this.extent;
+    }
+
+    protected AABB makeBoundingBox() {
+        this.setExtent(makeExtent());
+        return super.makeBoundingBox();
+    }
+
+    protected void setExtent(AABB aabb) {
+        this.extent = aabb;
     }
 
     private void addVehicleParts() {
@@ -556,7 +612,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         final List<Entity> helpers = Lists.newArrayList();
 
         for (final VehiclePart part : this.collectVehicleParts()) {
-            if(part.isVehicle()){
+            if (part.isVehicle()) {
                 helpers.add(part.getFirstPassenger());
             }
         }
@@ -567,7 +623,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         int count = 0;
 
         for (final VehiclePart part : this.collectVehicleParts()) {
-            if(part.isVehicle()){
+            if (part.isVehicle()) {
                 count++;
             }
         }
@@ -719,6 +775,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         this.setHurtDir(pCompound.getInt("hurtDir"));
         this.setDamage(pCompound.getFloat("damage"));
         this.setHurtTime(pCompound.getInt("hurtTime"));
+        this.loadAdditionalChunks();
     }
 
 

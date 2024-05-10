@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -51,9 +52,9 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     private final BoatMaterial boatMaterial;
 
 
-    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level, EntityDimensions extent,
                          final BoatMaterial boatMaterial) {
-        super(entityType, level);
+        super(entityType, level, extent);
         this.boatMaterial = boatMaterial;
     }
 

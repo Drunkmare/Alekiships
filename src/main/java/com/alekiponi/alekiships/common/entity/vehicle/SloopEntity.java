@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -78,9 +79,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     protected final float DAMAGE_RECOVERY = 5.333f;
     private final BoatMaterial boatMaterial;
 
-    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level, EntityDimensions extent,
                        final BoatMaterial boatMaterial) {
-        super(entityType, level);
+        super(entityType, level, extent);
         this.boatMaterial = boatMaterial;
     }
 

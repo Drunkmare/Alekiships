@@ -13,6 +13,7 @@ import com.alekiponi.alekiships.util.AlekiShipsHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Items;
@@ -32,24 +33,30 @@ public final class AlekiShipsEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
 
+    static EntityDimensions rowboatExtent = new EntityDimensions(7, 1,true);
+    static EntityDimensions sloopExtent = new EntityDimensions(14, 1,true);
+
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, rowboatExtent, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloop(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, sloopExtent, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = AlekiShipsHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
-                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
+                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, sloopExtent, vanillaWood),
                     MobCategory.MISC)));
 
+    /*
     public static final RegistryObject<EntityType<TestSailingShipEntity>> TEST_SAILING_SHIP = register("test_sailing_ship",
             EntityType.Builder.of(TestSailingShipEntity::new, MobCategory.MISC).sized(5F, 1F)
                     .setTrackingRange(LARGE_VEHICLE_TRACKING));
+
+     */
 
     public static final RegistryObject<CompartmentType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_empty", CompartmentType.Builder.createBasic(EmptyCompartmentEntity::new));
