@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
@@ -176,16 +177,16 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 canAddNonPlayers = !(vehicle.getPilotVehiclePartAsEntity() == this.getVehicle());
             }
             if (tickCount < 10 && this.isPassenger()) {
-                if(vehicle instanceof IHaveBlockOnlyCompartments){
-                    for (AbstractCompartmentEntity compartment : ((IHaveBlockOnlyCompartments)vehicle).getCanAddOnlyBlocks()) {
+                if (vehicle instanceof IHaveBlockOnlyCompartments) {
+                    for (AbstractCompartmentEntity compartment : ((IHaveBlockOnlyCompartments) vehicle).getCanAddOnlyBlocks()) {
                         if (compartment.getVehicle() == this.getVehicle()) {
                             canAddOnlyBlocks = true;
                         }
                     }
                 }
 
-                if(vehicle instanceof ICannonable){
-                    for (AbstractCompartmentEntity compartment : ((ICannonable)vehicle).getCanAddCannons()) {
+                if (vehicle instanceof ICannonable) {
+                    for (AbstractCompartmentEntity compartment : ((ICannonable) vehicle).getCanAddCannons()) {
                         if (compartment.getVehicle() == this.getVehicle()) {
                             canAddCannons = true;
                         }
@@ -359,9 +360,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(this.level());
                 cannon.moveTo(this.getPosition(0));
                 cannon.setYRot(-this.getYRot() - 180);
-                cannon.startRiding(this);
+
                 if (!this.level().isClientSide()) {
                     this.level().addFreshEntity(cannon);
+                    if (cannon.startRiding(this)) {
+                        AlekiShips.LOGGER.error("New Cannon: {} unable to ride Compartment: {}", cannon, this);
+                    }
                 }
                 player.awardStat(Stats.ITEM_USED.get(AlekiShipsItems.CANNON.get()));
                 if (!player.getAbilities().instabuild) {
@@ -521,7 +525,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 return states;
             }
 
-            if(handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS) || handItem.is(AlekiShipsItems.CANNON.get()) || this.canAddOnlyBLocks()){
+            if (handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS) || handItem.is(AlekiShipsItems.CANNON.get()) || this.canAddOnlyBLocks()) {
                 states.add(IngameOverlays.IconState.BLOCK);
                 return states;
             }
