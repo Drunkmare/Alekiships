@@ -1,11 +1,9 @@
 package com.alekiponi.alekiships.util;
 
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -22,7 +20,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class AlekiShipsHelper {
+public class CommonHelper {
     @Nullable
     public static Entity getAnyEntityAtCrosshair(Entity entity, double range) {
         Vec3 from = entity.getEyePosition(1);
@@ -118,26 +116,7 @@ public class AlekiShipsHelper {
     }
 
 
-    public static void tickHopPlayersOnboard(Entity thisEntity){
-        if(thisEntity.level().isClientSide()){
-            final List<Entity> entitiesToHop = thisEntity.level()
-                    .getEntities(thisEntity, thisEntity.getBoundingBox().inflate(0.1, -0.01, 0.1), EntitySelector.pushableBy(thisEntity));
 
-            if (!entitiesToHop.isEmpty()) {
-                for (final Entity entity : entitiesToHop) {
-                    if (entity instanceof LocalPlayer player && !player.isPassenger()) {
-                        if (player.input.jumping) {
-                            Vec3 newPlayerPos = player.getPosition(0).multiply(1, 0, 1);
-                            newPlayerPos = newPlayerPos.add(0, thisEntity.getY() + thisEntity.getBoundingBox().getYsize() + 0.05, 0);
-                            newPlayerPos = newPlayerPos.add((thisEntity.getX() - newPlayerPos.x()) * 0.2, 0, (thisEntity.getZ() - newPlayerPos.z()) * 0.2);
-                            player.setPos(newPlayerPos);
-                        }
-                    }
-                }
-            }
-        }
-
-    }
 
     public static boolean everyNthTickUnique(int id, int tickCount, int n){
         if((id + tickCount) % n == 0){

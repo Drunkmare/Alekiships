@@ -7,7 +7,7 @@ import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.SmokerCompartmentMenu;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -179,7 +179,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         }
 
         if (this.level().isClientSide()) {
-            if (!this.isRemoved() && AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, 10))
+            if (!this.isRemoved() && CommonHelper.everyNthTickUnique(this.getId(), this.tickCount, 10))
                 this.animateTick();
             return;
         }

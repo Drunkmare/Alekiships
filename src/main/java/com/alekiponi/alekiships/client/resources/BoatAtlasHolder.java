@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.client.reosurces;
+package com.alekiponi.alekiships.client.resources;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;

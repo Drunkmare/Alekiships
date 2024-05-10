@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.network;
 
-import com.alekiponi.alekiships.client.ClientHelpers;
+import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
@@ -33,7 +33,7 @@ public class ClientBoundCleatLinkPacket {
     }
 
     public void handle() {
-        final Level level = ClientHelpers.getLevel();
+        final Level level = ClientHelper.getLevel();
 
         if (level == null) return;
 

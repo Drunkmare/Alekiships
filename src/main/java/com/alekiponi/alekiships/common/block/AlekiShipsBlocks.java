@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -26,7 +26,7 @@ public final class AlekiShipsBlocks {
                     BlockBehaviour.Properties.copy(Blocks.BAMBOO_PLANKS).instabreak().noOcclusion()
                             .sound(SoundType.SCAFFOLDING)));
 
-    public static final EnumMap<VanillaWood, RegistryObject<AngledWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_ANGLED = AlekiShipsHelper.mapOfKeys(
+    public static final EnumMap<VanillaWood, RegistryObject<AngledWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_ANGLED = CommonHelper.mapOfKeys(
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/angled/" + vanillaWood.getSerializedName(),
                     () -> new AngledWoodenBoatFrameBlock(vanillaWood,
@@ -36,7 +36,7 @@ public final class AlekiShipsBlocks {
             "watercraft_frame_flat",
             () -> new FlatBoatFrameBlock(BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get())));
 
-    public static final EnumMap<VanillaWood, RegistryObject<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = AlekiShipsHelper.mapOfKeys(
+    public static final EnumMap<VanillaWood, RegistryObject<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = CommonHelper.mapOfKeys(
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/flat/" + vanillaWood.getSerializedName(),
                     () -> new FlatWoodenBoatFrameBlock(vanillaWood,

@@ -4,9 +4,9 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
+import com.alekiponi.alekiships.client.resources.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -40,7 +40,7 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
     public RowboatRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName()),
-                AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
+                CommonHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
     }
 

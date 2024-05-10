@@ -4,9 +4,9 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.reosurces.BoatAtlasHolder;
+import com.alekiponi.alekiships.client.resources.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -29,7 +29,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/sloop/damage_overlay.png");
-    public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = AlekiShipsHelper.mapOfKeys(DyeColor.class,
+    public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = CommonHelper.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
     private static final BoatAtlasHolder SLOOP_ATLAS = BoatAtlases.getSloopAtlas();
@@ -43,7 +43,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     public SloopRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
         this(context, new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName()),
-                AlekiShipsHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
+                CommonHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
     }
 

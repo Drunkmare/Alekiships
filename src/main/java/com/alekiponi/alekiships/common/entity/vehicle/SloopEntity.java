@@ -7,7 +7,7 @@ import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,7 +18,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -30,7 +29,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
@@ -678,7 +676,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
             windForceAngle = this.getLocalWindAngleAndSpeed()[0];
         }
 
-        float windForce = AlekiShipsHelper.sailForceMultiplierTable(windDifference);
+        float windForce = CommonHelper.sailForceMultiplierTable(windDifference);
         return new float[]{(float) windForceAngle, (float) windForce};
     }
 

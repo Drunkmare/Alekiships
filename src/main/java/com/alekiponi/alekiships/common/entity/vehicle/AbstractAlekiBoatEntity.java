@@ -1,10 +1,11 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -171,7 +171,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.setYRot(this.getYRot() + this.getDeltaRotation());
 
         // all code that moves other entities should happen after collision check
-        AlekiShipsHelper.tickHopPlayersOnboard(this);
+        ClientHelper.tickHopPlayersOnboard(this);
 
         this.tickTakeEntitiesForARide();
 
@@ -506,7 +506,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public void updateLocalWindAngleAndSpeed() {
 
-        double newDirection = AlekiShipsHelper.vec2ToWrappedDegrees(this.getWindVector());
+        double newDirection = CommonHelper.vec2ToWrappedDegrees(this.getWindVector());
         double newSpeed = Math.abs(this.getWindVector().length());
 
         if (this.level().isClientSide()) {

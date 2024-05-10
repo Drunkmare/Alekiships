@@ -5,7 +5,7 @@ import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.network.ClientBoundCleatLinkPacket;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -155,7 +155,7 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implem
             if (!this.level().isClientSide && pDropLeash) {
                 this.playSound(SoundEvents.LEASH_KNOT_BREAK, 1.0F, 1.0F);
                 if (leashHolder instanceof Player player) {
-                    AlekiShipsHelper.giveItemToPlayer(player, Items.LEAD.getDefaultInstance());
+                    CommonHelper.giveItemToPlayer(player, Items.LEAD.getDefaultInstance());
                 } else {
                     this.spawnAtLocation(Items.LEAD);
                     if(leashHolder instanceof LeashFenceKnotEntity){

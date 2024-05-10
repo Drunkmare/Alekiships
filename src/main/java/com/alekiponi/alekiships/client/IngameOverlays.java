@@ -12,7 +12,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -78,7 +78,7 @@ public enum IngameOverlays {
 
         if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+        final Entity entity = CommonHelper.getEntity(mc.hitResult);
 
         if (entity == null) return;
 
@@ -117,7 +117,7 @@ public enum IngameOverlays {
 
         if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+        final Entity entity = CommonHelper.getEntity(mc.hitResult);
 
         if (!(entity instanceof ConstructionEntity constructionEntity) || !(constructionEntity.getRootVehicle() instanceof SloopUnderConstructionEntity sloop))
             return;
@@ -149,7 +149,7 @@ public enum IngameOverlays {
 
         if (!setup(gui, mc) || mc.player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+        final Entity entity = CommonHelper.getEntity(mc.hitResult);
 
         if (!(entity instanceof CannonEntity cannon)) return;
 
@@ -247,7 +247,7 @@ public enum IngameOverlays {
 
         if (!setup(gui, mc) || player.isSpectator() || !mc.options.getCameraType().isFirstPerson()) return;
 
-        final Entity entity = AlekiShipsHelper.getEntity(mc.hitResult);
+        final Entity entity = CommonHelper.getEntity(mc.hitResult);
 
         if (entity instanceof IHaveIcons) {
             final PoseStack stack = graphics.pose();

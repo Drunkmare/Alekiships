@@ -6,7 +6,7 @@ import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.util.AlekiShipsHelper;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -187,7 +187,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     }
 
     public boolean everyNthTickUnique(int n){
-        return AlekiShipsHelper.everyNthTickUnique(this.getId(), this.tickCount, n);
+        return CommonHelper.everyNthTickUnique(this.getId(), this.tickCount, n);
     }
 
     @Override

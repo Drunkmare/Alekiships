@@ -321,11 +321,6 @@ public class CannonEntity extends Entity {
     }
 
     @Override
-    public boolean canCollideWith(final Entity other) {
-        return AbstractVehicle.canVehicleCollide(this, other);
-    }
-
-    @Override
     public boolean canBeCollidedWith() {
         return !this.isPassenger();
     }
