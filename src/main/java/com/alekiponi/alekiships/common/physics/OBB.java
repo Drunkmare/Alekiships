@@ -13,12 +13,14 @@ import static com.alekiponi.alekiships.common.physics.Vec3Helper.yRotDegrees;
 
 public class OBB {
 
-    AABB EXTENT;
-    Vec2[] VERTICES;
-    Vec3 ORIGIN;
-    Vec3 ORIENTATION;
-    float YAW;
-    double HEIGHT;
+    private final AABB EXTENT;
+    private final Vec2[] VERTICES;
+    private final Vec3 ORIGIN;
+
+    private Vec3 CENTER;
+    private Vec3 ORIENTATION;
+    private final float YAW;
+    private final double HEIGHT;
 
     Vec3[] VERTICES_IN_WORLD;
 
@@ -48,6 +50,26 @@ public class OBB {
             throw new IllegalArgumentException("An OBB must always be convex");
         }*/
 
+
+    }
+
+    public Vec3 getCenter() {
+        if(CENTER == null){
+            CENTER = createCenter();
+        }
+        return CENTER;
+    }
+
+    private Vec3 createCenter(){
+        Vec3 average = Vec3.ZERO;
+        for (Vec3 vertex : getLowerVerticesInWorld()){
+            average = average.add(vertex);
+        }
+        average = average.multiply(new Vec3((1f/(vertexCount())), 0, (1f/(vertexCount()))));
+        return average.add(0,ORIGIN.y+HEIGHT*0.5f,0);
+    }
+
+    public OBB expandTowardsY(){
 
     }
 
@@ -263,14 +285,12 @@ public class OBB {
 
         // https://www.youtube.com/watch?v=7Ik2vowGcU0
 
+
         for (int selector = 0; selector < 2; selector++) {
             if (selector == 1) {
                 OBB obb = obb1;
                 obb1 = obb2;
                 obb2 = obb;
-            } else {
-                obb1 = obb1;
-                obb2 = obb2;
             }
 
             for (int i = 0; i < obb1.vertexCount(); i++) {
@@ -279,7 +299,7 @@ public class OBB {
 
                 Vec2 axisProj = new Vec2(-(obb1.vertexL2D(j).y - obb1.vertexL2D(i).y), (obb1.vertexL2D(j).x - obb1.vertexL2D(i).x));
                 float d = Mth.sqrt((axisProj.x * axisProj.x + axisProj.y * axisProj.y));
-                axisProj = new Vec2(axisProj.x / d, axisProj.y / d);
+                //axisProj = new Vec2(axisProj.x / d, axisProj.y / d);
 
                 // Work out min and max 1D points for Obb1
                 float minObb1 = Float.MAX_VALUE, maxObb1 = Float.MIN_VALUE;
@@ -306,6 +326,60 @@ public class OBB {
         }
 
         return true;
+
+    }
+
+    public Vec3 collide(AABB obb2) {
+        return collide(this, createFromAABB(obb2));
+    }
+
+    public double collideY(AABB obb2, double desiredMovement) {
+        return collideY(this, createFromAABB(obb2), desiredMovement);
+    }
+
+    public static double collideY(OBB colliding, OBB obbStatic, double desiredMovement) {
+        double collidingBottom = colliding.getOrigin().y + desiredMovement;
+        double staticBottom = obbStatic.getOrigin().y;
+        double staticTop = staticBottom + obbStatic.getHeight();
+        double collidingTop = collidingBottom + colliding.getHeight();
+        if (collidingBottom > staticTop || collidingTop < staticBottom) {
+            return desiredMovement;
+        }
+        if (colliding.intersects(obbStatic)) {
+
+
+
+            double bottomIntersection = 0;
+            double topIntersection = 0;
+
+            // if the bottom is intersecting, get the distance between the colliding bottom and the top
+            if(collidingBottom < staticTop && collidingBottom > staticBottom){
+                bottomIntersection = staticTop - collidingBottom;
+            }
+            // if the top is intersecting, get the distance between the
+            if(collidingTop < staticTop && collidingTop > staticBottom){
+                topIntersection = staticBottom - collidingTop;
+            }
+            if(Math.abs(bottomIntersection) < Math.abs(topIntersection)){
+
+                if (Math.abs(bottomIntersection) < 1.0E-7D) {
+                    return 0.0D;
+                }
+                if(desiredMovement+bottomIntersection < 0){
+                    return 0;
+                }
+                return desiredMovement+bottomIntersection;
+            }
+
+            if (Math.abs(topIntersection) < 1.0E-7D) {
+                return 0.0D;
+            }
+            return desiredMovement+topIntersection;
+
+
+        }
+
+        return desiredMovement;
 
     }
 

@@ -330,6 +330,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     }
 
     @Override
+    protected void tickWindInput(){
+
+    }
+
+    @Override
     public float getStepHeight() {
         return 0.0f;
     }

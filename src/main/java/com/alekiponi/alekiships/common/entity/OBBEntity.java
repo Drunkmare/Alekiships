@@ -121,5 +121,81 @@ public abstract class OBBEntity extends Entity {
         return this.getOBB().getExtent();
     }
 
+    protected Vec3 collide(Vec3 pVec) {
+        AABB aabb = this.getBoundingBox();
+        OBB obb = this.getOBB();
+        List<VoxelShape> list = this.level().getEntityCollisions(this, aabb.expandTowards(pVec));
+        Vec3 vec3 = pVec.lengthSqr() == 0.0D ? pVec : collideBoundingBox(this, pVec, aabb, obb, this.level(), list);
+
+        return vec3;
+    }
+
+    public static Vec3 collideBoundingBox(@Nullable Entity pEntity, Vec3 pVec, AABB pCollisionBox, OBB pOBB, Level pLevel, List<VoxelShape> pPotentialHits) {
+        ImmutableList.Builder<VoxelShape> builder = ImmutableList.builderWithExpectedSize(pPotentialHits.size() + 1);
+        if (!pPotentialHits.isEmpty()) {
+            builder.addAll(pPotentialHits);
+        }
+
+        WorldBorder worldborder = pLevel.getWorldBorder();
+        boolean flag = pEntity != null && worldborder.isInsideCloseToBorder(pEntity, pCollisionBox.expandTowards(pVec));
+        if (flag) {
+            builder.add(worldborder.getCollisionShape());
+        }
+
+        builder.addAll(pLevel.getBlockCollisions(pEntity, pCollisionBox.expandTowards(pVec)));
+        return collideWithShapes(pVec, pOBB, builder.build());
+    }
+
+    private static Vec3 collideWithShapes(Vec3 pDeltaMovement, OBB pOBB, List<VoxelShape> pShapes) {
+        if (pShapes.isEmpty()) {
+            return pDeltaMovement;
+        } else {
+            double movementX = pDeltaMovement.x;
+            double movementY = pDeltaMovement.y;
+            double movementZ = pDeltaMovement.z;
+
+
+            /*
+            if (movementY != 0.0D) {
+                movementY = Shapes.collide(Direction.Axis.Y, pOBB.getExtent(), pShapes, movementY);
+                if (movementY != 0.0D) {
+                    pOBB = pOBB.move(0.0D, movementY, 0.0D);
+                }
+            }*/
+
+
+            if (movementY != 0.0D) {
+                movementY = OBBCollisions.collideY(pShapes, pOBB, movementY);
+                if (movementY != 0.0D) {
+                    pOBB = pOBB.move(0.0D, movementY, 0.0D);
+                }
+            }
+
+            /*
+            boolean flag = Math.abs(movementX) < Math.abs(movementZ);
+
+
+            if (flag && movementZ != 0.0D) {
+                movementZ = Shapes.collide(Direction.Axis.Z, pOBB.getExtent(), pShapes, movementZ);
+                if (movementZ != 0.0D) {
+                    pOBB = pOBB.move(0.0D, 0.0D, movementZ);
+                }
+            }
+
+            if (movementX != 0.0D) {
+                movementX = Shapes.collide(Direction.Axis.X, pOBB.getExtent(), pShapes, movementX);
+                if (!flag && movementX != 0.0D) {
+                    pOBB = pOBB.move(movementX, 0.0D, 0.0D);
+                }
+            }
+
+            if (!flag && movementZ != 0.0D) {
+                movementZ = Shapes.collide(Direction.Axis.Z, pOBB.getExtent(), pShapes, movementZ);
+            }*/
+
+            return new Vec3(movementX, movementY, movementZ);
+        }
+    }
+
 
 }

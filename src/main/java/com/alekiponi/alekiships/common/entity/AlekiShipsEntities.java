@@ -41,10 +41,13 @@ public final class AlekiShipsEntities {
 
     static EntityOBBDimensions rowboatDimensions = new EntityOBBDimensions(new Vec2[]{
 
+
             new Vec2(-1.0f, 1.5f),
             new Vec2(1.0f, 1.5f),
             new Vec2(1.0f, -1.5f),
             new Vec2(-1.0f, -1.5f),
+
+
 
 
 
@@ -60,6 +63,7 @@ public final class AlekiShipsEntities {
 
 
 
+
             /*
             new Vec2(-0.3125f, 1.9375f),
             new Vec2(0.3125f, 1.9375f),
@@ -69,6 +73,7 @@ public final class AlekiShipsEntities {
             new Vec2(-1.0625f, 0.4375f),
 
              */
+
 
 
 
