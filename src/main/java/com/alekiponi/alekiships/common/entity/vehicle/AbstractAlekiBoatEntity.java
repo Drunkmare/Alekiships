@@ -65,7 +65,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected int windLerpTicks = 0;
 
     public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, EntityDimensions extent) {
-        super(entityType, level, extent);
+        super(entityType, level);
     }
 
     protected void defineSynchedData() {
