@@ -42,8 +42,13 @@ public abstract class ServerEntityMixin {
         if (this.entity instanceof AbstractVehicle vehicle){
             if (!vehicle.hasAllParts() && vehicle.isAlive()){
                 ci.cancel();
-                return;
             }
+        }
+    }
+
+    @Inject(method = "sendChanges", at = @At(value = "HEAD"))
+    public void injectUpdatePassengersForFlaggedVehicles(CallbackInfo ci) {
+        if (this.entity instanceof AbstractVehicle vehicle){
             if (vehicle.isFlaggedForPassengerUpdate()) {
                 List<Entity> list = vehicle.getPassengers();
                 this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));

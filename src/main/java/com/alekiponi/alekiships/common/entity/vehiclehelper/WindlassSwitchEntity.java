@@ -115,9 +115,9 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
 
         if(this.getRootVehicle() instanceof AbstractVehicle){
             if(this.getSwitched()){
-                states.add(IngameOverlays.IconState.ANCHOR_ARROW_DOWN);
-            } else {
                 states.add(IngameOverlays.IconState.ANCHOR_ARROW_UP);
+            } else {
+                states.add(IngameOverlays.IconState.ANCHOR_ARROW_DOWN);
             }
         }
 
