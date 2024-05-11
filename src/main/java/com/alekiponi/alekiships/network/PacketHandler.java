@@ -50,5 +50,11 @@ public final class PacketHandler {
                 .consumerMainThread(
                         (clientBoundCleatLinkPacket, contextSupplier) -> clientBoundCleatLinkPacket.handle())
                 .add();
+
+        CHANNEL.messageBuilder(ServerBoundFlagVehicleForUpdatePacket.class, id++)
+                .encoder(ServerBoundFlagVehicleForUpdatePacket::encoder)
+                .decoder(ServerBoundFlagVehicleForUpdatePacket::new)
+                .consumerMainThread(ServerBoundFlagVehicleForUpdatePacket::handle)
+                .add();
     }
 }

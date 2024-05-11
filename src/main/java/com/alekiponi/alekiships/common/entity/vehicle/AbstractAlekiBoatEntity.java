@@ -85,6 +85,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Override
     public void tick() {
+        super.tick();
         this.oldStatus = this.status;
         this.status = this.getStatus();
 
@@ -92,19 +93,20 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             this.setHurtTime(this.getHurtTime() - 1);
         }
 
-        if (this.getDamage() > this.getDamageThreshold()) {
+        if (!this.isAlive()) {
             if (this.status == MediumStatus.IN_WATER) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.1, 0));
             }
             for (Entity entity : this.getPassengers()) {
+                entity.unRide();
                 entity.kill();
             }
-            if (this.getDamage() > this.getDamageThreshold() * 2) {
+            if (this.getDamage() > this.getDamageThreshold() * 1.5f) {
                 this.kill();
             }
         }
 
-        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.getDamage() <= this.getDamageThreshold() && this.tickCount % 10 == 0) {
+        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.isAlive() && this.tickCount % 10 == 0) {
             this.hurt(this.damageSources().drown(), this.getDamageRecovery());
         }
 
@@ -119,7 +121,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         this.tickEffects();
 
-        super.tick();
         this.tickLerp();
 
         this.tickWindInput();

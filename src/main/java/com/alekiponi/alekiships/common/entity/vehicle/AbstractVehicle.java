@@ -8,6 +8,8 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntit
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.network.PacketHandler;
+import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
@@ -44,6 +46,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -81,6 +84,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected double lastYd;
 
     private boolean hasAllParts = false;
+
+    private boolean passengerUpdateFlag = false;
 
     public AbstractVehicle(final EntityType entityType, final Level level) {
         super(entityType, level);
@@ -125,12 +130,19 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     @Override
     public void tick() {
-        super.tick();
-        if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers()) {
+        if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers() && this.isAlive()) {
             addVehicleParts();
         } else {
             hasAllParts = true;
         }
+        if (!hasAllParts()) {
+            return;
+        }
+        if (everyNthTickUnique(10)) {
+            checkIfNeedsPassengerUpdate();
+        }
+
+        super.tick();
     }
 
     private void addVehicleParts() {
@@ -142,6 +154,36 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     public boolean hasAllParts() {
         return hasAllParts;
+    }
+
+    public void checkIfNeedsPassengerUpdate() {
+        if (this.level().isClientSide()) {
+            if (!this.hasAllHelpers()) {
+                PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                        new ServerboundSwitchEntityPacket(true, this.getId()));
+            }
+        }
+    }
+
+    public void setFlaggedForPassengerUpdate(boolean flag) {
+        passengerUpdateFlag = flag;
+    }
+
+    public boolean isFlaggedForPassengerUpdate() {
+        return passengerUpdateFlag;
+    }
+
+    public boolean hasAllHelpers() {
+        for (Entity passenger : this.getPassengers()) {
+            if (!passenger.isVehicle()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isAlive() {
+        return this.getDamage() <= this.getDamageThreshold();
     }
 
     @Override
@@ -264,6 +306,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     protected void tickTakeEntitiesForARide() {
+        if(this.tickCount < 10){
+            return;
+        }
         if (this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)) {
             return;
         }

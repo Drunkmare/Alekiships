@@ -4,12 +4,13 @@
   "package": "com.alekiponi.alekiships.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "minecraft.PlayerMixin"
+    "minecraft.PlayerMixin",
+    "minecraft.ServerEntityMixin"
   ],
   "client": [
-    "minecraft.PlayerModelMixin",
+    "client.CameraMixin",
     "client.LocalPlayerMixin",
-    "client.CameraMixin"
+    "minecraft.PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
