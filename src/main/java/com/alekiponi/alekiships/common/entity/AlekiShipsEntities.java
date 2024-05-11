@@ -31,23 +31,19 @@ public final class AlekiShipsEntities {
     private static final int VEHICLE_HELPER_TRACKING = LARGE_VEHICLE_TRACKING + 1;
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             ForgeRegistries.ENTITY_TYPES, MOD_ID);
-
-    static EntityDimensions rowboatExtent = new EntityDimensions(7, 1,true);
-    static EntityDimensions sloopExtent = new EntityDimensions(14, 1,true);
-
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<RowboatEntity>>> ROWBOATS = CommonHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, rowboatExtent, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopEntity>>> SLOOPS = CommonHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloop(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, sloopExtent, vanillaWood),
+                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, vanillaWood),
                             MobCategory.MISC)));
 
     public static final EnumMap<VanillaWood, RegistryObject<EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = CommonHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
-                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, sloopExtent, vanillaWood),
+                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
                     MobCategory.MISC)));
 
     /*

@@ -9,8 +9,8 @@ import net.minecraft.world.level.Level;
 
 public class TestSailingShipEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveAnchorWindlass,IHaveCleats {
 
-    public TestSailingShipEntity(EntityType<? extends AbstractAlekiBoatEntity> entityType, Level level, EntityDimensions extent) {
-        super(entityType, level, extent);
+    public TestSailingShipEntity(EntityType<? extends AbstractAlekiBoatEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
     public final int PASSENGER_NUMBER = 24;

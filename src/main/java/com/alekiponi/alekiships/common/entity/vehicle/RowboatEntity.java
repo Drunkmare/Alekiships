@@ -52,9 +52,9 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     private final BoatMaterial boatMaterial;
 
 
-    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level, EntityDimensions extent,
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
                          final BoatMaterial boatMaterial) {
-        super(entityType, level, extent);
+        super(entityType, level);
         this.boatMaterial = boatMaterial;
     }
 

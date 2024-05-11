@@ -53,8 +53,8 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     public final int RIGGING_ITEM_NUMBER = 8;
 
     public SloopUnderConstructionEntity(final EntityType<? extends SloopUnderConstructionEntity> entityType,
-                                        final Level level, EntityDimensions extent, final BoatMaterial boatMaterial) {
-        super(entityType, level, extent);
+                                        final Level level, final BoatMaterial boatMaterial) {
+        super(entityType, level);
         this.boatMaterial = boatMaterial;
     }
 

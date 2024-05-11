@@ -77,9 +77,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
     protected final float DAMAGE_RECOVERY = 5.333f;
     private final BoatMaterial boatMaterial;
 
-    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level, EntityDimensions extent,
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
                        final BoatMaterial boatMaterial) {
-        super(entityType, level, extent);
+        super(entityType, level);
         this.boatMaterial = boatMaterial;
     }
 

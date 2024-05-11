@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * The vanilla wood {@link BoatMaterial} implementation. Notably doesn't include Bamboo
+ * The vanilla wood {@link BoatMaterial} implementation.
  */
 public enum VanillaWood implements BoatMaterial {
     OAK(Blocks.OAK_PLANKS, Items.OAK_FENCE, Items.STRIPPED_OAK_LOG),

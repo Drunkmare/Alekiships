@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 
 public abstract class AbstractUnderConstructionEntity extends AbstractVehicle implements IHaveConstructionEntities {
 
-    public AbstractUnderConstructionEntity(EntityType entityType, Level level, EntityDimensions extent) {
+    public AbstractUnderConstructionEntity(EntityType entityType, Level level) {
         super(entityType, level);
     }
 

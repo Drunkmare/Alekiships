@@ -64,7 +64,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected int windLerpTicks = 0;
 
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, EntityDimensions extent) {
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
         super(entityType, level);
     }
 
