@@ -1,1 +1,1 @@
-The next generation of ship mod is here! Build in-world, place containers onboard, fire cannons, sail the seas with
+A new generation of vanilla-friendly ships. Simulated sailing, placeable containers, walkable decks -- oh, and cannons!
