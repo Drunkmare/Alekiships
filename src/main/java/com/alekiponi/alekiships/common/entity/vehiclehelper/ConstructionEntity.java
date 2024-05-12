@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class ConstructionEntity extends Entity {
+public class ConstructionEntity extends AbstractHelper {
 
     public ConstructionEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -18,14 +18,6 @@ public class ConstructionEntity extends Entity {
     @Override
     protected void defineSynchedData() {
 
-    }
-
-    @Override
-    public void tick(){
-        super.tick();
-        if (!this.isPassenger()) {
-            this.kill();
-        }
     }
 
     public float getSpin(float pPartialTicks) {
@@ -43,17 +35,12 @@ public class ConstructionEntity extends Entity {
     }
 
     @Override
-    public boolean isPickable() {
-        return !this.isRemoved();
-    }
-
-    @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         if(this.getRootVehicle() instanceof AbstractUnderConstructionEntity constructionEntity){
             constructionEntity.interactFromConstructionEntity(player, hand);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return InteractionResult.FAIL;
     }
 
 }

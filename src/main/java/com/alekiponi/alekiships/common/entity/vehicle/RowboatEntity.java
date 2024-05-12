@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
@@ -31,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveCleats {
+public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
@@ -230,22 +231,9 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IHaveBlock
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldItem = player.getItemInHand(hand);
 
-        if (heldItem.is(Tags.Items.DYES)) {
-            final DyeColor dyeColor = DyeColor.getColor(heldItem);
-            if (dyeColor != null) {
-                final Optional<DyeColor> paintColor = this.getPaintColor();
-                if (paintColor.isEmpty() || paintColor.get() != dyeColor) {
-                    this.setPaintColor(dyeColor);
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
-        if (heldItem.is(Items.WATER_BUCKET)) {
-            this.clearPaint();
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
+        InteractionResult result = this.interactPaint(player, hand);
+        if (result != null){
+            return result;
         }
 
         if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars() != Oars.TWO) {

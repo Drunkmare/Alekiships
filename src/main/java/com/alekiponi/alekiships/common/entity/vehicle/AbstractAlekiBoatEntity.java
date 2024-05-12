@@ -414,7 +414,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 return states;
             }
 
-            if (itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) {
+            if ((itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) && this instanceof IPaintable) {
                 states.add(IngameOverlays.IconState.BRUSH);
                 return states;
             }

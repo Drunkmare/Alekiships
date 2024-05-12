@@ -9,13 +9,12 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 
-public abstract class AbstractSwitchEntity extends Entity implements IHaveIcons {
+public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
     public AbstractSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -32,14 +31,6 @@ public abstract class AbstractSwitchEntity extends Entity implements IHaveIcons 
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
-    }
-
-    @Override
-    public void tick(){
-        if(!this.isPassenger()){
-            this.kill();
-        }
-        super.tick();
     }
 
     public void setSwitched(boolean switched) {

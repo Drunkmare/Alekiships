@@ -82,6 +82,7 @@ public class ForgeEventHandler {
     public static void onPlayerAttack(final AttackEntityEvent event) {
         final Entity target = event.getTarget();
         if (!(target instanceof AbstractCompartmentEntity)) return;
+        if (target instanceof EmptyCompartmentEntity) return;
 
         final Player player = event.getEntity();
         final double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);

@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class AnchorEntity extends Entity {
+public class AnchorEntity extends AbstractHelper {
 
     protected int lerpSteps;
     protected double lerpX;
@@ -24,9 +24,6 @@ public class AnchorEntity extends Entity {
     @Override
     public void tick(){
         super.tick();
-        if (!this.isPassenger()) {
-            this.kill();
-        }
         this.tickLerp();
     }
 

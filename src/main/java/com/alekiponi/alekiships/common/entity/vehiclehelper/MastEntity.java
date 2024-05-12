@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MastEntity extends Entity {
+public class MastEntity extends AbstractPassthroughHelper {
     public MastEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
@@ -19,9 +19,6 @@ public class MastEntity extends Entity {
     @Override
     public void tick(){
         super.tick();
-        if (!this.isPassenger()) {
-            this.kill();
-        }
 
         if(this.level().isClientSide()){
             /*

@@ -3,10 +3,11 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface IDestroyPlants {
-    default void tickDestroyPlants() {
+public interface IBreakIce {
+    default void tickBreakIce() {
         final BlockPos.MutableBlockPos blockPos = ((Entity)this).blockPosition().mutable();
 
         final int size;
@@ -25,8 +26,9 @@ public interface IDestroyPlants {
             for (int z = -size; z <= size; z++) {
                 for (int y = 0; y < 2; y++) {
                     final BlockState blockState = ((Entity)this).level().getBlockState(blockPos);
-                    if (blockState.is(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED)) {
+                    if (blockState.is(Blocks.ICE)) {
                         ((Entity)this).level().destroyBlock(blockPos, false);
+                        ((Entity)this).level().setBlock(blockPos,Blocks.WATER.defaultBlockState(), 2);
                     }
                     // Move down a block
                     blockPos.setY(blockPos.getY() - 1);

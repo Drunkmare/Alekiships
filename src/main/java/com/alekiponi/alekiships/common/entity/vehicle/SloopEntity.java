@@ -31,7 +31,7 @@ import net.minecraftforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
+public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
 
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
@@ -414,27 +414,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        final ItemStack heldItem = player.getItemInHand(hand);
-
-        if (heldItem.is(Tags.Items.DYES)) {
-            final DyeColor dyeColor = DyeColor.getColor(heldItem);
-            if (dyeColor != null) {
-                final Optional<DyeColor> paintColor = this.getPaintColor();
-                if (paintColor.isEmpty() || paintColor.get() != dyeColor) {
-                    this.setPaintColor(dyeColor);
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
-        if (heldItem.is(Items.WATER_BUCKET)) {
-            this.clearPaint();
-            player.swing(hand);
-            return InteractionResult.SUCCESS;
-        }
-
-        return super.interact(player, hand);
+        InteractionResult result = this.interactPaint(player, hand);
+        return result == null ? super.interact(player, hand) : result;
     }
 
     @Override
@@ -758,15 +739,15 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IHaveAnchorW
         this.entityData.set(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
     }
 
-    /**
-     * @return The paint color of the boat
-     */
-    public Optional<DyeColor> getPaintColor() {
-        return this.entityData.get(DATA_ID_PAINT_COLOR);
-    }
+
 
     public void setPaintColor(final DyeColor paintColor) {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
+    }
+
+    @Override
+    public Optional<DyeColor> getPaintColor() {
+        return this.entityData.get(DATA_ID_PAINT_COLOR);
     }
 
     public void clearPaint() {

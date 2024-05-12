@@ -217,14 +217,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
             this.destroy(damageSource);
         }
 
-        if (this.getTrueVehicle() != null && this.getTrueVehicle() instanceof IAmTiny) {
-            AbstractVehicle vehicle = this.getTrueVehicle();
-            vehicle.spawnAtLocation(vehicle.getDropItem());
-            vehicle.remove(RemovalReason.KILLED);
-            vehicle.kill();
-            this.getVehicle().kill();
-        }
-
         this.discard();
         return true;
     }

@@ -472,10 +472,11 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        if (this.getTrueVehicle() != null && this.getTrueVehicle() instanceof IAmTiny) {
-            return super.hurt(damageSource, amount);
+        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
+            return vehicle.hurt(damageSource, amount);
         }
-        return false;
+
+        return true;
     }
 
     @Nullable

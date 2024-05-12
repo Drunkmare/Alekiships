@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.HangingEntity;
@@ -34,12 +35,12 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implements IHaveIcons {
+public class VehicleCleatEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_LEASHHOLDER_ID = SynchedEntityData.defineId(
             VehicleCleatEntity.class, EntityDataSerializers.INT);
     @Nullable
-    private net.minecraft.world.entity.Entity leashHolder;
+    private Entity leashHolder;
     private int delayedLeashHolderId;
     @Nullable
     private CompoundTag leashInfoTag;
@@ -101,7 +102,7 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implem
         if (this.leashInfoTag != null) {
             this.restoreLeashFromSave();
         }
-        net.minecraft.world.entity.Entity leashHolder = this.getLeashHolder();
+        Entity leashHolder = this.getLeashHolder();
         if (leashHolder != null) {
             if (!this.isAlive() || !leashHolder.isAlive()) {
                 this.dropLeash(true, true);
@@ -190,7 +191,7 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implem
     }
 
     @Nullable
-    public net.minecraft.world.entity.Entity getLeashHolder() {
+    public Entity getLeashHolder() {
         if (this.leashHolder == null && this.delayedLeashHolderId != 0 && this.level().isClientSide) {
             this.leashHolder = this.level().getEntity(this.delayedLeashHolderId);
         }
@@ -201,7 +202,7 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implem
     /**
      * Sets the entity to be leashed to.
      */
-    public void setLeashedTo(net.minecraft.world.entity.Entity pLeashHolder, boolean pBroadcastPacket) {
+    public void setLeashedTo(Entity pLeashHolder, boolean pBroadcastPacket) {
         this.leashHolder = pLeashHolder;
         this.leashInfoTag = null;
         if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
@@ -220,7 +221,7 @@ public class VehicleCleatEntity extends net.minecraft.world.entity.Entity implem
         if (this.leashInfoTag != null && this.level() instanceof ServerLevel) {
             if (this.leashInfoTag.hasUUID("UUID")) {
                 UUID uuid = this.leashInfoTag.getUUID("UUID");
-                net.minecraft.world.entity.Entity entity = ((ServerLevel) this.level()).getEntity(uuid);
+                Entity entity = ((ServerLevel) this.level()).getEntity(uuid);
                 if (entity != null) {
                     this.setLeashedTo(entity, true);
                     return;
