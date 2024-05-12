@@ -80,7 +80,9 @@ public class CannonEntity extends Entity {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
             if (this.isInWater()) {
                 this.setDeltaMovement(0.0D, -0.01D, 0.0D);
-                this.setYRot(this.getYRot() + 0.4f);
+                if (!this.onGround()) {
+                    this.setYRot(this.getYRot() + 0.4f);
+                }
             }
             if (!this.onGround() || this.getDeltaMovement()
                     .horizontalDistanceSqr() > (double) 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) {
@@ -262,7 +264,7 @@ public class CannonEntity extends Entity {
 
     @Override
     public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-            final int pPosRotationIncrements, final boolean teleport) {
+                       final int pPosRotationIncrements, final boolean teleport) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;

@@ -51,7 +51,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     private int notRidingTicks = 0;
 
     public AbstractCompartmentEntity(final CompartmentType<? extends AbstractCompartmentEntity> compartmentType,
-            final Level level) {
+                                     final Level level) {
         super(compartmentType, level);
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         if (ridingThisPart == null && this.isPassenger() && this.getVehicle() instanceof VehiclePart) {
             ridingThisPart = (VehiclePart) this.getVehicle();
         }
-        if(vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers().size() == vehicle.getMaxPassengers()){
+        if (vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             vehiclePassengerIndex = vehicle.getPassengers().indexOf(this.getVehicle());
         }
 
@@ -99,7 +99,9 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
                     if (this.getFluidTypeHeight(this.getEyeInFluidType()) > this.getEyeHeight() - 0.25) {
                         this.setDeltaMovement(0, this.getBuoyancy(), 0);
                     }
-                    this.setYRot(this.getYRot() + 0.4f);
+                    if (!this.onGround()) {
+                        this.setYRot(this.getYRot() + 0.4f);
+                    }
                 }
                 if (!this.onGround() || this.getDeltaMovement()
                         .horizontalDistanceSqr() > (double) 1.0E-5F || (this.tickCount + this.getId()) % 4 == 0) {
@@ -167,7 +169,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     @Override
     public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-            final int pPosRotationIncrements, final boolean teleport) {
+                       final int pPosRotationIncrements, final boolean teleport) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;
@@ -180,13 +182,13 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     @Override
     public boolean isInvulnerableTo(DamageSource pSource) {
-        if(pSource.is(DamageTypeTags.IS_EXPLOSION)){
+        if (pSource.is(DamageTypeTags.IS_EXPLOSION)) {
             return true;
         }
         return super.isInvulnerableTo(pSource);
     }
 
-    public boolean everyNthTickUnique(int n){
+    public boolean everyNthTickUnique(int n) {
         return CommonHelper.everyNthTickUnique(this.getId(), this.tickCount, n);
     }
 
@@ -296,11 +298,11 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         this.entityData.set(DATA_ID_HURT_DIR, pHurtDirection);
     }
 
-    public RidingPose getRidingPose(){
+    public RidingPose getRidingPose() {
         return RidingPose.STANDARD;
     }
 
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player){
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
         ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
         return states;
     }
@@ -310,7 +312,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         return !this.isRemoved();
     }
 
-    public boolean shouldFaceOtherWay(){
+    public boolean shouldFaceOtherWay() {
         return false;
     }
 
@@ -333,11 +335,11 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     abstract protected void onPlaced();
 
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
-            final float pitch) {
+                          final float pitch) {
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
     }
 
-    public static enum RidingPose{
+    public static enum RidingPose {
         ULTRA_COMPACT,
         COMPACT,
         STANDING,
