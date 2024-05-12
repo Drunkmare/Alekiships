@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 
-public interface IHaveFourCleats extends IHaveCleats {
+public interface IHaveMultipleCleats extends IHaveCleats {
     @Override
     default void tickCleatInput() {
 
@@ -60,7 +60,7 @@ public interface IHaveFourCleats extends IHaveCleats {
 
                     Vec3 vectorToVehicle = averageCleatPosition.vectorTo(averageLeashHolderPosition).normalize();
 
-                    Vec3 movementVector = vectorToVehicle.multiply(0.008, 0, 0.008).add(0, vehicle.getDeltaMovement().y, 0);
+                    Vec3 movementVector = vectorToVehicle.multiply(0.04, 0, 0.04).add(0, vehicle.getDeltaMovement().y, 0);
 
                     if (averageCleatPosition.distanceTo(averageLeashHolderPosition) > 1.0) {
                         vehicle.setDeltaMovement(movementVector);
@@ -83,7 +83,7 @@ public interface IHaveFourCleats extends IHaveCleats {
                                 vectorToVehicle.z * -0.03f);
                         double vehicleSize = Mth.clamp(vehicle.getBbWidth(), 1, 100);
                         movementVector = movementVector.multiply(1 / vehicleSize, 0, 1 / vehicleSize);
-
+                        movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
                         vehicle.setDeltaMovement(movementVector);
 
                     }
@@ -92,6 +92,7 @@ public interface IHaveFourCleats extends IHaveCleats {
                     Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(vehicle.getPosition(0)).normalize();
                     Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.001f, vehicle.getDeltaMovement().y,
                             vectorToVehicle.z * -0.001f);
+                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
 
                     if (cleat.distanceTo(leashHolder) > 1) {
                         vehicle.setDeltaMovement(movementVector);
@@ -110,7 +111,7 @@ public interface IHaveFourCleats extends IHaveCleats {
                     Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(vehicle.getPosition(0)).normalize();
                     Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.01f / count, vehicle.getDeltaMovement().y,
                             vectorToVehicle.z * -0.01f / count);
-
+                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
                     if (cleat.distanceTo(leashHolder) > 1) {
                         vehicle.setDeltaMovement(movementVector);
                     } else {

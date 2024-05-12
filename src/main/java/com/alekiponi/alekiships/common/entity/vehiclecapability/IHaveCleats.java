@@ -14,6 +14,8 @@ public interface IHaveCleats {
 
     //int[][] getCleatRotations();
 
+    float getCleatMovementMultiplier();
+
     private ArrayList<VehicleCleatEntity> getCleats(AbstractVehicle vehicle) {
         ArrayList<VehicleCleatEntity> list = new ArrayList<VehicleCleatEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
@@ -58,6 +60,7 @@ public interface IHaveCleats {
                             Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
                             Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.04f, vehicle.getDeltaMovement().y,
                                     vectorToVehicle.z * -0.04f);
+
                             double vehicleSize = Mth.clamp(vehicle.getBbWidth(), 1, 100);
                             movementVector = movementVector.multiply(1 / vehicleSize, 0, 1 / vehicleSize);
 

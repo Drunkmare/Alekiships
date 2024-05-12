@@ -89,6 +89,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
         return CAN_ADD_ONLY_BLOCKS;
     }
 
+    @Override
+    public float getCleatMovementMultiplier(){
+        return 10;
+    }
+
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
         AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
         for (int i = 0; i < this.getMaxPassengers(); i++) {

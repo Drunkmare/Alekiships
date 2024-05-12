@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.TestSailingShipEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
@@ -46,12 +47,12 @@ public final class AlekiShipsEntities {
                     (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
                     MobCategory.MISC)));
 
-    /*
+
     public static final RegistryObject<EntityType<TestSailingShipEntity>> TEST_SAILING_SHIP = register("test_sailing_ship",
             EntityType.Builder.of(TestSailingShipEntity::new, MobCategory.MISC).sized(5F, 1F)
                     .setTrackingRange(LARGE_VEHICLE_TRACKING));
 
-     */
+
 
     public static final RegistryObject<CompartmentType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_empty", CompartmentType.Builder.createBasic(EmptyCompartmentEntity::new));

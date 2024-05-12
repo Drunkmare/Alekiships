@@ -82,6 +82,6 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.ANCHOR_ENTITY.get(), AnchorRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CONSTRUCTION_ENTITY.get(), ConstructionRenderer::new);
 
-        //event.registerEntityRenderer(AlekiShipsEntities.TEST_SAILING_SHIP.get(), TestSailingShipRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.TEST_SAILING_SHIP.get(), TestSailingShipRenderer::new);
     }
 }

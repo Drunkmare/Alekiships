@@ -79,7 +79,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.entityData.define(DATA_ID_IMMOBILE, false);
     }
 
-    public float renderSizeForCompartments(){
+    public float renderSizeForCompartments() {
         return 0.6875f;
     }
 
@@ -124,11 +124,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.tickLerp();
 
         this.tickWindInput();
-        if(this instanceof IHaveCleats){
-            ((IHaveCleats)this).tickCleatInput();
+        if (this instanceof IHaveCleats) {
+            ((IHaveCleats) this).tickCleatInput();
         }
-        if(this instanceof IHaveAnchorWindlass){
-            ((IHaveAnchorWindlass)this).tickAnchorInput();
+        if (this instanceof IHaveAnchorWindlass) {
+            ((IHaveAnchorWindlass) this).tickAnchorInput();
         }
 
         this.tickFloatBoat();
@@ -225,7 +225,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
      * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
      * handling different wind models like the one found in TFC
      *
-     * @param level The level
+     * @param level    The level
      * @param blockPos The block pos at which the wind is being queried
      * @return A Vec2 containing the winds x (x) and z (y) components.
      */
@@ -373,9 +373,9 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected abstract float getPaddleMultiplier();
 
     protected float[] getPaddleAcceleration() {
-        float forward = 0.0275F*2;
-        float backward = 0.0125F*2;
-        float turning = 0.0025F*2;
+        float forward = 0.0275F * 2;
+        float backward = 0.0125F * 2;
+        float turning = 0.0025F * 2;
         return new float[]{forward, backward, turning};
     }
 
@@ -404,11 +404,15 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
         ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
 
-        if(this instanceof IAmTiny){
+        if (this instanceof IAmTiny) {
             return states;
         }
 
         for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.isEmpty()) {
+                return states;
+            }
+
             if (itemStack.is(this.getDropItem())) {
                 states.add(IngameOverlays.IconState.HAMMER);
                 return states;

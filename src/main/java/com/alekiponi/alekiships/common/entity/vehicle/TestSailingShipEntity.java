@@ -87,4 +87,9 @@ public class TestSailingShipEntity extends AbstractAlekiBoatEntity implements IH
     public int[] getWindlassIndices() {
         return new int[0];
     }
+
+    @Override
+    public float getCleatMovementMultiplier(){
+        return 10;
+    }
 }

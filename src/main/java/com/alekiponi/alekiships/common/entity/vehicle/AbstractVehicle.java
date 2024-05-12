@@ -577,6 +577,22 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return truePassengers;
     }
 
+    public final List<Entity> collectPlayerPassengers() {
+        final List<Entity> truePassengers = collectLivingPassengers();
+
+        truePassengers.removeIf(entity -> !(entity instanceof Player));
+
+        return truePassengers;
+    }
+
+    public final List<Entity> collectPlayersToTakeWith() {
+        final List<Entity> truePassengers = collectEntitesToTakeWith();
+
+        truePassengers.removeIf(entity -> !(entity instanceof Player));
+
+        return truePassengers;
+    }
+
     public final List<AbstractCompartmentEntity> collectCompartments() {
         final List<AbstractCompartmentEntity> compartments = Lists.newArrayList();
 

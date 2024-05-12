@@ -16,22 +16,18 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveFourCleats {
+public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
@@ -381,9 +377,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
                     this.setJibsailActive(switchEntity.getSwitched());
                 }
                 ind++;
-
             }
-            if (this.collectEntitesToTakeWith().isEmpty() && this.collectLivingPassengers().isEmpty()) {
+            if (this.collectPlayersToTakeWith().isEmpty() && this.collectPlayerPassengers().isEmpty()) {
                 this.setTicksNoRiders(this.getTicksNoRiders() + 2);
                 if (this.getTicksNoRiders() >= SAIL_TOGGLE_TICKS) {
                     for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
@@ -409,13 +404,18 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         if (this.getJibsailActive() || this.getMainsailActive()) {
             return;
         }
-        IHaveFourCleats.super.tickCleatInput();
+        IHaveMultipleCleats.super.tickCleatInput();
     }
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         InteractionResult result = this.interactPaint(player, hand);
         return result == null ? super.interact(player, hand) : result;
+    }
+
+    @Override
+    public float getCleatMovementMultiplier(){
+        return 5;
     }
 
     @Override
