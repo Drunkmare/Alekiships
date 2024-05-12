@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class ConstructionEntity extends AbstractHelper {
+public class ConstructionEntity extends AbstractPassthroughHelper {
 
     public ConstructionEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -17,7 +17,6 @@ public class ConstructionEntity extends AbstractHelper {
 
     @Override
     protected void defineSynchedData() {
-
     }
 
     public float getSpin(float pPartialTicks) {

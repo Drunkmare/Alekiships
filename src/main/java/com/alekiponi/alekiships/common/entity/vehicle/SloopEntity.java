@@ -116,6 +116,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
     }
 
     @Override
+    public int broadsideCount() {
+        return 3;
+    }
+
+    @Override
     public int[] getColliderIndices() {
         return COLLIDERS;
     }
@@ -393,6 +398,10 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
             if (!this.getMainsailActive() && !this.getJibsailActive()) {
                 this.setMainsheetLength(0);
             }
+        }
+
+        if (this.everyNthTickUnique(10)){
+            checkIfRecentlyFiredBroadside();
         }
 
         super.tick();

@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Container;
@@ -31,6 +32,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.RIDE_BARREL;
+
 public class BarrelCompartmentEntity extends ContainerCompartmentEntity implements BlockCompartment {
     public static final int SLOT_COUNT = 27;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
@@ -50,7 +53,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
         @Override
         protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                final int count, final int openCount) {
+                                          final int count, final int openCount) {
         }
 
         @Override
@@ -63,12 +66,12 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     };
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-            final Level level) {
+                                   final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
+                                   final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
         this.setDisplayBlockState(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
@@ -85,7 +88,6 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         // Silly easter egg
         if (!this.isPassenger() && !player.isSecondaryUseActive()) {
-            // TODO advancement? "Lost at sea"?
             return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
 
@@ -105,6 +107,16 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
         }
 
         super.remove(removalReason);
+    }
+
+    @Override
+    public void tick(){
+        super.tick();
+        if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)){
+            if (this.getFirstPassenger() instanceof ServerPlayer serverPlayer) {
+                RIDE_BARREL.trigger(serverPlayer);
+            }
+        }
     }
 
     @Override

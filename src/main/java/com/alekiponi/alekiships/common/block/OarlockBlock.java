@@ -2,8 +2,11 @@ package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.advancements.GenericTrigger;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,6 +26,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
+
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.ROWBOAT_COMPLETED;
 
 public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
@@ -111,8 +116,12 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
                     if (axis == Direction.Axis.X) {
                         rowboat.setYRot(90F);
                     }
-
                     pLevel.addFreshEntity(rowboat);
+
+                    for (ServerPlayer serverplayer : pLevel.getEntitiesOfClass(ServerPlayer.class, rowboat.getBoundingBox().inflate(5.0D))) {
+                        ROWBOAT_COMPLETED.trigger(serverplayer);
+                    }
+
                 }
             });
         }

@@ -185,7 +185,7 @@ public final class AlekiShipsEntities {
     private static <E extends SloopUnderConstructionEntity> RegistryObject<EntityType<E>> registerSloopConstruction(
             final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
         return register("sloop_construction/" + vanillaWood.getSerializedName(),
-                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon());
+                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune()/*.noSummon()*/);
     }
 
     /**

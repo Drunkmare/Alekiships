@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
+import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,6 +40,7 @@ public class AlekiShips {
         AlekiShipsConfig.init();
         PacketHandler.init();
 
+
         if (FMLEnvironment.dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init();
         }
@@ -47,6 +49,7 @@ public class AlekiShips {
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VanillaWood.registerFrames();
+            AlekiShipsAdvancements.registerTriggers();
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.DYE_COLOR);
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
         });

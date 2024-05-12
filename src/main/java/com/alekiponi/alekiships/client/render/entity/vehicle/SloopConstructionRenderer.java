@@ -65,9 +65,10 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
         poseStack.translate(0, 1.0625F, 0);
         poseStack.scale(-1, -1, 1);
         poseStack.mulPose(Axis.YP.rotationDegrees(0));
+        /*
         if (constructionEntity.getDamage() > constructionEntity.getDamageThreshold()) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(constructionEntity.getId() % 30));
-        }
+        }*/
         //sloopModel.setupAnim(constructionEntity, partialTicks, 0, -0.1F, 0, 0);
 
 

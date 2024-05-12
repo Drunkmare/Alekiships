@@ -149,7 +149,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             livingEntity.setYHeadRot(livingEntity.getYHeadRot() + this.getYRot());
             this.clampRotation(livingEntity);
         } else if (passenger instanceof CannonEntity cannon) {
-            cannon.setYRot(-this.getYRot() - 180);
+            cannon.setYRot(this.getYRot() - 180);
             if (cannon.getXRot() > 5) {
                 cannon.setXRot(5);
             }
@@ -359,7 +359,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             if (this.getVehicle() instanceof VehiclePart part && this.canAddCannons) {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(this.level());
                 cannon.moveTo(this.getPosition(0));
-                cannon.setYRot(-this.getYRot() - 180);
+                cannon.setYRot(this.getYRot() - 180);
 
                 if (!this.level().isClientSide()) {
                     this.level().addFreshEntity(cannon);
@@ -367,7 +367,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                         AlekiShips.LOGGER.error("New Cannon: {} unable to ride Compartment: {}", cannon, this);
                     }
                 }
-                player.awardStat(Stats.ITEM_USED.get(AlekiShipsItems.CANNON.get()));
+                player.awardStat(Stats.ITEM_USED  .get(AlekiShipsItems.CANNON.get()));
                 if (!player.getAbilities().instabuild) {
                     heldStack.shrink(1);
                 }

@@ -4,12 +4,14 @@ import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -119,8 +121,9 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     public int[] getConstructionIndices() {
-        return new int[0];
+        return new int[]{0};
     }
+
     @Override
     public float renderSizeForCompartments() {
         return 0;
@@ -143,6 +146,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(DATA_ID_KEEL, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_DECK, ItemStack.EMPTY);
         this.entityData.define(DATA_ID_BOWSPRIT, ItemStack.EMPTY);
@@ -288,6 +292,11 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     @Override
     public int[] getCompartmentIndices() {
         return new int[0];
+    }
+
+    @Override
+    public boolean isAlive(){
+        return true;
     }
 
     public static enum ConstructionState {
@@ -632,6 +641,10 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
                                 sloop.setYRot(this.getYRot());
                                 sloop.setPos(this.getPosition(0));
                                 this.level().addFreshEntity(sloop);
+                                if (player instanceof ServerPlayer serverPlayer) {
+                                    AlekiShipsAdvancements.SLOOP_COMPLETED.trigger(serverPlayer);
+                                }
+
                             }
                         });
 
@@ -653,11 +666,11 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     public void tick() {
+        super.tick();
         if (this.getDamage() > this.getDamageThreshold()) {
             this.kill();
             //TODO drop all materials
         }
-        super.tick();
 
     }
 }

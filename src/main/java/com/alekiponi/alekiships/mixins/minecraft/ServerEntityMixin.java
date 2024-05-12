@@ -37,6 +37,7 @@ public abstract class ServerEntityMixin {
         this.broadcast = broadcast;
     }
 
+
     @Inject(method = "sendChanges", at = @At(value = "HEAD"), cancellable = true)
     public void injectWaitToSendChanges(CallbackInfo ci) {
         if (this.entity instanceof AbstractVehicle vehicle){

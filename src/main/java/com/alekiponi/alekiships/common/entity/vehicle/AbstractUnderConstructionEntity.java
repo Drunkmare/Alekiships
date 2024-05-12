@@ -18,10 +18,6 @@ public abstract class AbstractUnderConstructionEntity extends AbstractVehicle im
         return 1;
     }
 
-    public void tick() {
-        super.tick();
-    }
-
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         return InteractionResult.PASS;
     }

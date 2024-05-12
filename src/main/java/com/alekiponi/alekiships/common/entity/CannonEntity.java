@@ -46,6 +46,7 @@ public class CannonEntity extends Entity {
     protected double lerpZ;
     protected double lerpYRot;
     protected double lerpXRot;
+    private int recentlyFired;
     private int fuse = -1;
     @Nullable
     private LivingEntity igniter;
@@ -77,6 +78,9 @@ public class CannonEntity extends Entity {
 
     @Override
     public void tick() {
+        if(recentlyFired > 0){
+            recentlyFired--;
+        }
         if (tickCount <= 1){
             fuse = -1;
         }
@@ -122,6 +126,7 @@ public class CannonEntity extends Entity {
                     deltaMovement.z);
         } else if (this.fuse == 0) {
             this.fire();
+            recentlyFired = 60;
         }
     }
 
@@ -171,7 +176,6 @@ public class CannonEntity extends Entity {
         }
         return InteractionResult.PASS;
     }
-
     /**
      * Lights the cannon
      */
@@ -315,6 +319,10 @@ public class CannonEntity extends Entity {
     @SuppressWarnings("unused")
     public int getFuseTime() {
         return this.fuse;
+    }
+
+    public boolean recentlyFired(){
+        return recentlyFired > 0;
     }
 
     public Item getDropItem() {

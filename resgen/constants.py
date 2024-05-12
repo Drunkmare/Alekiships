@@ -45,6 +45,8 @@ DEFAULT_LANG = {
     "entity.alekiships.cannonball": "Cannonball",
     "entity.alekiships.cannon": "Cannon",
 
+    "entity.alekiships.anchor": "Anchor",
+
     # Compartments
     "entity.alekiships.compartment_empty": "Empty Compartment",
     "entity.alekiships.compartment_barrel": "Barrel Compartment",
@@ -68,15 +70,28 @@ DEFAULT_LANG = {
 
     "itemGroup.alekiships": "aleki's Nifty Ships",
     "creativetab.alekiships_tab": "aleki's Nifty Ships",
-    "creativetab.watercraft_tab": "Watercraft",
-    "creativetab.navigation_tab": "Navigation",
 
     "press_button": "Press",
     "eject_passengers": "to eject",
-    "restless_passenger": "This passenger is restless.",
 
     "alekiships.advancements.oar.title": "Oaring my Paddleboat",
     "alekiships.advancements.oar.description": "Craft an Oar",
     "alekiships.advancements.oarlock.title": "The Montlake Cut",
-    "alekiships.advancements.oarlock.description": "Smith an Oarlock"
+    "alekiships.advancements.oarlock.description": "Smith an Oarlock",
+
+    "alekiships.advancements.cannon.title": "Incoming Cannon Event",
+    "alekiships.advancements.cannon.description": "Craft a cannon",
+
+    "alekiships.advancements.full_broadside.title": "Master and Commander",
+    "alekiships.advancements.full_broadside.description": "Fire a full broadside",
+
+    "alekiships.advancements.sloop_completed.title": "Yesler's Wharf",
+    "alekiships.advancements.sloop_completed.description": "Build a Sloop",
+
+    "alekiships.advancements.rowboat_completed.title": "The Montlake Cut",
+    "alekiships.advancements.rowboat_completed.description": "Build a Rowboat",
+
+    "alekiships.advancements.ride_barrel.title": "Lost at Sea",
+    "alekiships.advancements.ride_barrel.description": "Ride a barrel",
+
 }

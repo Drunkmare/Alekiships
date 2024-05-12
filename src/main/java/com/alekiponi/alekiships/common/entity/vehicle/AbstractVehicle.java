@@ -132,7 +132,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     public void tick() {
         if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers() && this.isAlive()) {
             addVehicleParts();
-        } else {
+        } else if (this.isAlive()) {
             hasAllParts = true;
         }
         if (!hasAllParts()) {
@@ -306,7 +306,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     protected void tickTakeEntitiesForARide() {
-        if(this.tickCount < 10){
+        if (this.tickCount < 10) {
             return;
         }
         if (this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)) {
@@ -577,20 +577,32 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return truePassengers;
     }
 
-    public final List<Entity> collectPlayerPassengers() {
+    public final List<Player> collectPlayerPassengers() {
         final List<Entity> truePassengers = collectLivingPassengers();
 
-        truePassengers.removeIf(entity -> !(entity instanceof Player));
+        ArrayList<Player> players = new ArrayList<Player>();
 
-        return truePassengers;
+        for (Entity entity : truePassengers){
+            if(entity instanceof Player player){
+                players.add(player);
+            }
+        }
+
+        return players;
     }
 
-    public final List<Entity> collectPlayersToTakeWith() {
+    public final List<Player> collectPlayersToTakeWith() {
         final List<Entity> truePassengers = collectEntitesToTakeWith();
 
-        truePassengers.removeIf(entity -> !(entity instanceof Player));
+        ArrayList<Player> players = new ArrayList<Player>();
 
-        return truePassengers;
+        for (Entity entity : truePassengers){
+            if(entity instanceof Player player){
+                players.add(player);
+            }
+        }
+
+        return players;
     }
 
     public final List<AbstractCompartmentEntity> collectCompartments() {
