@@ -52,6 +52,7 @@ public class CannonEntity extends Entity {
 
     public CannonEntity(final EntityType<? extends CannonEntity> entityType, final Level level) {
         super(entityType, level);
+        fuse = -1;
     }
 
     @Override
@@ -76,6 +77,9 @@ public class CannonEntity extends Entity {
 
     @Override
     public void tick() {
+        if (tickCount <= 1){
+            fuse = -1;
+        }
         if (!this.isPassenger()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
             if (this.isInWater()) {
@@ -101,11 +105,15 @@ public class CannonEntity extends Entity {
             this.updateInWaterStateAndDoFluidPushing();
         }
         tickLerp();
+        if (this.getDamage() > 0.0F) {
+            this.setDamage(this.getDamage() - DAMAGE_RECOVERY);
+        }
+
 
         if (this.fuse > 0) {
             --this.fuse;
-            final Vec3 fuse = new Vec3((Mth.sin((float) (this.getYRot() * (Math.PI / 180))) * 0.5), 0.8,
-                    Mth.cos((float) (-this.getYRot() * (Math.PI / 180))) * 0.5).multiply(-1, 1, -1)
+            final Vec3 fuse = new Vec3((Mth.sin((float) (-this.getYRot() * (Math.PI / 180))) * 0.5), 0.8,
+                    Mth.cos((float) (this.getYRot() * (Math.PI / 180))) * 0.5).multiply(-1, 1, -1)
                     .add(this.getPosition(0));
             final Vec3 deltaMovement = this.getRootVehicle().getDeltaMovement();
             this.level().addAlwaysVisibleParticle(ParticleTypes.FLAME, fuse.x, fuse.y, fuse.z, deltaMovement.x, 0.01,
@@ -132,7 +140,7 @@ public class CannonEntity extends Entity {
             this.light(player);
             player.swing(hand);
             heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-            return InteractionResult.CONSUME;
+            return InteractionResult.SUCCESS;
         }
 
         if (player.isSecondaryUseActive() && this.getXRot() < 20) {
@@ -143,7 +151,7 @@ public class CannonEntity extends Entity {
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     /**
@@ -194,20 +202,24 @@ public class CannonEntity extends Entity {
         final CannonballEntity cannonball = new CannonballEntity(this.getX(), this.getY(), this.getZ(), 0, -0.1, 0,
                 this.level());
         cannonball.setOwner(this.igniter);
-        cannonball.setXRot(this.getXRot());
-        cannonball.setYRot(this.getYRot());
 
-        cannonball.setDeltaMovement(Mth.sin(this.getYRot() * ((float) Math.PI / 180)) * 3,
-                Mth.sin(-this.getXRot() * ((float) Math.PI / 180)) * 3,
-                Mth.cos(-this.getYRot() * ((float) Math.PI / 180)) * 3);
+        float yRot = this.getYRot();
+        float xRot = this.getXRot();
+
+        cannonball.setXRot(xRot);
+        cannonball.setYRot(yRot);
+
+        cannonball.setDeltaMovement(Mth.sin(-yRot * ((float) Math.PI / 180)) * 6,
+                Mth.sin(-xRot * ((float) Math.PI / 180)) * 6,
+                Mth.cos(yRot * ((float) Math.PI / 180)) * 6);
 
         if (this.isPassenger()) {
             cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(this.getRootVehicle().getDeltaMovement()));
         }
 
         this.level().addFreshEntity(cannonball);
-        Vec3 movement = new Vec3((Mth.sin(this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
-                Mth.cos(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
+        Vec3 movement = new Vec3((Mth.sin(-yRot * ((float) Math.PI / 180F)) * 0.04), 0,
+                Mth.cos(yRot * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
     }
 
@@ -220,18 +232,15 @@ public class CannonEntity extends Entity {
         this.setDamage(this.getDamage() + amount * 10);
         this.markHurt();
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
-        final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild;
+        final boolean instantKill = damageSource.getEntity() instanceof Player player && player.getAbilities().instabuild;
 
         if (instantKill) {
-            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                this.spawnAtLocation(this.getDropItem());
-            }
-            this.discard();
-        }
-        if (this.getDamage() > 20) {
+            this.kill();
+        } else if (this.getDamage() > DAMAGE_TO_BREAK) {
             this.destroy(damageSource);
             this.remove(RemovalReason.KILLED);
         }
+
 
         return true;
     }

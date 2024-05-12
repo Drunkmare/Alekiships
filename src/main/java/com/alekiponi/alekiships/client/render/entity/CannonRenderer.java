@@ -27,7 +27,7 @@ public class CannonRenderer extends EntityRenderer<CannonEntity> {
     public void render(final CannonEntity entity, final float entityYaw, final float partialTicks,
             final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot() + 180));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180- entity.getYRot()));
         poseStack.mulPose(Axis.ZP.rotationDegrees(180));
         poseStack.translate(0, -1.5f, 0);
         this.model.setupAnim(entity, 0, 0, 0, 0, 0);

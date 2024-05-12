@@ -101,7 +101,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 entity.unRide();
                 entity.kill();
             }
-            if (this.getDamage() > this.getDamageThreshold() * 1.5f) {
+            if (this.getDamage() > this.getDamageThreshold() * 1.25f) {
                 this.kill();
             }
         }

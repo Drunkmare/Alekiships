@@ -51,7 +51,7 @@ public class CannonItem extends Item {
             if (hitresult.getType() == HitResult.Type.BLOCK) {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(pLevel);
                 cannon.moveTo(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
-                cannon.setYRot(-pPlayer.getYRot());
+                cannon.setYRot(pPlayer.getYRot());
                 if (!pLevel.noCollision(cannon, cannon.getBoundingBox())) {
                     return InteractionResultHolder.fail(itemstack);
                 } else {
