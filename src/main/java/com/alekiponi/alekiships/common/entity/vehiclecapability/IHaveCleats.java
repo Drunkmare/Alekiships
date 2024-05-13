@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,11 +16,11 @@ public interface IHaveCleats {
 
     float getCleatMovementMultiplier();
 
-    private ArrayList<VehicleCleatEntity> getCleats(AbstractVehicle vehicle) {
-        ArrayList<VehicleCleatEntity> list = new ArrayList<VehicleCleatEntity>();
+    private ArrayList<CleatEntity> getCleats(AbstractVehicle vehicle) {
+        ArrayList<CleatEntity> list = new ArrayList<CleatEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             for (int i : this.getCleatIndices()) {
-                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof VehicleCleatEntity cleat) {
+                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof CleatEntity cleat) {
                     list.add(cleat);
                 }
             }
@@ -28,13 +28,13 @@ public interface IHaveCleats {
         return list;
     }
 
-    default ArrayList<VehicleCleatEntity> getCleats() {
+    default ArrayList<CleatEntity> getCleats() {
         return getCleats((AbstractVehicle) this);
     }
 
     default boolean isBeingTowed(AbstractVehicle vehicle) {
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
-            for (VehicleCleatEntity cleat : this.getCleats()) {
+            for (CleatEntity cleat : this.getCleats()) {
                 return cleat.isLeashed() && vehicle.getDeltaMovement().length() != 0;
             }
         }
@@ -48,7 +48,7 @@ public interface IHaveCleats {
 
     default void tickCleatInput() {
         AbstractVehicle vehicle = (AbstractVehicle)this;
-        for (VehicleCleatEntity cleat : this.getCleats()) {
+        for (CleatEntity cleat : this.getCleats()) {
             if (cleat.isLeashed()) {
                 net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
                 if (leashHolder != null) {

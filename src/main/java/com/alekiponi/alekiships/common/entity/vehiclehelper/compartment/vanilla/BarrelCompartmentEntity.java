@@ -113,7 +113,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     public void tick(){
         super.tick();
         if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)){
-            if (this.getFirstPassenger() instanceof ServerPlayer serverPlayer) {
+            if (this.getFirstPassenger() instanceof ServerPlayer serverPlayer && this.isInWater()) {
                 RIDE_BARREL.trigger(serverPlayer);
             }
         }

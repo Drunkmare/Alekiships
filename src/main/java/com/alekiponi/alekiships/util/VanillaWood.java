@@ -69,6 +69,11 @@ public enum VanillaWood implements BoatMaterial {
     }
 
     @Override
+    public boolean withstandsLava() {
+        return this.equals(CRIMSON) || this.equals(WARPED);
+    }
+
+    @Override
     public BlockState getDeckBlock() {
         return this.plankBlock.defaultBlockState();
     }

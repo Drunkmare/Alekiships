@@ -28,6 +28,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     protected final ModelPart static_parts;
     protected final ModelPart jibsheet_transform_checker;
     private final ModelPart telltail;
+    private final ModelPart nameplate;
+    private final ModelPart icebreaker;
 
 
     public SloopEntityModel() {
@@ -45,6 +47,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         this.windlass = root.getChild("windlass");
         this.static_parts = root.getChild("static_parts");
         this.telltail = root.getChild("telltail");
+        this.nameplate = root.getChild("nameplate");
+        this.icebreaker = root.getChild("icebreaker");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -621,6 +625,33 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         PartDefinition telltail_part_5 = telltail.addOrReplaceChild("telltail_part_5", CubeListBuilder.create().texOffs(678, 1019).addBox(-0.5F, -2.0F, 11.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.6F));
 
         PartDefinition telltail_part_6 = telltail.addOrReplaceChild("telltail_part_6", CubeListBuilder.create().texOffs(678, 1019).addBox(-0.5F, -2.0F, 14.0F, 1.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.6F));
+
+        PartDefinition nameplate = partdefinition.addOrReplaceChild("nameplate", CubeListBuilder.create().texOffs(202, 972).addBox(4.0F, -18.0F, 47.5F, 21.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(200, 961).addBox(3.0F, -17.0F, 47.5F, 23.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(199, 969).addBox(2.0F, -16.0F, 47.5F, 25.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(198, 946).addBox(2.0F, -18.0F, 47.5F, 25.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+        PartDefinition cube_r83 = nameplate.addOrReplaceChild("cube_r83", CubeListBuilder.create().texOffs(200, 954).addBox(-35.0F, -16.0F, 36.5F, 25.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(200, 980).addBox(-33.0F, -16.0F, 36.5F, 21.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(200, 987).addBox(-34.0F, -15.0F, 36.5F, 23.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(200, 967).addBox(-35.0F, -14.0F, 36.5F, 25.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -3.1416F, -1.0472F, 3.1416F));
+
+        PartDefinition icebreaker = partdefinition.addOrReplaceChild("icebreaker", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+        PartDefinition cube_r84 = icebreaker.addOrReplaceChild("cube_r84", CubeListBuilder.create().texOffs(4, 248).addBox(-5.636F, -2.032F, -3.05F, 28.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(12.276F, -0.4328F, -33.5544F, 3.0181F, 1.0254F, 3.014F));
+
+        PartDefinition cube_r85 = icebreaker.addOrReplaceChild("cube_r85", CubeListBuilder.create().texOffs(919, 244).addBox(-22.364F, -2.032F, -3.05F, 28.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-12.276F, -0.4328F, -33.5544F, 3.0181F, -1.0254F, -3.014F));
+
+        PartDefinition cube_r86 = icebreaker.addOrReplaceChild("cube_r86", CubeListBuilder.create().texOffs(900, 208).addBox(-36.0271F, 41.298F, 18.2426F, 22.0F, 5.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(908, 218).addBox(-33.1711F, 45.282F, 16.5946F, 25.0F, 5.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(913, 228).addBox(-29.9311F, 48.282F, 15.1946F, 27.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -53.275F, -22.7926F, -3.1416F, -1.0472F, -3.1416F));
+
+        PartDefinition cube_r87 = icebreaker.addOrReplaceChild("cube_r87", CubeListBuilder.create().texOffs(23, 228).addBox(2.9311F, 48.282F, 15.1946F, 27.0F, 6.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(28, 218).addBox(8.1711F, 45.282F, 16.5946F, 25.0F, 5.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(34, 208).addBox(14.0271F, 41.298F, 18.2426F, 22.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -53.275F, -22.7926F, -3.1416F, 1.0472F, 3.1416F));
+
+        PartDefinition cube_r88 = icebreaker.addOrReplaceChild("cube_r88", CubeListBuilder.create().texOffs(505, 226).addBox(-23.0F, -4.25F, -2.5F, 37.0F, 9.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.1847F, -68.1216F, 1.5708F, 1.0908F, -1.5708F));
+
 
         // GENERATED MODEL PARTS, DO NOT REPLACE FROM BLOCKBENCH
         {
@@ -1215,6 +1246,13 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     public ModelPart getMainsail() {
         return this.mainsail;
+    }
+
+    public ModelPart getNameplate() {
+        return this.nameplate;
+    }
+    public ModelPart getIcebreaker() {
+        return this.icebreaker;
     }
 
     public ModelPart getRopeSpiral() {

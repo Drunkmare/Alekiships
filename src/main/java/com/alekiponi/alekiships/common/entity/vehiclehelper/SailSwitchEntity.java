@@ -64,7 +64,7 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
             }
         }
 
-        return InteractionResult.PASS;
+        return super.interact(player, hand);
     }
 
     @Override

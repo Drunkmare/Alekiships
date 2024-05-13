@@ -22,4 +22,10 @@ public final class AlekiShipsItems {
 
     public static final RegistryObject<Item> ANCHOR = ITEMS.register("anchor",
             () -> new Item(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> ROWBOAT_ICON_ONLY = ITEMS.register("rowboat_icon_only",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> SLOOP_ICON_ONLY = ITEMS.register("sloop_icon_only",
+            () -> new Item(new Item.Properties().stacksTo(1)));
 }

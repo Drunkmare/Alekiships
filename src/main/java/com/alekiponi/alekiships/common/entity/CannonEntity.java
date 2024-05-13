@@ -205,7 +205,7 @@ public class CannonEntity extends Entity {
 
         final CannonballEntity cannonball = new CannonballEntity(this.getX(), this.getY(), this.getZ(), 0, -0.1, 0,
                 this.level());
-        cannonball.setOwner(this.igniter);
+        cannonball.setOwner(this);
 
         float yRot = this.getYRot();
         float xRot = this.getXRot();

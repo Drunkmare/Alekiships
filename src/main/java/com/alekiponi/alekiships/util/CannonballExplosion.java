@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -142,15 +143,16 @@ public class CannonballExplosion extends Explosion {
             final double damage = (1 - d12) * seenPercent;
 
 
+            float damageForEntity = (float)((int)((damage * damage + damage) / 2.0D * 7.0D * (double)diameter + 1.0D));
             // Check for our Boats
             if (entity instanceof AbstractAlekiBoatEntity) {
-                entity.hurt(this.getDamageSource(), 100);
-                // Check for Vanilla Boats (also boat mods Aleki no like lol)
+                entity.hurt(this.getDamageSource(), damageForEntity);
+                // Check for Vanilla Boats
             } else if (entity instanceof Boat) {
-                entity.hurt(this.getDamageSource(), 1000);
-            } else {
+                entity.hurt(this.getDamageSource(), damageForEntity*1000);
+            } else if (!(entity instanceof AbstractHelper)){
                 // What vanilla normally does
-                entity.hurt(this.getDamageSource(), (float) ((damage * damage + damage) / 2 * 7 * diameter + 1));
+                entity.hurt(this.getDamageSource(), damageForEntity);
             }
 
             final double d11;
@@ -165,6 +167,7 @@ public class CannonballExplosion extends Explosion {
             distanceZ *= d11;
             final Vec3 vec31 = new Vec3(distanceX, distanceY, distanceZ);
             entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
+
             if (entity instanceof final Player player) {
                 if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
                     this.hitPlayers.put(player, vec31);

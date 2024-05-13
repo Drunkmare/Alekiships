@@ -2,22 +2,33 @@ package com.alekiponi.alekiships.client.render.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
+import java.util.List;
+
 public class AlekiShipsRenderHelper {
     public static void addVertexPair(VertexConsumer pConsumer, Matrix4f pMatrix, float p_174310_, float p_174311_,
-                                      float p_174312_, int pEntityBlockLightLevel, int pLeashHolderBlockLightLevel,
-                                      int pEntitySkyLightLevel, int pLeashHolderSkyLightLevel, float p_174317_,
-                                      float p_174318_, float p_174319_, float p_174320_, int pIndex,
-                                      boolean p_174322_) {
+                                     float p_174312_, int pEntityBlockLightLevel, int pLeashHolderBlockLightLevel,
+                                     int pEntitySkyLightLevel, int pLeashHolderSkyLightLevel, float p_174317_,
+                                     float p_174318_, float p_174319_, float p_174320_, int pIndex,
+                                     boolean p_174322_) {
         float f = (float) pIndex / 24.0F;
         int i = (int) Mth.lerp(f, (float) pEntityBlockLightLevel, (float) pLeashHolderBlockLightLevel);
         int j = (int) Mth.lerp(f, (float) pEntitySkyLightLevel, (float) pLeashHolderSkyLightLevel);
@@ -75,94 +86,125 @@ public class AlekiShipsRenderHelper {
         pPoseStack.popPose();
     }
 
-    public static double[] getColorFromName(String name){
+    public static double[] getColorFromName(String name) {
         switch (name) {
             case "white" -> {
-                return new double[]{1,1,1};
+                return new double[]{1, 1, 1};
             }
             case "orange" -> {
                 return new double[]{
-                        216.0/255.0,
-                        137.0/255.0,
-                        41.0/255.0};
+                        216.0 / 255.0,
+                        137.0 / 255.0,
+                        41.0 / 255.0};
             }
             case "magenta" -> {
                 return new double[]{
-                        201.0/255.0,
-                        104.0/255.0,
-                        195.0/255.0};
+                        201.0 / 255.0,
+                        104.0 / 255.0,
+                        195.0 / 255.0};
             }
             case "light_blue" -> {
                 return new double[]{
-                        141.0/255.0,
-                        183.0/255.0,
-                        241.0/255.0};
+                        141.0 / 255.0,
+                        183.0 / 255.0,
+                        241.0 / 255.0};
             }
             case "yellow" -> {
                 return new double[]{
-                        228.0/255.0,
-                        228.0/255.0,
-                        41.0/255.0};
+                        228.0 / 255.0,
+                        228.0 / 255.0,
+                        41.0 / 255.0};
             }
             case "lime" -> {
                 return new double[]{
-                        129.0/255.0,
-                        209.0/255.0,
-                        28.0/255.0};
+                        129.0 / 255.0,
+                        209.0 / 255.0,
+                        28.0 / 255.0};
             }
             case "pink" -> {
                 return new double[]{
-                        244.0/255.0,
-                        178.0/255.0,
-                        211.0/255.0};
+                        244.0 / 255.0,
+                        178.0 / 255.0,
+                        211.0 / 255.0};
             }
             case "gray" -> {
-                return new double[]{0.33,0.33,0.33};
+                return new double[]{0.33, 0.33, 0.33};
             }
             case "light_gray" -> {
-                return new double[]{0.66,0.66,0.66};
+                return new double[]{0.66, 0.66, 0.66};
             }
             case "cyan" -> {
                 return new double[]{
-                        59.0/255.0,
-                        140.0/255.0,
-                        74.0/255.0};
+                        59.0 / 255.0,
+                        140.0 / 255.0,
+                        74.0 / 255.0};
             }
             case "purple" -> {
                 return new double[]{
-                        128.0/255.0,
-                        47.0/255.0,
-                        176.0/255.0};
+                        128.0 / 255.0,
+                        47.0 / 255.0,
+                        176.0 / 255.0};
             }
             case "blue" -> {
                 return new double[]{
-                        51.0/255.0,
-                        93.0/255.0,
-                        193.0/255.0};
+                        51.0 / 255.0,
+                        93.0 / 255.0,
+                        193.0 / 255.0};
             }
             case "brown" -> {
                 return new double[]{
-                        121.0/255.0,
-                        69.0/255.0,
-                        33.0/255.0};
+                        121.0 / 255.0,
+                        69.0 / 255.0,
+                        33.0 / 255.0};
             }
             case "green" -> {
                 return new double[]{
-                        73.0/255.0,
-                        106.0/255.0,
-                        24.0/255.0};
+                        73.0 / 255.0,
+                        106.0 / 255.0,
+                        24.0 / 255.0};
             }
             case "red" -> {
                 return new double[]{
-                        207.0/255.0,
-                        67.0/255.0,
-                        62.0/255.0};
+                        207.0 / 255.0,
+                        67.0 / 255.0,
+                        62.0 / 255.0};
             }
             case "black" -> {
-                return new double[]{0,0,0};
+                return new double[]{0, 0, 0};
             }
         }
-        return new double[]{0,0,0};
+        return new double[]{0, 0, 0};
+    }
+
+    public static void renderTextLine(Vec3 position, float yaw, float scale, Font font, String pText, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pLineHeight, int pMaxWidth) {
+        pPoseStack.pushPose();
+
+        pPoseStack.translate(position.x, position.y, position.z);
+        pPoseStack.scale(scale, -scale, scale);
+
+
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(yaw));
+        int dyecolor = DyeColor.WHITE.getTextColor();
+        int red = (int) ((double) FastColor.ARGB32.red(dyecolor)*0.7f);
+        int green = (int) ((double) FastColor.ARGB32.green(dyecolor)*0.7f);
+        int blue = (int) ((double) FastColor.ARGB32.blue(dyecolor)*0.7f);
+        int color = FastColor.ARGB32.color(0, red, green, blue);
+        int background = FastColor.ARGB32.color(1, 0, 0, 0);
+        //int height = pLineHeight / 4;
+
+        /*
+        FormattedCharSequence[] aformattedcharsequence = pText.getRenderMessages(Minecraft.getInstance().isTextFilteringEnabled(), (p_277227_) -> {
+            List<FormattedCharSequence> list = font.split(p_277227_, pMaxWidth);
+            return list.isEmpty() ? FormattedCharSequence.EMPTY : list.get(0);
+        });*/
+
+
+        FormattedCharSequence formattedcharsequence = FormattedCharSequence.forward(pText, Style.EMPTY.withColor(color));
+        float width = (float)(-font.width(formattedcharsequence) / 2);
+        float height = ((float)(-pLineHeight) / 2);
+        font.drawInBatch(formattedcharsequence, width, height, color, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
+        //font.drawInBatch8xOutline(formattedcharsequence, width, height, color, background, pPoseStack.last().pose(), pBuffer, pPackedLight);
+        pPoseStack.popPose();
     }
 
 }

@@ -33,6 +33,11 @@ public interface BoatMaterial extends StringRepresentable {
      */
     Item getStrippedLog();
 
+    /**
+     * @return Whether this material withstands lava
+     */
+    boolean withstandsLava();
+
     BlockState getDeckBlock();
 
     /**

@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
@@ -36,5 +37,26 @@ public final class ClientHelper {
             }
         }
 
+    }
+
+    public static void tickTakeClientPlayersForARide(AbstractVehicle vehicle, Entity entity){
+        if (vehicle.level().isClientSide() && entity instanceof LocalPlayer player && !entity.isPassenger() && (Math.abs(vehicle.getBoundingBox().maxY - player.getBoundingBox().minY) < 0.01)) {
+            if (vehicle.getSmoothSpeedMS() > 4) {
+                if (!player.input.jumping || Math.abs(player.getDeltaMovement().y) > 0.05) {
+                    player.setPos(vehicle.getDismountLocationForPassenger(player));
+                }
+                //player.setPos(player.getPosition(0).add(this.getDeltaMovement()));
+            } else {
+                if (player.input.jumping || player.input.left || player.input.right || player.input.up || player.input.down) {
+                    player.setDeltaMovement(player.getDeltaMovement().multiply(1.0, 1, 1.0).add(vehicle.getDeltaMovement().multiply(0.45, 0, 0.45)));
+                } else {
+                    player.setPos(player.getPosition(0).add(vehicle.getDeltaMovement()));
+                    if (player.getDeltaMovement().length() > vehicle.getDeltaMovement().length() + 0.01) {
+                        player.setDeltaMovement(Vec3.ZERO);
+                    }
+                }
+            }
+
+        }
     }
 }

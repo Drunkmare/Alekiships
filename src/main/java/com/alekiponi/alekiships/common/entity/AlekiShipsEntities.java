@@ -13,7 +13,6 @@ import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Items;
@@ -46,12 +45,6 @@ public final class AlekiShipsEntities {
             VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
                     (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
                     MobCategory.MISC)));
-
-
-    public static final RegistryObject<EntityType<TestSailingShipEntity>> TEST_SAILING_SHIP = register("test_sailing_ship",
-            EntityType.Builder.of(TestSailingShipEntity::new, MobCategory.MISC).sized(5F, 1F)
-                    .setTrackingRange(LARGE_VEHICLE_TRACKING));
-
 
 
     public static final RegistryObject<CompartmentType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
@@ -133,43 +126,43 @@ public final class AlekiShipsEntities {
 
     public static final RegistryObject<EntityType<VehiclePart>> VEHICLE_PART = register("vehicle_part",
             EntityType.Builder.of(VehiclePart::new, MobCategory.MISC).sized(0, 0)
-                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
-    public static final RegistryObject<EntityType<VehicleCleatEntity>> VEHICLE_CLEAT_ENTITY = register("vehicle_cleat",
-            EntityType.Builder.of(VehicleCleatEntity::new, MobCategory.MISC).sized(0.4F, 0.2F)
-                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+    public static final RegistryObject<EntityType<CleatEntity>> VEHICLE_CLEAT_ENTITY = register("vehicle_cleat",
+            EntityType.Builder.of(CleatEntity::new, MobCategory.MISC).sized(0.4F, 0.2F)
+                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
-    public static final RegistryObject<EntityType<VehicleColliderEntity>> VEHICLE_COLLIDER_ENTITY = register(
+    public static final RegistryObject<EntityType<ColliderEntity>> VEHICLE_COLLIDER_ENTITY = register(
             "vehicle_collider",
-            EntityType.Builder.of(VehicleColliderEntity::new, MobCategory.MISC).sized(1, 1).noSummon());
+            EntityType.Builder.of(ColliderEntity::new, MobCategory.MISC).sized(1, 1).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<SailSwitchEntity>> SAIL_SWITCH_ENTITY = register(
             "vehicle_switch_sail",
-            EntityType.Builder.of(SailSwitchEntity::new, MobCategory.MISC).sized(0.8F, 0.8F).noSummon());
+            EntityType.Builder.of(SailSwitchEntity::new, MobCategory.MISC).sized(0.8F, 0.8F).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<AnchorEntity>> ANCHOR_ENTITY = register("vehicle_anchor",
             EntityType.Builder.of(AnchorEntity::new, MobCategory.MISC).sized(1, 1)
-                    .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+                    .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<ConstructionEntity>> CONSTRUCTION_ENTITY = register(
             "vehicle_construction", EntityType.Builder.of(ConstructionEntity::new, MobCategory.MISC).sized(1, 1)
-                    .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+                    .clientTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<WindlassSwitchEntity>> WINDLASS_SWITCH_ENTITY = register(
             "vehicle_switch_windlass",
             EntityType.Builder.of(WindlassSwitchEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<CannonballEntity>> CANNONBALL_ENTITY = register("cannonball",
             EntityType.Builder.<CannonballEntity>of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .setTrackingRange(32).clientTrackingRange(32).noSummon());
+                    .setTrackingRange(32).clientTrackingRange(32).fireImmune());
 
     public static final RegistryObject<EntityType<CannonEntity>> CANNON_ENTITY = register("cannon",
-            EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F));
+            EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F).fireImmune());
 
     public static final RegistryObject<EntityType<MastEntity>> MAST_ENTITY = register("vehicle_mast",
             EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8)
-                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon());
+                    .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     private static <E extends RowboatEntity> RegistryObject<EntityType<E>> registerRowboat(
             final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
@@ -179,13 +172,13 @@ public final class AlekiShipsEntities {
     private static <E extends SloopEntity> RegistryObject<EntityType<E>> registerSloop(final VanillaWood vanillaWood,
             final EntityType.Builder<E> builder) {
         return register("sloop/" + vanillaWood.getSerializedName(),
-                builder.sized(3F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune());
+                builder.sized(3F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING));
     }
 
     private static <E extends SloopUnderConstructionEntity> RegistryObject<EntityType<E>> registerSloopConstruction(
             final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
         return register("sloop_construction/" + vanillaWood.getSerializedName(),
-                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune()/*.noSummon()*/);
+                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon());
     }
 
     /**

@@ -1,11 +1,10 @@
 package com.alekiponi.alekiships.events;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -27,10 +26,11 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
+
+import java.awt.event.ItemEvent;
 
 @Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
@@ -130,7 +130,7 @@ public class ForgeEventHandler {
         LeashFenceKnotEntity knotEntity = null;
         boolean leashedSomething = false;
 
-        for (final VehicleCleatEntity cleat : level.getEntitiesOfClass(VehicleCleatEntity.class,
+        for (final CleatEntity cleat : level.getEntitiesOfClass(CleatEntity.class,
                 new AABB(blockPos.getX() - 7, blockPos.getY() - 7, blockPos.getZ() - 7, blockPos.getX() + 7,
                         blockPos.getY() + 7, blockPos.getZ() + 7))) {
             if (cleat.getLeashHolder() == player) {

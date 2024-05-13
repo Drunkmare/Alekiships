@@ -11,6 +11,9 @@ import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -19,10 +22,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.awt.*;
 import java.util.EnumMap;
+
+import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper.renderTextLine;
 
 @OnlyIn(Dist.CLIENT)
 public class SloopRenderer extends EntityRenderer<SloopEntity> {
@@ -36,6 +44,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     protected final ResourceLocation sloopTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
     protected final SloopEntityModel sloopModel = new SloopEntityModel();
+    private final Font font;
 
     /**
      * This is primarily for us as it hardcodes the Firmaciv namespace.
@@ -52,16 +61,17 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
      * @param paintTextures The texture locations for when the sloop is painted
      */
     public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture,
-            final EnumMap<DyeColor, ResourceLocation> paintTextures) {
+                         final EnumMap<DyeColor, ResourceLocation> paintTextures) {
         super(context);
         this.shadowRadius = 0.8F;
         this.sloopTexture = sloopTexture;
         this.paintTextures = paintTextures;
+        this.font = context.getFont();
     }
 
     @Override
     public void render(final SloopEntity sloopEntity, final float entityYaw, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
         poseStack.pushPose();
         poseStack.translate(0, 0.5, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(180 - entityYaw));
@@ -70,7 +80,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         poseStack.scale(-1, -1, 1);
         poseStack.mulPose(Axis.YP.rotationDegrees(0));
 
-        if (sloopEntity.getDamage() > sloopEntity.getDamageThreshold()) {
+        if (!sloopEntity.isFunctional()) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(sloopEntity.getId() % 30));
         }
 
@@ -78,6 +88,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
         final VertexConsumer vertexconsumer = SLOOP_ATLAS.getSprite(this.getTextureLocation(sloopEntity))
                 .wrap(bufferSource.getBuffer(this.sloopModel.renderType(ShipSheets.SLOOP_SHEET)));
+
 
         if (sloopEntity.tickCount < 1) {
             poseStack.popPose();
@@ -103,6 +114,13 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
 
         this.sloopModel.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+
+        if (sloopEntity.hasCustomName()) {
+            this.sloopModel.getNameplate().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        }
+        if (sloopEntity.breaksIce()) {
+            this.sloopModel.getIcebreaker().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        }
 
         if (sloopEntity.getMainsailActive()) {
             this.sloopModel.getMainsailDeployedParts()
@@ -146,6 +164,22 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         }
 
         poseStack.popPose();
+        if (sloopEntity.hasCustomName() && sloopEntity.isFunctional()) {
+            String name = sloopEntity.getName().getString();
+            int length = 20;
+            if (name.length() > length) {
+                name = name.substring(0, length);
+            }
+            float scale = 0.015625F * 1F;
+            Vec3 pos = new Vec3(-1.327, 0.885, 2.4).yRot((float) Math.toRadians(-entityYaw));
+            if (name.length() > 12) {
+                scale = scale / (name.length() / 13f);
+            }
+            renderTextLine(pos, -60 - entityYaw, scale, font, name, poseStack, bufferSource, packedLight, 10, 40);
+            pos = new Vec3(0.9, 1.005, -3.1).yRot((float) Math.toRadians(-entityYaw));
+            renderTextLine(pos, 180 - entityYaw, scale, font, name, poseStack, bufferSource, packedLight, 10, 40);
+        }
+
         super.render(sloopEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }
 

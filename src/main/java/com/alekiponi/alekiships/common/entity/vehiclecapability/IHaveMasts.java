@@ -2,8 +2,6 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.MastEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 
 import java.util.ArrayList;
 

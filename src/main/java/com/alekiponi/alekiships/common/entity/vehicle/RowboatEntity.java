@@ -50,13 +50,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
     protected final float DAMAGE_THRESHOLD = 128.0f;
     protected final float DAMAGE_RECOVERY = 5.333f;
-    private final BoatMaterial boatMaterial;
 
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
                          final BoatMaterial boatMaterial) {
-        super(entityType, level);
-        this.boatMaterial = boatMaterial;
+        super(entityType, level, boatMaterial);
     }
 
     @Override

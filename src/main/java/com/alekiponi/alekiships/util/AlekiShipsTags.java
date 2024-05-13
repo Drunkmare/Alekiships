@@ -23,6 +23,13 @@ public final class AlekiShipsTags {
         public static final TagKey<Item> SHULKER_BOXES = create("shulker_boxes");
         public static final TagKey<Item> CAN_PLACE_IN_COMPARTMENTS = create("can_place_in_compartments");
 
+        public static final TagKey<Item> NETHER_PLANKS_THAT_MAKE_SHIPS = create("nether_planks_that_make_ships");
+        public static final TagKey<Item> OVERWORLD_PLANKS_THAT_MAKE_SHIPS = create("overworld_planks_that_make_ships");
+
+        public static final TagKey<Item> OVERWORLD_PLANKS_THAT_MAKE_BAMBOO_SHIPS = create("overworld_planks_that_make_bamboo_ships");
+
+        public static final TagKey<Item> ICEBREAKER_UPGRADES = create("icebreaker_upgrades");
+
         public static TagKey<Item> create(final String id) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(AlekiShips.MOD_ID, id));
         }

@@ -5,7 +5,7 @@ import com.alekiponi.alekiships.client.model.entity.CleatKnotEntityModel;
 import com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -17,19 +17,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class VehicleCleatRenderer extends EntityRenderer<VehicleCleatEntity> {
+public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
     private static final ResourceLocation CLEAT_KNOT = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/cleat_knot.png");
-    private final CleatKnotEntityModel<VehicleCleatEntity> model = new CleatKnotEntityModel<>();
+    private final CleatKnotEntityModel<CleatEntity> model = new CleatKnotEntityModel<>();
 
     public VehicleCleatRenderer(final EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public void render(final VehicleCleatEntity cleat, final float entityYaw, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+    public void render(final CleatEntity cleat, final float entityYaw, final float partialTicks,
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
         final Entity entity = cleat.getLeashHolder();
         if (entity == null) return;
 
@@ -73,7 +73,7 @@ public class VehicleCleatRenderer extends EntityRenderer<VehicleCleatEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(final VehicleCleatEntity cleat) {
+    public ResourceLocation getTextureLocation(final CleatEntity cleat) {
         return CLEAT_KNOT;
     }
 }

@@ -114,7 +114,12 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
                 itemStack.setHoverName(this.getCustomName());
             }
 
-            this.spawnAtLocation(itemStack);
+            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
+            if(y > this.getY()){
+                this.spawnAtLocation(itemStack, (float) (y-this.getY()));
+            } else {
+                this.spawnAtLocation(itemStack);
+            }
         }
 
         this.invalidateCaps();

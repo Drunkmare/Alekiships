@@ -35,10 +35,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class VehicleCleatEntity extends AbstractPassthroughHelper implements IHaveIcons {
+public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
     protected static final EntityDataAccessor<Integer> DATA_ID_LEASHHOLDER_ID = SynchedEntityData.defineId(
-            VehicleCleatEntity.class, EntityDataSerializers.INT);
+            CleatEntity.class, EntityDataSerializers.INT);
     @Nullable
     private Entity leashHolder;
     private int delayedLeashHolderId;
@@ -52,7 +52,7 @@ public class VehicleCleatEntity extends AbstractPassthroughHelper implements IHa
     protected double lerpYRot;
     protected double lerpXRot;
 
-    public VehicleCleatEntity(EntityType<?> pEntityType, Level pLevel) {
+    public CleatEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 

@@ -30,6 +30,16 @@ def generate(manager: ResourceManager):
 
     manager.item_tag("crafting_tables", "minecraft:crafting_table")
 
+    manager.item_tag("overworld_planks_that_make_ships", "minecraft:oak_planks", "minecraft:spruce_planks",
+                     "minecraft:birch_planks", "minecraft:dark_oak_planks", "minecraft:jungle_planks",
+                     "minecraft:cherry_planks", "minecraft:mangrove_planks", "minecraft:acacia_planks")
+
+    manager.item_tag("nether_planks_that_make_ships", "minecraft:crimsons_planks", "minecraft:warped_planks")
+
+    manager.item_tag("overworld_planks_that_make_bamboo_ships", "minecraft:bamboo_planks")
+
+    manager.item_tag("icebreaker_upgrades", "minecraft:iron_block")
+
     manager.item_tag("shulker_boxes", "minecraft:shulker_box",
                      *[f"minecraft:{color}_shulker_box" for color in constants.COLORS])
 

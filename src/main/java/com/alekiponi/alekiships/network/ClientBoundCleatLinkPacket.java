@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.util.ClientHelper;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.world.entity.Entity;
@@ -10,13 +10,13 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 
 /**
- * Replicates {@link ClientboundSetEntityLinkPacket} for {@link VehicleCleatEntity}.
+ * Replicates {@link ClientboundSetEntityLinkPacket} for {@link CleatEntity}.
  */
 public class ClientBoundCleatLinkPacket {
     private final int cleatId;
     private final int designationId;
 
-    public ClientBoundCleatLinkPacket(final VehicleCleatEntity cleat, @Nullable final Entity designation) {
+    public ClientBoundCleatLinkPacket(final CleatEntity cleat, @Nullable final Entity designation) {
         this.cleatId = cleat.getId();
         this.designationId = designation != null ? designation.getId() : 0;
     }
@@ -37,7 +37,7 @@ public class ClientBoundCleatLinkPacket {
 
         if (level == null) return;
 
-        if (level.getEntity(this.cleatId) instanceof VehicleCleatEntity cleat) {
+        if (level.getEntity(this.cleatId) instanceof CleatEntity cleat) {
             cleat.setDelayedLeashHolderId(this.designationId);
         }
     }

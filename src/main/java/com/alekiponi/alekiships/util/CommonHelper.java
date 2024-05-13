@@ -1,8 +1,12 @@
 package com.alekiponi.alekiships.util;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -279,5 +283,12 @@ public class CommonHelper {
         if (hitResult.getType() != HitResult.Type.ENTITY) return null;
 
         return ((EntityHitResult) hitResult).getEntity();
+    }
+
+    public static void dropContents(Level pLevel, double pX, double pY, double pZ, Container pInventory) {
+        for(int i = 0; i < pInventory.getContainerSize(); ++i) {
+            Containers.dropItemStack(pLevel, pX, pY, pZ, pInventory.getItem(i));
+        }
+
     }
 }

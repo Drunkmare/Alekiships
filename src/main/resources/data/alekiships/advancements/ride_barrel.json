@@ -1,0 +1,29 @@
+{
+  "parent": "alekiships:rowboat_completed",
+  "criteria": {
+    "barrel": {
+      "trigger": "alekiships:ride_barrel"
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "minecraft:barrel"
+    },
+    "title": {
+      "translate": "alekiships.advancements.ride_barrel.title"
+    },
+    "description": {
+      "translate": "alekiships.advancements.ride_barrel.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true,
+    "background": "minecraft:textures/block/rock/cobblestone.png"
+  },
+  "requirements": [
+    [
+      "barrel"
+    ]
+  ]
+}

@@ -295,7 +295,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     }
 
     @Override
-    public boolean isAlive(){
+    public boolean isFunctional(){
         return true;
     }
 
@@ -389,6 +389,11 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     @Override
     public float getDamageThreshold() {
         return 40;
+    }
+
+    @Override
+    public float getDeathDamageThreshold() {
+        return getDamageThreshold()*1.25f;
     }
 
     @Override

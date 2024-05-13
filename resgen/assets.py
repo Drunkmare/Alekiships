@@ -88,3 +88,6 @@ def generate(rm: ResourceManager):
     rm.item("cannon").with_item_model().with_lang("Cannon")
     rm.item("cannonball").with_item_model().with_lang("Cannonball")
     rm.item("anchor").with_item_model().with_lang("Anchor")
+    rm.item("sloop_icon_only").with_item_model().with_lang("Sloop (ICON ONLY)")
+    rm.item("rowboat_icon_only").with_item_model().with_lang("Rowboat (ICON ONLY)")
+    rm.item("oar").with_item_model().with_lang("Oar")

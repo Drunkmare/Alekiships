@@ -3,14 +3,15 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 public class TestSailingShipEntity extends AbstractAlekiBoatEntity implements IHaveBlockOnlyCompartments, IHaveAnchorWindlass,IHaveCleats {
 
-    public TestSailingShipEntity(EntityType<? extends AbstractAlekiBoatEntity> entityType, Level level) {
-        super(entityType, level);
+    public TestSailingShipEntity(EntityType<? extends AbstractAlekiBoatEntity> entityType, Level level, BoatMaterial material) {
+        super(entityType, level, material);
     }
 
     public final int PASSENGER_NUMBER = 24;

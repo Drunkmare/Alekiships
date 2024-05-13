@@ -8,11 +8,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface IBreakIce {
     default void tickBreakIce() {
-        final BlockPos.MutableBlockPos blockPos = ((Entity)this).blockPosition().mutable();
+        if (!this.breaksIce()) {
+            return;
+        }
+        final BlockPos.MutableBlockPos blockPos = ((Entity) this).blockPosition().mutable();
 
         final int size;
         {
-            int sizeTemp = (int) Math.ceil(((Entity)this).getBoundingBox().getXsize());
+            int sizeTemp = (int) Math.ceil(((Entity) this).getBoundingBox().getXsize());
             if (sizeTemp % 2 != 0) {
                 sizeTemp++;
             }
@@ -22,13 +25,15 @@ public interface IBreakIce {
         // Move to our destroy "origin"
         blockPos.move(-size, 0, -size);
 
+        boolean flag = false;
         for (int x = -size; x <= size; x++) {
             for (int z = -size; z <= size; z++) {
                 for (int y = 0; y < 2; y++) {
-                    final BlockState blockState = ((Entity)this).level().getBlockState(blockPos);
+                    final BlockState blockState = ((Entity) this).level().getBlockState(blockPos);
                     if (blockState.is(Blocks.ICE)) {
-                        ((Entity)this).level().destroyBlock(blockPos, false);
-                        ((Entity)this).level().setBlock(blockPos,Blocks.WATER.defaultBlockState(), 2);
+                        flag = true;
+                        ((Entity) this).level().destroyBlock(blockPos, false);
+                        ((Entity) this).level().setBlock(blockPos, Blocks.WATER.defaultBlockState(), 2);
                     }
                     // Move down a block
                     blockPos.setY(blockPos.getY() - 1);
@@ -43,5 +48,11 @@ public interface IBreakIce {
             // Move positive x
             blockPos.setX(blockPos.getX() + 1);
         }
+        if (flag) {
+            ((Entity) this).setDeltaMovement(((Entity) this).getDeltaMovement().multiply(0.7, 1, 0.7));
+        }
+
     }
+
+    boolean breaksIce();
 }

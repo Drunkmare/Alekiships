@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleCleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,17 +16,17 @@ public interface IHaveMultipleCleats extends IHaveCleats {
         AbstractVehicle vehicle = (AbstractVehicle)this;
 
         int count = 0;
-        ArrayList<VehicleCleatEntity> cleats = this.getCleats();
-        ArrayList<VehicleCleatEntity> leashedCleats = new ArrayList<VehicleCleatEntity>();
-        for (VehicleCleatEntity cleat : cleats) {
+        ArrayList<CleatEntity> cleats = this.getCleats();
+        ArrayList<CleatEntity> leashedCleats = new ArrayList<CleatEntity>();
+        for (CleatEntity cleat : cleats) {
             if (cleat.isLeashed() && !vehicle.collectEntitesToTakeWith().contains(cleat.getLeashHolder())) {
                 leashedCleats.add(cleat);
                 count++;
             }
         }
         if (count == 2) {
-            VehicleCleatEntity cleat1 = leashedCleats.get(0);
-            VehicleCleatEntity cleat2 = leashedCleats.get(1);
+            CleatEntity cleat1 = leashedCleats.get(0);
+            CleatEntity cleat2 = leashedCleats.get(1);
             net.minecraft.world.entity.Entity leashHolder1 = cleat1.getLeashHolder();
             net.minecraft.world.entity.Entity leashHolder2 = cleat2.getLeashHolder();
             if (leashHolder1 != null && leashHolder2 != null) {
@@ -73,7 +73,7 @@ public interface IHaveMultipleCleats extends IHaveCleats {
 
         }
         if (count == 1) {
-            VehicleCleatEntity cleat = leashedCleats.get(0);
+            CleatEntity cleat = leashedCleats.get(0);
             net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
             if (leashHolder != null) {
                 if (leashHolder instanceof Player) {
@@ -86,6 +86,8 @@ public interface IHaveMultipleCleats extends IHaveCleats {
                         movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
                         vehicle.setDeltaMovement(movementVector);
 
+                    } else {
+                        vehicle.setDeltaMovement(Vec3.ZERO);
                     }
                 }
                 if (leashHolder instanceof HangingEntity) {
@@ -105,7 +107,7 @@ public interface IHaveMultipleCleats extends IHaveCleats {
             }
         }
         if (count != 1 && count != 2) {
-            for (VehicleCleatEntity cleat : leashedCleats) {
+            for (CleatEntity cleat : leashedCleats) {
                 net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
                 if (leashHolder != null) {
                     Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(vehicle.getPosition(0)).normalize();

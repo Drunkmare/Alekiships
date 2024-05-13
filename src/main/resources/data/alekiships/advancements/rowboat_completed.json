@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:story/smelt_iron",
+  "criteria": {
+    "rowboat": {
+      "trigger": "alekiships:rowboat_completed"
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "alekiships:rowboat_icon_only"
+    },
+    "title": {
+      "translate": "alekiships.advancements.rowboat_completed.title"
+    },
+    "description": {
+      "translate": "alekiships.advancements.rowboat_completed.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/rock/cobblestone.png"
+  },
+  "requirements": [
+    [
+      "rowboat"
+    ]
+  ]
+}

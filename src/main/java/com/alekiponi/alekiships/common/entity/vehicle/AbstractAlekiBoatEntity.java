@@ -1,10 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,6 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -64,8 +64,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected int windLerpTicks = 0;
 
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
+    protected final BoatMaterial boatMaterial;
+
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, BoatMaterial boatMaterial) {
         super(entityType, level);
+        this.boatMaterial = boatMaterial;
     }
 
     protected void defineSynchedData() {
@@ -93,7 +96,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             this.setHurtTime(this.getHurtTime() - 1);
         }
 
-        if (!this.isAlive()) {
+        if (!this.isFunctional()) {
             if (this.status == MediumStatus.IN_WATER) {
                 this.setDeltaMovement(this.getDeltaMovement().add(0, -0.1, 0));
             }
@@ -101,12 +104,12 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 entity.unRide();
                 entity.kill();
             }
-            if (this.getDamage() > this.getDamageThreshold() * 1.25f) {
+            if (this.getDamage() > this.getDeathDamageThreshold()) {
                 this.kill();
             }
         }
 
-        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.isAlive() && this.tickCount % 10 == 0) {
+        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.isFunctional() && this.tickCount % 10 == 0) {
             this.hurt(this.damageSources().drown(), this.getDamageRecovery());
         }
 
@@ -154,7 +157,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         this.tickPaddlingEffects();
 
-        // all movement code should happen before collision check
+        // all movement code should happen before collision check-
         //this.checkInsideBlocks();
 
         this.tickUpdateWind(true);
@@ -167,6 +170,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
         this.tickTakeEntitiesForARide();
 
+    }
+
+    public float getDeathDamageThreshold(){
+        return getDamageThreshold()*1.25f;
     }
 
     protected void tickWindInput() {
@@ -247,7 +254,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             this.lastYd = 0.0D;
             this.status = MediumStatus.IN_WATER;
         } else {
-
             if (this.status == MediumStatus.IN_WATER) {
                 d2 = ((this.waterLevel - this.getY()) / (double) this.getBbHeight()) + 0.1;
                 this.invFriction = 0.9F;
@@ -399,10 +405,13 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         return InteractionResult.PASS;
     }
 
+    public boolean fireImmune() {
+        return this.boatMaterial.withstandsLava();
+    }
+
     @Override
     public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
         ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-        ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
 
         if (this instanceof IAmTiny) {
             return states;
@@ -413,14 +422,16 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 return states;
             }
 
-            if (itemStack.is(this.getDropItem())) {
+            if (itemStack.is(this.getDropItem()) && this.getDamage() > 0) {
                 states.add(IngameOverlays.IconState.HAMMER);
                 return states;
             }
 
-            if ((itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) && this instanceof IPaintable) {
-                states.add(IngameOverlays.IconState.BRUSH);
-                return states;
+            if ((itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) && this instanceof IPaintable paintable) {
+                if (paintable.getPaintColor().isEmpty() || paintable.getPaintColor().get() != ((DyeItem)itemStack.getItem()).getDyeColor()){
+                    states.add(IngameOverlays.IconState.BRUSH);
+                    return states;
+                }
             }
         }
 

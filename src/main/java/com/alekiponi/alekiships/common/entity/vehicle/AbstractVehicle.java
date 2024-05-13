@@ -4,7 +4,7 @@ import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehicleColliderEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.ColliderEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -13,7 +13,6 @@ import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -55,6 +54,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.alekiponi.alekiships.util.ClientHelper.tickTakeClientPlayersForARide;
+
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
@@ -76,6 +77,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected double lerpYRot;
     protected double lerpXRot;
     protected double waterLevel;
+    protected double lavaLevel;
     protected float landFriction;
     @Nullable
     protected MediumStatus status;
@@ -130,9 +132,12 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     @Override
     public void tick() {
-        if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers() && this.isAlive()) {
+        if(!this.isFunctional()){
+            hasAllParts = false;
+        }
+        if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers() && this.isFunctional()) {
             addVehicleParts();
-        } else if (this.isAlive()) {
+        } else if (this.isFunctional()) {
             hasAllParts = true;
         }
         if (!hasAllParts()) {
@@ -141,6 +146,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         if (everyNthTickUnique(10)) {
             checkIfNeedsPassengerUpdate();
         }
+
 
         super.tick();
     }
@@ -182,7 +188,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return true;
     }
 
-    public boolean isAlive() {
+    public boolean isFunctional() {
         return this.getDamage() <= this.getDamageThreshold();
     }
 
@@ -225,6 +231,10 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
                 super.getRelativePortalPosition(axis, portal));
     }
 
+    public boolean shouldShowName() {
+        return this.isCustomNameVisible();
+    }
+
     @Override
     public double getPassengersRidingOffset() {
         return 0;
@@ -251,7 +261,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
             for (Entity entity : this.getPassengers()) {
                 entity.kill();
             }
-            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) && this.getDamage() > this.getDeathDamageThreshold()) {
                 if (this.level() instanceof ServerLevel serverLevel) {
                     this.dropAllDestructionLoot(damageSource, serverLevel);
                 }
@@ -260,6 +270,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
         return true;
     }
+
 
     @Override
     public void push(final Entity entity) {
@@ -317,24 +328,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
             if (!entitiesToTakeWith.isEmpty()) {
                 for (final Entity entity : entitiesToTakeWith) {
-                    if (this.level().isClientSide() && entity instanceof LocalPlayer player && !entity.isPassenger() && (Math.abs(this.getBoundingBox().maxY - player.getBoundingBox().minY) < 0.01)) {
-                        if (this.getSmoothSpeedMS() > 4) {
-                            if (!player.input.jumping || Math.abs(player.getDeltaMovement().y) > 0.05) {
-                                player.setPos(this.getDismountLocationForPassenger(player));
-                            }
-                            //player.setPos(player.getPosition(0).add(this.getDeltaMovement()));
-                        } else {
-                            if (player.input.jumping || player.input.left || player.input.right || player.input.up || player.input.down) {
-                                player.setDeltaMovement(player.getDeltaMovement().multiply(1.0, 1, 1.0).add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
-                            } else {
-                                player.setPos(player.getPosition(0).add(this.getDeltaMovement()));
-                                if (player.getDeltaMovement().length() > this.getDeltaMovement().length() + 0.01) {
-                                    player.setDeltaMovement(Vec3.ZERO);
-                                }
-                            }
-                        }
-
-                    }
+                    tickTakeClientPlayersForARide(this,entity);
                     if (!(entity instanceof AbstractVehicle) && !entity.isPassenger() && !(entity instanceof Player)) {
                         entity.setDeltaMovement(entity.getDeltaMovement().add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
                     }
@@ -347,7 +341,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         List<Entity> entities = this.level()
                 .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0).move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this));
 
-        for (VehicleColliderEntity collider : this.getColliders()) {
+        for (ColliderEntity collider : this.getColliders()) {
             entities.addAll(this.level()
                     .getEntities(collider, collider.getBoundingBox().inflate(0, -collider.getBoundingBox().getYsize() + 2, 0).move(0, collider.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this)));
         }
@@ -395,6 +389,17 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
         if (this.checkInWater()) {
             return MediumStatus.IN_WATER;
+        }
+
+        final MediumStatus underlava = this.isUnderlava();
+
+        if (underlava != null) {
+            this.lavaLevel = this.getBoundingBox().maxY;
+            return underlava;
+        }
+
+        if (this.checkInLava()) {
+            return MediumStatus.IN_LAVA;
         }
 
         final float groundFriction = this.getGroundFriction();
@@ -508,6 +513,68 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
 
         return flag;
+    }
+
+    protected boolean checkInLava() {
+        AABB aabb = this.getBoundingBox();
+        int i = Mth.floor(aabb.minX);
+        int j = Mth.ceil(aabb.maxX);
+        int k = Mth.floor(aabb.minY);
+        int l = Mth.ceil(aabb.minY + 0.001D);
+        int i1 = Mth.floor(aabb.minZ);
+        int j1 = Mth.ceil(aabb.maxZ);
+        boolean flag = false;
+        this.lavaLevel = -Double.MAX_VALUE;
+        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+
+        for (int k1 = i; k1 < j; ++k1) {
+            for (int l1 = k; l1 < l; ++l1) {
+                for (int i2 = i1; i2 < j1; ++i2) {
+                    blockpos$mutableblockpos.set(k1, l1, i2);
+                    FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+                    if (fluidstate.is(FluidTags.LAVA)) {
+                        float f = (float) l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
+                        this.lavaLevel = Math.max(f, this.lavaLevel);
+                        flag |= aabb.minY < (double) f;
+                    }
+                }
+            }
+        }
+
+        return flag;
+    }
+
+    @Nullable
+    protected MediumStatus isUnderlava() {
+        final AABB aabb = this.getBoundingBox();
+        final double d0 = aabb.maxY + 0.001D;
+        final int i = Mth.floor(aabb.minX);
+        final int j = Mth.ceil(aabb.maxX);
+        final int k = Mth.floor(aabb.maxY);
+        final int l = Mth.ceil(d0);
+        final int i1 = Mth.floor(aabb.minZ);
+        final int j1 = Mth.ceil(aabb.maxZ);
+        boolean isUnderLava = false;
+        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+
+        for (int k1 = i; k1 < j; ++k1) {
+            for (int l1 = k; l1 < l; ++l1) {
+                for (int i2 = i1; i2 < j1; ++i2) {
+                    mutableBlockPos.set(k1, l1, i2);
+                    final FluidState fluidstate = this.level().getFluidState(mutableBlockPos);
+                    if (fluidstate.is(FluidTags.LAVA) &&
+                            d0 < mutableBlockPos.getY() + fluidstate.getHeight(this.level(), mutableBlockPos)) {
+                        if (!fluidstate.isSource()) {
+                            return MediumStatus.UNDER_FLOWING_LAVA;
+                        }
+
+                        isUnderLava = true;
+                    }
+                }
+            }
+        }
+
+        return isUnderLava ? MediumStatus.UNDER_LAVA : null;
     }
 
     /*
@@ -768,6 +835,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     public abstract float getDamageThreshold();
 
+    public abstract float getDeathDamageThreshold();
+
     public abstract float getDamageRecovery();
 
     public void setDeltaRotation(float deltaRotation) {
@@ -997,6 +1066,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         UNDER_WATER,
         UNDER_FLOWING_WATER,
         ON_LAND,
-        IN_AIR;
+        IN_AIR,
+        IN_LAVA,
+        UNDER_LAVA,
+        UNDER_FLOWING_LAVA
     }
 }

@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -105,7 +106,12 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     @Override
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            Containers.dropContents(this.level(), this, this);
+            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
+            if(y > this.getY()){
+                CommonHelper.dropContents(this.level(), this.getX(), y, this.getZ(), this);
+            } else {
+                Containers.dropContents(this.level(), this, this);
+            }
         }
 
         super.remove(removalReason);

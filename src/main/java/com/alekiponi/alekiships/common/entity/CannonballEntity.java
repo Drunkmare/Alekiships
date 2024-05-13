@@ -34,6 +34,9 @@ public class CannonballEntity extends AbstractHurtingProjectile {
 
     protected void explode(final float radius) {
         final Level level = this.level();
+        if(level.isClientSide()){
+            return;
+        }
 
         final Explosion.BlockInteraction blockInteraction = level.getGameRules().getBoolean(
                 GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;

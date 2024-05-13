@@ -18,7 +18,7 @@ COLORS = ["white",
 WOODS = ["oak", "spruce", "birch", "acacia", "cherry", "jungle", "dark_oak", "crimson", "warped", "mangrove", "bamboo"]
 
 
-def normalize(s: str) -> str:
+def langify(s: str) -> str:
     """
     Takes a string like dark_oak and converts it to Dark Oak.
     Yes this method is horribly named I'm having trouble coming up with a good one :|
@@ -28,9 +28,9 @@ def normalize(s: str) -> str:
 
 DEFAULT_LANG = {
     # Entities
-    **{f"entity.alekiships.rowboat.{wood}": f"{normalize(wood)} Rowboat" for wood in WOODS},
-    **{f"entity.alekiships.sloop.{wood}": f"{normalize(wood)} Sloop" for wood in WOODS},
-    **{f"entity.alekiships.sloop_construction.{wood}": f"{normalize(wood)} Sloop" for wood in WOODS},
+    **{f"entity.alekiships.rowboat.{wood}": f"{langify(wood)} Rowboat" for wood in WOODS},
+    **{f"entity.alekiships.sloop.{wood}": f"{langify(wood)} Sloop" for wood in WOODS},
+    **{f"entity.alekiships.sloop_construction.{wood}": f"{langify(wood)} Sloop" for wood in WOODS},
 
     "entity.alekiships.kayak": "Kayak",
 

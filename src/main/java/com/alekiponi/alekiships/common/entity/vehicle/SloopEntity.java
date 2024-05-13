@@ -1,11 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
+import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -20,14 +23,17 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
+public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
@@ -51,6 +57,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
     protected static final EntityDataAccessor<Boolean> DATA_ID_MAINSAIL_ACTIVE = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.BOOLEAN);
 
+    protected static final EntityDataAccessor<Boolean> DATA_ID_ICEBREAKER = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.BOOLEAN);
+
     protected static final EntityDataAccessor<Boolean> DATA_ID_JIBSAIL_ACTIVE = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -71,12 +80,10 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
     protected final int SAIL_TOGGLE_TICKS = 20;
     protected final float DAMAGE_THRESHOLD = 512.0f;
     protected final float DAMAGE_RECOVERY = 5.333f;
-    private final BoatMaterial boatMaterial;
 
     public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
                        final BoatMaterial boatMaterial) {
-        super(entityType, level);
-        this.boatMaterial = boatMaterial;
+        super(entityType, level, boatMaterial);
     }
 
     @Override
@@ -371,8 +378,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
 
         }
 
+        this.tickBreakIce();
+
         if (this.everyNthTickUnique(2)) {
             this.tickDestroyPlants();
+
             int ind = 0;
             for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
                 if (ind == 0) {
@@ -400,7 +410,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
             }
         }
 
-        if (this.everyNthTickUnique(10)){
+        if (this.everyNthTickUnique(10)) {
             checkIfRecentlyFiredBroadside();
         }
 
@@ -419,11 +429,37 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         InteractionResult result = this.interactPaint(player, hand);
+        final ItemStack heldItem = player.getItemInHand(hand);
+
+        if (heldItem.is(AlekiShipsTags.Items.ICEBREAKER_UPGRADES) && !this.breaksIce()) {
+            this.setIceBreaker(true);
+            if (!player.getAbilities().instabuild) {
+                heldItem.shrink(1);
+            }
+            return InteractionResult.SUCCESS;
+
+        }
+
+        if (heldItem.is(Items.NAME_TAG)) {
+            if (heldItem.hasCustomHoverName() && !this.getName().equals(heldItem.getHoverName())) {
+                if (!this.level().isClientSide() && this.isAlive() && this.isFunctional()) {
+                    this.setCustomName(heldItem.getHoverName());
+                    if (!player.getAbilities().instabuild){
+                        heldItem.shrink(1);
+                    }
+                }
+
+                return InteractionResult.sidedSuccess(player.level().isClientSide);
+            } else {
+                return InteractionResult.PASS;
+            }
+        }
+
         return result == null ? super.interact(player, hand) : result;
     }
 
     @Override
-    public float getCleatMovementMultiplier(){
+    public float getCleatMovementMultiplier() {
         return 5;
     }
 
@@ -432,6 +468,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         // TODO make this cleaner in the inheritance structure
         // shouldn't be used for larger boats...
     }
+
 
     @Override
     protected void defineSynchedData() {
@@ -445,6 +482,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         this.entityData.define(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
         this.entityData.define(DATA_ID_MAINSAIL_DYE, DyeColor.WHITE);
         this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
+        this.entityData.define(DATA_ID_ICEBREAKER, false);
     }
 
     @Override
@@ -641,7 +679,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
             }
-            if (isAnchorDown() ) {
+            if (isAnchorDown()) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 1, 0.5));
             }
         }
@@ -748,10 +786,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         this.entityData.set(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
     }
 
-
-
     public void setPaintColor(final DyeColor paintColor) {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
+    }
+
+    public void setIceBreaker(final boolean icebreaker) {
+        this.entityData.set(DATA_ID_ICEBREAKER, icebreaker);
     }
 
     @Override
@@ -772,6 +812,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         this.setJibsailActive(pCompound.getBoolean("jibsailActive"));
         this.setTicksNoRiders(pCompound.getInt("ticksNoRiders"));
         this.setMainsheetLength(pCompound.getFloat("mainSheetLength"));
+        this.setIceBreaker(pCompound.getBoolean("icebreaker"));
 
         if (pCompound.contains("jibsailDye", Tag.TAG_BYTE)) {
             this.setMainsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
@@ -795,6 +836,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         pCompound.putBoolean("jibsailActive", this.getJibsailActive());
         pCompound.putInt("ticksNoRiders", this.getTicksNoRiders());
         pCompound.putFloat("mainSheetLength", this.getMainsheetLength());
+        pCompound.putBoolean("icebreaker", this.breaksIce());
 
         {
             final DyeColor paintColor = this.getJibsailDye();
@@ -813,5 +855,22 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IPaintable, 
         this.getPaintColor().ifPresent(dyeColor -> pCompound.putByte("paint", (byte) dyeColor.getId()));
     }
 
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
 
+        for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.is(AlekiShipsTags.Items.ICEBREAKER_UPGRADES) && !this.breaksIce()) {
+                states.add(IngameOverlays.IconState.HAMMER);
+                return states;
+            }
+        }
+
+        return super.getIconStates(player);
+    }
+
+    @Override
+    public boolean breaksIce() {
+        return entityData.get(DATA_ID_ICEBREAKER);
+    }
 }

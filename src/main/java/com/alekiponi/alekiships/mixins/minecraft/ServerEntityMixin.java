@@ -41,7 +41,7 @@ public abstract class ServerEntityMixin {
     @Inject(method = "sendChanges", at = @At(value = "HEAD"), cancellable = true)
     public void injectWaitToSendChanges(CallbackInfo ci) {
         if (this.entity instanceof AbstractVehicle vehicle){
-            if (!vehicle.hasAllParts() && vehicle.isAlive()){
+            if (!vehicle.hasAllParts() && vehicle.isFunctional()){
                 ci.cancel();
             }
         }
@@ -50,7 +50,7 @@ public abstract class ServerEntityMixin {
     @Inject(method = "sendChanges", at = @At(value = "HEAD"))
     public void injectUpdatePassengersForFlaggedVehicles(CallbackInfo ci) {
         if (this.entity instanceof AbstractVehicle vehicle){
-            if (vehicle.isFlaggedForPassengerUpdate()) {
+            if (vehicle.isFlaggedForPassengerUpdate() && vehicle.isFunctional()) {
                 List<Entity> list = vehicle.getPassengers();
                 this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));
                 removedPassengers(list, this.lastPassengers).forEach((player) -> {

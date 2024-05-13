@@ -73,7 +73,7 @@ public class VehiclePart extends Entity {
         moveFunction.accept(passenger, this.getX(), this.getY() + localY, this.getZ());
         passenger.setPos(this.getX(), this.getY() + localY, this.getZ());
 
-        if ((passenger instanceof AbstractCompartmentEntity || passenger instanceof VehicleCleatEntity)) {
+        if ((passenger instanceof AbstractCompartmentEntity || passenger instanceof CleatEntity)) {
             this.setYRot(abstractVehicle.getYRot());
             passenger.setYRot(this.getYRot() + this.getCompartmentRotation());
         }
@@ -121,7 +121,7 @@ public class VehiclePart extends Entity {
         for (int i : vehicle.getCleatIndices()) {
             if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
-                final VehicleCleatEntity cleat = AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get()
+                final CleatEntity cleat = AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get()
                         .create(this.level());
                 assert cleat != null;
                 cleat.setPos(this.getX(), this.getY(), this.getZ());
@@ -141,7 +141,7 @@ public class VehiclePart extends Entity {
     protected boolean tickAddCollider(IHaveColliders vehicle) {
         for (int i : vehicle.getColliderIndices()) {
             if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
-                final VehicleColliderEntity collider = AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get()
+                final ColliderEntity collider = AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get()
                         .create(this.level());
 
                 assert collider != null;
@@ -150,6 +150,7 @@ public class VehiclePart extends Entity {
                     AlekiShips.LOGGER.error("New Collider: {} unable to ride Vehicle Part: {}", collider, this);
                 }
                 this.level().addFreshEntity(collider);
+                collider.refreshDimensions();
                 return true;
 
             }

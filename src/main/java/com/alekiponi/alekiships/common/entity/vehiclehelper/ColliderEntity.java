@@ -9,9 +9,9 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 
-public class VehicleColliderEntity extends AbstractPassthroughHelper implements IHaveIcons {
+public class ColliderEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
-    public VehicleColliderEntity(EntityType<?> pEntityType, Level pLevel) {
+    public ColliderEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -22,12 +22,11 @@ public class VehicleColliderEntity extends AbstractPassthroughHelper implements 
 
     @Override
     public void tick() {
-        super.tick();
-        ClientHelper.tickHopPlayersOnboard(this);
-
-        if (tickCount < 2) {
+        if (tickCount < 20) {
             this.refreshDimensions();
         }
+        super.tick();
+        ClientHelper.tickHopPlayersOnboard(this);
     }
 
     @Override
