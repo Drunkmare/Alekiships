@@ -150,7 +150,7 @@ public final class AlekiShipsEntities {
 
     public static final RegistryObject<EntityType<WindlassSwitchEntity>> WINDLASS_SWITCH_ENTITY = register(
             "vehicle_switch_windlass",
-            EntityType.Builder.of(WindlassSwitchEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
+            EntityType.Builder.of(WindlassSwitchEntity::new, MobCategory.MISC).sized(0.8F, 0.8F)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     public static final RegistryObject<EntityType<CannonballEntity>> CANNONBALL_ENTITY = register("cannonball",
@@ -161,7 +161,7 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F).fireImmune());
 
     public static final RegistryObject<EntityType<MastEntity>> MAST_ENTITY = register("vehicle_mast",
-            EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8)
+            EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8.79375f)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
 
     private static <E extends RowboatEntity> RegistryObject<EntityType<E>> registerRowboat(

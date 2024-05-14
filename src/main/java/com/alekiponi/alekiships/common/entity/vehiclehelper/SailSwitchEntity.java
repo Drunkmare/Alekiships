@@ -41,8 +41,9 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
                 }
                 if (stack.is(Tags.Items.DYES)) {
                     final DyeColor dyeColor = DyeColor.getColor(stack);
-                    if (dyeColor != null) {
+                    if (dyeColor != null && dyeColor != sloop.getMainsailDye()) {
                         sloop.setMainsailDye(dyeColor);
+                        stack.shrink(1);
                         player.swing(hand);
                         return InteractionResult.SUCCESS;
                     }
@@ -55,8 +56,9 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
                 }
                 if (stack.is(Tags.Items.DYES)) {
                     final DyeColor dyeColor = DyeColor.getColor(stack);
-                    if (dyeColor != null) {
+                    if (dyeColor != null && dyeColor != sloop.getJibsailDye()) {
                         sloop.setJibsailDye(dyeColor);
+                        stack.shrink(1);
                         player.swing(hand);
                         return InteractionResult.SUCCESS;
                     }

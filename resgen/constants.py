@@ -41,11 +41,10 @@ DEFAULT_LANG = {
     "entity.alekiships.vehicle_collider": "Vehicle",
     "entity.alekiships.vehicle_part_boat": "Boat Part",
     "entity.alekiships.vehicle_mast": "Mast",
+    "entity.alekiships.vehicle_anchor": "Anchor",
 
     "entity.alekiships.cannonball": "Cannonball",
     "entity.alekiships.cannon": "Cannon",
-
-    "entity.alekiships.anchor": "Anchor",
 
     # Compartments
     "entity.alekiships.compartment_empty": "Empty Compartment",

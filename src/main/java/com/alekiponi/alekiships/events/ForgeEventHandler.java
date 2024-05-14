@@ -14,6 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
@@ -60,6 +61,33 @@ public class ForgeEventHandler {
             }
         }
     }
+
+    /*
+    @SubscribeEvent
+    public static void onLivingOnLadder(LivingOnLadder event) {
+        Player player = event.getEntity();
+
+        if (player.level().getServer().isSingleplayer() && player.level().getServer().isSingleplayerOwner(player.getGameProfile())) {
+            // do singleplayer behavior
+        } else if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
+            // do multiplayer behavior
+            player.stopRiding();
+            player.setPos(compartment.getRootVehicle().getDismountLocationForPassenger(player));
+            if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveSailSwitches boat) {
+                for (SailSwitchEntity sail : boat.getSailSwitches()) {
+                    sail.setSwitched(false);
+                }
+            }
+
+            if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveAnchorWindlass boat) {
+                for (WindlassSwitchEntity windlass : boat.getWindlasses()) {
+                    windlass.setSwitched(false);
+                }
+            }
+        }
+    }
+
+     */
 
     /**
      * Eject entities from compartments

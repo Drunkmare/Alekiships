@@ -674,7 +674,15 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         super.tick();
         if (this.getDamage() > this.getDamageThreshold()) {
             this.kill();
-            //TODO drop all materials
+            this.spawnAtLocation(this.getKeel());
+            this.spawnAtLocation(this.getDeck());
+            this.spawnAtLocation(this.getBowsprit());
+            this.spawnAtLocation(this.getMast());
+            this.spawnAtLocation(this.getBoom());
+            this.spawnAtLocation(this.getMainsail());
+            this.spawnAtLocation(this.getJibsail());
+            this.spawnAtLocation(this.getAnchor());
+            this.spawnAtLocation(this.getRigging());
         }
 
     }

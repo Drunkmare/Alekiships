@@ -1,6 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.AlekiShipsTags;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -53,6 +56,9 @@ public class MastEntity extends AbstractPassthroughHelper {
                     }
 
                 }
+                if(entity instanceof Player player){
+                    player.resetFallDistance();
+                }
             }
 
         }
@@ -62,14 +68,19 @@ public class MastEntity extends AbstractPassthroughHelper {
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.getItem() instanceof BannerItem) {
-            this.spawnAtLocation(this.getBanner());
+        if (stack.getItem() instanceof BannerItem bannerItem && !stack.is(getBanner().getItem())) {
+            CommonHelper.giveItemToPlayer(player, this.getBanner());
             this.setBanner(stack.split(1));
+            //bannerItem.patterns
+            this.level().playSound(null, this, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 1.5F,
+                    this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
         }
         if (stack.is(Tags.Items.SHEARS)) {
-            this.spawnAtLocation(this.getBanner());
+            CommonHelper.giveItemToPlayer(player, this.getBanner());
             this.setBanner(ItemStack.EMPTY);
+            this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.5F,
+                    this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
         }
         return super.interact(player,hand);
@@ -91,6 +102,20 @@ public class MastEntity extends AbstractPassthroughHelper {
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
         this.setBanner(ItemStack.of(pCompound.getCompound("banner")));
+    }
+
+    @Override
+    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
+        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
+
+        for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.getItem() instanceof BannerItem && !itemStack.is(getBanner().getItem())) {
+                states.add(IngameOverlays.IconState.BRUSH);
+                return states;
+            }
+        }
+
+        return super.getIconStates(player);
     }
 
     @Override

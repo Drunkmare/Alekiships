@@ -74,7 +74,8 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.SAIL_SWITCH_ENTITY.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get(), NoopRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.WINDLASS_SWITCH_ENTITY.get(), NoopRenderer::new);
-        event.registerEntityRenderer(AlekiShipsEntities.MAST_ENTITY.get(), NoopRenderer::new);
+
+        event.registerEntityRenderer(AlekiShipsEntities.MAST_ENTITY.get(), MastRenderer::new);
 
         event.registerEntityRenderer(AlekiShipsEntities.CANNONBALL_ENTITY.get(), CannonballRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CANNON_ENTITY.get(), CannonRenderer::new);

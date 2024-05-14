@@ -16,6 +16,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -436,6 +438,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             if (!player.getAbilities().instabuild) {
                 heldItem.shrink(1);
             }
+            this.level().playSound(null, this, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.5F,
+                    this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
 
         }
@@ -862,6 +866,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         for (final ItemStack itemStack : player.getHandSlots()) {
             if (itemStack.is(AlekiShipsTags.Items.ICEBREAKER_UPGRADES) && !this.breaksIce()) {
                 states.add(IngameOverlays.IconState.HAMMER);
+                return states;
+            }
+        }
+
+        for (final ItemStack itemStack : player.getHandSlots()) {
+            if (itemStack.is(Items.NAME_TAG)) {
+                states.add(IngameOverlays.IconState.BRUSH);
                 return states;
             }
         }

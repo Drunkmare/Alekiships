@@ -4,6 +4,7 @@
   "package": "com.alekiponi.alekiships.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "minecraft.LivingEntityMixin",
     "minecraft.PlayerMixin",
     "minecraft.ServerEntityMixin"
   ],

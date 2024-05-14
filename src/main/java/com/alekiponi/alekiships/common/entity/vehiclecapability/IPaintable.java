@@ -23,6 +23,7 @@ public interface IPaintable {
             if (dyeColor != null) {
                 final Optional<DyeColor> paintColor = this.getPaintColor();
                 if (paintColor.isEmpty() || paintColor.get() != dyeColor) {
+                    heldItem.shrink(1);
                     this.setPaintColor(dyeColor);
                     player.swing(hand);
                     return InteractionResult.SUCCESS;
