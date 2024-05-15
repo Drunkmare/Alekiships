@@ -265,6 +265,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
         this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
+    @Override
+    protected double windDriftMultiplier() {
+        return 0.5;
+    }
+
     /**
      * @return The paint color of the boat. {@code null} for no color
      */

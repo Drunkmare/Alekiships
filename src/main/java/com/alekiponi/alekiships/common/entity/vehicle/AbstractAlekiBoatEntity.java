@@ -178,7 +178,9 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickWindInput() {
         if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
-            double windFunction = Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.001, 0.002 * this.getBoundingBox().getXsize());
+            double windFunction = Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.001, 0.002 * this.getBoundingBox().getXsize()) * windDriftMultiplier();
+
+            // TODO add a config for enabling / disabling wind drift
 
             float windDifference = Mth.degreesDifference(this.getLocalWindAngleAndSpeed()[0], Mth.wrapDegrees(this.getYRot()));
 
@@ -208,6 +210,13 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
     }
 
+    /**
+     *
+     * @return a double used to multiply the base wind drift speed
+     */
+
+    protected abstract double windDriftMultiplier();
+
     protected void tickUpdateWind(boolean waitForWindUpdateTick) {
         if (this.everyNthTickUnique(WIND_UPDATE_TICKS) || !waitForWindUpdateTick) {
             Vec2 windVector = this.getWindVectorAt(this.level(), this.blockPosition());
@@ -226,18 +235,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             updateLocalWindAngleAndSpeed();
         }
 
-    }
-
-    /**
-     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
-     * handling different wind models like the one found in TFC
-     *
-     * @param level    The level
-     * @param blockPos The block pos at which the wind is being queried
-     * @return A Vec2 containing the winds x (x) and z (y) components.
-     */
-    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
-        return new Vec2(0.25F, 0.25F);
     }
 
     protected void tickFloatBoat() {

@@ -690,6 +690,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
     @Override
+    protected double windDriftMultiplier() {
+        return 0.3;
+    }
+
+    @Override
     public void tickAnchorInput() {
         if (this.getMainsailActive() || this.getJibsailActive()) {
             return;

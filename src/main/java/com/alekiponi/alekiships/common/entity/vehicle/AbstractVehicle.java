@@ -41,6 +41,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -410,6 +411,18 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
 
         return MediumStatus.IN_AIR;
+    }
+
+    /**
+     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
+     * handling different wind models like the one found in TFC
+     *
+     * @param level    The level
+     * @param blockPos The block pos at which the wind is being queried
+     * @return A Vec2 containing the winds x (x) and z (y) components.
+     */
+    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
+        return new Vec2(0.25F, 0.25F);
     }
 
     public float getWaterLevelAbove() {
