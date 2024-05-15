@@ -36,7 +36,7 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
         super.render(cleat, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
         final float rotation;
         
-        if (cleat.getVehicle().getVehicle() instanceof AbstractVehicle trueVehicle) {
+        if (cleat.getRootVehicle() instanceof AbstractVehicle trueVehicle) {
             rotation = trueVehicle.getYRot();
         } else {
             rotation = entityYaw;

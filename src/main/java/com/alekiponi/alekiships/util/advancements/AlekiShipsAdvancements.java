@@ -16,6 +16,8 @@ public class AlekiShipsAdvancements {
 
     public static final GenericTrigger RIDE_BARREL = registerGeneric("ride_barrel");
 
+    public static final GenericTrigger ARMOR_STAND_ON_BOAT = registerGeneric("armor_stand_on_boat");
+
     public static GenericTrigger registerGeneric(String name)
     {
         return CriteriaTriggers.register(new GenericTrigger(new ResourceLocation(AlekiShips.MOD_ID, name)));

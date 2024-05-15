@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;

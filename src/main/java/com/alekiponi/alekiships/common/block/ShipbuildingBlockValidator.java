@@ -19,7 +19,7 @@ public class ShipbuildingBlockValidator {
     @Nullable
     private Direction direction = null;
 
-    /*
+    /**
         Use this constructor for inner/outer angled frames
      */
     ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape, AngledWoodenBoatFrameBlock.ConstantDirection constantDirection) {
@@ -28,7 +28,7 @@ public class ShipbuildingBlockValidator {
         this.validatingThisBlock = true;
     }
 
-    /*
+    /**
         Use this constructor for flat frames or for blocks we don't need to care about (false)
      */
     ShipbuildingBlockValidator(boolean flat) {
@@ -36,7 +36,7 @@ public class ShipbuildingBlockValidator {
         this.validatingThisBlock = flat;
     }
 
-    /*
+    /**
         Use this constructor for straight angled frames
      */
     ShipbuildingBlockValidator(Direction direction) {
@@ -56,6 +56,8 @@ public class ShipbuildingBlockValidator {
         if (!(blockState.getBlock() instanceof BoatFrame boatFrame)) return false;
 
         if (boatFrame.getBoatMaterial() != boatMaterial) return false;
+
+        if(boatMaterial.withstandsLava()) return false;
 
         if (boatFrame instanceof FlatBoatFrameBlock) return ProcessedBoatFrame.isFullyProcessed(blockState);
 

@@ -93,4 +93,7 @@ DEFAULT_LANG = {
     "alekiships.advancements.ride_barrel.title": "Lost at Sea",
     "alekiships.advancements.ride_barrel.description": "Ride a barrel",
 
+    "alekiships.advancements.armor_stand_on_boat.title": "Wilson!!!!!!!",
+    "alekiships.advancements.armor_stand_on_boat.description": "Place an inanimate companion on a boat",
+
 }

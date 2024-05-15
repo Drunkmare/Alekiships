@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -94,7 +95,11 @@ public enum IngameOverlays {
         }
 
         // The passenger of the compartment isn't living
-        if (!(entity instanceof EmptyCompartmentEntity) && !(entity instanceof LivingEntity)){
+        if ((!(entity instanceof EmptyCompartmentEntity) && !(entity instanceof LivingEntity)) || (entity instanceof ArmorStand)){
+            return;
+        }
+        // The passenger isn't a stupid gd armor stand
+        if(entity instanceof EmptyCompartmentEntity compartment && compartment.getFirstPassenger() instanceof ArmorStand){
             return;
         }
 

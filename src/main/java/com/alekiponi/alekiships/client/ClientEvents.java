@@ -1,15 +1,18 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundPickCompartmentPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.ArmorStandArmorModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +20,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;

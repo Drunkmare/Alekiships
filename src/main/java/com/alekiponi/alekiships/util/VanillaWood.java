@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
@@ -70,7 +71,7 @@ public enum VanillaWood implements BoatMaterial {
 
     @Override
     public boolean withstandsLava() {
-        return this.equals(CRIMSON) || this.equals(WARPED);
+        return this.getDeckItem().getDefaultInstance().is(AlekiShipsTags.Items.NETHER_PLANKS_THAT_MAKE_SHIPS);
     }
 
     @Override

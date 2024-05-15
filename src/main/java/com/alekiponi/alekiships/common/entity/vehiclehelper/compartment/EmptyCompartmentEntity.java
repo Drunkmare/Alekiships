@@ -16,6 +16,7 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
+import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,6 +24,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -38,6 +40,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,6 +158,11 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             if (cannon.getXRot() > 5) {
                 cannon.setXRot(5);
             }
+        }
+        if (passenger instanceof ArmorStand armorStand) {
+            armorStand.setYBodyRot(this.getYRot());
+            armorStand.setYRot(this.getYRot());
+            armorStand.setNoBasePlate(true);
         }
         //this.clampRotation(passenger);
     }
@@ -366,11 +374,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
                 if (!this.level().isClientSide()) {
                     this.level().addFreshEntity(cannon);
-                    if (cannon.startRiding(this)) {
+                    if (!cannon.startRiding(this)) {
                         AlekiShips.LOGGER.error("New Cannon: {} unable to ride Compartment: {}", cannon, this);
                     }
                 }
-                player.awardStat(Stats.ITEM_USED  .get(AlekiShipsItems.CANNON.get()));
+                // TODO award stats properly elsewhere
+                player.awardStat(Stats.ITEM_USED.get(AlekiShipsItems.CANNON.get()));
                 if (!player.getAbilities().instabuild) {
                     heldStack.shrink(1);
                 }
@@ -384,18 +393,24 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             assert armorStand != null;
             armorStand.moveTo(this.position());
             armorStand.setYRot(this.getYRot() - 180);
+            armorStand.setYBodyRot(this.getYRot() - 180);
+            armorStand.setYHeadRot(this.getYRot() - 180);
 
             if (!this.level().isClientSide()) {
                 this.level().addFreshEntity(armorStand);
-                if (armorStand.startRiding(this)) {
+                if (!armorStand.startRiding(this)) {
                     AlekiShips.LOGGER.error("New Armor Stand: {} unable to ride Compartment: {}", armorStand, this);
                 }
             }
-            //TODO award stats properly elsewhere
+
             player.awardStat(Stats.ITEM_USED.get(Items.ARMOR_STAND));
             if (!player.getAbilities().instabuild) {
                 heldStack.shrink(1);
             }
+            if(player instanceof ServerPlayer serverPlayer){
+                AlekiShipsAdvancements.ARMOR_STAND_ON_BOAT.trigger(serverPlayer);
+            }
+
             return InteractionResult.SUCCESS;
         }
 

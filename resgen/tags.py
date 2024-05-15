@@ -34,7 +34,7 @@ def generate(manager: ResourceManager):
                      "minecraft:birch_planks", "minecraft:dark_oak_planks", "minecraft:jungle_planks",
                      "minecraft:cherry_planks", "minecraft:mangrove_planks", "minecraft:acacia_planks")
 
-    manager.item_tag("nether_planks_that_make_ships", "minecraft:crimsons_planks", "minecraft:warped_planks")
+    manager.item_tag("nether_planks_that_make_ships", "minecraft:crimson_planks", "minecraft:warped_planks")
 
     manager.item_tag("overworld_planks_that_make_bamboo_ships", "minecraft:bamboo_planks")
 

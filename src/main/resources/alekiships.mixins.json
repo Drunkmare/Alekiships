@@ -9,6 +9,7 @@
     "minecraft.ServerEntityMixin"
   ],
   "client": [
+    "client.ArmorStandRendererMixin",
     "client.CameraMixin",
     "client.LocalPlayerMixin",
     "minecraft.PlayerModelMixin"
