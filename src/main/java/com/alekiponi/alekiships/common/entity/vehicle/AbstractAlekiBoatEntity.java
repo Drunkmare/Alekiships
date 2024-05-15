@@ -109,7 +109,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
         }
 
-        if ((this.status == MediumStatus.UNDER_FLOWING_WATER || this.status == MediumStatus.UNDER_WATER) && this.isFunctional() && this.tickCount % 10 == 0) {
+        if ((this.status == MediumStatus.UNDER_WATER) && this.isFunctional() && this.tickCount % 20 == 0) {
             this.hurt(this.damageSources().drown(), this.getDamageRecovery());
         }
 
@@ -239,8 +239,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickFloatBoat() {
 
-        double gravAccel = -0.04F;
-        double d1 = this.isNoGravity() ? 0.0D : (double) gravAccel;
+        double gravityAccel = this.isNoGravity() ? 0.0D : (double) -0.04F;
 
         double d2 = 0.0D;
         this.invFriction = 0.05F;
@@ -251,11 +250,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             this.lastYd = 0.0D;
             this.status = MediumStatus.IN_WATER;
         } else {
-            if (this.status == MediumStatus.IN_WATER) {
+            if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER) {
                 d2 = ((this.waterLevel - this.getY()) / (double) this.getBbHeight()) + 0.1;
-                this.invFriction = 0.9F;
-            } else if (this.status == MediumStatus.UNDER_FLOWING_WATER) {
-                d1 = -7.0E-4D;
                 this.invFriction = 0.9F;
             } else if (this.status == MediumStatus.UNDER_WATER) {
                 d2 = 0.01F;
@@ -288,12 +284,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
             Vec3 vec3 = this.getDeltaMovement();
 
-            this.setDeltaMovement(vec3.x * (double) this.invFriction, vec3.y + d1, vec3.z * (double) this.invFriction);
-
+            this.setDeltaMovement(vec3.x * (double) this.invFriction, vec3.y + gravityAccel, vec3.z * (double) this.invFriction);
 
             if (d2 > 0.0D) {
-                Vec3 vec31 = this.getDeltaMovement();
-                this.setDeltaMovement(vec31.x, (vec31.y + d2 * 0.06153846016296973D) * 0.75D, vec31.z);
+                Vec3 movement = this.getDeltaMovement();
+                this.setDeltaMovement(movement.x, (movement.y + d2 * 0.06153846016296973D) * 0.75D, movement.z);
             }
 
 

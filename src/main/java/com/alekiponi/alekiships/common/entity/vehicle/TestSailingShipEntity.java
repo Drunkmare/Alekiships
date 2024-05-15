@@ -14,6 +14,11 @@ public class TestSailingShipEntity extends AbstractAlekiBoatEntity implements IH
         super(entityType, level, material);
     }
 
+    @Override
+    protected double windDriftMultiplier() {
+        return 1;
+    }
+
     public final int PASSENGER_NUMBER = 24;
 
     public final int[] CLEATS = {20,21,22,23};

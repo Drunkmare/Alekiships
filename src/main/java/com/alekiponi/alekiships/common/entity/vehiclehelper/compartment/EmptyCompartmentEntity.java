@@ -30,9 +30,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -355,10 +357,11 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         final ItemStack heldStack = player.getItemInHand(hand);
 
         if (this.canAddNonPlayers() && !this.canAddOnlyBLocks() && heldStack.is(
-                AlekiShipsItems.CANNON.get()) && this.getRootVehicle() instanceof SloopEntity) {
+                AlekiShipsItems.CANNON.get()) && this.getRootVehicle() instanceof ICannonable) {
             if (this.getVehicle() instanceof VehiclePart part && this.canAddCannons) {
                 CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(this.level());
-                cannon.moveTo(this.getPosition(0));
+                assert cannon != null;
+                cannon.moveTo(this.position());
                 cannon.setYRot(this.getYRot() - 180);
 
                 if (!this.level().isClientSide()) {
@@ -375,15 +378,36 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             }
         }
 
+        if (this.canAddNonPlayers() && !this.canAddOnlyBLocks() && heldStack.is(
+                Items.ARMOR_STAND)) {
+            ArmorStand armorStand = EntityType.ARMOR_STAND.create(this.level());
+            assert armorStand != null;
+            armorStand.moveTo(this.position());
+            armorStand.setYRot(this.getYRot() - 180);
+
+            if (!this.level().isClientSide()) {
+                this.level().addFreshEntity(armorStand);
+                if (armorStand.startRiding(this)) {
+                    AlekiShips.LOGGER.error("New Armor Stand: {} unable to ride Compartment: {}", armorStand, this);
+                }
+            }
+            //TODO award stats properly elsewhere
+            player.awardStat(Stats.ITEM_USED.get(Items.ARMOR_STAND));
+            if (!player.getAbilities().instabuild) {
+                heldStack.shrink(1);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         if (player.isSecondaryUseActive()) {
-            if (!getPassengers().isEmpty() && !(getPassengers().get(0) instanceof Player)) {
+            if (!getPassengers().isEmpty() && !(getFirstPassenger() instanceof Player)) {
                 this.ejectPassengers();
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
         }
 
-        if (ridingThisPart == null) return InteractionResult.PASS;
+        if (ridingThisPart == null) return InteractionResult.FAIL;
 
         final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
 
@@ -396,8 +420,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                     .create(this.level(), heldStack.copy());
             // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
             if (null == compartmentEntity) {
-                if (!this.level().isClientSide && !this.canAddOnlyBLocks()) {
-                    return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+                if (!this.canAddOnlyBLocks()) {
+                    return player.startRiding(this) ? InteractionResult.SUCCESS : InteractionResult.PASS;
                 }
                 return InteractionResult.FAIL;
             }
@@ -410,8 +434,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (!this.level().isClientSide && !this.canAddOnlyBLocks()) {
-            return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+        if (!this.canAddOnlyBLocks()) {
+            return player.startRiding(this) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
 
         return InteractionResult.FAIL;
