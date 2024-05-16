@@ -18,6 +18,8 @@ public class AlekiShipsAdvancements {
 
     public static final GenericTrigger ARMOR_STAND_ON_BOAT = registerGeneric("armor_stand_on_boat");
 
+    public static final GenericTrigger DYE_SHIP_BLACK = registerGeneric("dye_ship_black");
+
     public static GenericTrigger registerGeneric(String name)
     {
         return CriteriaTriggers.register(new GenericTrigger(new ResourceLocation(AlekiShips.MOD_ID, name)));

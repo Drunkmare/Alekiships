@@ -11,11 +11,14 @@ import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
+import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -380,9 +383,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         }
 
-        this.tickBreakIce();
 
         if (this.everyNthTickUnique(2)) {
+            this.tickBreakIce();
             this.tickDestroyPlants();
 
             int ind = 0;
@@ -450,6 +453,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                     this.setCustomName(heldItem.getHoverName());
                     if (!player.getAbilities().instabuild){
                         heldItem.shrink(1);
+                    }
+                    if (this.getName().getString().equals("The Black Pearl") && player instanceof ServerPlayer serverPlayer){
+                        if(this.getPaintColor().isPresent()){
+                            if(this.getPaintColor().get().equals(DyeColor.BLACK) && this.getJibsailDye().equals(DyeColor.BLACK) && this.getMainsailDye().equals(DyeColor.BLACK)){
+                                AlekiShipsAdvancements.DYE_SHIP_BLACK.trigger(serverPlayer);
+                            }
+                        }
                     }
                 }
 

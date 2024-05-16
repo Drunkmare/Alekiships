@@ -171,10 +171,10 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:atlasviewer-633577:4762356")
 
     // Carryon
-    runtimeOnly fg.deobf("tschipp.carryon:carryon-forge-$minecraftVersion:$carryonVersion")
+    // runtimeOnly fg.deobf("tschipp.carryon:carryon-forge-$minecraftVersion:$carryonVersion")
     // Carryon needs mixin extras at runtime
-    runtimeOnly "io.github.llamalad7:mixinextras-common:$mixinextrasVersion"
-    runtimeOnly "io.github.llamalad7:mixinextras-forge:$mixinextrasVersion"
+    // runtimeOnly "io.github.llamalad7:mixinextras-common:$mixinextrasVersion"
+    //runtimeOnly "io.github.llamalad7:mixinextras-forge:$mixinextrasVersion"
 
     // Jade / The One Probe
     compileOnly fg.deobf("curse.maven:jade-324717:$jadeFileID")

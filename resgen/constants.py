@@ -96,4 +96,7 @@ DEFAULT_LANG = {
     "alekiships.advancements.armor_stand_on_boat.title": "Wilson!!!!!!!",
     "alekiships.advancements.armor_stand_on_boat.description": "Place an inanimate companion on a boat",
 
+    "alekiships.advancements.dye_ship_black.title": "The best pirate I've ever seen",
+    "alekiships.advancements.dye_ship_black.description": "Name a black ship The Black Pearl",
+
 }

@@ -1,0 +1,29 @@
+{
+  "parent": "alekiships:sloop_completed",
+  "criteria": {
+    "dye": {
+      "trigger": "alekiships:dye_ship_black"
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "minecraft:skeleton_skull"
+    },
+    "title": {
+      "translate": "alekiships.advancements.dye_ship_black.title"
+    },
+    "description": {
+      "translate": "alekiships.advancements.dye_ship_black.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true,
+    "background": "minecraft:textures/block/rock/cobblestone.png"
+  },
+  "requirements": [
+    [
+      "dye"
+    ]
+  ]
+}
