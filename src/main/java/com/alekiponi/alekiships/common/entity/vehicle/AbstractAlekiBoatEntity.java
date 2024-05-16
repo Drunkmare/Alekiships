@@ -166,7 +166,9 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.setYRot(this.getYRot() + this.getDeltaRotation());
 
         // all code that moves other entities should happen after collision check
-        ClientHelper.tickHopPlayersOnboard(this);
+        if(this.level().isClientSide()){
+            ClientHelper.tickHopPlayersOnboard(this);
+        }
 
         this.tickTakeEntitiesForARide();
 
@@ -208,6 +210,19 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
 
         }
+    }
+
+    /**
+     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
+     * handling different wind models like the one found in TFC
+     *
+     * @param level    The level
+     * @param blockPos The block pos at which the wind is being queried
+     * @return A Vec2 containing the winds x (x) and z (y) components.
+     */
+    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
+        return new Vec2(0.25F, 0.25F);
+        //return CommonHelper.getWindVector(level, blockPos);
     }
 
     /**

@@ -26,7 +26,10 @@ public class ColliderEntity extends AbstractPassthroughHelper implements IHaveIc
             this.refreshDimensions();
         }
         super.tick();
-        ClientHelper.tickHopPlayersOnboard(this);
+        if(this.level().isClientSide()){
+            ClientHelper.tickHopPlayersOnboard(this);
+        }
+
     }
 
     @Override

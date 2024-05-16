@@ -9,7 +9,9 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.PacketHandler;
+import com.alekiponi.alekiships.network.ServerBoundFlagVehicleForUpdatePacket;
 import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
+import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
@@ -144,7 +146,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         if (!hasAllParts()) {
             return;
         }
-        if (everyNthTickUnique(10)) {
+        if (everyNthTickUnique(40)) {
             checkIfNeedsPassengerUpdate();
         }
 
@@ -167,7 +169,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         if (this.level().isClientSide()) {
             if (!this.hasAllHelpers()) {
                 PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                        new ServerboundSwitchEntityPacket(true, this.getId()));
+                        new ServerBoundFlagVehicleForUpdatePacket(true, this.getId()));
             }
         }
     }
@@ -329,7 +331,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
             if (!entitiesToTakeWith.isEmpty()) {
                 for (final Entity entity : entitiesToTakeWith) {
-                    tickTakeClientPlayersForARide(this,entity);
+                    if(this.level().isClientSide()){
+                        tickTakeClientPlayersForARide(this,entity);
+                    }
                     if (!(entity instanceof AbstractVehicle) && !entity.isPassenger() && !(entity instanceof Player)) {
                         entity.setDeltaMovement(entity.getDeltaMovement().add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
                     }
@@ -413,17 +417,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return MediumStatus.IN_AIR;
     }
 
-    /**
-     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
-     * handling different wind models like the one found in TFC
-     *
-     * @param level    The level
-     * @param blockPos The block pos at which the wind is being queried
-     * @return A Vec2 containing the winds x (x) and z (y) components.
-     */
-    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
-        return new Vec2(0.25F, 0.25F);
-    }
+
 
     public float getWaterLevelAbove() {
         final AABB boundingBox = this.getBoundingBox();
