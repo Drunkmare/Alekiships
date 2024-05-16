@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -23,11 +24,20 @@ public abstract class AbstractPassthroughHelper extends AbstractHelper implement
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
+        return hurt(this, damageSource, amount);
+    }
+
+    public static boolean hurt(Entity entity, final DamageSource damageSource, final float amount) {
+
+        if(damageSource.is(DamageTypes.EXPLOSION) || damageSource.is(DamageTypes.PLAYER_EXPLOSION)){
+            return false;
+        }
+
         if(!(damageSource.getEntity() instanceof Player)){
             return false;
         }
 
-        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
+        if (entity.getRootVehicle() instanceof AbstractVehicle vehicle) {
             return vehicle.hurt(damageSource, amount);
         }
 

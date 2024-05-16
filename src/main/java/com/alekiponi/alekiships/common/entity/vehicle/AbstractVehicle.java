@@ -26,6 +26,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -257,7 +259,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         this.setDamage(this.getDamage() + amount);
         this.markHurt();
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
-        final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild;
+        final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild && damageSource.is(DamageTypes.PLAYER_ATTACK);
 
         if (instantKill) {
             // TODO still drop loot when killed in creative?

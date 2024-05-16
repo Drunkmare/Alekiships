@@ -10,6 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractPassthroughHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -511,11 +512,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
-            return vehicle.hurt(damageSource, amount);
-        }
-
-        return true;
+        return AbstractPassthroughHelper.hurt(this,damageSource,amount);
     }
 
     @Nullable
