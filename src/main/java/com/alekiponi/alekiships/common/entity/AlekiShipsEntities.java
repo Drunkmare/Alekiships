@@ -155,7 +155,7 @@ public final class AlekiShipsEntities {
 
     public static final RegistryObject<EntityType<CannonballEntity>> CANNONBALL_ENTITY = register("cannonball",
             EntityType.Builder.<CannonballEntity>of(CannonballEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
-                    .setTrackingRange(32).clientTrackingRange(32).fireImmune());
+                    .setTrackingRange(32).clientTrackingRange(32).setShouldReceiveVelocityUpdates(true).fireImmune());
 
     public static final RegistryObject<EntityType<CannonEntity>> CANNON_ENTITY = register("cannon",
             EntityType.Builder.of(CannonEntity::new, MobCategory.MISC).sized(0.8F, 0.8F).fireImmune());
