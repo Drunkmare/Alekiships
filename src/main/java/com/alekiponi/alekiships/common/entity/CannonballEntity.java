@@ -49,7 +49,7 @@ public class CannonballEntity extends Projectile {
     @Override
     protected void onHit(final HitResult hitResult) {
         super.onHit(hitResult);
-        this.explode((float) (Math.min(this.getDeltaMovement().length(),4)));
+        this.explode((float) (this.getDeltaMovement().length() * 2));
         this.discard();
     }
 
