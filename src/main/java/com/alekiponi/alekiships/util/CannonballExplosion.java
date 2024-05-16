@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -150,7 +151,7 @@ public class CannonballExplosion extends Explosion {
                 // Check for Vanilla Boats
             } else if (entity instanceof Boat) {
                 entity.hurt(this.getDamageSource(), damageForEntity*1000);
-            } else if (!(entity instanceof AbstractHelper)){
+            } else if (!(entity instanceof AbstractHelper) && !(entity instanceof AbstractCompartmentEntity)){
                 // What vanilla normally does
                 entity.hurt(this.getDamageSource(), damageForEntity);
             }
