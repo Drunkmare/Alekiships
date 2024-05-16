@@ -1,8 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -16,11 +14,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
@@ -42,11 +40,21 @@ public class MastEntity extends AbstractPassthroughHelper {
             List<net.minecraft.world.entity.Entity> playersToMoveWithMast = new ArrayList<Entity>();
 
             playersToMoveWithMast.addAll(this.level()
-                    .getEntities(this, this.getBoundingBox().inflate(0, 0, 0).move(0, 0, 0), EntitySelector.pushableBy(this)));
+                    .getEntities(this, this.getBoundingBox().inflate(0, 0, 0).move(0, 0, 0), EntitySelector.NO_SPECTATORS));
 
             for (Entity entity : playersToMoveWithMast) {
                 if ((entity instanceof LocalPlayer player)) {
-                    player.move(MoverType.SELF, this.getRootVehicle().getDeltaMovement().multiply(1, 0, 1).add(0,0,0));
+                    Vec3 vehicleMovement = this.getRootVehicle().getDeltaMovement();
+                    /*
+                    if (player.input.jumping || player.input.left || player.input.right || player.input.up || player.input.down) {
+                        player.setDeltaMovement(player.getDeltaMovement().multiply(1.0, 1, 1.0).add(vehicleMovement.multiply(0.45, 0, 0.45)));
+                    } else {
+                        player.setPos(player.getPosition(0).add(vehicleMovement));
+                        if (player.getDeltaMovement().length() > vehicleMovement.length() + 0.01) {
+                            player.setDeltaMovement(Vec3.ZERO);
+                        }
+                    }*/
+                    player.setPos(new Vec3(this.position().x + 0.3f, player.position().y, this.position().z + 0.3f));
                     if (player.input.jumping) {
                         player.setDeltaMovement(player.getDeltaMovement().multiply(1,0,1).add(0,0.1,0));
                     } else if(player.input.shiftKeyDown){
@@ -59,6 +67,7 @@ public class MastEntity extends AbstractPassthroughHelper {
                 if(entity instanceof Player player){
                     player.resetFallDistance();
                 }
+
             }
 
         }

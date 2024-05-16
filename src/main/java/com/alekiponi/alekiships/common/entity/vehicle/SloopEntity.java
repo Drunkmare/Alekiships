@@ -1,9 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
@@ -17,7 +17,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -391,10 +390,10 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             int ind = 0;
             for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
                 if (ind == 0) {
-                    this.setMainsailActive(switchEntity.getSwitched());
+                    this.setMainsailActive(switchEntity.getSwitched() && !this.isUnderWater());
                 }
                 if (ind == 1) {
-                    this.setJibsailActive(switchEntity.getSwitched());
+                    this.setJibsailActive(switchEntity.getSwitched() && !this.isUnderWater());
                 }
                 ind++;
             }

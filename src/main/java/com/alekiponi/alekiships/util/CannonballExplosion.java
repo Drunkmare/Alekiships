@@ -148,10 +148,10 @@ public class CannonballExplosion extends Explosion {
             float damageForEntity = (float) ((int) ((damage * damage + damage) / 2.0D * 7.0D * (double) diameter + 1.0D));
             // Check for our Boats
             if (entity instanceof AbstractAlekiBoatEntity) {
-                entity.hurt(this.getDamageSource(), damageForEntity);
+                entity.hurt(this.getDamageSource(), 100);
                 // Check for Vanilla Boats
             } else if (entity instanceof Boat) {
-                entity.hurt(this.getDamageSource(), damageForEntity * 1000);
+                entity.hurt(this.getDamageSource(), 10000);
             } else if (!(entity instanceof AbstractHelper) && !(entity instanceof AbstractCompartmentEntity)) {
                 // What vanilla normally does
                 entity.hurt(this.getDamageSource(), damageForEntity);
