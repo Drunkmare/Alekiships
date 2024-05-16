@@ -167,9 +167,12 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     public void checkIfNeedsPassengerUpdate() {
         if (this.level().isClientSide()) {
-            if (!this.hasAllHelpers()) {
-                PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                        new ServerBoundFlagVehicleForUpdatePacket(true, this.getId()));
+            Player player = this.level().getNearestPlayer(this, 5 * 16);
+            if (player != null) {
+                if (this.distanceTo(player) < 4 * 16 && !this.hasAllHelpers()) {
+                    PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                            new ServerBoundFlagVehicleForUpdatePacket(true, this.getId()));
+                }
             }
         }
     }
