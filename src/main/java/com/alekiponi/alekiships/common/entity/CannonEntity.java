@@ -203,27 +203,11 @@ public class CannonEntity extends Entity {
         this.setCannonball(ItemStack.EMPTY);
         this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
 
-        final CannonballEntity cannonball = new CannonballEntity(this.getX(), this.getY(), this.getZ(), 0, -0.1, 0,
-                this.level());
-        cannonball.setOwner(this);
-
-        float yRot = this.getYRot();
-        float xRot = this.getXRot();
-
-        cannonball.setXRot(xRot);
-        cannonball.setYRot(yRot);
-
-        cannonball.setDeltaMovement(Mth.sin(-yRot * ((float) Math.PI / 180)) * 6,
-                Mth.sin(-xRot * ((float) Math.PI / 180)) * 6,
-                Mth.cos(yRot * ((float) Math.PI / 180)) * 6);
-
-        if (this.isPassenger()) {
-            cannonball.setDeltaMovement(cannonball.getDeltaMovement().add(this.getRootVehicle().getDeltaMovement()));
-        }
+        final CannonballEntity cannonball = new CannonballEntity(this);
 
         this.level().addFreshEntity(cannonball);
-        Vec3 movement = new Vec3((Mth.sin(-yRot * ((float) Math.PI / 180F)) * 0.04), 0,
-                Mth.cos(yRot * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
+        final Vec3 movement = new Vec3((Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
+                Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
     }
 
