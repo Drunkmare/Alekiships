@@ -1,10 +1,6 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
-import com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AnchorEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.MastEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,24 +15,13 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BannerItem;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.BannerBlock;
-import net.minecraft.world.level.block.WallBannerBlock;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.RotationSegment;
 
 import java.util.List;
 
@@ -67,7 +52,7 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
 
         AbstractAlekiBoatEntity ship = (AbstractAlekiBoatEntity) mast.getTrueVehicle();
 
-        final float rotation = ship.getWindLocalRotation();
+        final float rotation = ship.getWindLocalRotation() + ship.getYRot();
         final float height = mast.getBbHeight()+0.4175f;
 
         poseStack.pushPose();
@@ -75,7 +60,9 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
         poseStack.translate(0, height, 0f);
 
         poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(180 - ship.getYRot()));
         poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+
         poseStack.scale(0.6766667F, -0.6666667F, -0.6666667F);
         poseStack.translate(0,1.935f,0);
         VertexConsumer vertexconsumer = ModelBakery.BANNER_BASE.buffer(bufferSource, RenderType::entitySolid);
