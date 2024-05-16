@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
@@ -31,28 +32,28 @@ import java.util.Set;
 public class CannonballExplosion extends Explosion {
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-            final double pToBlowY, final double pToBlowZ, final float pRadius, final List<BlockPos> pPositions) {
+                               final double pToBlowY, final double pToBlowZ, final float pRadius, final List<BlockPos> pPositions) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pPositions);
     }
 
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-            final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
-            final BlockInteraction pBlockInteraction, final List<BlockPos> pPositions) {
+                               final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
+                               final BlockInteraction pBlockInteraction, final List<BlockPos> pPositions) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction, pPositions);
     }
 
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-            final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
-            final BlockInteraction pBlockInteraction) {
+                               final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
+                               final BlockInteraction pBlockInteraction) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
     }
 
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource,
-            @Nullable final DamageSource pDamageSource, @Nullable final ExplosionDamageCalculator pDamageCalculator,
-            final double pToBlowX, final double pToBlowY, final double pToBlowZ, final float pRadius,
-            final boolean pFire, final BlockInteraction pBlockInteraction) {
+                               @Nullable final DamageSource pDamageSource, @Nullable final ExplosionDamageCalculator pDamageCalculator,
+                               final double pToBlowX, final double pToBlowY, final double pToBlowZ, final float pRadius,
+                               final boolean pFire, final BlockInteraction pBlockInteraction) {
         super(pLevel, pSource, pDamageSource, pDamageCalculator, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire,
                 pBlockInteraction);
     }
@@ -144,14 +145,14 @@ public class CannonballExplosion extends Explosion {
             final double damage = (1 - d12) * seenPercent;
 
 
-            float damageForEntity = (float)((int)((damage * damage + damage) / 2.0D * 7.0D * (double)diameter + 1.0D));
+            float damageForEntity = (float) ((int) ((damage * damage + damage) / 2.0D * 7.0D * (double) diameter + 1.0D));
             // Check for our Boats
             if (entity instanceof AbstractAlekiBoatEntity) {
                 entity.hurt(this.getDamageSource(), damageForEntity);
                 // Check for Vanilla Boats
             } else if (entity instanceof Boat) {
-                entity.hurt(this.getDamageSource(), damageForEntity*1000);
-            } else if (!(entity instanceof AbstractHelper) && !(entity instanceof AbstractCompartmentEntity)){
+                entity.hurt(this.getDamageSource(), damageForEntity * 1000);
+            } else if (!(entity instanceof AbstractHelper) && !(entity instanceof AbstractCompartmentEntity)) {
                 // What vanilla normally does
                 entity.hurt(this.getDamageSource(), damageForEntity);
             }
@@ -159,6 +160,8 @@ public class CannonballExplosion extends Explosion {
             final double d11;
             if (entity instanceof final LivingEntity livingentity) {
                 d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
+            } else if (entity instanceof CannonEntity) {
+                d11 = 0;
             } else {
                 d11 = damage;
             }
