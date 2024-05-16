@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.CannonballExplosion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -48,7 +49,7 @@ public class CannonballEntity extends Projectile {
     @Override
     protected void onHit(final HitResult hitResult) {
         super.onHit(hitResult);
-        this.explode((float) (this.getDeltaMovement().length() * 2));
+        this.explode((float) (Math.min(this.getDeltaMovement().length(),4)));
         this.discard();
     }
 
@@ -143,6 +144,12 @@ public class CannonballEntity extends Projectile {
 
     @Override
     protected boolean canHitEntity(final Entity target) {
+        if(target instanceof AbstractVehicle || target.getRootVehicle() instanceof AbstractVehicle && this.getOwner() != null){
+            if(target.getRootVehicle().is(this.getOwner().getRootVehicle())){
+                return false;
+            }
+        }
+
         if (!target.canBeHitByProjectile()) return false;
 
         return !this.isPassengerOfSameVehicle(target) && !target.noPhysics;
