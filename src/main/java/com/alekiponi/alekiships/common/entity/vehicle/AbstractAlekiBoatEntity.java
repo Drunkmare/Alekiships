@@ -51,7 +51,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public final int WIND_UPDATE_TICKS = 40;
+    public static final int WIND_UPDATE_TICKS = 40;
 
     protected final float[] paddlePositions = new float[2];
 
