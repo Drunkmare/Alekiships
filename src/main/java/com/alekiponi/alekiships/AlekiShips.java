@@ -52,6 +52,7 @@ public class AlekiShips {
             AlekiShipsAdvancements.registerTriggers();
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.DYE_COLOR);
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
+            EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.WIND);
         });
     }
 }
