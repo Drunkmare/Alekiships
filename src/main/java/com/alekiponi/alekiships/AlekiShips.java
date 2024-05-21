@@ -10,8 +10,11 @@ import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
+import com.alekiponi.alekiships.wind.OverworldWindModel;
+import com.alekiponi.alekiships.wind.WindModels;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +56,8 @@ public class AlekiShips {
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.DYE_COLOR);
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.WIND);
+
+            WindModels.register(Level.OVERWORLD, new OverworldWindModel());
         });
     }
 }
