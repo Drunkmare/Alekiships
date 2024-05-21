@@ -519,9 +519,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public void updateLocalWindAngleAndSpeed() {
-
-        double newDirection = CommonHelper.vec2ToWrappedDegrees(this.getWindVector());
-        double newSpeed = Math.abs(this.getWindVector().length());
+        final double newDirection;
+        {
+            final Vec2 normalized = this.getWindVector().normalized();
+            newDirection = CommonHelper.vec2ToWrappedDegrees(normalized.x, normalized.y);
+        }
 
         if (this.level().isClientSide()) {
             if (this.windLerpTicks > 0) {
@@ -545,7 +547,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
 
         this.windAngle = Mth.wrapDegrees((float) Math.round(newDirection));
-        this.windSpeed = newSpeed;
+        this.windSpeed = Math.abs(this.getWindVector().length());
     }
 
     public float[] getLocalWindAngleAndSpeed() {
