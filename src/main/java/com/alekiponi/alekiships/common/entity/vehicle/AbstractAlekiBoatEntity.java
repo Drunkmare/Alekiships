@@ -44,10 +44,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<Vector3f> DATA_ID_WIND_VECTOR = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.VECTOR3);
-    protected static final EntityDataAccessor<Float> DATA_ID_WIND_ANGLE = SynchedEntityData.defineId(
-            AbstractAlekiBoatEntity.class, EntityDataSerializers.FLOAT);
-    protected static final EntityDataAccessor<Float> DATA_ID_WIND_SPEED = SynchedEntityData.defineId(
-            AbstractAlekiBoatEntity.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -77,8 +73,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.entityData.define(DATA_ID_PADDLE_RIGHT, false);
 
         this.entityData.define(DATA_ID_WIND_VECTOR, new Vector3f(0, 0, 0));
-        this.entityData.define(DATA_ID_WIND_ANGLE, 0f);
-        this.entityData.define(DATA_ID_WIND_SPEED, 0f);
         this.entityData.define(DATA_ID_IMMOBILE, false);
     }
 
