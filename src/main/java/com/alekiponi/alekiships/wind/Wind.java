@@ -11,6 +11,8 @@ import javax.annotation.concurrent.Immutable;
  * A simple 2D representation of wind.
  * <p>
  * {@link CustomEntityDataSerializers#WIND} is available for easy syncing over the network
+ *
+ * @see WindModel
  */
 @Immutable
 public final class Wind {

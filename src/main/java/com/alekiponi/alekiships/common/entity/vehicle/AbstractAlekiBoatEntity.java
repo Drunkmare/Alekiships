@@ -1,10 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.wind.WindModel;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.util.CommonHelper;
+import com.alekiponi.alekiships.wind.WindModels;
+import com.alekiponi.alekiships.wind.Wind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +16,7 @@ import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -29,7 +34,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,8 +46,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Vector3f> DATA_ID_WIND_VECTOR = SynchedEntityData.defineId(
-            AbstractAlekiBoatEntity.class, EntityDataSerializers.VECTOR3);
+    protected static final EntityDataAccessor<Wind> DATA_ID_WIND_VECTOR = SynchedEntityData.defineId(
+            AbstractAlekiBoatEntity.class, CustomEntityDataSerializers.WIND);
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -60,10 +64,13 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected int windLerpTicks = 0;
 
+    protected WindModel windModel;
+
     protected final BoatMaterial boatMaterial;
 
     public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, BoatMaterial boatMaterial) {
         super(entityType, level);
+        this.windModel = WindModels.get(level.dimension());
         this.boatMaterial = boatMaterial;
     }
 
@@ -72,7 +79,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.entityData.define(DATA_ID_PADDLE_LEFT, false);
         this.entityData.define(DATA_ID_PADDLE_RIGHT, false);
 
-        this.entityData.define(DATA_ID_WIND_VECTOR, new Vector3f(0, 0, 0));
+        this.entityData.define(DATA_ID_WIND_VECTOR, Wind.ZERO);
         this.entityData.define(DATA_ID_IMMOBILE, false);
     }
 
@@ -207,19 +214,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     /**
-     * Gets the wind vector for the given level at the block position. This is a simple ideally temporary way of
-     * handling different wind models like the one found in TFC
-     *
-     * @param level    The level
-     * @param blockPos The block pos at which the wind is being queried
-     * @return A Vec2 containing the winds x (x) and z (y) components.
-     */
-    protected Vec2 getWindVectorAt(@SuppressWarnings("unused") final Level level, @SuppressWarnings("unused") final BlockPos blockPos) {
-        return new Vec2(0.25F, 0.25F);
-        //return CommonHelper.getWindVector(level, blockPos);
-    }
-
-    /**
      *
      * @return a double used to multiply the base wind drift speed
      */
@@ -228,16 +222,16 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickUpdateWind(boolean waitForWindUpdateTick) {
         if (this.everyNthTickUnique(WIND_UPDATE_TICKS) || !waitForWindUpdateTick) {
-            Vec2 windVector = this.getWindVectorAt(this.level(), this.blockPosition());
+            Wind wind = this.windModel.getWind(this.blockPosition());
             //windVector = new Vec2(0.05f,0.05f);
-            if (windVector.length() == 0) {
-                windVector = new Vec2(-0.03f, 0f);
+            if (wind.speed == 0) {
+                wind = new Wind(-0.03F, 0F);
             }
             /*
             float subtractWeatherMultiplier = -(0.4F * this.level().getRainLevel(0.0F) + 0.3F * this.level().getThunderLevel(0.0F));
             windVector = new Vec2(windVector.x*subtractWeatherMultiplier,windVector.y*subtractWeatherMultiplier);*/
 
-            this.setWindVector(windVector);
+            this.setWind(wind);
             updateLocalWindAngleAndSpeed();
         }
         if (this.windLerpTicks > 0 && this.level().isClientSide()) {
@@ -513,11 +507,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public void updateLocalWindAngleAndSpeed() {
-        final double newDirection;
-        {
-            final Vec2 normalized = this.getWindVector().normalized();
-            newDirection = CommonHelper.vec2ToWrappedDegrees(normalized.x, normalized.y);
-        }
+        final double newDirection = this.getWind().angle;
 
         if (this.level().isClientSide()) {
             if (this.windLerpTicks > 0) {
@@ -541,7 +531,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
 
         this.windAngle = Mth.wrapDegrees((float) Math.round(newDirection));
-        this.windSpeed = Math.abs(this.getWindVector().length());
+        this.windSpeed = this.getWind().speed;
     }
 
     public float[] getLocalWindAngleAndSpeed() {
@@ -580,14 +570,12 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
 
-    public void setWindVector(final Vec2 windVector) {
-        this.entityData.set(DATA_ID_WIND_VECTOR, new Vector3f(windVector.x, 0, windVector.y));
+    public final void setWind(final Wind wind) {
+        this.entityData.set(DATA_ID_WIND_VECTOR, wind);
     }
 
-    public Vec2 getWindVector() {
-        float x = this.entityData.get(DATA_ID_WIND_VECTOR).x;
-        float y = this.entityData.get(DATA_ID_WIND_VECTOR).z;
-        return new Vec2(x, y);
+    public final Wind getWind() {
+        return this.entityData.get(DATA_ID_WIND_VECTOR);
     }
 
     public void setImmobile(boolean immobile) {
@@ -617,4 +605,14 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         return Mth.wrapDegrees(getLocalWindAngleAndSpeed()[0] - Mth.wrapDegrees(this.getYRot()));
     }
 
+    @Nullable
+    @Override
+    public Entity changeDimension(final ServerLevel destination) {
+        final Entity entity = super.changeDimension(destination);
+        if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
+            // Update our wind model when the dimension changes
+            alekiBoat.windModel = WindModels.get(destination.dimension());
+        }
+        return entity;
+    }
 }
