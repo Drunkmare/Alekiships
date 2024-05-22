@@ -6,7 +6,6 @@ import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
-import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.wind.WindModels;
 import com.alekiponi.alekiships.wind.Wind;
 import net.minecraft.core.BlockPos;
@@ -31,7 +30,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 
@@ -55,12 +53,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected final float[] paddlePositions = new float[2];
 
-    protected double windAngle;
-
-    protected double windSpeed;
-    protected double oldWindAngle;
-
-    protected double oldWindSpeed;
+    protected Wind oldWind = Wind.ZERO;
 
     protected int windLerpTicks = 0;
 
@@ -509,33 +502,41 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public void updateLocalWindAngleAndSpeed() {
         final double newDirection = this.getWind().angle;
 
-        if (this.level().isClientSide()) {
-            if (this.windLerpTicks > 0) {
-                float lerpStep = ((WIND_UPDATE_TICKS) - this.windLerpTicks) / ((float) WIND_UPDATE_TICKS);
-                double lerpedRot = Math.round(Mth.rotLerp(lerpStep, (float) this.oldWindAngle, (float) newDirection));
+        if (!this.level().isClientSide()) return;
 
-                this.windLerpTicks--;
+        if (this.windLerpTicks > 0) {
+            final float lerpStep = ((WIND_UPDATE_TICKS) - this.windLerpTicks) / ((float) WIND_UPDATE_TICKS);
+            final double lerpedRot = Math.round(Mth.rotLerp(lerpStep, this.oldWind.angle, (float) newDirection));
 
-                this.windAngle = Mth.wrapDegrees((float) Math.round(lerpedRot));
+            this.setWind(new Wind(this.oldWind.speed, Mth.wrapDegrees((float) Math.round(lerpedRot))));
 
-                this.windSpeed = this.oldWindSpeed;
-                return;
-            }
-
-            if (newDirection != this.windAngle) {
-                this.oldWindAngle = this.windAngle;
-                this.oldWindSpeed = this.windSpeed;
-                this.windLerpTicks = WIND_UPDATE_TICKS;
-                return;
-            }
+            this.windLerpTicks--;
+            return;
         }
 
-        this.windAngle = Mth.wrapDegrees((float) Math.round(newDirection));
-        this.windSpeed = this.getWind().speed;
+        if (newDirection != this.getWind().angle) {
+            this.oldWind = this.getWind();
+            this.windLerpTicks = WIND_UPDATE_TICKS;
+        }
     }
 
+    /**
+     * This allocates a new array for each call simply to bundle wind angle and speed together in a single return value.
+     * Our {@link Wind} object has both of these values ({@link #getWind()}) or the alternative
+     * {@link #getLocalWindAngle()} and {@link #getLocalWindSpeed()} can be used instead.
+     * No matter what you call you'll get the same values
+     */
+    @Deprecated(forRemoval = true)
     public float[] getLocalWindAngleAndSpeed() {
-        return new float[]{(float) this.windAngle, (float) Mth.clamp(this.windSpeed, 0, 0.2f)};
+        return new float[]{this.getLocalWindAngle(), this.getLocalWindSpeed()};
+    }
+
+    public float getLocalWindAngle() {
+        return this.getWind().angle;
+    }
+
+    public float getLocalWindSpeed() {
+        return Mth.clamp(this.getWind().speed, 0, 0.2F);
     }
 
     @Nullable
