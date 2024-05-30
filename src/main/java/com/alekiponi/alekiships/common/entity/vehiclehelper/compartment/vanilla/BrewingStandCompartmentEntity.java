@@ -7,9 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -89,12 +87,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     private Item ingredient;
 
     public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
-            final Level level) {
+                                         final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
     public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
+                                         final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
         this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
@@ -259,7 +257,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
 
     @Override
     public boolean canPlaceItemThroughFace(final int slotIndex, final ItemStack itemStack,
-            @Nullable final Direction direction) {
+                                           @Nullable final Direction direction) {
         return this.canPlaceItem(slotIndex, itemStack);
     }
 
@@ -282,15 +280,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.loadCommonNBTData(compoundTag);
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         this.saveCommonNBTData(compoundTag);
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override

@@ -15,9 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -149,7 +147,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,
-            final float experience) {
+                                         final float experience) {
         int i = Mth.floor(recipeIndex * experience);
         float f = Mth.frac(recipeIndex * experience);
         if (f != 0 && Math.random() < f) {
@@ -255,7 +253,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private boolean burn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
-            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
+                         final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
         if (cookingRecipe == null || !this.canBurn(registryAccess, cookingRecipe, itemStacks, maxStackSize)) {
             return false;
         }
@@ -283,7 +281,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private boolean canBurn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
-            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
+                            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
         if (itemStacks.get(SLOT_INPUT).isEmpty() || cookingRecipe == null) return false;
 
         final ItemStack itemstack = cookingRecipe.assemble(this, registryAccess);
@@ -361,7 +359,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     public boolean canPlaceItemThroughFace(final int slotIndex, final ItemStack itemStack,
-            final @Nullable Direction direction) {
+                                           final @Nullable Direction direction) {
         return this.canPlaceItem(slotIndex, itemStack);
     }
 
@@ -429,8 +427,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.loadCommonNBTData(compoundTag);
 
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
@@ -439,7 +436,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.saveCommonNBTData(compoundTag);
 
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override

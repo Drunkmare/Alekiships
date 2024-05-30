@@ -5,9 +5,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCom
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -129,14 +127,13 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
