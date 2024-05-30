@@ -53,7 +53,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
         @Override
         protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                                          final int count, final int openCount) {
+                final int count, final int openCount) {
         }
 
         @Override
@@ -66,12 +66,12 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     };
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-                                   final Level level) {
+            final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-                                   final Level level, final ItemStack itemStack) {
+            final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
         this.setDisplayBlockState(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
@@ -101,18 +101,9 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-
-        super.remove(removalReason);
-    }
-
-    @Override
-    public void tick(){
+    public void tick() {
         super.tick();
-        if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)){
+        if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)) {
             if (this.getFirstPassenger() instanceof ServerPlayer serverPlayer && this.isInWater()) {
                 RIDE_BARREL.trigger(serverPlayer);
             }
@@ -149,7 +140,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
         this.playHitSound();
     }
 
@@ -173,6 +164,11 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     @Override
     protected void onPlaced() {
         this.playPlaceSound();
+    }
+
+    @Override
+    protected void onBreak() {
+        this.playBreakSound();
     }
 
     @Override

@@ -103,21 +103,18 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playSound(SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1, 0.8F);
-        }
-        super.remove(removalReason);
-    }
-
-    @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
         this.playSound(SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.5F);
     }
 
     @Override
     protected void onPlaced() {
         this.playSound(SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+    }
+
+    @Override
+    protected void onBreak() {
+        this.playSound(SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     @Override

@@ -201,14 +201,6 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         }
     }
 
-    @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-        super.remove(removalReason);
-    }
-
     /**
      * @return an array of size 3 where every element represents whether the respective slot is not empty
      */
@@ -231,13 +223,18 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
         this.playHitSound();
     }
 
     @Override
     protected void onPlaced() {
         this.playPlaceSound();
+    }
+
+    @Override
+    protected void onBreak() {
+        this.playBreakSound();
     }
 
     @Override

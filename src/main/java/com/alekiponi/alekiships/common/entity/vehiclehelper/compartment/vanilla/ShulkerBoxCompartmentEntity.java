@@ -104,10 +104,6 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     public void remove(final RemovalReason removalReason) {
         this.setRemoved(removalReason);
 
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
-        }
-
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             final ItemStack itemStack = this.getDropStack();
             if (this.hasCustomName()) {
@@ -235,8 +231,13 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
         this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.5F);
+    }
+
+    @Override
+    protected void onBreak() {
+        this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     @Override

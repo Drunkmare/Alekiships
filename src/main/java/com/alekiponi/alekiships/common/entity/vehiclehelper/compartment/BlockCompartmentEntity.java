@@ -71,17 +71,13 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
         this.playHitSound();
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-
-        super.remove(removalReason);
+    protected void onBreak() {
+        this.playBreakSound();
     }
 
     @Override

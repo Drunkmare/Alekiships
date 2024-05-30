@@ -132,16 +132,13 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
-        }
-        super.remove(removalReason);
+    protected void onHurt(final DamageSource damageSource) {
+        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.8F);
+    protected void onBreak() {
+        this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
     }
 
     private boolean stillValid(final Player player) {

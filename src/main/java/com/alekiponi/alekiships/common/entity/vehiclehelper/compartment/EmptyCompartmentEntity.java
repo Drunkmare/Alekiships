@@ -531,7 +531,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
+    protected void onHurt(final DamageSource damageSource) {
+        // Purposefully empty
+    }
+
+    @Override
+    protected void onBreak() {
         // Purposefully empty
     }
 
