@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -110,12 +111,13 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
                 itemStack.setHoverName(this.getCustomName());
             }
 
-            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
-            if(y > this.getY()){
-                this.spawnAtLocation(itemStack, (float) (y-this.getY()));
-            } else {
-                this.spawnAtLocation(itemStack);
+            double yPos = this.getY();
+            for (final Entity entity : this.level()
+                    .getEntities(this, this.getBoundingBox(), Entity::canBeCollidedWith)) {
+                if (entity.getBoundingBox().maxY > yPos) yPos = entity.getBoundingBox().maxY;
             }
+
+            Containers.dropItemStack(this.level(), this.getX(), yPos, this.getZ(), itemStack);
         }
 
         this.invalidateCaps();

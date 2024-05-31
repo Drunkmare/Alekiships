@@ -9,10 +9,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -106,12 +106,14 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     @Override
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
-            if(y > this.getY()){
-                CommonHelper.dropContents(this.level(), this.getX(), y, this.getZ(), this);
-            } else {
-                Containers.dropContents(this.level(), this, this);
+
+            double yPos = this.getY();
+            for (final Entity entity : this.level()
+                    .getEntities(this, this.getBoundingBox(), Entity::canBeCollidedWith)) {
+                if (entity.getBoundingBox().maxY > yPos) yPos = entity.getBoundingBox().maxY;
             }
+
+            CommonHelper.dropContents(this.level(), this.getX(), yPos, this.getZ(), this);
         }
 
         super.remove(removalReason);
