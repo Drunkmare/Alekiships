@@ -138,7 +138,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
     @Override
     protected void onHurt(final DamageSource damageSource) {
-        this.playHitSound();
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
@@ -160,12 +160,12 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
     }
 
     @Override
     protected void onBreak() {
-        this.playBreakSound();
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override

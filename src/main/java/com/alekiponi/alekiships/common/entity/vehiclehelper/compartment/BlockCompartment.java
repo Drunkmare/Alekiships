@@ -54,29 +54,29 @@ public interface BlockCompartment {
     }
 
     /**
-     * Plays the hit sound of the held blockstate
+     * Plays the hit sound for the passed {@link BlockCompartment}
      */
-    default void playHitSound() {
-        final SoundType soundType = this.getDisplayBlockState().getSoundType();
-        this.playSound(soundType.getHitSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
+    static void playHitSound(final BlockCompartment blockCompartment) {
+        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
+        blockCompartment.playSound(soundType.getHitSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
                 soundType.getPitch() * 0.5F);
     }
 
     /**
-     * Plays the break sound of the held blockstate
+     * Plays the break sound for the passed {@link BlockCompartment}
      */
-    default void playBreakSound() {
-        final SoundType soundType = this.getDisplayBlockState().getSoundType();
-        this.playSound(soundType.getBreakSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+    static void playBreakSound(final BlockCompartment blockCompartment) {
+        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
+        blockCompartment.playSound(soundType.getBreakSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
                 soundType.getPitch() * 0.8F);
     }
 
     /**
-     * Plays the place sound of the held blockstate
+     * Plays the place sound for the passed {@link BlockCompartment}
      */
-    default void playPlaceSound() {
-        final SoundType soundType = this.getDisplayBlockState().getSoundType();
-        this.playSound(soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+    static void playPlaceSound(final BlockCompartment blockCompartment) {
+        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
+        blockCompartment.playSound(soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
                 soundType.getPitch() * 0.8F);
     }
 

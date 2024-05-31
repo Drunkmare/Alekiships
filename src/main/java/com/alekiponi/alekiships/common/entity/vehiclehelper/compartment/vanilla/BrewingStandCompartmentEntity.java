@@ -222,17 +222,17 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
 
     @Override
     protected void onHurt(final DamageSource damageSource) {
-        this.playHitSound();
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
     }
 
     @Override
     protected void onBreak() {
-        this.playBreakSound();
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override
