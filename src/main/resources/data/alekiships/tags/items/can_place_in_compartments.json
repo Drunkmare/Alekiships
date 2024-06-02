@@ -15,6 +15,7 @@
     "minecraft:smithing_table",
     "minecraft:grindstone",
     "minecraft:loom",
-    "minecraft:brewing_stand"
+    "minecraft:brewing_stand",
+    "minecraft:note_block"
   ]
 }

@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.TestSailingShipEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
@@ -123,6 +122,11 @@ public final class AlekiShipsEntities {
             registerCompartment("compartment_loom",
                     CompartmentType.Builder.of(LoomCompartmentEntity::new, LoomCompartmentEntity::new)),
             itemStack -> itemStack.is(Items.LOOM));
+
+    public static final RegistryObject<CompartmentType<NoteBlockCompartmentEntity>> NOTE_BLOCK_COMPARTMENT_ENTITY = CompartmentType.register(
+            registerCompartment("compartment_note_block",
+                    CompartmentType.Builder.of(NoteBlockCompartmentEntity::new, NoteBlockCompartmentEntity::new)),
+            itemStack -> itemStack.is(Items.NOTE_BLOCK));
 
     public static final RegistryObject<EntityType<VehiclePart>> VEHICLE_PART = register("vehicle_part",
             EntityType.Builder.of(VehiclePart::new, MobCategory.MISC).sized(0, 0)
