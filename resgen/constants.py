@@ -63,6 +63,7 @@ DEFAULT_LANG = {
     "entity.alekiships.compartment_grindstone": "Grindstone Compartment",
     "entity.alekiships.compartment_loom": "Loom Compartment",
     "entity.alekiships.compartment_note_block": "Note Block Compartment",
+    "entity.alekiships.compartment_jukebox": "Jukebox Compartment",
 
     "block.alekiships.boat_frame": "Shipwright's Scaffolding",
 

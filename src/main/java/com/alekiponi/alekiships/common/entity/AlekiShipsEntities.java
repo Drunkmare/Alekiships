@@ -128,6 +128,11 @@ public final class AlekiShipsEntities {
                     CompartmentType.Builder.of(NoteBlockCompartmentEntity::new, NoteBlockCompartmentEntity::new)),
             itemStack -> itemStack.is(Items.NOTE_BLOCK));
 
+    public static final RegistryObject<CompartmentType<JukeboxCompartmentEntity>> JUKEBOX_COMPARTMENT_ENTITY = CompartmentType.register(
+            registerCompartment("compartment_jukebox",
+                    CompartmentType.Builder.of(JukeboxCompartmentEntity::new, JukeboxCompartmentEntity::new)),
+            itemStack -> itemStack.is(Items.JUKEBOX));
+
     public static final RegistryObject<EntityType<VehiclePart>> VEHICLE_PART = register("vehicle_part",
             EntityType.Builder.of(VehiclePart::new, MobCategory.MISC).sized(0, 0)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());

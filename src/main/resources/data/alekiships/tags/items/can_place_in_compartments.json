@@ -16,6 +16,7 @@
     "minecraft:grindstone",
     "minecraft:loom",
     "minecraft:brewing_stand",
-    "minecraft:note_block"
+    "minecraft:note_block",
+    "minecraft:jukebox"
   ]
 }

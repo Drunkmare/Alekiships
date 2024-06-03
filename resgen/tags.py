@@ -21,14 +21,14 @@ def generate(manager: ResourceManager):
                        "compartment_ender_chest", "compartment_furnace", "compartment_grindstone", "compartment_loom",
                        "compartment_shulker_box", "compartment_smithing_table", "compartment_smoker",
                        "compartment_stonecutter", "compartment_crafting_table", "compartment_brewing_stand",
-                       "compartment_note_block")
+                       "compartment_note_block", "compartment_jukebox")
 
     # Tag that allows things to go into compartments
     manager.item_tag("can_place_in_compartments", "minecraft:barrel", "minecraft:chest", "minecraft:ender_chest",
                      "#alekiships:shulker_boxes", "minecraft:furnace", "minecraft:blast_furnace", "minecraft:smoker",
                      "#alekiships:crafting_tables", "minecraft:stonecutter", "minecraft:cartography_table",
                      "minecraft:smithing_table", "minecraft:grindstone", "minecraft:loom", "minecraft:brewing_stand",
-                     "minecraft:note_block")
+                     "minecraft:note_block", "minecraft:jukebox")
 
     manager.item_tag("crafting_tables", "minecraft:crafting_table")
 
