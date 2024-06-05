@@ -12,7 +12,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -106,14 +105,8 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     @Override
     public void remove(final RemovalReason removalReason) {
         if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-
-            double yPos = this.getY();
-            for (final Entity entity : this.level()
-                    .getEntities(this, this.getBoundingBox(), Entity::canBeCollidedWith)) {
-                if (entity.getBoundingBox().maxY > yPos) yPos = entity.getBoundingBox().maxY;
-            }
-
-            CommonHelper.dropContents(this.level(), this.getX(), yPos, this.getZ(), this);
+            CommonHelper.dropContents(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                    this.getZ(), this);
         }
 
         super.remove(removalReason);

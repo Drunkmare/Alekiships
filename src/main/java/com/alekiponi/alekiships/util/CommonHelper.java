@@ -291,4 +291,28 @@ public class CommonHelper {
         }
 
     }
+
+    /**
+     * @param entity The entity which should be checked for collisions
+     * @return The maximum height of the colliding {@link AABB}s or {@link Entity#getY()}
+     */
+    public static double maxHeightOfCollidableEntities(final Entity entity) {
+        return maxHeightOfCollidableEntities(entity, entity.level(), entity.getBoundingBox(), entity.getY());
+    }
+
+    /**
+     * @param entity      The entity
+     * @param level       The level to check for entities
+     * @param boundingBox The {@link AABB} to check for collisions
+     * @param yPos        The starting Y position
+     * @return The passed in yPos or {@link AABB#maxY} of the highest colliding {@link AABB}
+     */
+    public static double maxHeightOfCollidableEntities(@Nullable final Entity entity, final Level level,
+            final AABB boundingBox, double yPos) {
+        for (final Entity collidableEntity : level.getEntities(entity, boundingBox, Entity::canBeCollidedWith)) {
+            final double maxY = collidableEntity.getBoundingBox().maxY;
+            if (maxY > yPos) yPos = maxY;
+        }
+        return yPos;
+    }
 }

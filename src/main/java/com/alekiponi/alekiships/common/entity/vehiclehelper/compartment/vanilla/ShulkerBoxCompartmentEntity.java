@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -111,13 +112,8 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
                 itemStack.setHoverName(this.getCustomName());
             }
 
-            double yPos = this.getY();
-            for (final Entity entity : this.level()
-                    .getEntities(this, this.getBoundingBox(), Entity::canBeCollidedWith)) {
-                if (entity.getBoundingBox().maxY > yPos) yPos = entity.getBoundingBox().maxY;
-            }
-
-            Containers.dropItemStack(this.level(), this.getX(), yPos, this.getZ(), itemStack);
+            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                    this.getZ(), itemStack);
         }
 
         this.invalidateCaps();

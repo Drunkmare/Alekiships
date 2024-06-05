@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -226,12 +227,8 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
                 itemStack.setHoverName(this.getCustomName());
             }
 
-            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
-            if(y > this.getY()){
-                this.spawnAtLocation(itemStack, (float) (y-this.getY()));
-            } else {
-                this.spawnAtLocation(itemStack);
-            }
+            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                    this.getZ(), itemStack);
         }
     }
 
