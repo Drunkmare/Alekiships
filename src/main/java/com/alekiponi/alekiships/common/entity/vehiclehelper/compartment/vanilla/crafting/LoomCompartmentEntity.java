@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
+package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
@@ -9,21 +9,21 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.StonecutterMenu;
+import net.minecraft.world.inventory.LoomMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class StonecutterCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
+public class LoomCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
-    private static final Component CONTAINER_TITLE = Component.translatable("container.stonecutter");
+    private static final Component CONTAINER_TITLE = Component.translatable("container.loom");
 
-    public StonecutterCompartmentEntity(final CompartmentType<? extends StonecutterCompartmentEntity> compartmentType,
+    public LoomCompartmentEntity(final CompartmentType<? extends LoomCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level);
     }
 
-    public StonecutterCompartmentEntity(final CompartmentType<? extends StonecutterCompartmentEntity> compartmentType,
+    public LoomCompartmentEntity(final CompartmentType<? extends LoomCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, itemStack);
     }
@@ -31,17 +31,17 @@ public class StonecutterCompartmentEntity extends SimpleBlockMenuCompartmentEnti
     @Override
     public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
             final Player player) {
-        return new StonecutterMenu(id, playerInventory, this.getContainerLevelAccess()) {
+        return new LoomMenu(id, playerInventory, this.getContainerLevelAccess()) {
             @Override
             public boolean stillValid(final Player player) {
-                return StonecutterCompartmentEntity.this.stillValid(player);
+                return LoomCompartmentEntity.this.stillValid(player);
             }
         };
     }
 
     @Override
     protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_STONECUTTER);
+        return Stats.CUSTOM.get(Stats.INTERACT_WITH_LOOM);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
+package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;

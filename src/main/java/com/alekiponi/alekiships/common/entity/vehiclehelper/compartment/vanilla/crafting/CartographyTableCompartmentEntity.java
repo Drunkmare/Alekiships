@@ -1,4 +1,4 @@
-package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
+package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
@@ -9,39 +9,39 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.CartographyTableMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class CraftingTableCompartment extends SimpleBlockMenuCompartmentEntity {
+public class CartographyTableCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
+    private static final Component CONTAINER_TITLE = Component.translatable("container.cartography_table");
 
-    private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
-
-    public CraftingTableCompartment(final CompartmentType<? extends CraftingTableCompartment> compartmentType,
-            final Level level) {
+    public CartographyTableCompartmentEntity(
+            final CompartmentType<? extends CartographyTableCompartmentEntity> compartmentType, final Level level) {
         super(compartmentType, level);
     }
 
-    public CraftingTableCompartment(final CompartmentType<? extends CraftingTableCompartment> compartmentType,
-            final Level level, final ItemStack itemStack) {
+    public CartographyTableCompartmentEntity(
+            final CompartmentType<? extends CartographyTableCompartmentEntity> compartmentType, final Level level,
+            final ItemStack itemStack) {
         super(compartmentType, level, itemStack);
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
             final Player player) {
-        return new CraftingMenu(id, playerInventory, this.getContainerLevelAccess()) {
+        return new CartographyTableMenu(id, playerInventory, this.getContainerLevelAccess()) {
             @Override
             public boolean stillValid(final Player player) {
-                return CraftingTableCompartment.this.stillValid(player);
+                return CartographyTableCompartmentEntity.this.stillValid(player);
             }
         };
     }
 
     @Override
     protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_CRAFTING_TABLE);
+        return Stats.CUSTOM.get(Stats.INTERACT_WITH_CARTOGRAPHY_TABLE);
     }
 
     @Override

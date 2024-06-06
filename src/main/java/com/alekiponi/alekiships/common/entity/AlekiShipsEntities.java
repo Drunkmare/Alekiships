@@ -8,6 +8,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.Abstract
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.*;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.*;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.VanillaWood;
