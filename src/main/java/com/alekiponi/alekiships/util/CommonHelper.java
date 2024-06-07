@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -11,8 +11,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
@@ -20,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -314,5 +319,52 @@ public class CommonHelper {
             if (maxY > yPos) yPos = maxY;
         }
         return yPos;
+    }
+
+    /**
+     * Creates a {@link ContainerLevelAccess} that'll pass valid {@link Level} and {@link BlockPos} objects
+     * from the passed in entity.
+     *
+     * @param entity The entity the returned {@link ContainerLevelAccess} is bound to
+     * @return {@link ContainerLevelAccess} with valid {@link Level} and {@link BlockPos} objects
+     * @apiNote While this returns a valid {@link ContainerLevelAccess} most vanilla block menus such as {@link CraftingMenu}
+     * check for a block in world to see if the menu should close. As such you will likely need to override at the very
+     * least {@link AbstractContainerMenu#stillValid(Player)} however this can usually be done anonymously. For example
+     * {@link CraftingTableCompartment} returns an anonymous {@link CraftingMenu} with {@link AbstractContainerMenu#stillValid(Player)}
+     * overridden like so
+     * <pre>{@code
+     *      return new CraftingMenu(id, playerInventory, CommonHelper.createEntityContainerLevelAccess(this)) {
+     *          @Override
+     *          public boolean stillValid(final Player player) {
+     *              return CraftingTableCompartment.this.stillValid(player);
+     *          }
+     *      };}</pre>
+     */
+    public static ContainerLevelAccess createEntityContainerLevelAccess(final Entity entity) {
+        return new ContainerLevelAccess() {
+            @Override
+            public <T> Optional<T> evaluate(final BiFunction<Level, BlockPos, T> function) {
+                return Optional.of(function.apply(entity.level(), entity.blockPosition()));
+            }
+        };
+    }
+
+    /**
+     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player)} but for entities
+     *
+     * @return If the passed entity is in range for a menu to be open
+     */
+    public static boolean stillValidEntity(final Entity entity, final Player player) {
+        return stillValidEntity(entity, player, 8);
+    }
+
+    /**
+     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player, int)} but for entities
+     *
+     * @param maxDistance The max distance to the entity
+     * @return If the passed entity is in range for a menu to be open
+     */
+    public static boolean stillValidEntity(final Entity entity, final Player player, final int maxDistance) {
+        return !entity.isRemoved() && entity.position().closerThan(player.position(), maxDistance);
     }
 }

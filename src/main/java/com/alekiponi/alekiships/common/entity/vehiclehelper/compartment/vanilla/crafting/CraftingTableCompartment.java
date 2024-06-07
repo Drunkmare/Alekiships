@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
@@ -28,13 +29,13 @@ public class CraftingTableCompartment extends SimpleBlockMenuCompartmentEntity {
         super(compartmentType, level, itemStack);
     }
 
+    @Nullable
     @Override
-    public @Nullable AbstractContainerMenu createMenu(final int id, final Inventory playerInventory,
-            final Player player) {
-        return new CraftingMenu(id, playerInventory, this.getContainerLevelAccess()) {
+    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
+        return new CraftingMenu(id, playerInventory, CommonHelper.createEntityContainerLevelAccess(this)) {
             @Override
             public boolean stillValid(final Player player) {
-                return CraftingTableCompartment.this.stillValid(player);
+                return CommonHelper.stillValidEntity(CraftingTableCompartment.this, player);
             }
         };
     }
