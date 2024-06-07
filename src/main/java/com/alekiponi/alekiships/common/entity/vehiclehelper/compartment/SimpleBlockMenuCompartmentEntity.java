@@ -34,9 +34,12 @@ public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentE
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
+        if (player.level().isClientSide) return InteractionResult.SUCCESS;
+
         player.openMenu(this.getMenuProvider());
         player.awardStat(this.getInteractionStat());
-        return InteractionResult.SUCCESS;
+
+        return InteractionResult.CONSUME;
     }
 
     @Override
