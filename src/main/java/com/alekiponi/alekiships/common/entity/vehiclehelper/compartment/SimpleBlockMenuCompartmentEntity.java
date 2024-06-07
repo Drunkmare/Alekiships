@@ -37,18 +37,26 @@ public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentE
         if (player.level().isClientSide) return InteractionResult.SUCCESS;
 
         player.openMenu(this.getMenuProvider());
-        player.awardStat(this.getInteractionStat());
+        final Stat<ResourceLocation> interactionStat = this.getInteractionStat();
+        if (interactionStat != null) player.awardStat(interactionStat);
 
         return InteractionResult.CONSUME;
     }
 
     @Override
-    public MenuProvider getMenuProvider() {
+    public final MenuProvider getMenuProvider() {
         return new SimpleMenuProvider(this, this.getContainerTitle());
     }
 
+    /**
+     * @return The stat object for interactions or {@code null} for no stat
+     */
+    @Nullable
     protected abstract Stat<ResourceLocation> getInteractionStat();
 
+    /**
+     * @return The title of the container
+     */
     protected abstract Component getContainerTitle();
 
     @Nullable
