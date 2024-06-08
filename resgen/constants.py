@@ -65,6 +65,9 @@ DEFAULT_LANG = {
     "entity.alekiships.compartment_note_block": "Note Block Compartment",
     "entity.alekiships.compartment_jukebox": "Jukebox Compartment",
 
+    # Jade plugin
+    "config.jade.plugin_alekiships.jukebox": "Jukebox Compartment",
+
     "block.alekiships.boat_frame": "Shipwright's Scaffolding",
 
     "block.alekiships.thatch_roofing": "Thatch Roofing",
