@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -230,17 +231,17 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
 
     @Override
     protected void onHurt(final DamageSource damageSource) {
-        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.5F);
+        CommonHelper.playHitSound(this::playSound, SoundType.STONE);
     }
 
     @Override
     protected void onBreak() {
-        this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playBreakSound(this::playSound, SoundType.STONE);
     }
 
     @Override
     protected void onPlaced() {
-        this.playSound(SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playPlaceSound(this::playSound, SoundType.STONE);
     }
 
     @Override

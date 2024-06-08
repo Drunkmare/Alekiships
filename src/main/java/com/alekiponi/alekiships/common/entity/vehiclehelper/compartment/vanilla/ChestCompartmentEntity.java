@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +16,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -104,17 +106,17 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
 
     @Override
     protected void onHurt(final DamageSource damageSource) {
-        this.playSound(SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.5F);
+        CommonHelper.playHitSound(this::playSound, SoundType.WOOD);
     }
 
     @Override
     protected void onPlaced() {
-        this.playSound(SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playPlaceSound(this::playSound, SoundType.WOOD);
     }
 
     @Override
     protected void onBreak() {
-        this.playSound(SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playBreakSound(this::playSound, SoundType.WOOD);
     }
 
     @Override
