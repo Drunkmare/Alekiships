@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -39,13 +40,15 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_OPEN);
+            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
             BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, true));
         }
 
         @Override
         protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_CLOSE);
+            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_CLOSE, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
             BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, false));
         }
 
