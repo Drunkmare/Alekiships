@@ -93,8 +93,8 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        super.remove(removalReason);
+    protected void onBreak() {
+        super.onBreak();
         this.popOutRecord();
     }
 

@@ -165,6 +165,7 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
     @Override
     protected void onBreak() {
+        super.onBreak();
         BlockCompartment.playBreakSound(this);
     }
 

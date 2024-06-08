@@ -116,6 +116,7 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
 
     @Override
     protected void onBreak() {
+        super.onBreak();
         CommonHelper.playBreakSound(this::playSound, SoundType.WOOD);
     }
 

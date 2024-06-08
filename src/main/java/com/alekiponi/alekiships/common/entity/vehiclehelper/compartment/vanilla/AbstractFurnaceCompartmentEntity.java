@@ -345,6 +345,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     protected void onBreak() {
+        super.onBreak();
         BlockCompartment.playBreakSound(this);
     }
 

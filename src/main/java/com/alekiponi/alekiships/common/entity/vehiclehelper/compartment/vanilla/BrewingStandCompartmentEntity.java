@@ -87,12 +87,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     private Item ingredient;
 
     public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
-                                         final Level level) {
+            final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
     public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
-                                         final Level level, final ItemStack itemStack) {
+            final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
         this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
@@ -232,6 +232,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
 
     @Override
     protected void onBreak() {
+        super.onBreak();
         BlockCompartment.playBreakSound(this);
     }
 
@@ -257,7 +258,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
 
     @Override
     public boolean canPlaceItemThroughFace(final int slotIndex, final ItemStack itemStack,
-                                           @Nullable final Direction direction) {
+            @Nullable final Direction direction) {
         return this.canPlaceItem(slotIndex, itemStack);
     }
 

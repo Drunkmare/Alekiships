@@ -104,23 +104,6 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        this.setRemoved(removalReason);
-
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-            final ItemStack itemStack = this.getDropStack();
-            if (this.hasCustomName()) {
-                itemStack.setHoverName(this.getCustomName());
-            }
-
-            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
-                    this.getZ(), itemStack);
-        }
-
-        this.invalidateCaps();
-    }
-
-    @Override
     public void chestVehicleDestroyed(final DamageSource damageSource, final Level level, final Entity entity) {
         if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             if (!level.isClientSide) {
@@ -237,6 +220,15 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     @Override
     protected void onBreak() {
         CommonHelper.playBreakSound(this::playSound, SoundType.STONE);
+        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+            final ItemStack itemStack = this.getDropStack();
+            if (this.hasCustomName()) {
+                itemStack.setHoverName(this.getCustomName());
+            }
+
+            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                    this.getZ(), itemStack);
+        }
     }
 
     @Override

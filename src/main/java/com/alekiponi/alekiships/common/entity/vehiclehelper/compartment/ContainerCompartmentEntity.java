@@ -68,7 +68,7 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     /**
      * Called from {@link ContainerCompartmentEntity} during construction to load values from NBT
      */
-    public void loadFromStackNBT(final CompoundTag compoundTag) {
+    protected void loadFromStackNBT(final CompoundTag compoundTag) {
         ContainerHelper.loadAllItems(compoundTag, this.getItemStacks());
         if (compoundTag.contains(CUSTOM_NAME_KEY, Tag.TAG_STRING)) {
             this.setCustomName(Component.Serializer.fromJson(compoundTag.getString(CUSTOM_NAME_KEY)));
@@ -103,14 +103,9 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            CommonHelper.dropContents(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
-                    this.getZ(), this);
-        }
-
-        super.remove(removalReason);
-        this.invalidateCaps();
+    protected void onBreak() {
+        CommonHelper.dropContents(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                this.getZ(), this);
     }
 
     @Override
