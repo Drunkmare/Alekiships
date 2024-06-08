@@ -347,7 +347,9 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
             final float pitch) {
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
+        if (!this.isSilent()) {
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
+        }
     }
 
     public static enum RidingPose {
