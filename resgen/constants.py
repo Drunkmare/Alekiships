@@ -67,6 +67,7 @@ DEFAULT_LANG = {
 
     # Jade plugin
     "config.jade.plugin_alekiships.jukebox": "Jukebox Compartment",
+    "config.jade.plugin_alekiships.note_block": "Note Block Compartment",
 
     "block.alekiships.boat_frame": "Shipwright's Scaffolding",
 
