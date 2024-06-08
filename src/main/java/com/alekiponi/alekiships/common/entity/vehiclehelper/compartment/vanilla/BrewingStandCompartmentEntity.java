@@ -316,6 +316,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         compoundTag.putByte(FUEL_KEY, (byte) this.fuel);
     }
 
+    public int getFuel() {
+        return fuel;
+    }
+
+    public int getBrewTime() {
+        return brewTime;
+    }
+
     @Override
     protected ItemStack getDropStack() {
         return new ItemStack(Items.BREWING_STAND);
