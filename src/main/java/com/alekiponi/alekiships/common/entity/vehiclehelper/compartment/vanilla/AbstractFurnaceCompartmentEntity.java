@@ -73,9 +73,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     public static final String COOK_TIME_KEY = "CookTime";
     public static final String COOK_TIME_TOTAL_KEY = "CookTimeTotal";
     public static final String RECIPES_USED_KEY = "RecipesUsed";
-    protected static final int SLOT_INPUT = 0;
-    protected static final int SLOT_FUEL = 1;
-    protected static final int SLOT_RESULT = 2;
+    public static final int SLOT_INPUT = 0;
+    public static final int SLOT_FUEL = 1;
+    public static final int SLOT_RESULT = 2;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             AbstractFurnaceCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private static final int[] SLOTS_FOR_UP = new int[]{SLOT_INPUT};
@@ -406,6 +406,14 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             this.cookingProgress = 0;
             this.setChanged();
         }
+    }
+
+    public int getCookTime() {
+        return this.cookingProgress;
+    }
+
+    public int getTotalCookTime() {
+        return cookingTotalTime;
     }
 
     public boolean isLit() {
