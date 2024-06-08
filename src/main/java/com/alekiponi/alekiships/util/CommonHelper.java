@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -16,6 +17,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.items.IItemHandler;
@@ -366,5 +368,39 @@ public class CommonHelper {
      */
     public static boolean stillValidEntity(final Entity entity, final Player player, final int maxDistance) {
         return !entity.isRemoved() && entity.position().closerThan(player.position(), maxDistance);
+    }
+
+    /**
+     * Plays {@link SoundType#getHitSound()} with the correct volume and pitch
+     */
+    public static void playHitSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getHitSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
+                soundType.getPitch() * 0.5F);
+    }
+
+    /**
+     * Plays {@link SoundType#getBreakSound()} with the correct volume and pitch
+     */
+    public static void playBreakSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getBreakSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+                soundType.getPitch() * 0.8F);
+    }
+
+    /**
+     * Plays {@link SoundType#getPlaceSound()} with the correct volume and pitch
+     */
+    public static void playPlaceSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+                soundType.getPitch() * 0.8F);
+    }
+
+    /**
+     * A minimal sound playing interface required by {@link #playHitSound(SimpleSoundPlayer, SoundType)},
+     * {@link #playBreakSound(SimpleSoundPlayer, SoundType)} and {@link #playPlaceSound(SimpleSoundPlayer, SoundType)}.
+     */
+    @FunctionalInterface
+    public interface SimpleSoundPlayer {
+        void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
+                final float pitch);
     }
 }

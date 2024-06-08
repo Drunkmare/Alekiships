@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +11,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -57,27 +57,23 @@ public interface BlockCompartment {
      * Plays the hit sound for the passed {@link BlockCompartment}
      */
     static void playHitSound(final BlockCompartment blockCompartment) {
-        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
-        blockCompartment.playSound(soundType.getHitSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
-                soundType.getPitch() * 0.5F);
+        CommonHelper.playHitSound(blockCompartment::playSound, blockCompartment.getDisplayBlockState().getSoundType());
     }
 
     /**
      * Plays the break sound for the passed {@link BlockCompartment}
      */
     static void playBreakSound(final BlockCompartment blockCompartment) {
-        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
-        blockCompartment.playSound(soundType.getBreakSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
-                soundType.getPitch() * 0.8F);
+        CommonHelper.playBreakSound(blockCompartment::playSound,
+                blockCompartment.getDisplayBlockState().getSoundType());
     }
 
     /**
      * Plays the place sound for the passed {@link BlockCompartment}
      */
     static void playPlaceSound(final BlockCompartment blockCompartment) {
-        final SoundType soundType = blockCompartment.getDisplayBlockState().getSoundType();
-        blockCompartment.playSound(soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
-                soundType.getPitch() * 0.8F);
+        CommonHelper.playPlaceSound(blockCompartment::playSound,
+                blockCompartment.getDisplayBlockState().getSoundType());
     }
 
     /**
