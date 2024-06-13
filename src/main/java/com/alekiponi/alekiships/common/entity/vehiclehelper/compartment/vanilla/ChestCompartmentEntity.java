@@ -1,8 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class ChestCompartmentEntity extends ContainerCompartmentEntity implements LidCompartment {
+public class ChestCompartmentEntity extends RandomizableContainerCompartmentEntity implements LidCompartment {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;

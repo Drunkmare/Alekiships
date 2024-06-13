@@ -194,8 +194,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             }
 
             final int maxStackSize = this.getMaxStackSize();
-            if (!this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.getItemStacks(),
-                    maxStackSize)) {
+            if (!this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                 this.litTime = this.getBurnDuration(fuelStack);
                 this.litDuration = this.litTime;
                 if (this.isLit()) {
@@ -208,13 +207,12 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
                 }
             }
 
-            if (this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.getItemStacks(),
-                    maxStackSize)) {
+            if (this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                 ++this.cookingProgress;
                 if (this.cookingProgress == this.cookingTotalTime) {
                     this.cookingProgress = 0;
                     this.cookingTotalTime = getTotalCookTime(this.level(), this);
-                    if (this.burn(this.level().registryAccess(), recipe, this.getItemStacks(), maxStackSize)) {
+                    if (this.burn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                         this.setRecipeUsed(recipe);
                     }
                 }
@@ -233,7 +231,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     public void fillStackedContents(final StackedContents stackedContents) {
-        for (final ItemStack itemstack : this.getItemStacks()) {
+        for (final ItemStack itemstack : this.itemStacks) {
             stackedContents.accountStack(itemstack);
         }
     }
@@ -253,7 +251,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private boolean burn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
-                         final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
+            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
         if (cookingRecipe == null || !this.canBurn(registryAccess, cookingRecipe, itemStacks, maxStackSize)) {
             return false;
         }
@@ -281,7 +279,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private boolean canBurn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
-                            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
+            final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
         if (itemStacks.get(SLOT_INPUT).isEmpty() || cookingRecipe == null) return false;
 
         final ItemStack itemstack = cookingRecipe.assemble(this, registryAccess);
@@ -313,7 +311,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         for (final Recipe<?> recipe : list) {
             if (recipe != null) {
-                player.triggerRecipeCrafted(recipe, this.getItemStacks());
+                player.triggerRecipeCrafted(recipe, this.itemStacks);
             }
         }
 
@@ -360,7 +358,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     public boolean canPlaceItemThroughFace(final int slotIndex, final ItemStack itemStack,
-                                           final @Nullable Direction direction) {
+            final @Nullable Direction direction) {
         return this.canPlaceItem(slotIndex, itemStack);
     }
 

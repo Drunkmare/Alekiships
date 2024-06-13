@@ -86,12 +86,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     @Nullable
     private Item ingredient;
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
@@ -168,12 +168,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
             }
         }
 
-        final boolean canBrew = isBrewable(this.getItemStacks());
+        final boolean canBrew = isBrewable(this.itemStacks);
         final ItemStack ingredientStack = this.getItem(INGREDIENT_SLOT);
         if (this.brewTime > 0) {
             --this.brewTime;
             if (this.brewTime == 0 && canBrew) {
-                doBrew(this.level(), this.blockPosition(), this.getItemStacks());
+                doBrew(this.level(), this.blockPosition(), this.itemStacks);
             } else if (!canBrew || !ingredientStack.is(this.ingredient)) {
                 this.brewTime = 0;
             }

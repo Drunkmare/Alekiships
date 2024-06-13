@@ -1,9 +1,10 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -13,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -34,17 +36,21 @@ import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.stream.IntStream;
 
-public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity implements IEntityAdditionalSpawnData {
+public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmentEntity implements WorldlyContainer, IEntityAdditionalSpawnData {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
     public static final String COLOR_KEY = "Color";
     public static final int SLOT_COUNT = 27;
     private static final int NULL_COLOR = -1;
+    private static final int[] SLOTS = IntStream.range(0, SLOT_COUNT).toArray();
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
@@ -76,12 +82,12 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     @Nullable
     private DyeColor color;
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
@@ -231,6 +237,22 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
         }
     }
 
+    public int[] getSlotsForFace(Direction pSide) {
+        return SLOTS;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(final int slotIndex, final ItemStack itemStack,
+            final @Nullable Direction direction) {
+        return !(Block.byItem(itemStack.getItem()) instanceof ShulkerBoxBlock) && itemStack.getItem()
+                .canFitInsideContainerItems(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(final int slotIndex, final ItemStack itemStack, final Direction direction) {
+        return true;
+    }
+
     @Override
     protected void onPlaced() {
         CommonHelper.playPlaceSound(this::playSound, SoundType.STONE);
@@ -244,5 +266,10 @@ public class ShulkerBoxCompartmentEntity extends ContainerCompartmentEntity impl
     @Nullable
     public DyeColor getColor() {
         return this.color;
+    }
+
+    @Override
+    protected IItemHandler createItemHandler() {
+        return new SidedInvWrapper(this, Direction.UP);
     }
 }
