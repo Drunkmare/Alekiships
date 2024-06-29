@@ -5,7 +5,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
@@ -69,12 +69,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     protected static final EntityDataAccessor<Integer> DATA_ID_TICKS_NO_RIDERS = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<DyeColor> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            CustomEntityDataSerializers.DYE_COLOR);
-    private static final EntityDataAccessor<DyeColor> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(SloopEntity.class,
-            CustomEntityDataSerializers.DYE_COLOR);
-    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(SloopEntity.class,
-            CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
+    private static final EntityDataAccessor<DyeColor> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
+    private static final EntityDataAccessor<DyeColor> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
+    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
 
     public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
 

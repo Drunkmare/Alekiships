@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.wind.WindModel;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
@@ -45,7 +45,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<Wind> DATA_ID_WIND_VECTOR = SynchedEntityData.defineId(
-            AbstractAlekiBoatEntity.class, CustomEntityDataSerializers.WIND);
+            AbstractAlekiBoatEntity.class, AlekiShipsEntityDataSerializers.WIND.get());
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
 
