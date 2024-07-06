@@ -57,7 +57,7 @@ public class AlekiShips {
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
             EntityDataSerializers.registerSerializer(CustomEntityDataSerializers.WIND);
 
-            WindModels.register(Level.OVERWORLD, new OverworldWindModel());
+            WindModels.register(Level.OVERWORLD, level -> new OverworldWindModel());
         });
     }
 }
