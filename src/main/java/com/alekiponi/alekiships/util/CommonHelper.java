@@ -36,9 +36,7 @@ public class CommonHelper {
         return hit != null && from.distanceTo(hit.getLocation()) < range ? hit.getEntity() : null;
     }
 
-    public static double vec2ToWrappedDegrees(Vec2 vec2) {
-        double x = vec2.normalized().x;
-        double y = vec2.normalized().y;
+    public static double vec2ToWrappedDegrees(final double x, final double y) {
         double direction = 0;
         if (y != 0 && x != 0) {
             direction = Math.round(Math.toDegrees(Math.atan(y / x)));
