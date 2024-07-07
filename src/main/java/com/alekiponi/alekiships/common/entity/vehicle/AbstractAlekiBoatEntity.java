@@ -63,7 +63,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, BoatMaterial boatMaterial) {
         super(entityType, level);
-        this.windModel = WindModels.get(level.dimension());
+        this.windModel = WindModels.get(level);
         this.boatMaterial = boatMaterial;
     }
 
@@ -612,7 +612,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         final Entity entity = super.changeDimension(destination);
         if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
             // Update our wind model when the dimension changes
-            alekiBoat.windModel = WindModels.get(destination.dimension());
+            alekiBoat.windModel = WindModels.get(destination);
         }
         return entity;
     }
