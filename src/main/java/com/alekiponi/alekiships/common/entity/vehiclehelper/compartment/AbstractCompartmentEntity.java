@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
@@ -15,6 +14,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
@@ -178,8 +178,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         this.lerpSteps = 10;
     }
 
-    abstract protected void playHurtSound(final DamageSource damageSource);
-
     @Override
     public boolean isInvulnerableTo(DamageSource pSource) {
         if (pSource.is(DamageTypeTags.IS_EXPLOSION)) {
@@ -208,7 +206,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
         // Don't kill
         if (!instantKill && !(this.getDamage() > DAMAGE_TO_BREAK)) {
-            this.playHurtSound(damageSource);
+            this.onHurt(damageSource);
             return true;
         }
 
@@ -229,12 +227,8 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
                 itemStack.setHoverName(this.getCustomName());
             }
 
-            double y = this.getRootVehicle().getBoundingBox().maxY + 0.6;
-            if(y > this.getY()){
-                this.spawnAtLocation(itemStack, (float) (y-this.getY()));
-            } else {
-                this.spawnAtLocation(itemStack);
-            }
+            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
+                    this.getZ(), itemStack);
         }
     }
 
@@ -305,6 +299,15 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     }
 
     @Override
+    public void remove(final RemovalReason removalReason) {
+        if (!this.level().isClientSide && removalReason.shouldDestroy()) {
+            this.onBreak();
+        }
+
+        super.remove(removalReason);
+    }
+
+    @Override
     public boolean isPickable() {
         return !this.isRemoved();
     }
@@ -314,26 +317,39 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     }
 
     /**
-     * Gets the ItemStack that should be dropped when this compartment is destroyed
+     * Gets the {@link ItemStack} that should be dropped when this compartment is destroyed
      * This is so compartments can easily control the output stack or add NBT
      *
-     * @return The ItemStack that should be dropped in world when the compartment is destroyed
+     * @return The {@link ItemStack} that should be dropped in world when the compartment is destroyed
      */
-    abstract protected ItemStack getDropStack();
+    protected abstract ItemStack getDropStack();
 
     @Nullable
     @Override
-    abstract public ItemStack getPickResult();
+    public abstract ItemStack getPickResult();
 
     /**
-     * Called after the compartment is placed into the world by {@link EmptyCompartmentEntity}.
-     * This is primarily for playing the placement sound, but I could imagine that there's other good uses
+     * Called after the compartment is placed into the world by {@link EmptyCompartmentEntity}
      */
-    abstract protected void onPlaced();
+    protected abstract void onPlaced();
+
+    /**
+     * Called whenever the compartment is hurt but not broken
+     *
+     * @param damageSource The source of the damage
+     */
+    protected abstract void onHurt(final DamageSource damageSource);
+
+    /**
+     * Called when the compartment is broken
+     */
+    protected abstract void onBreak();
 
     public void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
-                          final float pitch) {
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
+            final float pitch) {
+        if (!this.isSilent()) {
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), soundEvent, soundSource, volume, pitch);
+        }
     }
 
     public static enum RidingPose {

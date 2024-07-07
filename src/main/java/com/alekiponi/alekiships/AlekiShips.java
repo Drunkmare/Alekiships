@@ -54,7 +54,7 @@ public class AlekiShips {
             VanillaWood.registerFrames();
             AlekiShipsAdvancements.registerTriggers();
 
-            WindModels.register(Level.OVERWORLD, new OverworldWindModel());
+            WindModels.register(Level.OVERWORLD, OverworldWindModel::new);
         });
     }
 }

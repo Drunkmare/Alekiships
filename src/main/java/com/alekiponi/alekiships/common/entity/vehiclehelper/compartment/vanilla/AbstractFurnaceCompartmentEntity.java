@@ -15,9 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -75,9 +73,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     public static final String COOK_TIME_KEY = "CookTime";
     public static final String COOK_TIME_TOTAL_KEY = "CookTimeTotal";
     public static final String RECIPES_USED_KEY = "RecipesUsed";
-    protected static final int SLOT_INPUT = 0;
-    protected static final int SLOT_FUEL = 1;
-    protected static final int SLOT_RESULT = 2;
+    public static final int SLOT_INPUT = 0;
+    public static final int SLOT_FUEL = 1;
+    public static final int SLOT_RESULT = 2;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             AbstractFurnaceCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private static final int[] SLOTS_FOR_UP = new int[]{SLOT_INPUT};
@@ -149,7 +147,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,
-            final float experience) {
+                                         final float experience) {
         int i = Mth.floor(recipeIndex * experience);
         float f = Mth.frac(recipeIndex * experience);
         if (f != 0 && Math.random() < f) {
@@ -196,8 +194,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             }
 
             final int maxStackSize = this.getMaxStackSize();
-            if (!this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.getItemStacks(),
-                    maxStackSize)) {
+            if (!this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                 this.litTime = this.getBurnDuration(fuelStack);
                 this.litDuration = this.litTime;
                 if (this.isLit()) {
@@ -210,13 +207,12 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
                 }
             }
 
-            if (this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.getItemStacks(),
-                    maxStackSize)) {
+            if (this.isLit() && this.canBurn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                 ++this.cookingProgress;
                 if (this.cookingProgress == this.cookingTotalTime) {
                     this.cookingProgress = 0;
                     this.cookingTotalTime = getTotalCookTime(this.level(), this);
-                    if (this.burn(this.level().registryAccess(), recipe, this.getItemStacks(), maxStackSize)) {
+                    if (this.burn(this.level().registryAccess(), recipe, this.itemStacks, maxStackSize)) {
                         this.setRecipeUsed(recipe);
                     }
                 }
@@ -235,17 +231,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     public void fillStackedContents(final StackedContents stackedContents) {
-        for (final ItemStack itemstack : this.getItemStacks()) {
+        for (final ItemStack itemstack : this.itemStacks) {
             stackedContents.accountStack(itemstack);
         }
-    }
-
-    @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-        super.remove(removalReason);
     }
 
     @Override
@@ -323,7 +311,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         for (final Recipe<?> recipe : list) {
             if (recipe != null) {
-                player.triggerRecipeCrafted(recipe, this.getItemStacks());
+                player.triggerRecipeCrafted(recipe, this.itemStacks);
             }
         }
 
@@ -344,13 +332,19 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playHitSound();
+    protected void onHurt(final DamageSource damageSource) {
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
+    }
+
+    @Override
+    protected void onBreak() {
+        super.onBreak();
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override
@@ -412,6 +406,14 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         }
     }
 
+    public int getCookTime() {
+        return this.cookingProgress;
+    }
+
+    public int getTotalCookTime() {
+        return cookingTotalTime;
+    }
+
     public boolean isLit() {
         return this.litTime > 0;
     }
@@ -432,8 +434,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.loadCommonNBTData(compoundTag);
 
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
@@ -442,7 +443,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
         this.saveCommonNBTData(compoundTag);
 
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,12 +16,13 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class ChestCompartmentEntity extends ContainerCompartmentEntity implements LidCompartment {
+public class ChestCompartmentEntity extends RandomizableContainerCompartmentEntity implements LidCompartment {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
@@ -103,21 +105,19 @@ public class ChestCompartmentEntity extends ContainerCompartmentEntity implement
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playSound(SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1, 0.8F);
-        }
-        super.remove(removalReason);
-    }
-
-    @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playSound(SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.5F);
+    protected void onHurt(final DamageSource damageSource) {
+        CommonHelper.playHitSound(this::playSound, SoundType.WOOD);
     }
 
     @Override
     protected void onPlaced() {
-        this.playSound(SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playPlaceSound(this::playSound, SoundType.WOOD);
+    }
+
+    @Override
+    protected void onBreak() {
+        super.onBreak();
+        CommonHelper.playBreakSound(this::playSound, SoundType.WOOD);
     }
 
     @Override

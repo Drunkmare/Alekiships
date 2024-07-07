@@ -1,7 +1,8 @@
-package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
+package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
@@ -34,10 +35,10 @@ public class GrindstoneCompartmentEntity extends SimpleBlockMenuCompartmentEntit
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
-        return new GrindstoneMenu(id, playerInventory, this.getContainerLevelAccess()) {
+        return new GrindstoneMenu(id, playerInventory, CommonHelper.createEntityContainerLevelAccess(this)) {
             @Override
             public boolean stillValid(final Player player) {
-                return GrindstoneCompartmentEntity.this.stillValid(player);
+                return CommonHelper.stillValidEntity(GrindstoneCompartmentEntity.this, player);
             }
         };
     }

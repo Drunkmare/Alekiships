@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.wind;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * Entities aren't expected to serialize or sync model state.
@@ -16,4 +17,9 @@ public interface WindModel {
      * @return The wind at that block pos
      */
     Wind getWind(BlockPos blockPos);
+
+    @FunctionalInterface
+    interface WindModelFactory {
+        WindModel create(Level level);
+    }
 }

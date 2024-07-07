@@ -2,17 +2,16 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -34,26 +33,28 @@ import javax.annotation.Nullable;
 
 import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.RIDE_BARREL;
 
-public class BarrelCompartmentEntity extends ContainerCompartmentEntity implements BlockCompartment {
+public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEntity implements BlockCompartment {
     public static final int SLOT_COUNT = 27;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             BarrelCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_OPEN);
+            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
             BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, true));
         }
 
         @Override
         protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
-            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_CLOSE);
+            BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_CLOSE, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
             BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, false));
         }
 
         @Override
         protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                                          final int count, final int openCount) {
+                final int count, final int openCount) {
         }
 
         @Override
@@ -66,12 +67,12 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     };
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-                                   final Level level) {
+            final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
     public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-                                   final Level level, final ItemStack itemStack) {
+            final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
         this.setDisplayBlockState(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
@@ -101,18 +102,9 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-
-        super.remove(removalReason);
-    }
-
-    @Override
-    public void tick(){
+    public void tick() {
         super.tick();
-        if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)){
+        if (this.isVehicle() && !this.isPassenger() && everyNthTickUnique(5)) {
             if (this.getFirstPassenger() instanceof ServerPlayer serverPlayer && this.isInWater()) {
                 RIDE_BARREL.trigger(serverPlayer);
             }
@@ -138,19 +130,18 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playHitSound();
+    protected void onHurt(final DamageSource damageSource) {
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
@@ -172,7 +163,13 @@ public class BarrelCompartmentEntity extends ContainerCompartmentEntity implemen
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
+    }
+
+    @Override
+    protected void onBreak() {
+        super.onBreak();
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override
