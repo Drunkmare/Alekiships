@@ -6,7 +6,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
-import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.wind.Wind;
