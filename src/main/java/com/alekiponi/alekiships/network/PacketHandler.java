@@ -56,5 +56,19 @@ public final class PacketHandler {
                 .decoder(ServerBoundFlagVehicleForUpdatePacket::new)
                 .consumerMainThread(ServerBoundFlagVehicleForUpdatePacket::handle)
                 .add();
+
+        CHANNEL.messageBuilder(ClientboundJukeboxStartMusicPacket.class, id++)
+                .encoder(ClientboundJukeboxStartMusicPacket::encoder)
+                .decoder(ClientboundJukeboxStartMusicPacket::new)
+                .consumerMainThread(
+                        (clientboundJukeboxStartMusicPacket, contextSupplier) -> clientboundJukeboxStartMusicPacket.handle())
+                .add();
+
+        CHANNEL.messageBuilder(ClientboundJukeboxStopMusicPacket.class, id++)
+                .encoder(ClientboundJukeboxStopMusicPacket::encoder)
+                .decoder(ClientboundJukeboxStopMusicPacket::new)
+                .consumerMainThread(
+                        (clientboundJukeboxStopMusicPacket, contextSupplier) -> clientboundJukeboxStopMusicPacket.handle())
+                .add();
     }
 }

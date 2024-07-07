@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -128,24 +130,17 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
     @Override
     protected void onPlaced() {
-        this.playSound(SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1, 0.8F);
+        CommonHelper.playPlaceSound(this::playSound, SoundType.STONE);
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playSound(SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1, 0.8F);
-        }
-        super.remove(removalReason);
+    protected void onHurt(final DamageSource damageSource) {
+        CommonHelper.playHitSound(this::playSound, SoundType.STONE);
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playSound(SoundEvents.STONE_HIT, SoundSource.BLOCKS, 1, 0.8F);
-    }
-
-    private boolean stillValid(final Player player) {
-        return !this.isRemoved() && this.position().closerThan(player.position(), 8);
+    protected void onBreak() {
+        CommonHelper.playBreakSound(this::playSound, SoundType.STONE);
     }
 
     @Override
@@ -173,87 +168,88 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
             @Override
             public ItemStack getItem(final int slotIndex) {
-                return enderChestInventory.getItem(slotIndex);
+                return this.enderChestInventory.getItem(slotIndex);
             }
 
             @Override
             public List<ItemStack> removeAllItems() {
-                return enderChestInventory.removeAllItems();
+                return this.enderChestInventory.removeAllItems();
             }
 
             @Override
             public ItemStack removeItem(final int slotIndex, final int count) {
-                return enderChestInventory.removeItem(slotIndex, count);
+                return this.enderChestInventory.removeItem(slotIndex, count);
             }
 
             @Override
             public ItemStack removeItemType(final Item item, final int amount) {
-                return enderChestInventory.removeItemType(item, amount);
+                return this.enderChestInventory.removeItemType(item, amount);
             }
 
             @Override
             public ItemStack addItem(final ItemStack itemStack) {
-                return enderChestInventory.addItem(itemStack);
+                return this.enderChestInventory.addItem(itemStack);
             }
 
             @Override
             public boolean canAddItem(final ItemStack itemStack) {
-                return enderChestInventory.canAddItem(itemStack);
+                return this.enderChestInventory.canAddItem(itemStack);
             }
 
             @Override
             public ItemStack removeItemNoUpdate(final int slotIndex) {
-                return enderChestInventory.removeItemNoUpdate(slotIndex);
+                return this.enderChestInventory.removeItemNoUpdate(slotIndex);
             }
 
             @Override
             public void setItem(final int slotIndex, final ItemStack itemStack) {
-                enderChestInventory.setItem(slotIndex, itemStack);
+                this.enderChestInventory.setItem(slotIndex, itemStack);
             }
 
             @Override
             public int getContainerSize() {
-                return enderChestInventory.getContainerSize();
+                return this.enderChestInventory.getContainerSize();
             }
 
             @Override
             public boolean isEmpty() {
-                return enderChestInventory.isEmpty();
+                return this.enderChestInventory.isEmpty();
             }
 
             @Override
             public void setChanged() {
-                enderChestInventory.setChanged();
+                this.enderChestInventory.setChanged();
             }
 
             @Override
             public boolean stillValid(final Player player) {
-                return EnderChestCompartmentEntity.this.stillValid(player) && super.stillValid(player);
+                return CommonHelper.stillValidEntity(EnderChestCompartmentEntity.this, player) && super.stillValid(
+                        player);
             }
 
             @Override
             public void clearContent() {
-                enderChestInventory.clearContent();
+                this.enderChestInventory.clearContent();
             }
 
             @Override
             public void fillStackedContents(final StackedContents stackedContents) {
-                enderChestInventory.fillStackedContents(stackedContents);
+                this.enderChestInventory.fillStackedContents(stackedContents);
             }
 
             @Override
             public String toString() {
-                return enderChestInventory.toString();
+                return this.enderChestInventory.toString();
             }
 
             @Override
             public void fromTag(final ListTag containerNBT) {
-                enderChestInventory.fromTag(containerNBT);
+                this.enderChestInventory.fromTag(containerNBT);
             }
 
             @Override
             public ListTag createTag() {
-                return enderChestInventory.createTag();
+                return this.enderChestInventory.createTag();
             }
 
             @Override

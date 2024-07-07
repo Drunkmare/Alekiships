@@ -7,9 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -88,12 +86,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     @Nullable
     private Item ingredient;
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
     }
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level, final ItemStack itemStack) {
         super(compartmentType, level, SLOT_COUNT, itemStack);
 
@@ -170,12 +168,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
             }
         }
 
-        final boolean canBrew = isBrewable(this.getItemStacks());
+        final boolean canBrew = isBrewable(this.itemStacks);
         final ItemStack ingredientStack = this.getItem(INGREDIENT_SLOT);
         if (this.brewTime > 0) {
             --this.brewTime;
             if (this.brewTime == 0 && canBrew) {
-                doBrew(this.level(), this.blockPosition(), this.getItemStacks());
+                doBrew(this.level(), this.blockPosition(), this.itemStacks);
             } else if (!canBrew || !ingredientStack.is(this.ingredient)) {
                 this.brewTime = 0;
             }
@@ -201,14 +199,6 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
         }
     }
 
-    @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-        super.remove(removalReason);
-    }
-
     /**
      * @return an array of size 3 where every element represents whether the respective slot is not empty
      */
@@ -231,13 +221,19 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playHitSound();
+    protected void onHurt(final DamageSource damageSource) {
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
+    }
+
+    @Override
+    protected void onBreak() {
+        super.onBreak();
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override
@@ -285,15 +281,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.loadCommonNBTData(compoundTag);
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         this.saveCommonNBTData(compoundTag);
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override
@@ -319,6 +314,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity im
     private void saveCommonNBTData(final CompoundTag compoundTag) {
         compoundTag.putShort(BREW_TIME_KEY, (short) this.brewTime);
         compoundTag.putByte(FUEL_KEY, (byte) this.fuel);
+    }
+
+    public int getFuel() {
+        return fuel;
+    }
+
+    public int getBrewTime() {
+        return brewTime;
     }
 
     @Override

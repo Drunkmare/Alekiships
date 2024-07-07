@@ -1,7 +1,8 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -11,8 +12,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
@@ -20,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -288,5 +295,110 @@ public class CommonHelper {
             Containers.dropItemStack(pLevel, pX, pY, pZ, pInventory.getItem(i));
         }
 
+    }
+
+    /**
+     * @param entity The entity which should be checked for collisions
+     * @return The maximum height of the colliding {@link AABB}s or {@link Entity#getY()}
+     */
+    public static double maxHeightOfCollidableEntities(final Entity entity) {
+        return maxHeightOfCollidableEntities(entity, entity.level(), entity.getBoundingBox(), entity.getY());
+    }
+
+    /**
+     * @param entity      The entity
+     * @param level       The level to check for entities
+     * @param boundingBox The {@link AABB} to check for collisions
+     * @param yPos        The starting Y position
+     * @return The passed in yPos or {@link AABB#maxY} of the highest colliding {@link AABB}
+     */
+    public static double maxHeightOfCollidableEntities(@Nullable final Entity entity, final Level level,
+            final AABB boundingBox, double yPos) {
+        for (final Entity collidableEntity : level.getEntities(entity, boundingBox, Entity::canBeCollidedWith)) {
+            final double maxY = collidableEntity.getBoundingBox().maxY;
+            if (maxY > yPos) yPos = maxY;
+        }
+        return yPos;
+    }
+
+    /**
+     * Creates a {@link ContainerLevelAccess} that'll pass valid {@link Level} and {@link BlockPos} objects
+     * from the passed in entity.
+     *
+     * @param entity The entity the returned {@link ContainerLevelAccess} is bound to
+     * @return {@link ContainerLevelAccess} with valid {@link Level} and {@link BlockPos} objects
+     * @apiNote While this returns a valid {@link ContainerLevelAccess} most vanilla block menus such as {@link CraftingMenu}
+     * check for a block in world to see if the menu should close. As such you will likely need to override at the very
+     * least {@link AbstractContainerMenu#stillValid(Player)} however this can usually be done anonymously. For example
+     * {@link CraftingTableCompartment} returns an anonymous {@link CraftingMenu} with {@link AbstractContainerMenu#stillValid(Player)}
+     * overridden like so
+     * <pre>{@code
+     *      return new CraftingMenu(id, playerInventory, CommonHelper.createEntityContainerLevelAccess(this)) {
+     *          @Override
+     *          public boolean stillValid(final Player player) {
+     *              return CraftingTableCompartment.this.stillValid(player);
+     *          }
+     *      };}</pre>
+     */
+    public static ContainerLevelAccess createEntityContainerLevelAccess(final Entity entity) {
+        return new ContainerLevelAccess() {
+            @Override
+            public <T> Optional<T> evaluate(final BiFunction<Level, BlockPos, T> function) {
+                return Optional.of(function.apply(entity.level(), entity.blockPosition()));
+            }
+        };
+    }
+
+    /**
+     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player)} but for entities
+     *
+     * @return If the passed entity is in range for a menu to be open
+     */
+    public static boolean stillValidEntity(final Entity entity, final Player player) {
+        return stillValidEntity(entity, player, 8);
+    }
+
+    /**
+     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player, int)} but for entities
+     *
+     * @param maxDistance The max distance to the entity
+     * @return If the passed entity is in range for a menu to be open
+     */
+    public static boolean stillValidEntity(final Entity entity, final Player player, final int maxDistance) {
+        return !entity.isRemoved() && entity.position().closerThan(player.position(), maxDistance);
+    }
+
+    /**
+     * Plays {@link SoundType#getHitSound()} with the correct volume and pitch
+     */
+    public static void playHitSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getHitSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 8,
+                soundType.getPitch() * 0.5F);
+    }
+
+    /**
+     * Plays {@link SoundType#getBreakSound()} with the correct volume and pitch
+     */
+    public static void playBreakSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getBreakSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+                soundType.getPitch() * 0.8F);
+    }
+
+    /**
+     * Plays {@link SoundType#getPlaceSound()} with the correct volume and pitch
+     */
+    public static void playPlaceSound(final SimpleSoundPlayer simpleSoundPlayer, final SoundType soundType) {
+        simpleSoundPlayer.playSound(soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1) / 2,
+                soundType.getPitch() * 0.8F);
+    }
+
+    /**
+     * A minimal sound playing interface required by {@link #playHitSound(SimpleSoundPlayer, SoundType)},
+     * {@link #playBreakSound(SimpleSoundPlayer, SoundType)} and {@link #playPlaceSound(SimpleSoundPlayer, SoundType)}.
+     */
+    @FunctionalInterface
+    public interface SimpleSoundPlayer {
+        void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
+                final float pitch);
     }
 }

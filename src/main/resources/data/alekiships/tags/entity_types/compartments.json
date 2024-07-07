@@ -16,6 +16,8 @@
     "alekiships:compartment_smoker",
     "alekiships:compartment_stonecutter",
     "alekiships:compartment_crafting_table",
-    "alekiships:compartment_brewing_stand"
+    "alekiships:compartment_brewing_stand",
+    "alekiships:compartment_note_block",
+    "alekiships:compartment_jukebox"
   ]
 }

@@ -141,6 +141,7 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
      *
      * @param <T> The type of compartment
      */
+    @FunctionalInterface
     public interface StackCompartmentFactory<T extends AbstractCompartmentEntity> {
         @Nullable
         T create(final CompartmentType<T> compartmentType, final Level level, final ItemStack itemStack);
@@ -149,6 +150,7 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
     /**
      * A replacement of {@link EntityFactory} to enforce compartments use a {@link CompartmentType} instead of {@link EntityType}
      */
+    @FunctionalInterface
     public interface BasicCompartmentFactory<T extends AbstractCompartmentEntity> {
         @Nullable
         T create(final CompartmentType<T> compartmentType, final Level level);

@@ -4,9 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -60,28 +58,23 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(this.getDisplayBlockState()));
+        BlockCompartment.saveBlockstate(this, compoundTag);
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setDisplayBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),
-                compoundTag.getCompound(HELD_BLOCK_KEY)));
+        BlockCompartment.readBlockstate(this, compoundTag);
     }
 
     @Override
-    protected void playHurtSound(final DamageSource damageSource) {
-        this.playHitSound();
+    protected void onHurt(final DamageSource damageSource) {
+        BlockCompartment.playHitSound(this);
     }
 
     @Override
-    public void remove(final RemovalReason removalReason) {
-        if (!this.level().isClientSide() && removalReason.shouldDestroy()) {
-            this.playBreakSound();
-        }
-
-        super.remove(removalReason);
+    protected void onBreak() {
+        BlockCompartment.playBreakSound(this);
     }
 
     @Override
@@ -97,7 +90,7 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
 
     @Override
     protected void onPlaced() {
-        this.playPlaceSound();
+        BlockCompartment.playPlaceSound(this);
     }
 
     @Override
