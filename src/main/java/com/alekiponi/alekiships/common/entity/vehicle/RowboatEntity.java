@@ -5,7 +5,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,16 +17,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -35,8 +32,8 @@ import java.util.function.IntFunction;
 public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(RowboatEntity.class,
-            CustomEntityDataSerializers.OPTIONAL_DYE_COLOR);
+    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
+            RowboatEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
     public final int PASSENGER_NUMBER = 6;
 
     public final int[] CLEATS = {5};

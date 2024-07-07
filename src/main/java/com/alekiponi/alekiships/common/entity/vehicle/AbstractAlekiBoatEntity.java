@@ -51,7 +51,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<Wind> DATA_ID_WIND_VECTOR = SynchedEntityData.defineId(
-            AbstractAlekiBoatEntity.class, CustomEntityDataSerializers.WIND);
+            AbstractAlekiBoatEntity.class, AlekiShipsEntityDataSerializers.WIND.get());
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
 
