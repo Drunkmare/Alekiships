@@ -1,13 +1,17 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
-import com.alekiponi.alekiships.wind.WindModel;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
-import com.alekiponi.alekiships.wind.WindModels;
 import com.alekiponi.alekiships.wind.Wind;
+import com.alekiponi.alekiships.wind.WindModel;
+import com.alekiponi.alekiships.wind.WindModels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +26,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -160,7 +166,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.setYRot(this.getYRot() + this.getDeltaRotation());
 
         // all code that moves other entities should happen after collision check
-        if(this.level().isClientSide()){
+        if (this.level().isClientSide()) {
             ClientHelper.tickHopPlayersOnboard(this);
         }
 
@@ -168,8 +174,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     }
 
-    public float getDeathDamageThreshold(){
-        return getDamageThreshold()*1.25f;
+    public float getDeathDamageThreshold() {
+        return getDamageThreshold() * 1.25f;
     }
 
     protected void tickWindInput() {
@@ -207,7 +213,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     /**
-     *
      * @return a double used to multiply the base wind drift speed
      */
 
@@ -223,6 +228,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             /*
             float subtractWeatherMultiplier = -(0.4F * this.level().getRainLevel(0.0F) + 0.3F * this.level().getThunderLevel(0.0F));
             windVector = new Vec2(windVector.x*subtractWeatherMultiplier,windVector.y*subtractWeatherMultiplier);*/
+            if (!this.level().isClientSide()) {
+                AlekiShips.LOGGER.debug(this.toString());
+                AlekiShips.LOGGER.debug("Wind: " + wind.angle + ", " + wind.speed);
+            }
 
             this.setWind(wind);
             updateLocalWindAngleAndSpeed();
@@ -416,7 +425,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             }
 
             if ((itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) && this instanceof IPaintable paintable) {
-                if (paintable.getPaintColor().isEmpty() || paintable.getPaintColor().get() != ((DyeItem)itemStack.getItem()).getDyeColor()){
+                if (paintable.getPaintColor().isEmpty() || paintable.getPaintColor().get() != ((DyeItem) itemStack.getItem()).getDyeColor()) {
                     states.add(IngameOverlays.IconState.BRUSH);
                     return states;
                 }
