@@ -154,7 +154,11 @@ public class CannonballExplosion extends Explosion {
                 entity.hurt(this.getDamageSource(), 10000);
             } else if (!(entity instanceof AbstractHelper) && !(entity instanceof AbstractCompartmentEntity)) {
                 // What vanilla normally does
-                entity.hurt(this.getDamageSource(), damageForEntity);
+                if (entity instanceof Player) {
+                    entity.hurt(this.getDamageSource(), 1);
+                } else {
+                    entity.hurt(this.getDamageSource(), damageForEntity);
+                }
             }
 
             final double d11;
@@ -169,14 +173,17 @@ public class CannonballExplosion extends Explosion {
             distanceX *= d11;
             distanceY *= d11;
             distanceZ *= d11;
-            final Vec3 vec31 = new Vec3(distanceX, distanceY, distanceZ);
-            entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
+            Vec3 vec31 = new Vec3(distanceX, distanceY, distanceZ);
 
             if (entity instanceof final Player player) {
                 if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
                     this.hitPlayers.put(player, vec31);
                 }
+            } else {
+                entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
             }
+
+
         }
     }
 }
