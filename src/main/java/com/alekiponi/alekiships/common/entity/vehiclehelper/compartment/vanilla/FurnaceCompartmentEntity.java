@@ -37,10 +37,10 @@ public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
                     false);
         }
 
-        final double randomOffset = this.random.nextDouble() * 0.6 - 0.3;
-        final double xOffset = Mth.sin(-this.getYRot() * Mth.DEG_TO_RAD) * 0.48;
+        final double randomOffset = this.random.nextDouble() * 50 - 25;
+        final double xOffset = Mth.sin((float) ((-this.getYRot() + randomOffset) * Mth.DEG_TO_RAD)) * 0.4;
         final double yOffset = this.random.nextDouble() * 6 / 16;
-        final double zOffset = Mth.cos(-this.getYRot() * Mth.DEG_TO_RAD) * 0.48;
+        final double zOffset = Mth.cos((float) ((-this.getYRot() + randomOffset) * Mth.DEG_TO_RAD)) * 0.4;
 
         // TODO I'm too stupid for this. This needs to be a horizontal line that the particles are randomly distributed on
         //  IE it should look like how the vanilla furnace particles do
