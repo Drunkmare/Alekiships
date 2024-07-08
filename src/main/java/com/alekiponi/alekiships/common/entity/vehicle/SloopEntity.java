@@ -353,7 +353,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
                 this.setDeltaRotation(this.getDeltaRotation() + rotationImpact);
 
-                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngleAndSpeed()[0], Mth.wrapDegrees(this.getSailWorldRotation()));
+                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngle(), Mth.wrapDegrees(this.getSailWorldRotation()));
 
                 float sheet = this.getMainsheetLength();
                 float boom = this.getMainBoomRotation();
@@ -633,7 +633,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     protected void tickWindInput() {
         super.tickWindInput();
         if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
-            float windFunction = (float) (Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.02, 1.0) * 0.45);
+            float windFunction = (float) (Mth.clamp(this.getLocalWindSpeed(), 0.02, 1.0) * 0.45);
 
             float sailForce = this.getMainsailWindAngleAndForce()[1];
             float sailForceAngle = Mth.wrapDegrees(this.getMainsailWindAngleAndForce()[0]);
@@ -664,7 +664,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
             }
             if (this.getJibsailActive()) {
-                windFunction = (float) (Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.02, 1.0) * 0.1);
+                windFunction = (float) (Mth.clamp(this.getLocalWindSpeed(), 0.02, 1.0) * 0.1);
                 acceleration = windFunction * sailForce;
 
                 if (!this.getMainsailActive()) {
@@ -719,7 +719,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         if (Math.abs(windDifference) < 120) {
             // calculate wind force for dragging scenario
-            windForceAngle = this.getLocalWindAngleAndSpeed()[0];
+            windForceAngle = this.getLocalWindSpeed();
         }
 
         float windForce = CommonHelper.sailForceMultiplierTable(windDifference);
