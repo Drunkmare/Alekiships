@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.wind;
 
-import com.alekiponi.alekiships.network.CustomEntityDataSerializers;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
@@ -10,7 +10,7 @@ import javax.annotation.concurrent.Immutable;
 /**
  * A simple 2D representation of wind.
  * <p>
- * {@link CustomEntityDataSerializers#WIND} is available for easy syncing over the network
+ * {@link AlekiShipsEntityDataSerializers#WIND} is available for easy syncing over the network
  *
  * @see WindModel
  */
