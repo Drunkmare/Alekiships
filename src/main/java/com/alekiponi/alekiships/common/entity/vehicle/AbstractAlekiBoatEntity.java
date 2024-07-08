@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
@@ -225,14 +224,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             if (wind.speed == 0) {
                 wind = new Wind(-0.03F, 0F);
             }
-            /*
-            float subtractWeatherMultiplier = -(0.4F * this.level().getRainLevel(0.0F) + 0.3F * this.level().getThunderLevel(0.0F));
-            windVector = new Vec2(windVector.x*subtractWeatherMultiplier,windVector.y*subtractWeatherMultiplier);*/
-            if (!this.level().isClientSide()) {
-                AlekiShips.LOGGER.debug(this.toString());
-                AlekiShips.LOGGER.debug("Wind: " + wind.angle + ", " + wind.speed);
-            }
-
             this.setWind(wind);
             updateLocalWindAngleAndSpeed();
         }

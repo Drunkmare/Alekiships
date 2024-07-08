@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -140,12 +138,14 @@ public class CannonEntity extends Entity {
 
         if (this.isLoaded() && heldItem.is(Items.FLINT_AND_STEEL)) {
             // Already lit
-            if (this.isLit()) return InteractionResult.PASS;
+            if (this.isLit()) return InteractionResult.FAIL;
 
             this.light(player);
             player.swing(hand);
             heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
             return InteractionResult.SUCCESS;
+        } else if (heldItem.is(Items.FLINT_AND_STEEL)) {
+            return InteractionResult.FAIL;
         }
 
         if (player.isSecondaryUseActive() && this.getXRot() < 20) {
@@ -156,7 +156,7 @@ public class CannonEntity extends Entity {
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.CONSUME;
+        return InteractionResult.PASS;
     }
 
     /**
@@ -199,14 +199,16 @@ public class CannonEntity extends Entity {
      * Fires the cannon once the fuse is out. This should also clear whatever contents are necessary
      */
     public void fire() {
+
         this.fuse = -1;
         this.setCannonball(ItemStack.EMPTY);
         this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
 
         final CannonballEntity cannonball = new CannonballEntity(this);
 
+        cannonball.setPos(this.position());
         this.level().addFreshEntity(cannonball);
-        final Vec3 movement = new Vec3((Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04), 0,
+        final Vec3 movement = new Vec3((Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04), this.getDeltaMovement().y,
                 Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
     }

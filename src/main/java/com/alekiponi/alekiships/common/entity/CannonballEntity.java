@@ -49,6 +49,7 @@ public class CannonballEntity extends Projectile {
     @Override
     protected void onHit(final HitResult hitResult) {
         super.onHit(hitResult);
+        //this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float) Math.min(this.getDeltaMovement().length() * 2,4), true, Level.ExplosionInteraction.MOB);
         this.explode((float) Math.min(this.getDeltaMovement().length() * 2,4));
         this.discard();
     }
@@ -63,7 +64,7 @@ public class CannonballEntity extends Projectile {
         this.shootFromRotation(cannonEntity, cannonEntity.getXRot(), cannonEntity.getYRot(), 0, 6, 0);
 
         if (cannonEntity.isPassenger()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(this.getRootVehicle().getDeltaMovement()));
+            this.setDeltaMovement(this.getDeltaMovement().add(cannonEntity.getRootVehicle().getDeltaMovement()));
         }
     }
 
@@ -112,7 +113,7 @@ public class CannonballEntity extends Projectile {
     protected void explode(final float radius) {
         final Level level = this.level();
 
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         final Explosion.BlockInteraction blockInteraction = level.getGameRules().getBoolean(
                 GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
@@ -145,7 +146,7 @@ public class CannonballEntity extends Projectile {
     @Override
     protected boolean canHitEntity(final Entity target) {
         // stop cannons from being able to hit the boat they're fired from
-        if(target instanceof AbstractVehicle || target.getRootVehicle() instanceof AbstractVehicle && this.getOwner() != null){
+        if (target.getRootVehicle() instanceof AbstractVehicle && this.getOwner() != null) {
             if(target.getRootVehicle().is(this.getOwner().getRootVehicle())){
                 return false;
             }
