@@ -7,7 +7,6 @@ import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopConstructionRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopRenderer;
-import com.alekiponi.alekiships.client.render.entity.vehicle.TestSailingShipRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -50,10 +49,12 @@ public final class RenderEventHandler {
                 ShulkerBoxCompartmentRenderer::new);
 
         event.registerEntityRenderer(AlekiShipsEntities.FURNACE_COMPARTMENT_ENTITY.get(),
-                BlockCompartmentRenderer::new);
+                LightableBlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY.get(),
-                BlockCompartmentRenderer::new);
-        event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
+                LightableBlockCompartmentRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), LightableBlockCompartmentRenderer::new);
+
+
         event.registerEntityRenderer(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY.get(),
                 BlockCompartmentRenderer::new);
 

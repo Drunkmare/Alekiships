@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
  * Generic unspecialized renderer for compartments that render normal blocks such as a furnace or barrel
  */
 public class BlockCompartmentRenderer<Compartment extends AbstractCompartmentEntity & BlockCompartment> extends CompartmentRenderer<Compartment> {
-    private final BlockRenderDispatcher blockRenderer;
+    protected final BlockRenderDispatcher blockRenderer;
 
     public BlockCompartmentRenderer(final EntityRendererProvider.Context context) {
         super(context);
