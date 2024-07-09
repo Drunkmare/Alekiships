@@ -1,7 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.util.CommonHelper;
@@ -29,9 +27,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 
-public abstract class AbstractCompartmentEntity extends Entity implements IHaveIcons {
+public abstract class AbstractCompartmentEntity extends Entity {
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractCompartmentEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_HURT_DIR = SynchedEntityData.defineId(
@@ -295,11 +292,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     public RidingPose getRidingPose() {
         return RidingPose.STANDARD;
-    }
-
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-        return states;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopConstructionRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
+import com.alekiponi.alekiships.client.render.icon.compartment.EmptyCompartmentIconRenderer;
 import com.alekiponi.alekiships.client.render.icon.vehicle.RowboatIconRenderer;
 import com.alekiponi.alekiships.client.render.icon.vehicle.SloopIconRenderer;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
@@ -102,5 +103,8 @@ public final class RenderEventHandler {
             event.registerIconRenderer(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get(), RowboatIconRenderer::new);
             event.registerIconRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(), SloopIconRenderer::new);
         }
+
+        event.registerIconRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(),
+                EmptyCompartmentIconRenderer::new);
     }
 }

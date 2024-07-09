@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
@@ -41,7 +40,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -550,33 +548,5 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     @Override
     public ItemStack getPickResult() {
         return null;
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-        ItemStack handItem = player.getItemInHand(player.getUsedItemHand());
-
-        if (this.getTrueVehicle() != null && !this.isVehicle()) {
-
-            if (this.getTrueVehicle().getPilotCompartment() != null && this.getTrueVehicle().getPilotCompartment().is(this)) {
-                states.add(IngameOverlays.IconState.HELM);
-
-                if (this.getTrueVehicle().pilotCompartmentAcceptsNonPlayers() && handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) {
-                    states.add(IngameOverlays.IconState.BLOCK);
-                }
-                return states;
-            }
-
-            if (handItem.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS) || handItem.is(AlekiShipsItems.CANNON.get()) || this.canAddOnlyBLocks()) {
-                states.add(IngameOverlays.IconState.BLOCK);
-                return states;
-            }
-
-            states.add(IngameOverlays.IconState.SEAT);
-
-        }
-
-        return states;
     }
 }
