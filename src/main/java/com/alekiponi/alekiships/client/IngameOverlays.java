@@ -1,8 +1,9 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.event.IconRenderersEvent;
+import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
@@ -22,16 +23,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 public final class IngameOverlays {
-    public static final ResourceLocation COMPARTMENT_STATUS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-            "compartment_status");
+    public static final ResourceLocation ENTITY_ICON = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
+            "entity_icon");
     public static final ResourceLocation PASSENGER_STATUS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "passenger_status");
     public static final ResourceLocation SAILING_ELEMENT = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
@@ -41,8 +42,6 @@ public final class IngameOverlays {
     public static final ResourceLocation CANNON_LOAD_STATE = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "cannon_load_state");
 
-    public static final ResourceLocation COMPARTMENT_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-            "textures/gui/icons/compartment_icons.png");
     public static final ResourceLocation SAILING_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/gui/icons/sailing_icons.png");
     public static final ResourceLocation SPEEDOMETER_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
@@ -54,7 +53,8 @@ public final class IngameOverlays {
     private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
 
     public static void registerOverlays(final RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, COMPARTMENT_STATUS, IngameOverlays::renderCompartmentStatus);
+        ModLoader.postEvent(new IconRenderersEvent.RegisterIconRenderersEvent());
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR, ENTITY_ICON, IngameOverlays::renderEntityIcon);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, PASSENGER_STATUS, IngameOverlays::renderPassengerStatus);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, SLOOP_CONSTRUCTION,
                 IngameOverlays::renderSloopConstructionStatus);
@@ -62,94 +62,22 @@ public final class IngameOverlays {
         event.registerAbove(VanillaGuiLayers.HOTBAR, SAILING_ELEMENT, IngameOverlays::renderSailingElement);
     }
 
-    private static void renderCompartmentStatus(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
+    private static void renderEntityIcon(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
         final Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.player == null) return;
-        if (minecraft.gameMode == null) return;
 
-        final Player player = minecraft.player;
+        final var player = minecraft.player;
 
-        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
-                .isFirstPerson()) return;
+        if (!(minecraft.getCameraEntity() instanceof Player) || !minecraft.options.getCameraType().isFirstPerson())
+            return;
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
 
-        if (entity instanceof IHaveIcons) {
-            final PoseStack stack = guiGraphics.pose();
-
-            stack.pushPose();
-
-            stack.scale(1, 1, 1);
-
-            final int width = guiGraphics.guiWidth();
-            final int height = guiGraphics.guiHeight();
-            stack.translate(width / 2F - 5 - 12, height / 2F - 5, 0);
-
-            if (height % 2 != 0) {
-                stack.translate(0, 0.5F, 0);
-            }
-
-            if (width % 2 != 0) {
-                stack.translate(0.5F, 0, 0);
-            }
-
-            ArrayList<IconState> states = ((IHaveIcons) entity).getIconStates(player);
-
-            for (int i = 0; i < states.size(); i++) {
-                IconState state = states.get(i);
-                int offset = -12 * i;
-
-                switch (state) {
-                    case NONE -> {
-
-                    }
-                    case HELM -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.HELM), 0, 9, 9);
-                    }
-                    case BLOCK -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.BLOCK), 0, 9, 9);
-                    }
-                    case SAIL_ARROW_UP -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.SAIL), 0, 9, 9);
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, -10, Icon.offset(Icon.ARROW_UP), 0, 9, 9);
-                    }
-                    case SAIL_ARROW_DOWN -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.SAIL), 0, 9, 9);
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 10, Icon.offset(Icon.ARROW_DOWN), 0, 9, 9);
-                    }
-                    case PADDLE -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.PADDLE), 0, 9, 9);
-                    }
-                    case SEAT -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.SEAT), 0, 9, 9);
-                    }
-                    case EJECT -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.EJECT), 0, 9, 9);
-                    }
-                    case LEAD -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.LEAD), 0, 9, 9);
-                    }
-                    case ANCHOR_ARROW_UP -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.ANCHOR), 0, 9, 9);
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, -10, Icon.offset(Icon.ARROW_UP), 0, 9, 9);
-                    }
-                    case ANCHOR_ARROW_DOWN -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.ANCHOR), 0, 9, 9);
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 10, Icon.offset(Icon.ARROW_DOWN), 0, 9, 9);
-                    }
-                    case BRUSH -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.BRUSH), 0, 9, 9);
-                    }
-                    case HAMMER -> {
-                        guiGraphics.blit(COMPARTMENT_ICONS, offset, 0, Icon.offset(Icon.HAMMER), 0, 9, 9);
-                    }
-                }
-            }
-
-            stack.popPose();
+        if (entity != null) {
+            IconRenderDispatcher.INSTANCE.render(entity, player, guiGraphics,
+                    deltaTracker.getGameTimeDeltaPartialTick(false));
         }
-
     }
 
     private static void renderPassengerStatus(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
@@ -332,46 +260,5 @@ public final class IngameOverlays {
         guiGraphics.blit(SPEEDOMETER_ICONS, -126 - 8, 3 - offhandOffset, 16 * frameIndex, 32 + 16 * (frameIndex / 16),
                 16, 16);
         stack.popPose();
-    }
-
-    public enum Icon {
-        HELM(0),
-        BLOCK(1),
-        SAIL(2),
-        PADDLE(3),
-        SEAT(4),
-        EJECT(5),
-        LEAD(6),
-        ARROW_UP(7),
-        ARROW_DOWN(8),
-        ANCHOR(9),
-        BRUSH(10),
-        HAMMER(11);
-
-        public final int index;
-
-        Icon(final int index) {
-            this.index = index;
-        }
-
-        public static int offset(final Icon icon) {
-            return icon.index * 9;
-        }
-    }
-
-    public enum IconState {
-        NONE,
-        HELM,
-        BLOCK,
-        SAIL_ARROW_UP,
-        SAIL_ARROW_DOWN,
-        PADDLE,
-        SEAT,
-        EJECT,
-        LEAD,
-        ANCHOR_ARROW_UP,
-        ANCHOR_ARROW_DOWN,
-        BRUSH,
-        HAMMER,
     }
 }
