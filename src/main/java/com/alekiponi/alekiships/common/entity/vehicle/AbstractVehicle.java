@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAllowFallDamage;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCompartments;
@@ -59,7 +57,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.alekiponi.alekiships.util.ClientHelper.*;
 
-public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
+public abstract class AbstractVehicle extends Entity implements IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(
@@ -1049,11 +1047,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
     public int getCompartmentBlockLight() {
         return blockLightLevel;
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        return new ArrayList<IngameOverlays.IconState>();
     }
 
     @Override

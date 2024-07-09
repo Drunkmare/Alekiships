@@ -1,11 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import java.util.ArrayList;
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
@@ -30,15 +26,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.Tags;
 
 public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public static final int PADDLE_LEFT = 0;
@@ -403,35 +396,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public boolean fireImmune() {
         return this.boatMaterial.withstandsLava();
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-
-        if (this instanceof IAmTiny) {
-            return states;
-        }
-
-        for (final ItemStack itemStack : player.getHandSlots()) {
-            if (itemStack.isEmpty()) {
-                return states;
-            }
-
-            if (itemStack.is(this.getDropItem()) && this.getDamage() > 0) {
-                states.add(IngameOverlays.IconState.HAMMER);
-                return states;
-            }
-
-            if ((itemStack.is(Tags.Items.DYES) || itemStack.is(Items.WATER_BUCKET)) && this instanceof IPaintable paintable) {
-                if (paintable.getPaintColor().isEmpty() || paintable.getPaintColor().get() != ((DyeItem) itemStack.getItem()).getDyeColor()) {
-                    states.add(IngameOverlays.IconState.BRUSH);
-                    return states;
-                }
-            }
-        }
-
-        return states;
     }
 
     protected abstract float getMomentumSubtractor();
