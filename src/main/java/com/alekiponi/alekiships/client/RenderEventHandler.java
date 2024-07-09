@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.event.IconRenderersEvent;
 import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
@@ -10,6 +11,7 @@ import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopConstructionRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.SloopRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
+import com.alekiponi.alekiships.client.render.icon.vehicle.SloopIconRenderer;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.client.renderer.entity.NoopRenderer;
@@ -91,5 +93,12 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.CONSTRUCTION_ENTITY.get(), ConstructionRenderer::new);
 
         //event.registerEntityRenderer(AlekiShipsEntities.TEST_SAILING_SHIP.get(), TestSailingShipRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerIconRenderers(final IconRenderersEvent.RegisterIconRenderersEvent event) {
+        for (final VanillaWood vanillaWood : VanillaWood.values()) {
+            event.registerIconRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(), SloopIconRenderer::new);
+        }
     }
 }

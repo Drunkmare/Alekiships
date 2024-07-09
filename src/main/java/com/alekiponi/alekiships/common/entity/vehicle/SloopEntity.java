@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBreakIce;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IDestroyPlants;
@@ -968,27 +967,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         }
 
         this.getPaintColor().ifPresent(dyeColor -> pCompound.putByte("paint", (byte) dyeColor.getId()));
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-
-        for (final ItemStack itemStack : player.getHandSlots()) {
-            if (itemStack.is(AlekiShipsTags.Items.ICEBREAKER_UPGRADES) && !this.breaksIce()) {
-                states.add(IngameOverlays.IconState.HAMMER);
-                return states;
-            }
-        }
-
-        for (final ItemStack itemStack : player.getHandSlots()) {
-            if (itemStack.is(Items.NAME_TAG)) {
-                states.add(IngameOverlays.IconState.BRUSH);
-                return states;
-            }
-        }
-
-        return super.getIconStates(player);
     }
 
     @Override
