@@ -1,8 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import java.util.ArrayList;
-import java.util.List;
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +19,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MastEntity extends AbstractPassthroughHelper {
 
@@ -113,20 +113,4 @@ public class MastEntity extends AbstractPassthroughHelper {
     protected void readAdditionalSaveData(CompoundTag pCompound) {
         this.setBanner(ItemStack.parseOptional(this.registryAccess(), pCompound.getCompound(BANNER_KEY)));
     }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-
-        for (final ItemStack itemStack : player.getHandSlots()) {
-            if (itemStack.getItem() instanceof BannerItem && !itemStack.is(getBanner().getItem())) {
-                states.add(IngameOverlays.IconState.BRUSH);
-                return states;
-            }
-        }
-
-        return super.getIconStates(player);
-    }
-
-
 }

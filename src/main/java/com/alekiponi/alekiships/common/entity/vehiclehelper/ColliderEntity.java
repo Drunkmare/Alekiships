@@ -1,9 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
+import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.util.ClientHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -13,7 +12,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 
-public class ColliderEntity extends AbstractPassthroughHelper implements IHaveIcons {
+public class ColliderEntity extends AbstractPassthroughHelper {
 
     public ColliderEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

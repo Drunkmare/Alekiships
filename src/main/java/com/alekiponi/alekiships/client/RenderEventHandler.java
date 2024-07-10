@@ -14,6 +14,7 @@ import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
 import com.alekiponi.alekiships.client.render.icon.compartment.EmptyCompartmentIconRenderer;
 import com.alekiponi.alekiships.client.render.icon.vehicle.RowboatIconRenderer;
 import com.alekiponi.alekiships.client.render.icon.vehicle.SloopIconRenderer;
+import com.alekiponi.alekiships.client.render.icon.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.client.renderer.entity.NoopRenderer;
@@ -106,5 +107,14 @@ public final class RenderEventHandler {
 
         event.registerIconRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(),
                 EmptyCompartmentIconRenderer::new);
+
+        event.registerIconRenderer(AlekiShipsEntities.SAIL_SWITCH_ENTITY.get(), SailSwitchIconRenderer::new);
+        event.registerIconRenderer(AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get(), IconPassthroughRenderer::new);
+        event.registerIconRenderer(AlekiShipsEntities.WINDLASS_SWITCH_ENTITY.get(), WindlassIconRenderer::new);
+
+        event.registerIconRenderer(AlekiShipsEntities.MAST_ENTITY.get(), MastIconRenderer::new);
+
+        event.registerIconRenderer(AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get(), CleatIconRenderer::new);
+        event.registerIconRenderer(AlekiShipsEntities.CONSTRUCTION_ENTITY.get(), IconPassthroughRenderer::new);
     }
 }

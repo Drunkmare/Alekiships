@@ -1,7 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
@@ -15,9 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-import java.util.ArrayList;
-
-public abstract class AbstractPassthroughHelper extends AbstractHelper implements IHaveIcons {
+public abstract class AbstractPassthroughHelper extends AbstractHelper {
     public AbstractPassthroughHelper(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
@@ -60,15 +56,6 @@ public abstract class AbstractPassthroughHelper extends AbstractHelper implement
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         return this.getRootVehicle().interact(player, hand);
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
-            return vehicle.getIconStates(player);
-        }
-
-        return new ArrayList<IngameOverlays.IconState>();
     }
 
     @Override

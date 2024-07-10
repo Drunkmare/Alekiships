@@ -1,23 +1,18 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Leashable;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 // TODO, ensure this works as expected when relying on Leashable
-public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons, Leashable {
+public class CleatEntity extends AbstractPassthroughHelper implements Leashable {
 
     @Nullable
     private Leashable.LeashData leashData;
@@ -104,14 +99,5 @@ public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons
     @Override
     public void setLeashData(@Nullable Leashable.LeashData leashData) {
         this.leashData = leashData;
-    }
-
-    @Override
-    public ArrayList<IngameOverlays.IconState> getIconStates(Player player) {
-        ArrayList<IngameOverlays.IconState> states = new ArrayList<>();
-        if (this.isPassenger() && !this.isLeashed() && this.getRootVehicle() instanceof AbstractVehicle){
-            states.add(IngameOverlays.IconState.LEAD);
-        }
-        return states;
     }
 }
