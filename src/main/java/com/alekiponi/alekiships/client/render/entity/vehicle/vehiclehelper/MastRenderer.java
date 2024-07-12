@@ -69,7 +69,7 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
         this.bar.render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180 + rotation));
         poseStack.mulPose(Axis.ZP.rotationDegrees(90));
 
         poseStack.translate(0,0,-0.05f);
