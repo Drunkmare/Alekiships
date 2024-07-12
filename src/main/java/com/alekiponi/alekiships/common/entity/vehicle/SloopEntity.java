@@ -151,6 +151,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return COMPARTMENT_ROTATIONS;
     }
 
+    @Override
     public float[] getDefaultColliderDimensions() {
         return new float[]{1.5f, 0.75f};
     }
