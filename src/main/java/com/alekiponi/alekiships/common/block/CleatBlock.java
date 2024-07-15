@@ -187,11 +187,11 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
             BlockPos pos2 = origin.relative(structureDirection.getOpposite(), 5).relative(structureDirection.getClockWise(), 3);
             Vec3 spawnPosition = new Vec3(pos1.getX() + pos2.getX(), pos1.getY() + pos2.getY(), pos1.getZ() + pos2.getZ()).multiply(0.5, 0.5, 0.5);
             //TODO fix this with better math instead please :)
-            if(structureDirection == Direction.EAST || structureDirection == Direction.SOUTH){
-                spawnPosition = spawnPosition.add(1,0,0);
+            if (structureDirection == Direction.EAST || structureDirection == Direction.SOUTH) {
+                spawnPosition = spawnPosition.add(1, 0, 0);
             }
-            if(structureDirection == Direction.WEST || structureDirection == Direction.SOUTH){
-                spawnPosition = spawnPosition.add(0,0,1);
+            if (structureDirection == Direction.WEST || structureDirection == Direction.SOUTH) {
+                spawnPosition = spawnPosition.add(0, 0, 1);
             }
 
 
