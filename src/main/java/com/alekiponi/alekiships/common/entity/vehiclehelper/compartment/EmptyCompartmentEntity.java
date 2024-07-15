@@ -6,13 +6,11 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractPassthroughHelper;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
@@ -41,7 +39,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -365,6 +362,13 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldStack = player.getItemInHand(hand);
 
+        //TODO make generic for all oar-accepting boats
+        if (heldStack.is(AlekiShipsItems.OAR.get())) {
+            if (this.getTrueVehicle() instanceof RowboatEntity rowboat && !rowboat.getOars().equals(RowboatEntity.Oars.TWO)) {
+                return rowboat.interact(player, hand);
+            }
+        }
+
         if (this.canAddNonPlayers() && !this.canAddOnlyBLocks() && heldStack.is(
                 AlekiShipsItems.CANNON.get()) && this.getRootVehicle() instanceof ICannonable) {
             if (this.getVehicle() instanceof VehiclePart part && this.canAddCannons) {
@@ -408,7 +412,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             if (!player.getAbilities().instabuild) {
                 heldStack.shrink(1);
             }
-            if(player instanceof ServerPlayer serverPlayer){
+            if (player instanceof ServerPlayer serverPlayer) {
                 AlekiShipsAdvancements.ARMOR_STAND_ON_BOAT.trigger(serverPlayer);
             }
 
@@ -512,7 +516,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     @Override
     public boolean hurt(final DamageSource damageSource, final float amount) {
-        return AbstractPassthroughHelper.hurt(this,damageSource,amount);
+        return AbstractPassthroughHelper.hurt(this, damageSource, amount);
     }
 
     @Nullable

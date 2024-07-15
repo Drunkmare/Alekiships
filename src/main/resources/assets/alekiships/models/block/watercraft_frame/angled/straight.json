@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"particle": "block/bamboo_mosaic",
-		"frame": "block/bamboo_mosaic"
+		"particle": "block/bamboo_planks",
+		"frame": "block/bamboo_planks"
 	},
 	"elements": [
 		{
