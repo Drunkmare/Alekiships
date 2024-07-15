@@ -12,6 +12,7 @@
     }
   },
   "result": {
-    "item": "alekiships:watercraft_frame_angled"
+    "item": "alekiships:watercraft_frame_flat",
+    "count": 5
   }
 }

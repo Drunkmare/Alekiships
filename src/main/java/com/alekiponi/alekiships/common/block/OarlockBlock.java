@@ -2,8 +2,6 @@ package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.advancements.GenericTrigger;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +16,11 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -32,6 +34,7 @@ import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.
 public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE_NORTH = Stream.of(
                     Block.box(3, 0, 0, 13, 3, 3))
             .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
@@ -47,7 +50,7 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
 
     protected OarlockBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
@@ -162,9 +165,10 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         Direction direction = pContext.getClickedFace();
         BlockPos blockpos = pContext.getClickedPos();
+        final FluidState fluidstate = pContext.getLevel().getFluidState(blockpos);
         LevelAccessor level = pContext.getLevel();
         BlockState blockstate = this.defaultBlockState()
-                .setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+                .setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
 
         if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
             Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
@@ -188,7 +192,13 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
+        pBuilder.add(FACING, WATERLOGGED);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public FluidState getFluidState(final BlockState blockState) {
+        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
     }
 
     @Override
