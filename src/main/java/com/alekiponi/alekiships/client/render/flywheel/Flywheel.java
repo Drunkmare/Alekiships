@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.client.render.flywheel;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.render.flywheel.compartment.BlockCompartmentVisual;
 import com.alekiponi.alekiships.client.render.flywheel.compartment.ChestCompartmentVisual;
+import com.alekiponi.alekiships.client.render.flywheel.compartment.EnderChestCompartmentVisual;
 import com.alekiponi.alekiships.client.render.flywheel.compartment.LightableBlockCompartmentVisual;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.AlekiShipsHelper;
@@ -36,6 +37,8 @@ public class Flywheel {
         SimpleEntityVisualizer.builder(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY.get())
                 .factory(ChestCompartmentVisual::new).apply();
         // Ender Chest
+        SimpleEntityVisualizer.builder(AlekiShipsEntities.ENDER_CHEST_COMPARTMENT_ENTITY.get())
+                .factory(EnderChestCompartmentVisual::new).apply();
         // Shulker Box
 
         // Processing Compartments
