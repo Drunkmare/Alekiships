@@ -3,9 +3,6 @@ package com.alekiponi.alekiships.common.block;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,10 +21,10 @@ public class ShipbuildingMultiblocks {
                     new ShipbuildingBlockValidator(false),
             },
             {
-                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_EAST, true),
                     new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.OUTER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
                     new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.OUTER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
-                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST, true),
             },
             {
                     new ShipbuildingBlockValidator(Direction.WEST),
@@ -48,10 +45,10 @@ public class ShipbuildingMultiblocks {
                     new ShipbuildingBlockValidator(Direction.EAST),
             },
             {
-                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST, true),
                     new ShipbuildingBlockValidator(Direction.SOUTH),
                     new ShipbuildingBlockValidator(Direction.SOUTH),
-                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST),
+                    new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_WEST, true),
             },
     };
 
@@ -61,8 +58,8 @@ public class ShipbuildingMultiblocks {
                     new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.SOUTH_AND_WEST)
             },
             {
-                    new ShipbuildingBlockValidator(Direction.WEST),
-                    new ShipbuildingBlockValidator(Direction.EAST)
+                    new ShipbuildingBlockValidator(Direction.WEST, true),
+                    new ShipbuildingBlockValidator(Direction.EAST, true)
             },
             {
                     new ShipbuildingBlockValidator(AngledBoatFrameBlock.ConstantShape.INNER, AngledBoatFrameBlock.ConstantDirection.NORTH_AND_EAST),
@@ -99,15 +96,20 @@ public class ShipbuildingMultiblocks {
         }
 
         if (!success) {
+            // TODO rework this to make it more helpful
+            /*
             Player player = level.getNearestPlayer(startPos.getX(), startPos.getY(), startPos.getZ(), 12, EntitySelector.NO_SPECTATORS);
             if (player != null) {
                 player.displayClientMessage(Component.translatable("alekiships.failed_multiblock_detection"), true);
-            }
+            }*/
             return false;
         }
 
         for (int y = 0; y < multiblockValidators.length; y++) {
             for (int x = 0; x < multiblockValidators[0].length; x++) {
+                if (multiblockValidators[y][x].shouldDestroyAbove()) {
+                    level.destroyBlock(startPos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x).above(), false);
+                }
                 if (multiblockValidators[y][x].shouldDestroy()) {
                     level.destroyBlock(startPos.relative(structureDirection.getOpposite(), y).relative(crossDirection, x), false);
                 }

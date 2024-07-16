@@ -3,8 +3,8 @@ package com.alekiponi.alekiships.events;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
@@ -14,7 +14,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
@@ -30,8 +29,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
-
-import java.awt.event.ItemEvent;
 
 @Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {

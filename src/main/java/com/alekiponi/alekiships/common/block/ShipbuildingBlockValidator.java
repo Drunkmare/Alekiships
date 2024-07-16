@@ -15,6 +15,7 @@ public class ShipbuildingBlockValidator {
     private boolean flat = false;
 
     private boolean validatingThisBlock = false;
+    private boolean shouldDestroyAbove = false;
 
     @Nullable
     private Direction direction = null;
@@ -26,6 +27,13 @@ public class ShipbuildingBlockValidator {
         this.constantShape = constantShape;
         this.constantDirection = constantDirection;
         this.validatingThisBlock = true;
+    }
+
+    ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape, AngledWoodenBoatFrameBlock.ConstantDirection constantDirection, boolean shouldDestroyAbove) {
+        this.constantShape = constantShape;
+        this.constantDirection = constantDirection;
+        this.validatingThisBlock = true;
+        this.shouldDestroyAbove = shouldDestroyAbove;
     }
 
     /**
@@ -45,8 +53,19 @@ public class ShipbuildingBlockValidator {
         this.validatingThisBlock = true;
     }
 
+    ShipbuildingBlockValidator(Direction direction, boolean shouldDestroyAbove) {
+        this.constantShape = AngledBoatFrameBlock.ConstantShape.STRAIGHT;
+        this.direction = direction;
+        this.validatingThisBlock = true;
+        this.shouldDestroyAbove = shouldDestroyAbove;
+    }
+
     public boolean shouldDestroy(){
         return validatingThisBlock;
+    }
+
+    public boolean shouldDestroyAbove() {
+        return shouldDestroyAbove;
     }
 
     public boolean validate(final BlockState blockState, final Direction structureDirection,

@@ -4,22 +4,10 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -28,10 +16,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
 
-public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
-
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+public class CleatBlock extends AbstractHullSideBlock {
     private static final VoxelShape SHAPE_NORTH = Stream.of(
                     Block.box(5, 0, 2, 11, 2, 4))
             .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
@@ -47,29 +32,7 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
 
     protected CleatBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
-
-    public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
-        if (pLevel.getBlockState(thispos.below())
-                .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
-                thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
-        }
-        return false;
-    }
-
-    private static Vec3 getSpawnPosition(Level pLevel, BlockPos thispos, BlockState blockState) {
-        Direction direction = blockState.getValue(FACING);
-        thispos = thispos.below();
-        BlockPos otherpos = thispos.relative(direction.getOpposite());
-        Vec3 origin = new Vec3(((thispos.getX() + otherpos.getX()) / 2.0f) + 0.5f, thispos.getY() + 0.5f,
-                ((thispos.getZ() + otherpos.getZ()) / 2.0f) + 0.5f);
-        return origin;
-    }
-
 
     @Override
     public VoxelShape getShape(BlockState pstate, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -88,19 +51,6 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
             validateMultiblock(pLevel, pPos, pState);
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
-    }
-
-    public void destroyMultiblock(Level level, BlockPos thispos, BlockState blockState) {
-
-    }
-
-    @Override
-    public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        return isSupportedByWatercraftFrame(pLevel, pPos);
-    }
-
-    private void spawnConstructionSloop(Level pLevel, BlockPos thispos, BlockState blockState) {
-
     }
 
     public void validateMultiblock(Level level, BlockPos thispos, BlockState blockState) {
@@ -178,10 +128,6 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
         if (boatMaterial == null) return;
 
         if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, boatMaterial) && frameState.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
-            // destroy cleats
-            for (BlockPos pos : cleats) {
-                level.destroyBlock(pos, false);
-            }
             // spawn sloop construction entity
             BlockPos pos1 = origin.relative(structureDirection.getOpposite(), 3).relative(structureDirection.getClockWise(), 1);
             BlockPos pos2 = origin.relative(structureDirection.getOpposite(), 5).relative(structureDirection.getClockWise(), 3);
@@ -217,53 +163,6 @@ public class CleatBlock extends HorizontalDirectionalBlock implements SimpleWate
         }
 
 
-    }
-
-
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        Direction direction = pContext.getClickedFace();
-        BlockPos blockpos = pContext.getClickedPos();
-        final FluidState fluidstate = pContext.getLevel().getFluidState(blockpos);
-        LevelAccessor level = pContext.getLevel();
-        BlockState blockstate = this.defaultBlockState()
-                .setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
-
-
-        if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock) {
-            Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
-            if (directions.length == 0) {
-                return blockstate;
-            }
-            for (Direction dir : directions) {
-                if (dir == pContext.getHorizontalDirection().getOpposite()) {
-                    return blockstate;
-                }
-            }
-            blockstate = blockstate.setValue(FACING, directions[0]);
-        }
-        return blockstate;
-    }
-
-    @Override
-    public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.MODEL;
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING, WATERLOGGED);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public FluidState getFluidState(final BlockState blockState) {
-        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
-    }
-
-    @Override
-    public boolean useShapeForLightOcclusion(BlockState pState) {
-        return true;
     }
 
 }
