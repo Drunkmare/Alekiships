@@ -3,6 +3,9 @@ package com.alekiponi.alekiships.common.block;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -96,11 +99,10 @@ public class ShipbuildingMultiblocks {
         }
 
         if (!success) {
-            /*
             Player player = level.getNearestPlayer(startPos.getX(), startPos.getY(), startPos.getZ(), 12, EntitySelector.NO_SPECTATORS);
-            if (player != null && level.isClientSide()) {
-                player.displayClientMessage(Component.translatable("failed_multiblock_detection"), true);
-            }*/
+            if (player != null) {
+                player.displayClientMessage(Component.translatable("alekiships.failed_multiblock_detection"), true);
+            }
             return false;
         }
 

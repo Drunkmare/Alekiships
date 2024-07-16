@@ -84,6 +84,8 @@ DEFAULT_LANG = {
     "press_button": "Press",
     "eject_passengers": "to eject",
 
+    "alekiships.failed_multiblock_detection": "No Valid Hull Structure Found",
+
     "alekiships.advancements.oar.title": "Oaring my Paddleboat",
     "alekiships.advancements.oar.description": "Craft an Oar",
     "alekiships.advancements.oarlock.title": "The Montlake Cut",

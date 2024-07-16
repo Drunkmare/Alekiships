@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -46,7 +46,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        final int processState = blockState.getValue(FRAME_PROCESSED);
+        int processState = blockState.getValue(FRAME_PROCESSED);
 
         // Try extract
         if (heldStack.isEmpty() && !level.isClientSide) {
@@ -77,14 +77,40 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
                     heldStack.shrink(1);
                 }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
+                processState++;
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
+                if (processState == FULLY_PROCESSED) {
+                    triggerDetection(level, blockPos);
+                }
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.CONSUME;
         }
 
+        /*
+        // Try multiblock detection
+        if (player.isSecondaryUseActive()){
+            triggerDetection(level, blockPos);
+            return InteractionResult.SUCCESS;
+        }*/
+
         return InteractionResult.PASS;
+    }
+
+    public static void triggerDetection(Level level, BlockPos blockPos) {
+        BlockPos search = blockPos.above();
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                BlockPos cur = search.relative(Direction.Axis.X, x).relative(Direction.Axis.Z, z);
+                if (level.getBlockState(cur).getBlock() instanceof CleatBlock cleat) {
+                    cleat.validateMultiblock(level, cur, level.getBlockState(cur));
+                }
+                if (level.getBlockState(cur).getBlock() instanceof OarlockBlock oarlock) {
+                    oarlock.validateMultiblock(level, cur, level.getBlockState(cur));
+                }
+            }
+        }
     }
 
     @Override

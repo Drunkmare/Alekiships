@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+
+import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.triggerDetection;
 
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
@@ -42,7 +44,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
-        final int processState = blockState.getValue(FRAME_PROCESSED);
+        int processState = blockState.getValue(FRAME_PROCESSED);
 
         // Try extract
         if (heldStack.isEmpty() && !level.isClientSide) {
@@ -70,8 +72,12 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
                     heldStack.shrink(1);
                 }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
+                processState++;
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
+                if (processState == FULLY_PROCESSED) {
+                    triggerDetection(level, blockPos);
+                }
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.CONSUME;

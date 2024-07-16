@@ -54,14 +54,9 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
     }
 
     public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
-        if (pLevel.getBlockState(thispos.below())
-                .getBlock() instanceof AngledWoodenBoatFrameBlock woodenBoatFrameBlock && pLevel.getBlockState(
-                thispos.below()).getValue(AngledWoodenBoatFrameBlock.FRAME_PROCESSED) == AngledWoodenBoatFrameBlock.FULLY_PROCESSED) {
-            return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                    thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
-        }
-        return false;
+        return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
+                thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
     }
 
     private static Vec3 getSpawnPosition(Level pLevel, BlockPos thispos, BlockState blockState) {
@@ -88,11 +83,7 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
     @Override
     public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
         if (!pOldState.is(pState.getBlock())) {
-            BlockState frameState = pLevel.getBlockState(pPos.below());
-            if (validateOarlocks(pLevel, pPos, pState) && validateFrames(pLevel, pPos, pState)) {
-                destroyOarlocks(pLevel, pPos, pState);
-                spawnRowboat(pLevel, pPos, pState, frameState);
-            }
+            validateMultiblock(pLevel, pPos, pState);
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
     }
@@ -108,30 +99,34 @@ public class OarlockBlock extends HorizontalDirectionalBlock implements SimpleWa
         return isSupportedByWatercraftFrame(pLevel, pPos);
     }
 
-    private void spawnRowboat(Level pLevel, BlockPos thispos, BlockState blockState, BlockState framestate) {
-        Direction direction = blockState.getValue(FACING);
-        Direction.Axis axis = direction.getClockWise().getAxis();
-        if(framestate.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock){
-            boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.ROWBOAT).ifPresent(entityType -> {
-                final AbstractVehicle rowboat = entityType.create(pLevel);
-                if (rowboat != null) {
-                    rowboat.setPos(getSpawnPosition(pLevel, thispos, blockState));
-                    if (axis == Direction.Axis.X) {
-                        rowboat.setYRot(90F);
-                    }
-                    pLevel.addFreshEntity(rowboat);
+    private void spawnRowboat(Level pLevel, BlockPos thispos, BlockState blockState) {
 
-                    for (ServerPlayer serverplayer : pLevel.getEntitiesOfClass(ServerPlayer.class, rowboat.getBoundingBox().inflate(5.0D))) {
-                        ROWBOAT_COMPLETED.trigger(serverplayer);
-                    }
+    }
 
-                }
-            });
+    public void validateMultiblock(Level level, BlockPos thispos, BlockState blockState) {
+        BlockState frameState = level.getBlockState(thispos.below());
+        if (validateOarlocks(level, thispos, blockState) && validateFrames(level, thispos, blockState)) {
+            destroyOarlocks(level, thispos, blockState);
+            Direction direction = blockState.getValue(FACING);
+            Direction.Axis axis = direction.getClockWise().getAxis();
+            if (frameState.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
+                boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.ROWBOAT).ifPresent(entityType -> {
+                    final AbstractVehicle rowboat = entityType.create(level);
+                    if (rowboat != null) {
+                        rowboat.setPos(getSpawnPosition(level, thispos, blockState));
+                        if (axis == Direction.Axis.X) {
+                            rowboat.setYRot(90F);
+                        }
+                        level.addFreshEntity(rowboat);
+
+                        for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, rowboat.getBoundingBox().inflate(5.0D))) {
+                            ROWBOAT_COMPLETED.trigger(serverplayer);
+                        }
+
+                    }
+                });
+            }
         }
-        //String woodName = boatFrameBlock.getPlankAsItemStack().getItem().toString().split("planks/")[1];
-        //BoatVariant variant = BoatVariant.byName(woodName);
-        //RowboatEntity rowboat = FirmacivEntities.ROWBOATS.get(variant).get().create(pLevel);
-
     }
 
     public boolean validateOarlocks(Level level, BlockPos thispos, BlockState blockState) {

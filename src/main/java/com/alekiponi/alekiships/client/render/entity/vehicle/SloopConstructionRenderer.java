@@ -263,14 +263,14 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
 
         poseStack.pushPose();
         poseStack.translate(0 / 16.0, 9.0 / 16.0, -64.0 / 16.0);
-        blockstate = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState().setValue(FACING, Direction.WEST).setValue(SHAPE, StairsShape.OUTER_RIGHT);
+        blockstate = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState().setValue(FACING, Direction.SOUTH).setValue(SHAPE, StairsShape.OUTER_RIGHT);
         this.blockRenderer.renderSingleBlock(blockstate, poseStack, bufferSource, packedLight,
                 OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
         poseStack.pushPose();
         poseStack.translate(-16 / 16.0, 9.0 / 16.0, -64.0 / 16.0);
-        blockstate = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState().setValue(FACING, Direction.EAST).setValue(SHAPE, StairsShape.OUTER_LEFT);
+        blockstate = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState().setValue(FACING, Direction.SOUTH).setValue(SHAPE, StairsShape.OUTER_LEFT);
         this.blockRenderer.renderSingleBlock(blockstate, poseStack, bufferSource, packedLight,
                 OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
