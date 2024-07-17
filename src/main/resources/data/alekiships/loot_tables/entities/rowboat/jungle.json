@@ -8,11 +8,35 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "alekiships:oarlock",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 0,
+                "max": 2,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "loot_pool",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "minecraft:jungle_planks",
           "functions": [
             {
               "function": "minecraft:set_count",
-              "count": 24
+              "count": {
+                "min": 4.800000000000001,
+                "max": 24,
+                "type": "minecraft:uniform"
+              }
             }
           ]
         }

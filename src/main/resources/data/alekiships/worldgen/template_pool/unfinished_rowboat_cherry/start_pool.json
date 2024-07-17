@@ -1,11 +1,11 @@
 {
-  "name": "alekiships:unfinished_rowboat_1/start_pool",
+  "name": "alekiships:unfinished_rowboat_cherry/start_pool",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
-        "location": "alekiships:unfinished_rowboat_1",
+        "location": "alekiships:unfinished_rowboat_cherry",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"

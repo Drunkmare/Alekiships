@@ -1,0 +1,30 @@
+{
+  "structures": [
+    {
+      "structure": "alekiships:unfinished_rowboat_birch",
+      "weight": 50
+    },
+    {
+      "structure": "alekiships:unfinished_rowboat_cherry",
+      "weight": 1
+    },
+    {
+      "structure": "alekiships:unfinished_rowboat_dark_oak",
+      "weight": 50
+    },
+    {
+      "structure": "alekiships:unfinished_rowboat_oak",
+      "weight": 50
+    },
+    {
+      "structure": "alekiships:unfinished_rowboat_spruce",
+      "weight": 50
+    }
+  ],
+  "placement": {
+    "salt": 1642136474,
+    "spacing": 20,
+    "separation": 10,
+    "type": "minecraft:random_spread"
+  }
+}
