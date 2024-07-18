@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LightEmittingCompartment;
 import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
 import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
@@ -69,7 +70,7 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * {@link BlastFurnaceCompartmentMenu} and {@link SmokerCompartmentMenu}. If you extend or use the vanilla menu
  * counterparts you'll need to use or extend our menus as well
  */
-public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
+public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment, LightEmittingCompartment {
     public static final int SLOT_COUNT = 3;
     public static final String BURN_TIME_KEY = "BurnTime";
     public static final String COOK_TIME_KEY = "CookTime";
@@ -414,6 +415,17 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     public boolean isLit() {
         return this.litTime > 0;
+    }
+
+    @Override
+    public boolean isEmitting() {
+        return this.getDisplayBlockState().getValue(AbstractFurnaceBlock.LIT);
+    }
+
+    @Override
+    public int getLightEmission() {
+        //noinspection deprecation
+        return this.getDisplayBlockState().getLightEmission();
     }
 
     @Override
