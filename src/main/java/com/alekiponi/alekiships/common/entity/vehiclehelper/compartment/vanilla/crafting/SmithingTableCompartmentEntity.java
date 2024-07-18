@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SmithingTableCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
-    private static final Component CONTAINER_TITLE = Component.translatable("container.cartography_table");
+    private static final Component CONTAINER_TITLE = Component.translatable("container.upgrade");
 
     public SmithingTableCompartmentEntity(
             final CompartmentType<? extends SmithingTableCompartmentEntity> compartmentType, final Level level) {
