@@ -35,6 +35,13 @@ public class CannonEntity extends Entity {
             EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
             CannonEntity.class, EntityDataSerializers.ITEM_STACK);
+    /**
+     * Vanilla only syncs rotation continuously for arrows.
+     * As the cannons rotation must be accurate we have to override
+     * {@link #setXRot(float)} and {@link #getXRot()} to use this synced data instead
+     */
+    private static final EntityDataAccessor<Float> DATA_ID_X_ROT = SynchedEntityData.defineId(CannonEntity.class,
+            EntityDataSerializers.FLOAT);
     private static final ItemStack CANNONBALL = new ItemStack(AlekiShipsItems.CANNONBALL.get());
     private static final float DAMAGE_TO_BREAK = 8;
     private static final float DAMAGE_RECOVERY = 0.5F;
@@ -58,6 +65,7 @@ public class CannonEntity extends Entity {
     protected void defineSynchedData() {
         this.entityData.define(DATA_ID_DAMAGE, 0F);
         this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
+        this.entityData.define(DATA_ID_X_ROT, 0F);
     }
 
     @Override
@@ -341,6 +349,24 @@ public class CannonEntity extends Entity {
      */
     public ItemStack nextRequiredItem() {
         return CANNONBALL;
+    }
+
+    /**
+     * Vanilla only syncs rotation continuously for arrows.
+     * As the cannons rotation must be accurate we have to override this
+     */
+    @Override
+    public float getXRot() {
+        return this.entityData.get(DATA_ID_X_ROT);
+    }
+
+    /**
+     * Vanilla only syncs rotation continuously for arrows.
+     * As the cannons rotation must be accurate we have to override this
+     */
+    @Override
+    public void setXRot(final float xRot) {
+        this.entityData.set(DATA_ID_X_ROT, xRot);
     }
 
     public boolean isLoaded() {
