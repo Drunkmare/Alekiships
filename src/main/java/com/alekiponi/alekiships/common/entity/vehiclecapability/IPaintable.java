@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +11,8 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
 
 public interface IPaintable {
     void clearPaint();
@@ -26,6 +29,9 @@ public interface IPaintable {
                     heldItem.shrink(1);
                     this.setPaintColor(dyeColor);
                     player.swing(hand);
+                    if (this instanceof AbstractAlekiBoatEntity boat) {
+                        checkDyeShipBlack(player, boat);
+                    }
                     return InteractionResult.SUCCESS;
                 }
             }

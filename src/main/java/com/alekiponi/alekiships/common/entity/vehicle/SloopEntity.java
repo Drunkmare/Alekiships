@@ -11,13 +11,11 @@ import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -36,6 +34,8 @@ import net.minecraftforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Optional;
+
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
 
 public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
@@ -388,30 +388,32 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             this.tickBreakIce();
             this.tickDestroyPlants();
 
-            int ind = 0;
-            for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
-                if (ind == 0) {
-                    this.setMainsailActive(switchEntity.getSwitched() && !this.isUnderWater());
-                }
-                if (ind == 1) {
-                    this.setJibsailActive(switchEntity.getSwitched() && !this.isUnderWater());
-                }
-                ind++;
-            }
-            if (this.collectPlayersToTakeWith().isEmpty() && this.collectPlayerPassengers().isEmpty()) {
-                this.setTicksNoRiders(this.getTicksNoRiders() + 2);
-                if (this.getTicksNoRiders() >= SAIL_TOGGLE_TICKS) {
-                    for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
-                        switchEntity.setSwitched(false);
+            if (!this.level().isClientSide()) {
+                int ind = 0;
+                for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
+                    if (ind == 0) {
+                        this.setMainsailActive(switchEntity.getSwitched() && !this.isUnderWater());
                     }
-                    this.setJibsailActive(false);
-                    this.setMainsailActive(false);
+                    if (ind == 1) {
+                        this.setJibsailActive(switchEntity.getSwitched() && !this.isUnderWater());
+                    }
+                    ind++;
                 }
-            } else {
-                this.setTicksNoRiders(0);
-            }
-            if (!this.getMainsailActive() && !this.getJibsailActive()) {
-                this.setMainsheetLength(0);
+                if (this.collectPlayersToTakeWith().isEmpty() && this.collectPlayerPassengers().isEmpty()) {
+                    this.setTicksNoRiders(this.getTicksNoRiders() + 2);
+                    if (this.getTicksNoRiders() >= SAIL_TOGGLE_TICKS) {
+                        for (SailSwitchEntity switchEntity : this.getSailSwitches()) {
+                            switchEntity.setSwitched(false);
+                        }
+                        this.setJibsailActive(false);
+                        this.setMainsailActive(false);
+                    }
+                } else {
+                    this.setTicksNoRiders(0);
+                }
+                if (!this.getMainsailActive() && !this.getJibsailActive()) {
+                    this.setMainsheetLength(0);
+                }
             }
         }
 
@@ -451,16 +453,10 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             if (heldItem.hasCustomHoverName() && !this.getName().equals(heldItem.getHoverName())) {
                 if (!this.level().isClientSide() && this.isAlive() && this.isFunctional()) {
                     this.setCustomName(heldItem.getHoverName());
-                    if (!player.getAbilities().instabuild){
+                    if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
                     }
-                    if (this.getName().getString().equals("The Black Pearl") && player instanceof ServerPlayer serverPlayer){
-                        if(this.getPaintColor().isPresent()){
-                            if(this.getPaintColor().get().equals(DyeColor.BLACK) && this.getJibsailDye().equals(DyeColor.BLACK) && this.getMainsailDye().equals(DyeColor.BLACK)){
-                                AlekiShipsAdvancements.DYE_SHIP_BLACK.trigger(serverPlayer);
-                            }
-                        }
-                    }
+                    checkDyeShipBlack(player, this);
                 }
 
                 return InteractionResult.sidedSuccess(player.level().isClientSide);
@@ -468,6 +464,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                 return InteractionResult.PASS;
             }
         }
+
 
         return result == null ? super.interact(player, hand) : result;
     }

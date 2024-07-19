@@ -15,6 +15,8 @@ import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
+
 public class SailSwitchEntity extends AbstractSwitchEntity{
 
     public SailSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
@@ -45,6 +47,7 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
                         sloop.setMainsailDye(dyeColor);
                         stack.shrink(1);
                         player.swing(hand);
+                        checkDyeShipBlack(player, sloop);
                         return InteractionResult.SUCCESS;
                     }
                 }
@@ -60,6 +63,7 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
                         sloop.setJibsailDye(dyeColor);
                         stack.shrink(1);
                         player.swing(hand);
+                        checkDyeShipBlack(player, sloop);
                         return InteractionResult.SUCCESS;
                     }
                 }
