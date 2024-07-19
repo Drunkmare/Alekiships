@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.google.common.collect.Sets;
@@ -163,17 +163,23 @@ public class CannonballExplosion extends Explosion {
                 }
             }
 
-            final double d11;
+            double d11;
             if (entity instanceof final LivingEntity livingentity) {
                 // Prevent knock-back for players on colliders (and therefore a boat)
                 if (livingentity instanceof final Player player) {
-                    final List<Entity> entities = this.level.getEntities(player, player.getBoundingBox(),
-                            EntitySelector.NO_SPECTATORS.and(player::canCollideWith)
-                                    .and(IHaveColliders.class::isInstance));
-                    if (entities.isEmpty()) {
-                        d11 = 0;
-                    } else {
+                    final List<Entity> entities = this.level.getEntities(player, player.getBoundingBox().inflate(0, 0.1, 0),
+                            EntitySelector.CAN_BE_COLLIDED_WITH);
+                    boolean flag = false;
+                    for (Entity entity1 : entities) {
+                        if (entity1 instanceof AbstractVehicle vehicle && vehicle.collectPlayersToTakeWith().contains(player)) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
                         d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
+                    } else {
+                        d11 = 0;
                     }
                 } else d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
                 // ======================================================
