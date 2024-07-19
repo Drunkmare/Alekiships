@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.google.common.collect.Sets;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
@@ -163,7 +165,18 @@ public class CannonballExplosion extends Explosion {
 
             final double d11;
             if (entity instanceof final LivingEntity livingentity) {
-                d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
+                // Prevent knock-back for players on colliders (and therefore a boat)
+                if (livingentity instanceof final Player player) {
+                    final List<Entity> entities = this.level.getEntities(player, player.getBoundingBox(),
+                            EntitySelector.NO_SPECTATORS.and(player::canCollideWith)
+                                    .and(IHaveColliders.class::isInstance));
+                    if (entities.isEmpty()) {
+                        d11 = 0;
+                    } else {
+                        d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
+                    }
+                } else d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, damage);
+                // ======================================================
             } else if (entity instanceof CannonEntity) {
                 d11 = 0;
             } else {
