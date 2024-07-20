@@ -31,6 +31,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
+import java.util.List;
+
 @Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
 
@@ -55,15 +57,24 @@ public class ForgeEventHandler {
             // do multiplayer behavior
             player.stopRiding();
             player.setPos(compartment.getRootVehicle().getDismountLocationForPassenger(player));
+
             if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveSailSwitches boat) {
-                for (SailSwitchEntity sail : boat.getSailSwitches()) {
-                    sail.setSwitched(false);
+                List<Player> players = ((AbstractVehicle) boat).collectPlayerPassengers();
+                players.addAll(((AbstractVehicle) boat).collectPlayersToTakeWith());
+                if (players.size() == 1) {
+                    for (SailSwitchEntity sail : boat.getSailSwitches()) {
+                        sail.setSwitched(false);
+                    }
                 }
             }
 
             if (compartment.isPassenger() && compartment.getRootVehicle() instanceof IHaveAnchorWindlass boat) {
-                for (WindlassSwitchEntity windlass : boat.getWindlasses()) {
-                    windlass.setSwitched(false);
+                List<Player> players = ((AbstractVehicle) boat).collectPlayerPassengers();
+                players.addAll(((AbstractVehicle) boat).collectPlayersToTakeWith());
+                if (players.size() == 1) {
+                    for (WindlassSwitchEntity windlass : boat.getWindlasses()) {
+                        windlass.setSwitched(true);
+                    }
                 }
             }
         }

@@ -49,6 +49,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
     public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
+    public final int NO_INPUT_THRESHOLD = 20 * 10;
+
+    float boom_rotation;
+    float mainsheet_length;
+    float rudder_rotation;
+    int ticks_no_input;
+
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
 
@@ -88,6 +95,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
                        final BoatMaterial boatMaterial) {
         super(entityType, level, boatMaterial);
+        boom_rotation = 0;
+        mainsheet_length = 0;
+        rudder_rotation = 0;
     }
 
     @Override
@@ -332,58 +342,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     @Override
     public void tick() {
 
-        if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
-            if (this.status == MediumStatus.IN_WATER) {
-                this.setDeltaRotation((float) (-1 * this.getRudderRotation() * 0.25f *
-                        (Mth.clamp(this.getDeltaMovement().length(), 0.05f, 1))));
-                this.setDeltaRotation(Mth.clamp(this.getDeltaRotation(), -1f, 1f));
-            }
-
-            if (this.getMainsailActive() || this.getJibsailActive()) {
-                float rotationImpact = 0;
-
-                float windDifference = Mth.degreesDifference(getMainsailWindAngleAndForce()[0], Mth.wrapDegrees(this.getYRot()));
-
-                if (windDifference > 4) {
-                    rotationImpact = 1f;
-                } else if (windDifference < -4) {
-                    rotationImpact = -1f;
-                }
-
-                rotationImpact = Mth.clamp((float) (rotationImpact * this.getDeltaMovement().length()), 0, 0.5f);
-
-                this.setDeltaRotation(this.getDeltaRotation() + rotationImpact);
-
-                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngle(), Mth.wrapDegrees(this.getSailWorldRotation()));
-
-                float sheet = this.getMainsheetLength();
-                float boom = this.getMainBoomRotation();
-
-
-                if (boomWindDifference < -171) {
-                    boomWindDifference = Mth.wrapDegrees(boomWindDifference - 180);
-                }
-                if (boomWindDifference > 5) {
-                    boom += 2f;
-                }
-                if (boomWindDifference < -5) {
-                    boom -= 2f;
-                }
-
-                if (sheet > Math.abs(boom)) {
-                    if (boom < 2) {
-                        boom--;
-                    } else if (boom > 2) {
-                        boom++;
-                    }
-                }
-
-                this.setMainBoomRotation(boom);
-            }
-
-        }
-
-
         if (this.everyNthTickUnique(2)) {
             this.tickBreakIce();
             this.tickDestroyPlants();
@@ -423,6 +381,153 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         super.tick();
 
+        this.tickDynamicControls();
+
+        if (this.level().isClientSide() && this.getControllingPassenger() != null && this.isControlledByLocalInstance()) {
+            PacketHandler.send(PacketDistributor.SERVER.noArg(),
+                    new ServerBoundSloopPacket(this.getMainsheetLength(), this.getMainBoomRotation(), this.getRudderRotation(), this.getId()));
+        }
+    }
+
+
+    protected void tickDynamicControls() {
+        if (this.status == MediumStatus.IN_WATER) {
+            this.setDeltaRotation((float) (-1 * this.getRudderRotation() * 0.25f *
+                    (Mth.clamp(this.getDeltaMovement().length(), 0.05f, 1))));
+            this.setDeltaRotation(Mth.clamp(this.getDeltaRotation(), -1f, 1f));
+
+            if (this.status == MediumStatus.IN_AIR || this.status == MediumStatus.IN_WATER) {
+                float rotationImpact = 0;
+
+                float windDifference = Mth.degreesDifference(getMainsailWindAngleAndForce()[0], Mth.wrapDegrees(this.getYRot()));
+
+                if (windDifference > 4) {
+                    rotationImpact = 1f;
+                } else if (windDifference < -4) {
+                    rotationImpact = -1f;
+                }
+
+                rotationImpact = Mth.clamp((float) (rotationImpact * this.getDeltaMovement().length()), 0, 0.5f);
+
+                this.setDeltaRotation(this.getDeltaRotation() + rotationImpact);
+            }
+        }
+
+        if (!(this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
+            return;
+        }
+        if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
+            if (this.getMainsailActive() || this.getJibsailActive()) {
+
+                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngle(), Mth.wrapDegrees(this.getSailWorldRotation()));
+
+                float sheet = this.getMainsheetLength();
+                float boom = this.getMainBoomRotation();
+
+                if (boomWindDifference < -171) {
+                    boomWindDifference = Mth.wrapDegrees(boomWindDifference - 180);
+                }
+                if (boomWindDifference > 5) {
+                    boom += 2f;
+                }
+                if (boomWindDifference < -5) {
+                    boom -= 2f;
+                }
+
+                if (sheet > Math.abs(boom)) {
+                    if (boom < 2) {
+                        boom--;
+                    } else if (boom > 2) {
+                        boom++;
+                    }
+                }
+
+                this.setMainBoomRotation(boom);
+            }
+        }
+    }
+
+    @Override
+    protected void tickControlBoat() {
+        ticks_no_input++;
+        boolean inputUp = false;
+        boolean inputDown = false;
+        boolean inputLeft = false;
+        boolean inputRight = false;
+        if (getPilotCompartment() != null) {
+            inputUp = this.getPilotCompartment().getInputUp();
+            inputDown = this.getPilotCompartment().getInputDown();
+            inputLeft = this.getPilotCompartment().getInputLeft();
+            inputRight = this.getPilotCompartment().getInputRight();
+            if (inputDown || inputUp || inputLeft || inputRight) {
+                ticks_no_input = 0;
+            }
+        }
+
+        if (getPilotCompartment() != null && (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
+
+            float rudder = this.getRudderRotation();
+            if (inputLeft) {
+                if (rudder < 45) {
+                    if (rudder < 0) {
+                        rudder += 2;
+                    } else {
+                        rudder += 1;
+                    }
+                }
+            }
+
+            if (inputRight) {
+                if (rudder > -45) {
+                    if (rudder > 0) {
+                        rudder -= 2;
+                    } else {
+                        rudder -= 1;
+                    }
+
+                }
+            }
+
+            if (!inputRight && !inputLeft) {
+                if (rudder > 0) {
+                    rudder -= 0.3f;
+                }
+                if (rudder < 0) {
+                    rudder += 0.3f;
+                }
+                if (Math.abs(rudder) < 1) {
+                    rudder = 0;
+                }
+            }
+            this.setRudderRotation(rudder);
+
+            this.tickSailBoat();
+
+        }
+    }
+
+    protected void tickSailBoat() {
+        if (getPilotCompartment() != null) {
+            boolean inputUp = this.getPilotCompartment().getInputUp();
+            boolean inputDown = this.getPilotCompartment().getInputDown();
+            boolean inputLeft = this.getPilotCompartment().getInputLeft();
+            boolean inputRight = this.getPilotCompartment().getInputRight();
+            float sheet = this.getMainsheetLength();
+            if (inputUp) {
+                if (sheet < 45) {
+                    sheet++;
+                }
+            }
+
+            if (inputDown) {
+                if (sheet > 0) {
+                    sheet--;
+                }
+            }
+
+            this.setMainsheetLength(sheet);
+
+        }
     }
 
     @Override
@@ -431,6 +536,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             return;
         }
         IHaveMultipleCleats.super.tickCleatInput();
+    }
+
+    @Override
+    public boolean isControlledByLocalInstance() {
+        return super.isControlledByLocalInstance() && ticks_no_input <= NO_INPUT_THRESHOLD;
     }
 
     @Override
@@ -537,57 +647,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     protected void tickPaddlingEffects() {
     }
 
-    @Override
-    protected void tickControlBoat() {
-        if (getPilotCompartment() != null) {
-            boolean inputUp = this.getPilotCompartment().getInputUp();
-            boolean inputDown = this.getPilotCompartment().getInputDown();
-            boolean inputLeft = this.getPilotCompartment().getInputLeft();
-            boolean inputRight = this.getPilotCompartment().getInputRight();
 
-            float rudder = this.getRudderRotation();
-            if (inputLeft) {
-                if (rudder < 45) {
-                    if (rudder < 0) {
-                        rudder += 2;
-                    } else {
-                        rudder += 1;
-                    }
-                }
-            }
-
-            if (inputRight) {
-                if (rudder > -45) {
-                    if (rudder > 0) {
-                        rudder -= 2;
-                    } else {
-                        rudder -= 1;
-                    }
-
-                }
-            }
-
-            if (!inputRight && !inputLeft) {
-                if (rudder > 0) {
-                    rudder -= 0.3f;
-                }
-                if (rudder < 0) {
-                    rudder += 0.3f;
-                }
-                if (Math.abs(rudder) < 1) {
-                    rudder = 0;
-                }
-            }
-            this.setRudderRotation(rudder);
-
-            tickSailBoat();
-
-            if (this.level().isClientSide() && this.getControllingPassenger() != null) {
-                PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                        new ServerBoundSloopPacket(this.getMainsheetLength(), this.getRudderRotation(), this.getId()));
-            }
-        }
-    }
 
     @Override
     protected float getPaddleMultiplier() {
@@ -604,29 +664,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return 0.0005f;
     }
 
-    protected void tickSailBoat() {
-        if (getPilotCompartment() != null) {
-            boolean inputUp = this.getPilotCompartment().getInputUp();
-            boolean inputDown = this.getPilotCompartment().getInputDown();
-            boolean inputLeft = this.getPilotCompartment().getInputLeft();
-            boolean inputRight = this.getPilotCompartment().getInputRight();
-            float sheet = this.getMainsheetLength();
-            if (inputUp) {
-                if (sheet < 45) {
-                    sheet++;
-                }
-            }
 
-            if (inputDown) {
-                if (sheet > 0) {
-                    sheet--;
-                }
-            }
-
-            this.setMainsheetLength(sheet);
-
-        }
-    }
 
     protected void tickWindInput() {
         super.tickWindInput();
@@ -725,19 +763,39 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
     public float getMainBoomRotation() {
+        if (this.isControlledByLocalInstance()) {
+            return boom_rotation;
+        }
         return Mth.wrapDegrees(this.entityData.get(DATA_ID_MAIN_BOOM_ROTATION));
     }
 
     public void setMainBoomRotation(float rotation) {
+        boom_rotation = Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength());
         this.entityData.set(DATA_ID_MAIN_BOOM_ROTATION, Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength()));
     }
 
     public float getMainsheetLength() {
+        if (this.isControlledByLocalInstance()) {
+            return mainsheet_length;
+        }
         return Mth.wrapDegrees(this.entityData.get(DATA_ID_MAINSHEET_LENGTH));
     }
 
     public void setMainsheetLength(float length) {
+        mainsheet_length = Mth.clamp(length, 0, 45);
         this.entityData.set(DATA_ID_MAINSHEET_LENGTH, Mth.clamp(length, 0, 45));
+    }
+
+    public void setRudderRotation(float rotation) {
+        rudder_rotation = Mth.clamp(rotation, -45, 45);
+        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
+    }
+
+    public float getRudderRotation() {
+        if (this.isControlledByLocalInstance()) {
+            return rudder_rotation;
+        }
+        return this.entityData.get(DATA_ID_RUDDER_ROTATION);
     }
 
     public void setMainsailActive(boolean mainsail) {
@@ -764,13 +822,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return this.entityData.get(DATA_ID_TICKS_NO_RIDERS);
     }
 
-    public void setRudderRotation(float rotation) {
-        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
-    }
 
-    public float getRudderRotation() {
-        return this.entityData.get(DATA_ID_RUDDER_ROTATION);
-    }
 
     /**
      * @return The color of the mainsail
