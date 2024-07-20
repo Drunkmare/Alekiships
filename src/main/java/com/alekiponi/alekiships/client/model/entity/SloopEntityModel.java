@@ -748,8 +748,11 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     private static void animateMainsail(SloopEntity pBoat, float pPartialTicks, ModelPart mainsail_main, ModelPart mainsail, ModelPart[][] sails, float mastRotation, int animationTick) {
 
         if (pBoat.getMainsailActive()) {
-            mainsail_main.yRot  = mastRotation;
-            mainsail.yRot  = mastRotation;
+            //mainsail_main.yRot  = mastRotation;
+            //mainsail.yRot  = mastRotation;
+
+            mainsail_main.yRot = Mth.rotLerp(pPartialTicks, mainsail_main.yRot, mastRotation);
+            mainsail.yRot = Mth.rotLerp(pPartialTicks, mainsail_main.yRot, mastRotation);
 
             float windWorldAngle = Mth.wrapDegrees(pBoat.getLocalWindAngleAndSpeed()[0]);
             float windSpeed = pBoat.getLocalWindAngleAndSpeed()[1] * 20f;
@@ -863,10 +866,11 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         float boatWorldAngle = Mth.wrapDegrees(pBoat.getYRot());
         float boatWindDifference = Mth.degreesDifferenceAbs(windWorldAngle, boatWorldAngle);
         if (boatWindDifference < 10 || boatWindDifference > 170 && pBoat.getMainsailActive()) {
-            jibsail.yRot = -mastRotation;
+            jibsail.yRot = Mth.rotLerp(pPartialTicks, jibsail.yRot, -mastRotation);
+            //jibsail.yRot = -mastRotation;
             airFoilDirection *= -1;
         } else {
-            jibsail.yRot = mastRotation;
+            jibsail.yRot = Mth.rotLerp(pPartialTicks, jibsail.yRot, mastRotation);
         }
 
         if(pBoat.getJibsailActive()){
@@ -1018,7 +1022,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     }
 
     private static void animateRudder(SloopEntity pBoat, float pPartialTicks, ModelPart rudder, float rudderRotation) {
-        rudder.yRot = rudderRotation;
+        rudder.yRot = Mth.rotLerp(pPartialTicks, rudder.yRot, rudderRotation);
+        ;
     }
 
     private static void animateWindlass(SloopEntity pBoat, float pPartialTicks, ModelPart windlass, float anchorDistance) {
@@ -1053,43 +1058,45 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                 mainsheet.xRot = -1 * boomRotation * 0.6f;
             }
             // oh my god this is bad
+            float scale = 0;
             if (Math.abs(thing) < 5) {
-                mainsheet.yScale = 1.0f;
+                scale = 1.0f;
             } else if (Math.abs(thing) < 10) {
-                mainsheet.yScale = 1.2f;
+                scale = 1.2f;
             } else if (Math.abs(thing) < 12.5) {
-                mainsheet.yScale = 1.3f;
+                scale = 1.3f;
             } else if (Math.abs(thing) < 15) {
-                mainsheet.yScale = 1.5f;
+                scale = 1.5f;
             } else if (Math.abs(thing) < 20) {
-                mainsheet.yScale = 1.7f;
+                scale = 1.7f;
             } else if (Math.abs(thing) < 25) {
-                mainsheet.yScale = 1.9f;
+                scale = 1.9f;
             } else if (Math.abs(thing) < 30) {
-                mainsheet.yScale = 2.2f;
+                scale = 2.2f;
             } else if (Math.abs(thing) < 32.5) {
-                mainsheet.yScale = 2.5f;
+                scale = 2.5f;
             } else if (Math.abs(thing) < 35) {
-                mainsheet.yScale = 2.7f;
+                scale = 2.7f;
             } else if (Math.abs(thing) < 37.5) {
-                mainsheet.yScale = 2.8f;
+                scale = 2.8f;
             } else if (Math.abs(thing) < 40) {
-                mainsheet.yScale = 3.0f;
+                scale = 3.0f;
             } else if (Math.abs(thing) < 41) {
-                mainsheet.yScale = 3.15f;
+                scale = 3.15f;
             } else if (Math.abs(thing) < 42) {
-                mainsheet.yScale = 3.25f;
+                scale = 3.25f;
             } else if (Math.abs(thing) < 43) {
-                mainsheet.yScale = 3.25f;
+                scale = 3.25f;
             } else if (Math.abs(thing) < 44) {
-                mainsheet.yScale = 3.3f;
+                scale = 3.3f;
             } else if (Math.abs(thing) < 50) {
-                mainsheet.yScale = 3.35f;
+                scale = 3.35f;
             }
+            mainsheet.yScale = Mth.lerp(pPartialTicks, mainsheet.yScale, scale);
             //sheet.yScale = ((float)Mth.clamp(Math.abs(thing), 15, 45)/45f)*3.85f;
-            mainsheet.x = (float) Math.toDegrees(boomRotation) / 3.53f;
-            traveller.x = (float) Math.toDegrees(boomRotation) / 3.8f - 12f;
-            connector.xScale = (float) (1 + (-Math.toDegrees(boomRotation) / 45) * 0.5);
+            mainsheet.x = Mth.rotLerp(pPartialTicks, mainsheet.x, (float) Math.toDegrees(boomRotation) / 3.53f);
+            traveller.x = Mth.rotLerp(pPartialTicks, traveller.x, (float) Math.toDegrees(boomRotation) / 3.8f - 12f);
+            connector.xScale = Mth.lerp(pPartialTicks, connector.xScale, (float) (1 + (-Math.toDegrees(boomRotation) / 45) * 0.5));
 
             int spiralIndex = Mth.clamp(12 - (int) pBoat.getMainsheetLength() / 4, 2, 11);
             for (int i = 2; i <= 11; i++) {
