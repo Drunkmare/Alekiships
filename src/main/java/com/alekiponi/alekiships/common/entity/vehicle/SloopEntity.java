@@ -49,7 +49,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
     public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
-    public final int NO_INPUT_THRESHOLD = 20 * 5;
+    public final int NO_INPUT_THRESHOLD = 20 * 10;
 
     float boom_rotation;
     float mainsheet_length;
@@ -450,15 +450,21 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     @Override
     protected void tickControlBoat() {
         ticks_no_input++;
-        if (getPilotCompartment() != null && (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
-            boolean inputUp = this.getPilotCompartment().getInputUp();
-            boolean inputDown = this.getPilotCompartment().getInputDown();
-            boolean inputLeft = this.getPilotCompartment().getInputLeft();
-            boolean inputRight = this.getPilotCompartment().getInputRight();
-
+        boolean inputUp = false;
+        boolean inputDown = false;
+        boolean inputLeft = false;
+        boolean inputRight = false;
+        if (getPilotCompartment() != null) {
+            inputUp = this.getPilotCompartment().getInputUp();
+            inputDown = this.getPilotCompartment().getInputDown();
+            inputLeft = this.getPilotCompartment().getInputLeft();
+            inputRight = this.getPilotCompartment().getInputRight();
             if (inputDown || inputUp || inputLeft || inputRight) {
                 ticks_no_input = 0;
             }
+        }
+
+        if (getPilotCompartment() != null && (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
 
             float rudder = this.getRudderRotation();
             if (inputLeft) {
