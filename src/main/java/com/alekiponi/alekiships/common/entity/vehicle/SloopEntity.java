@@ -49,6 +49,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
     public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
+    public final int NO_INPUT_THRESHOLD = 20 * 5;
+
+    float boom_rotation;
+    float mainsheet_length;
+    float rudder_rotation;
+    int ticks_no_input;
+
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
 
@@ -88,6 +95,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
                        final BoatMaterial boatMaterial) {
         super(entityType, level, boatMaterial);
+        boom_rotation = 0;
+        mainsheet_length = 0;
+        rudder_rotation = 0;
     }
 
     @Override
@@ -439,11 +449,16 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     @Override
     protected void tickControlBoat() {
-        if (getPilotCompartment() != null || (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
+        ticks_no_input++;
+        if (getPilotCompartment() != null && (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
             boolean inputUp = this.getPilotCompartment().getInputUp();
             boolean inputDown = this.getPilotCompartment().getInputDown();
             boolean inputLeft = this.getPilotCompartment().getInputLeft();
             boolean inputRight = this.getPilotCompartment().getInputRight();
+
+            if (inputDown || inputUp || inputLeft || inputRight) {
+                ticks_no_input = 0;
+            }
 
             float rudder = this.getRudderRotation();
             if (inputLeft) {
@@ -515,6 +530,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             return;
         }
         IHaveMultipleCleats.super.tickCleatInput();
+    }
+
+    @Override
+    public boolean isControlledByLocalInstance() {
+        return super.isControlledByLocalInstance() && ticks_no_input <= NO_INPUT_THRESHOLD;
     }
 
     @Override
@@ -737,19 +757,39 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
     public float getMainBoomRotation() {
+        if (this.isControlledByLocalInstance()) {
+            return boom_rotation;
+        }
         return Mth.wrapDegrees(this.entityData.get(DATA_ID_MAIN_BOOM_ROTATION));
     }
 
     public void setMainBoomRotation(float rotation) {
+        boom_rotation = Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength());
         this.entityData.set(DATA_ID_MAIN_BOOM_ROTATION, Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength()));
     }
 
     public float getMainsheetLength() {
+        if (this.isControlledByLocalInstance()) {
+            return mainsheet_length;
+        }
         return Mth.wrapDegrees(this.entityData.get(DATA_ID_MAINSHEET_LENGTH));
     }
 
     public void setMainsheetLength(float length) {
+        mainsheet_length = Mth.clamp(length, 0, 45);
         this.entityData.set(DATA_ID_MAINSHEET_LENGTH, Mth.clamp(length, 0, 45));
+    }
+
+    public void setRudderRotation(float rotation) {
+        rudder_rotation = Mth.clamp(rotation, -45, 45);
+        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
+    }
+
+    public float getRudderRotation() {
+        if (this.isControlledByLocalInstance()) {
+            return rudder_rotation;
+        }
+        return this.entityData.get(DATA_ID_RUDDER_ROTATION);
     }
 
     public void setMainsailActive(boolean mainsail) {
@@ -776,13 +816,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return this.entityData.get(DATA_ID_TICKS_NO_RIDERS);
     }
 
-    public void setRudderRotation(float rotation) {
-        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
-    }
 
-    public float getRudderRotation() {
-        return this.entityData.get(DATA_ID_RUDDER_ROTATION);
-    }
 
     /**
      * @return The color of the mainsail
