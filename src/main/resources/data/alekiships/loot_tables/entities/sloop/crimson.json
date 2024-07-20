@@ -68,7 +68,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:stripped_crimson_log",
+          "name": "minecraft:stripped_crimson_hyphae",
           "functions": [
             {
               "function": "minecraft:set_count",

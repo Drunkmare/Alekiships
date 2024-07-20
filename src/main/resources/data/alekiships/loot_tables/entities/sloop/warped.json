@@ -68,7 +68,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:stripped_warped_log",
+          "name": "minecraft:stripped_warped_hyphae",
           "functions": [
             {
               "function": "minecraft:set_count",

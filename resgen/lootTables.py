@@ -20,6 +20,12 @@ def boat_drops(rm: ResourceManager):
         if wood == "bamboo":
             log = "minecraft:stripped_bamboo_block"
 
+        if wood == "crimson":
+            log = "minecraft:stripped_crimson_hyphae"
+
+        if wood == "warped":
+            log = "minecraft:stripped_warped_hyphae"
+
         # TOTO Drop all the resources used to construct a rowboat?
         rm.entity_loot(f"rowboat/{wood}", {"name": "alekiships:oarlock",
                                            "functions": loot_tables.set_count(0, 2)},
@@ -111,6 +117,12 @@ def structures(rm: ResourceManager):
                  "functions": loot_tables.set_count(0, 5)},
                 {"name": "minecraft:scaffolding",
                  "functions": loot_tables.set_count(0, 5)},
+                {"name": "alekiships:oar",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": "alekiships:oar",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": "#forge:dyes",
+                 "functions": loot_tables.set_count(0, 2)},
                 path="structures",
                 loot_type="chest"
                 )
@@ -145,6 +157,38 @@ def structures(rm: ResourceManager):
                  "functions": loot_tables.set_count(0, 5)},
                 {"name": "minecraft:scaffolding",
                  "functions": loot_tables.set_count(0, 5)},
+                {"name": "#forge:dyes",
+                 "functions": loot_tables.set_count(0, 2)},
+                {"name": "#forge:dyes",
+                 "functions": loot_tables.set_count(0, 2)},
+                {"name": "#forge:dyes",
+                 "functions": loot_tables.set_count(0, 2)},
+                path="structures",
+                loot_type="chest"
+                )
+        rm.loot(f"sloop_hut/{wood}",
+                {"name": "alekiships:cleat",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": "alekiships:cleat",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": "alekiships:anchor",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": "minecraft:scaffolding",
+                 "functions": loot_tables.set_count(0, 5)},
+                {"name": "minecraft:scaffolding",
+                 "functions": loot_tables.set_count(0, 5)},
+                {"name": "minecraft:bread",
+                 "functions": loot_tables.set_count(0, 3)},
+                {"name": "minecraft:bread",
+                 "functions": loot_tables.set_count(0, 5)},
+                {"name": "alekiships:cannonball",
+                 "functions": loot_tables.set_count(0, 3)},
+                {"name": "alekiships:cannonball",
+                 "functions": loot_tables.set_count(0, 3)},
+                {"name": "minecraft:flint_and_steel",
+                 "functions": loot_tables.set_count(0, 1)},
+                {"name": f"minecraft:{wood}_planks",
+                 "functions": loot_tables.set_count(0, 8)},
                 path="structures",
                 loot_type="chest"
                 )
