@@ -439,7 +439,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     @Override
     protected void tickControlBoat() {
-        if (getPilotCompartment() != null) {
+        if (getPilotCompartment() != null || (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player))) {
             boolean inputUp = this.getPilotCompartment().getInputUp();
             boolean inputDown = this.getPilotCompartment().getInputDown();
             boolean inputLeft = this.getPilotCompartment().getInputLeft();
@@ -467,20 +467,18 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                 }
             }
 
-            if (this.isControlledByLocalInstance() || !(this.getControllingPassenger() instanceof Player)) {
-                if (!inputRight && !inputLeft) {
-                    if (rudder > 0) {
-                        rudder -= 0.3f;
-                    }
-                    if (rudder < 0) {
-                        rudder += 0.3f;
-                    }
-                    if (Math.abs(rudder) < 1) {
-                        rudder = 0;
-                    }
+            if (!inputRight && !inputLeft) {
+                if (rudder > 0) {
+                    rudder -= 0.3f;
                 }
-                this.setRudderRotation(rudder);
+                if (rudder < 0) {
+                    rudder += 0.3f;
+                }
+                if (Math.abs(rudder) < 1) {
+                    rudder = 0;
+                }
             }
+            this.setRudderRotation(rudder);
 
             this.tickSailBoat();
 
