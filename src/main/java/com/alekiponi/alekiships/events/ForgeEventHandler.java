@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.events;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
@@ -41,6 +42,15 @@ public class ForgeEventHandler {
 
         if (player.level().getServer().isSingleplayer() && player.level().getServer().isSingleplayerOwner(player.getGameProfile())) {
             // do singleplayer behavior
+            if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
+                AbstractVehicle vehicle = compartment.getTrueVehicle();
+                if (vehicle != null) {
+                    player.setYBodyRot(vehicle.getYRot());
+                    player.setYHeadRot(vehicle.getYRot());
+                    player.setYRot(vehicle.getYRot());
+                }
+            }
+
         } else if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
             // do multiplayer behavior
             player.stopRiding();
