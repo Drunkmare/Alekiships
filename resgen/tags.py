@@ -42,7 +42,7 @@ def generate(manager: ResourceManager):
 
     manager.item_tag("icebreaker_upgrades", "minecraft:iron_block")
 
-    manager.item_tag("shulker_boxes", "minecraft:oak_planks",
+    manager.item_tag("shulker_boxes", "minecraft:shulker_box",
                      *[f"minecraft:{color}_shulker_box" for color in constants.COLORS])
 
     manager.tag("unfinished_sloop", "worldgen/structure", "alekiships:unfinished_sloop_birch",
