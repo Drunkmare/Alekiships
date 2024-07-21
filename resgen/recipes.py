@@ -3,7 +3,7 @@ from mcresources import ResourceManager
 
 def generate(rm: ResourceManager):
     rm.crafting_shaped("crafting/watercraft_frame_angled", ["  S", " SS", "SS "], {"S": "minecraft:scaffolding"},
-                       (5, "alekiships:watercraft_frame_flat")).with_advancement("alekiships:watercraft_frame_angled")
+                       (5, "alekiships:watercraft_frame_angled")).with_advancement("alekiships:watercraft_frame_angled")
 
     rm.crafting_shaped("crafting/watercraft_frame_flat", ["SSS"], {"S": "minecraft:scaffolding"},
                        (3, "alekiships:watercraft_frame_flat")).with_advancement("alekiships:watercraft_frame_flat")
