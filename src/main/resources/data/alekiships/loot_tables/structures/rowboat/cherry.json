@@ -237,26 +237,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "loot_pool",
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:tag",
-          "name": "forge:dyes",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 0,
-                "max": 2,
-                "type": "minecraft:uniform"
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }

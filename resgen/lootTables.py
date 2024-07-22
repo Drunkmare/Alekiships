@@ -121,8 +121,6 @@ def structures(rm: ResourceManager):
                  "functions": loot_tables.set_count(0, 1)},
                 {"name": "alekiships:oar",
                  "functions": loot_tables.set_count(0, 1)},
-                {"name": "#forge:dyes",
-                 "functions": loot_tables.set_count(0, 2)},
                 path="structures",
                 loot_type="chest"
                 )
@@ -157,12 +155,6 @@ def structures(rm: ResourceManager):
                  "functions": loot_tables.set_count(0, 5)},
                 {"name": "minecraft:scaffolding",
                  "functions": loot_tables.set_count(0, 5)},
-                {"name": "#forge:dyes",
-                 "functions": loot_tables.set_count(0, 2)},
-                {"name": "#forge:dyes",
-                 "functions": loot_tables.set_count(0, 2)},
-                {"name": "#forge:dyes",
-                 "functions": loot_tables.set_count(0, 2)},
                 path="structures",
                 loot_type="chest"
                 )

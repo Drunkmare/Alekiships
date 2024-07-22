@@ -32,7 +32,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
 base {
-    archivesName.set("AlekiShips-$minecraftVersion")
+    archivesName.set("alekiNiftyShips-FORGE-$minecraftVersion")
     group = "com.alekiponi" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
     version = modVersion
 }
