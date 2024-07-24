@@ -8,11 +8,8 @@ version="${file.jarVersion}"
 displayName="aleki's Nifty Ships"
 logoFile="icon.png"
 authors="alekiponi"
-credits = "Contributors: alekiponi, Traister101, vexxel"
-description='''
-
-
-'''
+credits = "Contributors: alekiponi, Traister101, vexxel. Translations: PL - Freeziu"
+description = '''A new generation of vanilla-friendly ships. Simulated sailing, placeable containers, walkable decks -- oh, and cannons!'''
 [[dependencies.alekiships]]
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
