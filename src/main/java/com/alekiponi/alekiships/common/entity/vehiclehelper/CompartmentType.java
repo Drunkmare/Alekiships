@@ -46,9 +46,9 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             final boolean canSpawnFarFromPlayer, final ImmutableSet<Block> immuneTo, final EntityDimensions dimensions,
             final int clientTrackingRange, final int updateInterval, final FeatureFlagSet requiredFeatures,
             @Nullable final StackCompartmentFactory<T> stackCompartmentFactory) {
-        //noinspection DataFlowIssue    We entirely replace the vanilla factory
-        super(null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
-                clientTrackingRange, updateInterval, requiredFeatures);
+        //noinspection DataFlowIssue   We entirely replace the vanilla factory
+        super((entityType, level) -> null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo,
+                dimensions, clientTrackingRange, updateInterval, requiredFeatures);
         this.basicCompartmentFactory = basicCompartmentFactory;
         this.stackCompartmentFactory = stackCompartmentFactory;
     }
@@ -63,9 +63,9 @@ public class CompartmentType<T extends AbstractCompartmentEntity> extends Entity
             @Nullable final BiFunction<PlayMessages.SpawnEntity, Level, T> customClientFactory,
             @Nullable final StackCompartmentFactory<T> stackCompartmentFactory) {
         //noinspection DataFlowIssue    customClientFactory can be null, and we entirely replace the vanilla factory
-        super(null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, dimensions,
-                clientTrackingRange, updateInterval, requiredFeatures, velocityUpdateSupplier, trackingRangeSupplier,
-                updateIntervalSupplier, customClientFactory);
+        super((entityType, level) -> null, mobCategory, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo,
+                dimensions, clientTrackingRange, updateInterval, requiredFeatures, velocityUpdateSupplier,
+                trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
         this.basicCompartmentFactory = basicCompartmentFactory;
         this.stackCompartmentFactory = stackCompartmentFactory;
     }
