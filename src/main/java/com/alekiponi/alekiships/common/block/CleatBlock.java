@@ -105,7 +105,7 @@ public class CleatBlock extends AbstractHullSideBlock {
             cleats = newCleats;
         }
 
-        if (level.getBlockState(cleats[0].below().relative(crossAxis, 1).relative(axis, 2)).getBlock() instanceof AngledWoodenBoatFrameBlock) {
+        if (level.getBlockState(cleats[0].below().relative(crossAxis, 1).relative(axis, 2)).getBlock() instanceof AngledBoatFrameBlock) {
             structureDirection = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.POSITIVE);
         } else {
             structureDirection = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.NEGATIVE);
@@ -127,7 +127,7 @@ public class CleatBlock extends AbstractHullSideBlock {
 
         if (boatMaterial == null) return;
 
-        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, boatMaterial) && frameState.getBlock() instanceof AngledWoodenBoatFrameBlock boatFrameBlock) {
+        if (ShipbuildingMultiblocks.validateShipHull(level, origin, structureDirection, ShipbuildingMultiblocks.Multiblock.SLOOP, boatMaterial) && frameState.getBlock() instanceof AngledBoatFrameBlock && frameState.getBlock() instanceof ProcessedBoatFrame boatFrameBlock) {
             // spawn sloop construction entity
             BlockPos pos1 = origin.relative(structureDirection.getOpposite(), 3).relative(structureDirection.getClockWise(), 1);
             BlockPos pos2 = origin.relative(structureDirection.getOpposite(), 5).relative(structureDirection.getClockWise(), 3);
@@ -145,7 +145,7 @@ public class CleatBlock extends AbstractHullSideBlock {
                 // TODO also try to initialize the position in a final context to avoid the silly copy
                 //  (lambda is unhappy when it's mutable)
                 final Vec3 finalSpawnPosition = spawnPosition;
-                boatFrameBlock.boatMaterial.getEntityType(BoatMaterial.BoatType.CONSTRUCTION_SLOOP).ifPresent(entityType -> {
+                boatFrameBlock.getBoatMaterial().getEntityType(BoatMaterial.BoatType.CONSTRUCTION_SLOOP).ifPresent(entityType -> {
                     final AbstractVehicle sloop = entityType.create(level);
                     if (sloop != null) {
                         sloop.setPos(finalSpawnPosition);

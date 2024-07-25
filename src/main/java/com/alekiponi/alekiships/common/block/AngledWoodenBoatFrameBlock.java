@@ -77,10 +77,9 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
                     heldStack.shrink(1);
                 }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
-                processState++;
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
-                if (processState == FULLY_PROCESSED) {
+                if (processState + 1 == FULLY_PROCESSED) {
                     triggerDetection(level, blockPos);
                 }
                 return InteractionResult.SUCCESS;

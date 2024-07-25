@@ -38,7 +38,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
 
     @Override
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
-            final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+                                 final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
 
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 
@@ -68,14 +68,13 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         if (heldStack.is(this.boatMaterial.getDeckItem())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
-                if(!player.getAbilities().instabuild){
+                if (!player.getAbilities().instabuild) {
                     heldStack.shrink(1);
                 }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
-                processState++;
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
-                if (processState == FULLY_PROCESSED) {
+                if (processState + 1 == FULLY_PROCESSED) {
                     triggerDetection(level, blockPos);
                 }
                 return InteractionResult.SUCCESS;
@@ -89,7 +88,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
     @Override
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(final BlockGetter blockGetter, final BlockPos blockPos,
-            final BlockState blockState) {
+                                       final BlockState blockState) {
         // We don't exist as an item so pass it the base version instead
         return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(blockGetter, blockPos, blockState);
     }
