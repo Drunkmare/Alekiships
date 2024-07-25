@@ -11,9 +11,8 @@ import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -23,11 +22,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.Team;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.awt.*;
 import java.util.EnumMap;
 
 import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper.renderTextLine;
@@ -71,7 +68,11 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     @Override
     public void render(final SloopEntity sloopEntity, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        if (LightTexture.block(packedLight) < sloopEntity.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(sloopEntity.getCompartmentBlockLight(), getSkyLightLevel(sloopEntity, sloopEntity.blockPosition()));
+        }
+
         poseStack.pushPose();
         poseStack.translate(0, 0.5, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(180 - entityYaw));

@@ -3,8 +3,8 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -314,6 +314,10 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
 
     public boolean shouldFaceOtherWay() {
         return false;
+    }
+
+    public int getCompartmentBlockLight() {
+        return 0;
     }
 
     /**

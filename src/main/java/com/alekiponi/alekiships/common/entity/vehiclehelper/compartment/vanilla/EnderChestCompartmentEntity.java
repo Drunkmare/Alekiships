@@ -155,6 +155,11 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     }
 
     @Override
+    public int getCompartmentBlockLight() {
+        return 7;
+    }
+
+    @Override
     public MenuProvider getMenuProvider() {
         return new SimpleMenuProvider(this::createMenu, CONTAINER_TITLE);
     }

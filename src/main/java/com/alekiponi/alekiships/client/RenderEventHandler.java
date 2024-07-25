@@ -49,10 +49,10 @@ public final class RenderEventHandler {
                 ShulkerBoxCompartmentRenderer::new);
 
         event.registerEntityRenderer(AlekiShipsEntities.FURNACE_COMPARTMENT_ENTITY.get(),
-                LightableBlockCompartmentRenderer::new);
+                BlockCompartmentRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY.get(),
-                LightableBlockCompartmentRenderer::new);
-        event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), LightableBlockCompartmentRenderer::new);
+                BlockCompartmentRenderer::new);
+        event.registerEntityRenderer(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY.get(), BlockCompartmentRenderer::new);
 
 
         event.registerEntityRenderer(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY.get(),

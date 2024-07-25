@@ -11,6 +11,7 @@ import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -58,7 +59,11 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     @Override
     public void render(final RowboatEntity rowboatEntity, final float entityYaw, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        if (LightTexture.block(packedLight) < rowboatEntity.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(rowboatEntity.getCompartmentBlockLight(), getSkyLightLevel(rowboatEntity, rowboatEntity.blockPosition()));
+        }
+
         poseStack.pushPose();
         poseStack.translate(0, 0.4375D, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(180 - entityYaw));

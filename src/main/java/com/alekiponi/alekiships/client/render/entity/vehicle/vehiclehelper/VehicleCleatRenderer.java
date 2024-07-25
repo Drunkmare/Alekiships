@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -29,7 +30,12 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
     @Override
     public void render(final CleatEntity cleat, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        AbstractVehicle vehicle = cleat.getTrueVehicle();
+        if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(cleat, cleat.blockPosition()));
+        }
+
         final Entity entity = cleat.getLeashHolder();
         if (entity == null) return;
 
@@ -43,7 +49,7 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
         }
 
 
-        if(cleat.getRootVehicle() instanceof AbstractVehicle vehicle){
+        if (vehicle != null) {
             poseStack.pushPose();
             poseStack.translate(0, 1.5f, 0);
             poseStack.mulPose(Axis.ZP.rotationDegrees(180));

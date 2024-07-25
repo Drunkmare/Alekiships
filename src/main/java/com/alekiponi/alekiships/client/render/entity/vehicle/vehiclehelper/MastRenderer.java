@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.MastEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -8,6 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
@@ -45,7 +47,12 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
 
     @Override
     public void render(final MastEntity mast, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        AbstractVehicle vehicle = mast.getTrueVehicle();
+        if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(mast, mast.blockPosition()));
+        }
+
         if (!(mast.getTrueVehicle() instanceof AbstractAlekiBoatEntity)) return;
 
         if(!(mast.getBanner().getItem() instanceof BannerItem)) return;

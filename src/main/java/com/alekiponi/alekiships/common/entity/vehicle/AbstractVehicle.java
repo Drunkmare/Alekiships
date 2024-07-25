@@ -3,15 +3,15 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IAllowFallDamage;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ColliderEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundFlagVehicleForUpdatePacket;
-import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
-import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.BlockUtil;
@@ -26,10 +26,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +43,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -84,6 +81,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     protected double waterLevel;
     protected double lavaLevel;
     protected float landFriction;
+    protected int blockLightLevel;
+
     @Nullable
     protected MediumStatus status;
     @Nullable
@@ -151,6 +150,14 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         if (everyNthTickUnique(40)) {
             checkIfNeedsPassengerUpdate();
         }
+        if (everyNthTickUnique(2)) {
+            int light = 0;
+            for (AbstractCompartmentEntity compartment : this.getCompartments()) {
+                light = Math.max(compartment.getCompartmentBlockLight(), light);
+            }
+            blockLightLevel = Math.max(0, light - 1);
+        }
+
 
 
         super.tick();
@@ -1044,6 +1051,10 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
             }
         }*/
         return originalCollision;
+    }
+
+    public int getCompartmentBlockLight() {
+        return blockLightLevel;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -44,7 +46,14 @@ public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartm
 
     @Override
     protected void renderCompartmentContents(final CompartmentEntity compartmentEntity, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                                             final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        AbstractVehicle vehicle = compartmentEntity.getTrueVehicle();
+        if (LightTexture.block(packedLight) < compartmentEntity.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+        }
+        if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+        }
 
         float openAngle = compartmentEntity.getOpenNess(partialTicks);
         openAngle = 1 - openAngle;

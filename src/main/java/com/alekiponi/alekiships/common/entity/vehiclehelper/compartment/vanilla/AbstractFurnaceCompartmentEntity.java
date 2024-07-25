@@ -47,6 +47,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
@@ -416,6 +417,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     public boolean isLit() {
         return this.litTime > 0;
+    }
+
+    @Override
+    public int getCompartmentBlockLight() {
+        return getDisplayBlockState().getValue(BlockStateProperties.LIT) ? 13 : 0;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -22,7 +24,12 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
     @Override
     public void render(final CompartmentType compartmentEntity, final float entityYaw, final float partialTicks,
-            final PoseStack poseStack, final MultiBufferSource bufferSource, final int packedLight) {
+                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+        AbstractVehicle vehicle = compartmentEntity.getTrueVehicle();
+        if (vehicle != null) {
+            packedLight = Math.max(packedLight, LightTexture.pack(compartmentEntity.getCompartmentBlockLight(), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition())));
+        }
+
         super.render(compartmentEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
 
         if (compartmentEntity.tickCount < 2) {
