@@ -14,7 +14,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 0,
-                "max": 8,
+                "max": 32,
                 "type": "minecraft:uniform"
               }
             }
@@ -34,7 +34,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 0,
-                "max": 8,
+                "max": 32,
                 "type": "minecraft:uniform"
               }
             }
@@ -54,7 +54,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 0,
-                "max": 8,
+                "max": 32,
                 "type": "minecraft:uniform"
               }
             }
@@ -289,6 +289,38 @@
                 "max": 5,
                 "type": "minecraft:uniform"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "loot_pool",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:slime",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "loot_pool",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lead",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 1
             }
           ]
         }
