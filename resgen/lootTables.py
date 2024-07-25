@@ -157,7 +157,7 @@ def structures(rm: ResourceManager):
                  "functions": loot_tables.set_count(0, 5)},
                 {"name": "minecraft:scaffolding",
                  "functions": loot_tables.set_count(0, 5)},
-                {"name": "minecraft:slime",
+                {"name": "minecraft:slime_ball",
                  "functions": loot_tables.set_count(8)},
                 {"name": "minecraft:lead",
                  "functions": loot_tables.set_count(1)},

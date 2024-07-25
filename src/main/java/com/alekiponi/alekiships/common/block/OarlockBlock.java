@@ -77,7 +77,6 @@ public class OarlockBlock extends AbstractHullSideBlock {
     public void validateMultiblock(Level level, BlockPos thispos, BlockState blockState) {
         BlockState frameState = level.getBlockState(thispos.below());
         if (validateOarlocks(level, thispos, blockState) && validateFrames(level, thispos, blockState)) {
-            //destroyOarlocks(level, thispos, blockState);
             Direction direction = blockState.getValue(FACING);
             Direction.Axis axis = direction.getClockWise().getAxis();
             if (frameState.getBlock() instanceof AngledBoatFrameBlock && frameState instanceof ProcessedBoatFrame boatFrameBlock) {
