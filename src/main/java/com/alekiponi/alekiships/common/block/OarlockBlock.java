@@ -79,7 +79,7 @@ public class OarlockBlock extends AbstractHullSideBlock {
         if (validateOarlocks(level, thispos, blockState) && validateFrames(level, thispos, blockState)) {
             Direction direction = blockState.getValue(FACING);
             Direction.Axis axis = direction.getClockWise().getAxis();
-            if (frameState.getBlock() instanceof AngledBoatFrameBlock && frameState instanceof ProcessedBoatFrame boatFrameBlock) {
+            if (frameState.getBlock() instanceof AngledBoatFrameBlock && frameState.getBlock() instanceof ProcessedBoatFrame boatFrameBlock) {
                 boatFrameBlock.getBoatMaterial().getEntityType(BoatMaterial.BoatType.ROWBOAT).ifPresent(entityType -> {
                     final AbstractVehicle rowboat = entityType.create(level);
                     if (rowboat != null) {
