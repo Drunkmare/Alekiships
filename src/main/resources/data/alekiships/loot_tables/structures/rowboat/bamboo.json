@@ -244,7 +244,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "alekiships:lead",
+          "name": "minecraft:lead",
           "functions": [
             {
               "function": "minecraft:set_count",
