@@ -21,6 +21,9 @@ public final class AlekiShipsBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
             AlekiShips.MOD_ID);
 
+    static final SoundType BOAT_FRAME_SOUND =
+            new SoundType(SoundType.SCAFFOLDING.volume, SoundType.SCAFFOLDING.pitch, SoundType.SCAFFOLDING.getBreakSound(), SoundType.SCAFFOLDING.getStepSound(), SoundType.WOOD.getPlaceSound(), SoundType.SCAFFOLDING.getHitSound(), SoundType.SCAFFOLDING.getFallSound());
+
     public static final RegistryObject<AngledBoatFrameBlock> BOAT_FRAME_ANGLED = registerBlockWithItem(
             "watercraft_frame_angled", () -> new AngledBoatFrameBlock(
                     BlockBehaviour.Properties.copy(Blocks.BAMBOO_PLANKS).instabreak().noOcclusion()
@@ -30,7 +33,7 @@ public final class AlekiShipsBlocks {
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/angled/" + vanillaWood.getSerializedName(),
                     () -> new AngledWoodenBoatFrameBlock(vanillaWood,
-                            BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get()))));
+                            BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get()).sound(BOAT_FRAME_SOUND))));
 
     public static final RegistryObject<FlatBoatFrameBlock> BOAT_FRAME_FLAT = registerBlockWithItem(
             "watercraft_frame_flat",
@@ -40,7 +43,7 @@ public final class AlekiShipsBlocks {
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/flat/" + vanillaWood.getSerializedName(),
                     () -> new FlatWoodenBoatFrameBlock(vanillaWood,
-                            BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()))));
+                            BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()).sound(BOAT_FRAME_SOUND))));
 
     public static final RegistryObject<OarlockBlock> OARLOCK = registerBlockWithItem("oarlock",
             () -> new OarlockBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
