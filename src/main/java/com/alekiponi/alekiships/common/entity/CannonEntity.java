@@ -174,7 +174,7 @@ public class CannonEntity extends Entity {
      * @return The result of the interaction. If {@link InteractionResult#consumesAction()} is
      * true no further processing is attempted
      */
-    private InteractionResult insertItem(final ItemStack itemStack) {
+    protected InteractionResult insertItem(final ItemStack itemStack) {
         if (itemStack.is(AlekiShipsItems.CANNONBALL.get())) {
             if (this.getCannonball().isEmpty()) {
                 this.setCannonball(itemStack.split(1));
