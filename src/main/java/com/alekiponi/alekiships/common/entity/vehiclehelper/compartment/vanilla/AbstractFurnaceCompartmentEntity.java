@@ -67,7 +67,7 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * {@link BlastFurnaceCompartmentMenu} and {@link SmokerCompartmentMenu}. If you extend or use the vanilla menu
  * counterparts you'll need to use or extend our menus as well
  */
-public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
+public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity.ContainerMenuCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
     public static final int SLOT_COUNT = 3;
     public static final String BURN_TIME_KEY = "BurnTime";
     public static final String COOK_TIME_KEY = "CookTime";

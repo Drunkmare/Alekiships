@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 
 import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.RIDE_BARREL;
 
-public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEntity implements BlockCompartment {
+public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEntity.RandomizableContainerMenuCompartmentEntity implements BlockCompartment {
     public static final int SLOT_COUNT = 27;
     private static final EntityDataAccessor<BlockState> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(
             BarrelCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);

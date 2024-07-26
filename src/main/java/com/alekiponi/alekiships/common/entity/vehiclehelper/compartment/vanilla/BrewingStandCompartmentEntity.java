@@ -40,7 +40,7 @@ import java.util.Arrays;
 
 import static net.minecraft.world.level.block.entity.BrewingStandBlockEntity.*;
 
-public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity implements WorldlyContainer, BlockCompartment {
+public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.ContainerMenuCompartmentEntity implements WorldlyContainer, BlockCompartment {
     public static final int SLOT_COUNT = 5;
     public static final String FUEL_KEY = "Fuel";
     public static final String BREW_TIME_KEY = "BrewTime";
