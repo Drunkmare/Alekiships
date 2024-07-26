@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.item;
 
-import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.CannonEntity;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,6 +17,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -49,7 +50,10 @@ public class CannonItem extends Item {
             }
 
             if (hitresult.getType() == HitResult.Type.BLOCK) {
-                CannonEntity cannon = AlekiShipsEntities.CANNON_ENTITY.get().create(pLevel);
+                CannonEntity cannon = getCannon(pLevel);
+                if (cannon == null) {
+                    return InteractionResultHolder.fail(itemstack);
+                }
                 cannon.moveTo(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
                 cannon.setYRot(pPlayer.getYRot());
                 if (!pLevel.noCollision(cannon, cannon.getBoundingBox())) {
@@ -70,5 +74,10 @@ public class CannonItem extends Item {
                 return InteractionResultHolder.pass(itemstack);
             }
         }
+    }
+
+    @Nullable
+    protected CannonEntity getCannon(Level level) {
+        return AlekiShipsEntities.CANNON_ENTITY.get().create(level);
     }
 }
