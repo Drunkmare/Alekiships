@@ -883,7 +883,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.setIceBreaker(pCompound.getBoolean("icebreaker"));
 
         if (pCompound.contains("jibsailDye", Tag.TAG_BYTE)) {
-            this.setMainsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
+            this.setJibsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
         }
 
         if (pCompound.contains("mainsailDye", Tag.TAG_BYTE)) {
