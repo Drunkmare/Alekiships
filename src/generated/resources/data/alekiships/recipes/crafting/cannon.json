@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "L": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "R": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "LL ",
+    "R R"
+  ],
+  "result": {
+    "item": "alekiships:cannon"
+  },
+  "show_notification": true
+}

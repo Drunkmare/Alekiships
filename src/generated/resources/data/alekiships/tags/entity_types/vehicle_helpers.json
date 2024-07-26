@@ -1,0 +1,12 @@
+{
+  "values": [
+    "alekiships:vehicle_part",
+    "alekiships:vehicle_cleat",
+    "alekiships:vehicle_collider",
+    "alekiships:vehicle_switch_sail",
+    "alekiships:vehicle_anchor",
+    "alekiships:vehicle_construction",
+    "alekiships:vehicle_switch_windlass",
+    "alekiships:vehicle_mast"
+  ]
+}

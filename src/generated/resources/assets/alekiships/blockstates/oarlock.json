@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "alekiships:block/oarlock",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "alekiships:block/oarlock"
+    },
+    "facing=south": {
+      "model": "alekiships:block/oarlock",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "alekiships:block/oarlock",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

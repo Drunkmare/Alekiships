@@ -1,0 +1,20 @@
+{
+  "values": [
+    "alekiships:cannonball",
+    "#alekiships:sloops",
+    "#alekiships:rowboats",
+    "#alekiships:vehicle_helpers",
+    "#alekiships:compartments",
+    "alekiships:sloop_construction/oak",
+    "alekiships:sloop_construction/spruce",
+    "alekiships:sloop_construction/birch",
+    "alekiships:sloop_construction/acacia",
+    "alekiships:sloop_construction/cherry",
+    "alekiships:sloop_construction/jungle",
+    "alekiships:sloop_construction/dark_oak",
+    "alekiships:sloop_construction/crimson",
+    "alekiships:sloop_construction/warped",
+    "alekiships:sloop_construction/mangrove",
+    "alekiships:sloop_construction/bamboo"
+  ]
+}

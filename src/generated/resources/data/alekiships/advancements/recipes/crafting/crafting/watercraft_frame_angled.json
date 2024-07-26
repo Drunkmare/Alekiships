@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_scaffolding": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:scaffolding"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "alekiships:crafting/watercraft_frame_angled"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_scaffolding",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "alekiships:crafting/watercraft_frame_angled"
+    ]
+  },
+  "sends_telemetry_event": false
+}

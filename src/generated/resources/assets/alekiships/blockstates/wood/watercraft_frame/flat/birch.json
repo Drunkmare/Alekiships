@@ -1,0 +1,41 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/flat/frame"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/flat/birch/first"
+      },
+      "when": {
+        "frame_processed": "0|1|2|3"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/flat/birch/second"
+      },
+      "when": {
+        "frame_processed": "1|2|3"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/flat/birch/third"
+      },
+      "when": {
+        "frame_processed": "2|3"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/flat/birch/fourth"
+      },
+      "when": {
+        "frame_processed": "3"
+      }
+    }
+  ]
+}

@@ -1,7 +1,0 @@
-{
-  "__comment__": "This file was automatically created by mcresources",
-  "parent": "alekiships:block/watercraft_frame/flat/template/third",
-  "textures": {
-    "plank": "minecraft:block/warped_planks"
-  }
-}
