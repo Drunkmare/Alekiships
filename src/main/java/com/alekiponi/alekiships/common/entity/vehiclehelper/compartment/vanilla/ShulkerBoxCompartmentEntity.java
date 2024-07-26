@@ -82,6 +82,11 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Nullable
     private DyeColor color;
 
+    @Override
+    public double getBuoyancy() {
+        return this.tickCount % 21 > 10 ? -0.01 : 0.01;
+    }
+
     public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);

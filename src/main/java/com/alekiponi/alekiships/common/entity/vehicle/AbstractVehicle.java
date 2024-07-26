@@ -338,7 +338,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         if (this instanceof AbstractAlekiBoatEntity && (this.status == MediumStatus.UNDER_WATER || this.status == MediumStatus.UNDER_FLOWING_WATER)) {
             return;
         }
-        if (this.getDeltaMovement().length() > 0.01) {
+        if (this.getDeltaMovement().length() > 0) {
             List<Entity> entitiesToTakeWith = this.collectEntitesToTakeWith();
 
             if (!entitiesToTakeWith.isEmpty()) {

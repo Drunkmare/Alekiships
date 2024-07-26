@@ -159,6 +159,10 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         return 7;
     }
 
+    public double getBuoyancy() {
+        return -0.02;
+    }
+
     @Override
     public MenuProvider getMenuProvider() {
         return new SimpleMenuProvider(this::createMenu, CONTAINER_TITLE);

@@ -420,6 +420,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
+    public double getBuoyancy() {
+        return -0.03;
+    }
+
+    @Override
     public int getCompartmentBlockLight() {
         return getDisplayBlockState().getValue(BlockStateProperties.LIT) ? 13 : 0;
     }
