@@ -183,6 +183,9 @@ dependencies {
     // Only use Jade at runtime
     runtimeOnly fg.deobf("curse.maven:jade-324717:$jadeFileID")
 
+    //runtimeOnly fg.deobf("curse.maven:woodworks-543610:5228779")
+    //runtimeOnly fg.deobf("curse.maven:blueprint-382216:5292242")
+
     // JEI
     compileOnly fg.deobf("mezz.jei:jei-$minecraftVersion-forge-api:$jeiVersion")
     compileOnly fg.deobf("mezz.jei:jei-$minecraftVersion-common-api:$jeiVersion")
