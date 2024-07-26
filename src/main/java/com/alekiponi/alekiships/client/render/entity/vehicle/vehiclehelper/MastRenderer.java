@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -53,11 +54,9 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
             packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(mast, mast.blockPosition()));
         }
 
-        if (!(mast.getTrueVehicle() instanceof AbstractAlekiBoatEntity)) return;
+        if (!(mast.getTrueVehicle() instanceof AbstractAlekiBoatEntity ship)) return;
 
         if(!(mast.getBanner().getItem() instanceof BannerItem)) return;
-
-        AbstractAlekiBoatEntity ship = (AbstractAlekiBoatEntity) mast.getTrueVehicle();
 
         final float rotation = ship.getWindLocalRotation() + ship.getYRot();
         final float height = mast.getBbHeight()+0.4175f;
@@ -76,7 +75,9 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
         this.bar.render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(180 + rotation));
+        // render banner itself
+        float windLocalAngle = Mth.wrapDegrees(ship.getWindLocalRotation() - ship.getYRot());
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
         poseStack.mulPose(Axis.ZP.rotationDegrees(90));
 
         poseStack.translate(0,0,-0.05f);
