@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.data;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.data.providers.AlekiShipsLootTableProvider;
 import com.alekiponi.alekiships.data.providers.tags.AlekiShipsBlockTagsProvider;
+import com.alekiponi.alekiships.data.providers.tags.AlekiShipsItemTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -23,8 +24,12 @@ public final class DataGenerators {
         final CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
+        final AlekiShipsBlockTagsProvider blockTags = new AlekiShipsBlockTagsProvider(packOutput, lookupProvider,
+                existingFileHelper);
+        generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(),
-                new AlekiShipsBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
+                new AlekiShipsItemTagsProvider(packOutput, lookupProvider, blockTags.contentsGetter(),
+                        existingFileHelper));
         generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput));
     }
 }
