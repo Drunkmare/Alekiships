@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -40,6 +41,29 @@ public final class AlekiShipsTags {
 
         public static TagKey<Item> create(final String id) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(AlekiShips.MOD_ID, id));
+        }
+    }
+
+    public static final class Entities {
+        /**
+         * All sloops
+         */
+        public static final TagKey<EntityType<?>> SLOOPS = create("sloops");
+        /**
+         * All rowboats
+         */
+        public static final TagKey<EntityType<?>> ROWBOATS = create("rowboats");
+        /**
+         * Vehicle helpers such as our collision entities
+         */
+        public static final TagKey<EntityType<?>> VEHICLE_HELPERS = create("vehicle_helpers");
+        /**
+         * All compartments
+         */
+        public static final TagKey<EntityType<?>> COMPARTMENTS = create("compartments");
+
+        public static TagKey<EntityType<?>> create(final String id) {
+            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(AlekiShips.MOD_ID, id));
         }
     }
 }
