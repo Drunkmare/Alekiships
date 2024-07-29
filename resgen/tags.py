@@ -12,7 +12,7 @@ def generate(manager: ResourceManager):
         manager.entity_tag("rowboats", f"rowboat/{wood}")
 
     # Vehicle helpers such as our collision entities
-    manager.entity_tag("vehicle_helpers", "vehicle_cleat", "vehicle_part_boat", "vehicle_switch_windlass",
+    manager.entity_tag("vehicle_helpers", "vehicle_cleat", "vehicle_part", "vehicle_switch_windlass",
                        "vehicle_switch_sail", "vehicle_collider", "vehicle_mast")
 
     # Compartment Entities
@@ -58,7 +58,7 @@ def generate(manager: ResourceManager):
     # Vanilla mining tags
     manager.block_tag("minecraft:mineable/axe", "watercraft_frame_angled", "watercraft_frame_flat",
                       "#alekiships:wooden_watercraft_frames")
-    manager.block_tag("minecraft:mineable/pickaxe", "oarlock")
+    manager.block_tag("minecraft:mineable/pickaxe", "oarlock", "cleat")
 
     # Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
     manager.entity_tag("carryon:entity_blacklist", "cannonball", "#alekiships:sloops",

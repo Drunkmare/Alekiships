@@ -385,12 +385,17 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(this.getDropItem())) {
+            if (player.getAbilities().instabuild) {
+                this.setDamage(0);
+                return InteractionResult.SUCCESS;
+            }
             if (this.getDamage() > 0.0F) {
                 this.setDamage(this.getDamage() - getDamageRecovery());
                 stack.split(1);
                 player.swing(hand);
                 this.level().playSound(null, this, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         this.level().getRandom().nextFloat() * 0.1F + 0.9F);
+
                 return InteractionResult.SUCCESS;
             }
         }

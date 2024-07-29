@@ -269,8 +269,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild && damageSource.is(DamageTypes.PLAYER_ATTACK);
 
         if (instantKill) {
-            // TODO still drop loot when killed in creative?
-            this.discard();
+            this.setDamage(this.getDamage() + this.getDeathDamageThreshold() / 4);
         }
         if (this.getDamage() > getDamageThreshold()) {
             for (Entity entity : this.getPassengers()) {
