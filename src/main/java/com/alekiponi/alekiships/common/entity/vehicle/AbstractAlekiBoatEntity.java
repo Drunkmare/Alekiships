@@ -288,7 +288,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 this.setDeltaMovement(movement.x, (movement.y + d2 * 0.06153846016296973D) * 0.75D, movement.z);
             }
 
-            if (status == MediumStatus.UNDER_WATER && this.level().getFluidState(this.blockPosition().above(3)).isEmpty()) {
+            if (status == MediumStatus.UNDER_WATER && this.level().getFluidState(this.blockPosition().above(3)).isEmpty() && this.isFunctional()) {
                 this.setDeltaMovement(getDeltaMovement().x, 1 / 20.0, getDeltaMovement().z);
             }
 
