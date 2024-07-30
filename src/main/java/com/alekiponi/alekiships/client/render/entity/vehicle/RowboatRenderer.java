@@ -1,10 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
-import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.resources.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -30,7 +27,6 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
             "textures/entity/watercraft/rowboat/damage_overlay.png");
-    private static final BoatAtlasHolder ROWBOAT_ATLAS = BoatAtlases.getRowboatAtlas();
     protected final RowboatEntityModel rowboatModel = new RowboatEntityModel();
     protected final ResourceLocation rowboatTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
@@ -78,8 +74,8 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
         this.rowboatModel.setupAnim(rowboatEntity, partialTicks, 0, -0.1F, 0, 0);
 
-        final VertexConsumer baseVertexConsumer = ROWBOAT_ATLAS.getSprite(this.getTextureLocation(rowboatEntity))
-                .wrap(bufferSource.getBuffer(this.rowboatModel.renderType(ShipSheets.ROWBOAT_SHEET)));
+        final VertexConsumer baseVertexConsumer = bufferSource.getBuffer(
+                this.rowboatModel.renderType(this.getTextureLocation(rowboatEntity)));
 
         if (rowboatEntity.tickCount < 1) {
             poseStack.popPose();

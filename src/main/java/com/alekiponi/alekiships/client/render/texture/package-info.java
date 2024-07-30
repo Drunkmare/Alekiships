@@ -1,0 +1,7 @@
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault @FieldsAreNonnullByDefault
+package com.alekiponi.alekiships.client.render.texture;
+
+import net.minecraft.FieldsAreNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
+
+import javax.annotation.ParametersAreNonnullByDefault;
