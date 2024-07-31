@@ -42,6 +42,11 @@ public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     }
 
     @Override
+    protected int getBurnDuration(final ItemStack itemStack) {
+        return super.getBurnDuration(itemStack) / 2;
+    }
+
+    @Override
     protected AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory) {
         return new SmokerCompartmentMenu(id, playerInventory, this, this.dataAccess);
     }
