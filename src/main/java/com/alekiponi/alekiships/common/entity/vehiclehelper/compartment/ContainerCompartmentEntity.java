@@ -33,8 +33,9 @@ import javax.annotation.Nullable;
 
 /**
  * This can be thought of as similar to {@link BaseContainerBlockEntity} but for compartments.
+ * Use {@link ContainerMenuCompartmentEntity} for a simple {@link MenuProvider} implementation
  */
-public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements Container, MenuProvider, CompartmentCloneable {
+public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements Container, CompartmentCloneable {
 
     public static final String CUSTOM_NAME_KEY = "CustomName";
     /**
@@ -97,13 +98,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     }
 
     @Override
-    public InteractionResult interact(final Player player, final InteractionHand hand) {
-        player.openMenu(this);
-        this.gameEvent(GameEvent.CONTAINER_OPEN, player);
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
-    }
-
-    @Override
     protected void destroy(final DamageSource damageSource) {
         super.destroy(damageSource);
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
@@ -127,14 +121,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     public boolean stillValid(final Player player) {
         return !this.isRemoved() && this.position().closerThan(player.position(), 8);
     }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(final int id, final Inventory inventory, final Player player) {
-        return this.createMenu(id, inventory);
-    }
-
-    abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
 
     @Override
     public void stopOpen(final Player player) {
@@ -263,5 +249,44 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
      */
     protected IItemHandler createItemHandler() {
         return new InvWrapper(this);
+    }
+
+    /**
+     * Simple {@link MenuProvider} implementation for {@link ContainerCompartmentEntity}
+     */
+    public abstract static class ContainerMenuCompartmentEntity extends ContainerCompartmentEntity implements MenuProvider {
+
+        /**
+         * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int)
+         */
+        protected ContainerMenuCompartmentEntity(
+                final CompartmentType<? extends ContainerMenuCompartmentEntity> compartmentType, final Level level,
+                final int slotCount) {
+            super(compartmentType, level, slotCount);
+        }
+
+        /**
+         * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int, ItemStack)
+         */
+        protected ContainerMenuCompartmentEntity(
+                final CompartmentType<? extends ContainerMenuCompartmentEntity> compartmentType, final Level level,
+                final int slotCount, final ItemStack itemStack) {
+            super(compartmentType, level, slotCount, itemStack);
+        }
+
+        @Override
+        public InteractionResult interact(final Player player, final InteractionHand hand) {
+            player.openMenu(this);
+            this.gameEvent(GameEvent.CONTAINER_OPEN, player);
+            return InteractionResult.sidedSuccess(player.level().isClientSide);
+        }
+
+        @Nullable
+        @Override
+        public AbstractContainerMenu createMenu(final int id, final Inventory inventory, final Player player) {
+            return this.createMenu(id, inventory);
+        }
+
+        abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
     }
 }

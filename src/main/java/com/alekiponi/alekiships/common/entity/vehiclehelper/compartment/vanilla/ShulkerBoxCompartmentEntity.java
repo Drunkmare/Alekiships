@@ -43,7 +43,7 @@ import net.minecraftforge.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmentEntity implements WorldlyContainer, IEntityAdditionalSpawnData {
+public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmentEntity.RandomizableContainerMenuCompartmentEntity implements WorldlyContainer, IEntityAdditionalSpawnData {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;

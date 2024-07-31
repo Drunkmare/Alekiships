@@ -6,6 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +17,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * This can be thought of as similar to {@link RandomizableContainerBlockEntity} but for compartments.
+ * Use {@link RandomizableContainerMenuCompartmentEntity} for a simple {@link MenuProvider} implementation
  */
 public abstract class RandomizableContainerCompartmentEntity extends ContainerCompartmentEntity implements ContainerEntity {
 
@@ -43,15 +48,6 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
             final CompartmentType<? extends RandomizableContainerCompartmentEntity> compartmentType, final Level level,
             final int slotCount, final ItemStack itemStack) {
         super(compartmentType, level, slotCount, itemStack);
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
-        if (this.lootTable != null && player.isSpectator()) return null;
-
-        this.unpackChestVehicleLootTable(playerInventory.player);
-        return this.createMenu(id, playerInventory);
     }
 
     @Override
@@ -146,5 +142,47 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
 
         this.setLootTable(new ResourceLocation(compoundTag.getString(LOOT_TABLE_TAG)));
         this.setLootTableSeed(compoundTag.getLong(LOOT_TABLE_SEED_TAG));
+    }
+
+    /**
+     * Simple {@link MenuProvider} implementation for {@link RandomizableContainerCompartmentEntity}
+     */
+    public abstract static class RandomizableContainerMenuCompartmentEntity extends RandomizableContainerCompartmentEntity implements MenuProvider {
+
+        /**
+         * @see RandomizableContainerCompartmentEntity#RandomizableContainerCompartmentEntity(CompartmentType, Level, int)
+         */
+        protected RandomizableContainerMenuCompartmentEntity(
+                final CompartmentType<? extends RandomizableContainerMenuCompartmentEntity> compartmentType,
+                final Level level, final int slotCount) {
+            super(compartmentType, level, slotCount);
+        }
+
+        /**
+         * @see RandomizableContainerCompartmentEntity#RandomizableContainerCompartmentEntity(CompartmentType, Level, int, ItemStack)
+         */
+        protected RandomizableContainerMenuCompartmentEntity(
+                final CompartmentType<? extends RandomizableContainerMenuCompartmentEntity> compartmentType,
+                final Level level, final int slotCount, final ItemStack itemStack) {
+            super(compartmentType, level, slotCount, itemStack);
+        }
+
+        @Override
+        public InteractionResult interact(final Player player, final InteractionHand hand) {
+            player.openMenu(this);
+            this.gameEvent(GameEvent.CONTAINER_OPEN, player);
+            return InteractionResult.sidedSuccess(player.level().isClientSide);
+        }
+
+        @Nullable
+        @Override
+        public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
+            if (this.getLootTable() != null && player.isSpectator()) return null;
+
+            this.unpackChestVehicleLootTable(playerInventory.player);
+            return this.createMenu(id, playerInventory);
+        }
+
+        abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
     }
 }
