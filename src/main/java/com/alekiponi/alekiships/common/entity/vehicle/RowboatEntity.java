@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IBoatNoAnchor;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
@@ -29,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats {
+public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
@@ -57,6 +58,14 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     @Override
     public float getPassengerSizeLimit() {
         return PASSENGER_SIZE_LIMIT;
+    }
+
+
+    @Override
+    protected void tickWindInput() {
+        if (windShouldAffect()) {
+            super.tickWindInput();
+        }
     }
 
     @Override

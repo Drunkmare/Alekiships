@@ -112,4 +112,5 @@ DEFAULT_LANG = {
     "alekiships.advancements.dye_ship_black.title": "The best pirate I've ever seen",
     "alekiships.advancements.dye_ship_black.description": "Name a black ship The Black Pearl",
 
+    "alekiships.config.server.windAffectsBoatsWithNoAnchor": "Wind Affects Boats With No Anchor"
 }

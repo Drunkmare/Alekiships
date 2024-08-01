@@ -5,7 +5,7 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
-import com.alekiponi.alekiships.events.config.AlekiShipsConfig;
+import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -40,7 +40,7 @@ public class AlekiShips {
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(eventBus);
 
         eventBus.addListener(this::setup);
-        AlekiShipsConfig.init();
+        AlekishipsConfig.init();
         PacketHandler.init();
 
 

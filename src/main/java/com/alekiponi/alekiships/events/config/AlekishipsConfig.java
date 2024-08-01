@@ -7,7 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
 
-public final class AlekiShipsConfig {
+public final class AlekishipsConfig {
 
     @SuppressWarnings("unused")
     public static final ServerConfig SERVER = register(ModConfig.Type.SERVER, ServerConfig::new);
