@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public final class AlekishipsConfig {
 
-    @SuppressWarnings("unused")
+
     public static final ServerConfig SERVER = register(ModConfig.Type.SERVER, ServerConfig::new);
 
     public static void init() {
