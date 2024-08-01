@@ -1,10 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.BoatAtlases;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
-import com.alekiponi.alekiships.client.render.ShipSheets;
-import com.alekiponi.alekiships.client.resources.BoatAtlasHolder;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
@@ -37,7 +34,6 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
     public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = CommonHelper.mapOfKeys(DyeColor.class,
             dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
-    private static final BoatAtlasHolder SLOOP_ATLAS = BoatAtlases.getSloopAtlas();
     protected final ResourceLocation sloopTexture;
     protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
     protected final SloopEntityModel sloopModel = new SloopEntityModel();
@@ -87,8 +83,8 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
         this.sloopModel.setupAnim(sloopEntity, partialTicks, 0, -0.1F, 0, 0);
 
-        final VertexConsumer vertexconsumer = SLOOP_ATLAS.getSprite(this.getTextureLocation(sloopEntity))
-                .wrap(bufferSource.getBuffer(this.sloopModel.renderType(ShipSheets.SLOOP_SHEET)));
+        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
+                this.sloopModel.renderType(this.getTextureLocation(sloopEntity)));
 
 
         if (sloopEntity.tickCount < 1) {
