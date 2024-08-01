@@ -16,7 +16,7 @@ public final class ServerConfig {
         this.windAffectsBoatsWithNoAnchor = builder.apply("windAffectsBoatsWithNoAnchor")
                 .comment(
                         "When true, boats with no anchor will drift in the wind")
-                .define("windAffectsBoatsWithNoAnchor", true);
+                .define("windAffectsBoatsWithNoAnchor", false);
 
     }
 }
