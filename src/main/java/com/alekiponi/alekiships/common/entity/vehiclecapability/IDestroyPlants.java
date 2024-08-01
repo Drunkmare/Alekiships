@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -7,6 +8,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface IDestroyPlants {
     default void tickDestroyPlants() {
+        if (!((AbstractVehicle) this).isFunctional()) {
+            return;
+        }
         final BlockPos.MutableBlockPos blockPos = ((Entity)this).blockPosition().mutable();
 
         final int size;

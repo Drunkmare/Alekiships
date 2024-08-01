@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
-import com.alekiponi.alekiships.util.AlekiShipsTags;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
@@ -9,6 +9,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public interface IBreakIce {
     default void tickBreakIce() {
         if (!this.breaksIce()) {
+            return;
+        }
+        if (!((AbstractVehicle) this).isFunctional()) {
             return;
         }
         final BlockPos.MutableBlockPos blockPos = ((Entity) this).blockPosition().mutable();
