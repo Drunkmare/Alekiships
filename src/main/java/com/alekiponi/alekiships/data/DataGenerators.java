@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.data.providers.AlekiShipsAdvancementsProvider;
 import com.alekiponi.alekiships.data.providers.AlekiShipsLootTableProvider;
 import com.alekiponi.alekiships.data.providers.AlekiShipsRecipeProvider;
 import com.alekiponi.alekiships.data.providers.tags.AlekiShipsBlockTagsProvider;
@@ -39,5 +40,7 @@ public final class DataGenerators {
                 new AlekiShipsStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new AlekiShipsRecipeProvider(packOutput));
         generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput));
+        generator.addProvider(event.includeServer(),
+                AlekiShipsAdvancementsProvider.create(packOutput, lookupProvider, existingFileHelper));
     }
 }
