@@ -1,14 +1,12 @@
 import mcresources
 
 import assets
-import constants
 
 
 def main():
     resourceManager = mcresources.ResourceManager("alekiships", "../src/main/resources",
                                                   on_error=lambda file, e: print(f"Error writing {file}\n{e}"))
     print("Starting resource generation.")
-    resourceManager.lang(constants.DEFAULT_LANG)
     assets.generate(resourceManager)
     resourceManager.flush()
 
