@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import java.util.Optional;
+import java.util.function.IntFunction;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBoatNoAnchor;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
@@ -8,6 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.Abstract
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,10 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
@@ -99,12 +98,17 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
-        AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-        for (int i = 0; i < this.getMaxPassengers(); i++) {
-            poses[i] = AbstractCompartmentEntity.RidingPose.COMPACT;
+        if (ridingPoses.length == 0)
+        {
+            AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
+            for (int i = 1; i < this.getMaxPassengers(); i++)
+            {
+                poses[i] = AbstractCompartmentEntity.RidingPose.COMPACT;
+            }
+            poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
+            this.ridingPoses = poses;
         }
-        poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
-        return poses;
+        return ridingPoses;
     }
 
     protected Vec3 positionRiderByIndex(int index) {

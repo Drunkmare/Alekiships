@@ -1,5 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
@@ -14,6 +18,7 @@ import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundFlagVehicleForUpdatePacket;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
+import javax.annotation.Nullable;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +32,12 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,13 +60,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.alekiponi.alekiships.util.ClientHelper.tickTakeClientPlayersForARide;
+import static com.alekiponi.alekiships.util.ClientHelper.*;
 
 public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
@@ -96,11 +100,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     public AbstractVehicle(final EntityType entityType, final Level level) {
         super(entityType, level);
         this.blocksBuilding = true;
-        AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-        for (AbstractCompartmentEntity.RidingPose pose : poses) {
-            pose = AbstractCompartmentEntity.RidingPose.STANDARD;
-        }
-        this.ridingPoses = poses;
+
         this.speedOverTime = new LinkedList<Double>();
         for (int i = 0; i < 5; i++) {
             this.speedOverTime.add(0.0);
@@ -110,6 +110,15 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     public abstract int getMaxPassengers();
 
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
+        if (ridingPoses.length == 0)
+        {
+            AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
+            for (int i = 0; i < this.getMaxPassengers(); i++)
+            {
+                poses[i] = AbstractCompartmentEntity.RidingPose.STANDARD;
+            }
+            this.ridingPoses = poses;
+        }
         return ridingPoses;
     }
 
