@@ -1,16 +1,29 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IBreakIce;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IDestroyPlants;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMasts;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMultipleCleats;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.events.config.AlekishipsConfig;
+import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -29,13 +42,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.PacketDistributor;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Optional;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
 public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
@@ -489,14 +500,41 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             }
 
             if (!inputRight && !inputLeft) {
-                if (rudder > 0) {
-                    rudder -= 0.3f;
+                if (this.isControlledByLocalInstance())
+                {
+                    if (FMLEnvironment.dist == Dist.CLIENT)
+                    {
+                        if (AlekishipsConfig.CLIENT.rudderControlScheme.get() == ClientConfig.RudderSchemes.RETURN_TO_CENTER)
+                        {
+                            if (rudder > 0)
+                            {
+                                rudder -= 0.3f;
+                            }
+                            if (rudder < 0)
+                            {
+                                rudder += 0.3f;
+                            }
+                            if (Math.abs(rudder) < 1)
+                            {
+                                rudder = 0;
+                            }
+                        }
+                    }
                 }
-                if (rudder < 0) {
-                    rudder += 0.3f;
-                }
-                if (Math.abs(rudder) < 1) {
-                    rudder = 0;
+                if (!(this.getControllingPassenger() instanceof Player))
+                {
+                    if (rudder > 0)
+                    {
+                        rudder -= 0.3f;
+                    }
+                    if (rudder < 0)
+                    {
+                        rudder += 0.3f;
+                    }
+                    if (Math.abs(rudder) < 1)
+                    {
+                        rudder = 0;
+                    }
                 }
             }
             this.setRudderRotation(rudder);

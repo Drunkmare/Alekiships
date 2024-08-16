@@ -105,6 +105,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         for (int i = 0; i < 5; i++) {
             this.speedOverTime.add(0.0);
         }
+        ridingPoses = new AbstractCompartmentEntity.RidingPose[0];
     }
 
     public abstract int getMaxPassengers();
@@ -217,8 +218,9 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    protected Entity.MovementEmission getMovementEmission() {
-        return Entity.MovementEmission.EVENTS;
+    protected MovementEmission getMovementEmission()
+    {
+        return MovementEmission.EVENTS;
     }
 
     protected void defineSynchedData() {
@@ -742,7 +744,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     }
 
     @Override
-    protected void positionRider(final Entity passenger, final Entity.MoveFunction moveFunction) {
+    protected void positionRider(final Entity passenger, final MoveFunction moveFunction)
+    {
         if (this.hasPassenger(passenger)) {
             if (!(passenger instanceof VehiclePart)) {
                 passenger.stopRiding();
