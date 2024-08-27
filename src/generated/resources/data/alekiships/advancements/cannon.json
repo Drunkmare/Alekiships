@@ -1,0 +1,38 @@
+{
+  "parent": "minecraft:story/smelt_iron",
+  "criteria": {
+    "cannon": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "alekiships:cannon"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "alekiships.advancements.cannon.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "alekiships:cannon"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "alekiships.advancements.cannon.title"
+    }
+  },
+  "requirements": [
+    [
+      "cannon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,112 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "alekiships:watercraft_frame_angled"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "alekiships:wood/watercraft_frame/angled/spruce",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "0"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 0.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:spruce_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "alekiships:wood/watercraft_frame/angled/spruce",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "1"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:spruce_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "alekiships:wood/watercraft_frame/angled/spruce",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "2"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:spruce_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "alekiships:wood/watercraft_frame/angled/spruce",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "3"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:spruce_planks"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "alekiships:blocks/wood/watercraft_frame/angled/spruce"
+}

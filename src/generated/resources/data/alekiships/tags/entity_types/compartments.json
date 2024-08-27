@@ -1,0 +1,20 @@
+{
+  "values": [
+    "alekiships:compartment_empty",
+    "alekiships:compartment_block",
+    "alekiships:compartment_barrel",
+    "alekiships:compartment_chest",
+    "alekiships:compartment_ender_chest",
+    "alekiships:compartment_shulker_box",
+    "alekiships:compartment_furnace",
+    "alekiships:compartment_blast_furnace",
+    "alekiships:compartment_smoker",
+    "alekiships:compartment_brewing_stand",
+    "alekiships:compartment_crafting_table",
+    "alekiships:compartment_stonecutter",
+    "alekiships:compartment_cartography_table",
+    "alekiships:compartment_smithing_table",
+    "alekiships:compartment_note_block",
+    "alekiships:compartment_jukebox"
+  ]
+}

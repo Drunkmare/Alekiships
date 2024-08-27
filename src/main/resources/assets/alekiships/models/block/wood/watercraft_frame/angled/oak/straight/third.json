@@ -1,7 +1,0 @@
-{
-  "__comment__": "This file was automatically created by mcresources",
-  "parent": "alekiships:block/watercraft_frame/angled/template/straight/third",
-  "textures": {
-    "plank": "minecraft:block/oak_planks"
-  }
-}

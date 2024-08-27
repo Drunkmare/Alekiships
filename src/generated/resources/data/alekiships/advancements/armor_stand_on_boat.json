@@ -1,0 +1,30 @@
+{
+  "parent": "alekiships:rowboat_completed",
+  "criteria": {
+    "armorstand": {
+      "conditions": {},
+      "trigger": "alekiships:armor_stand_on_boat"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "alekiships.advancements.armor_stand_on_boat.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "item": "minecraft:armor_stand"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "alekiships.advancements.armor_stand_on_boat.title"
+    }
+  },
+  "requirements": [
+    [
+      "armorstand"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

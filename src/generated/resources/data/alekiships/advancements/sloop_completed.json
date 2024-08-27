@@ -1,0 +1,30 @@
+{
+  "parent": "alekiships:rowboat_completed",
+  "criteria": {
+    "sloop": {
+      "conditions": {},
+      "trigger": "alekiships:sloop_completed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "alekiships.advancements.sloop_completed.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "alekiships:sloop_icon_only"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "alekiships.advancements.sloop_completed.title"
+    }
+  },
+  "requirements": [
+    [
+      "sloop"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

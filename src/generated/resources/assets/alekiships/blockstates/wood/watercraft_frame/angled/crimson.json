@@ -1,0 +1,1119 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/straight",
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/first",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "0|1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/second",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/third",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/fourth",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "north",
+        "frame_processed": "3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/straight"
+      },
+      "when": {
+        "facing": "south",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/first"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "0|1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/second"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/third"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/fourth"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner"
+      },
+      "when": {
+        "facing": "south",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer"
+      },
+      "when": {
+        "facing": "south",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth"
+      },
+      "when": {
+        "facing": "south",
+        "frame_processed": "3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/straight",
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/first",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "0|1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/second",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/third",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/fourth",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner"
+      },
+      "when": {
+        "facing": "west",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer"
+      },
+      "when": {
+        "facing": "west",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth"
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "facing": "west",
+        "frame_processed": "3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/straight",
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/first",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "0|1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/second",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "1|2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/third",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "2|3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/straight/fourth",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "3",
+        "shape": "straight"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "1|2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "2|3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "3",
+        "shape": "inner_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/inner",
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/first",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "0|1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/second",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "1|2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/third",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "2|3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/inner/fourth",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "3",
+        "shape": "inner_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "1|2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "2|3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "3",
+        "shape": "outer_left"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/first",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "0|1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/second",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "1|2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/third",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "2|3",
+        "shape": "outer_right"
+      }
+    },
+    {
+      "apply": {
+        "model": "alekiships:block/wood/watercraft_frame/angled/crimson/outer/fourth",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "facing": "east",
+        "frame_processed": "3",
+        "shape": "outer_right"
+      }
+    }
+  ]
+}
