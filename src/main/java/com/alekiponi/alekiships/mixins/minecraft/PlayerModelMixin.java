@@ -101,7 +101,7 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
                     this.leftPants.setPos(01.9F, 13.6F, 1F);
                 }
             }
-        } else {
+        } /*else {
             this.rightLeg.setPos(-1.9F, 12.0F, 0.0F);
             this.leftLeg.setPos(01.9F, 12.0F, 0.0F);
             this.rightPants.setPos(-1.9F, 12.0F, 0.0F);
@@ -117,6 +117,6 @@ public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidM
                 this.rightPants.y = 12.2F;
                 this.leftPants.y = 12.2F;
             }
-        }
+        }*/
     }
 }
