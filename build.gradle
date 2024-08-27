@@ -192,7 +192,7 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-$minecraftVersion-forge:$jeiVersion")
 
     // Easy handheld models TODO (maybe we JIJ this?)
-    runtimeOnly fg.deobf("curse.maven:alekiehm-953157:5253115")
+    //runtimeOnly fg.deobf("curse.maven:alekiehm-953157:5253115")
 }
 
 mixin {
