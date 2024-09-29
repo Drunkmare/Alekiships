@@ -1,13 +1,13 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
-import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
-import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractFurnaceMenu;
+import net.minecraft.world.inventory.BlastFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -50,7 +50,7 @@ public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEnt
     }
 
     @Override
-    protected AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory) {
-        return new BlastFurnaceCompartmentMenu(id, playerInventory, this, this.dataAccess);
+    protected AbstractFurnaceMenu createMenu(final int id, final Inventory playerInventory) {
+        return new BlastFurnaceMenu(id, playerInventory, this, this.dataAccess);
     }
 }
