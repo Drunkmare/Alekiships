@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
+import com.alekiponi.alekiships.mixins.accessors.ShulkerBoxMenuAccessor;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -75,7 +76,7 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
         protected boolean isOwnContainer(final Player player) {
             if (!(player.containerMenu instanceof ShulkerBoxMenu)) return false;
 
-            final Container container = ((ShulkerBoxMenu) player.containerMenu).container;
+            final Container container = ((ShulkerBoxMenuAccessor) player.containerMenu).getContainer();
             return container == ShulkerBoxCompartmentEntity.this;
         }
     };
