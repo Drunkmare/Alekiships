@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -97,16 +96,18 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         return compoundTag;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Angers nearby piglins if the source of damage is a player
+     */
     @Override
     protected void destroy(final DamageSource damageSource) {
         super.destroy(damageSource);
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-            Containers.dropContents(this.level(), this, this);
-            if (!this.level().isClientSide) {
-                final Entity entity = damageSource.getDirectEntity();
-                if (entity != null && entity.getType() == EntityType.PLAYER) {
-                    PiglinAi.angerNearbyPiglins((Player) entity, true);
-                }
+        if (!this.level().isClientSide) {
+            final Entity entity = damageSource.getDirectEntity();
+            if (entity != null && entity.getType() == EntityType.PLAYER) {
+                PiglinAi.angerNearbyPiglins((Player) entity, true);
             }
         }
     }

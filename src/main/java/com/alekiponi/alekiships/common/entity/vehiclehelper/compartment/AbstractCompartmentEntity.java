@@ -219,6 +219,11 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         return true;
     }
 
+    /**
+     * Destroy the compartment dropping the return of {@link #getDropStack()}.
+     *
+     * @param damageSource The source of the damage
+     */
     protected void destroy(final DamageSource damageSource) {
         this.kill();
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {

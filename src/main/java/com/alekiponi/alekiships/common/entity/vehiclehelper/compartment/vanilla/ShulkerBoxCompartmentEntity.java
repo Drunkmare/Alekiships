@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.Containers;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -231,15 +230,6 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Override
     protected void onBreak() {
         CommonHelper.playBreakSound(this::playSound, SoundType.STONE);
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-            final ItemStack itemStack = this.getDropStack();
-            if (this.hasCustomName()) {
-                itemStack.setHoverName(this.getCustomName());
-            }
-
-            Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
-                    this.getZ(), itemStack);
-        }
     }
 
     public int[] getSlotsForFace(Direction pSide) {
