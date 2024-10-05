@@ -1,37 +1,37 @@
 package com.alekiponi.alekiships.common.item;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.AlekiShipsSounds;
+import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.RecordItem;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Objects;
 
 public final class AlekiShipsItems {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
-            AlekiShips.MOD_ID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(AlekiShips.MOD_ID);
 
-    public static final RegistryObject<Item> CANNONBALL = ITEMS.register("cannonball",
+    public static final DeferredItem<Item> CANNONBALL = ITEMS.register("cannonball",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
-    public static final RegistryObject<RecordItem> MUSIC_DISC_PIRATE_CRAFTING = ITEMS.register("music_disc_pirate_crafting",
-        () -> new RecordItem(2, AlekiShipsSounds.MUSIC_DISC_PIRATE_CRAFTING, (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE), 6340));
+    public static final DeferredItem<Item> MUSIC_DISC_PIRATE_CRAFTING = ITEMS.register("music_disc_pirate_crafting",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)
+                    .jukeboxPlayable(Objects.requireNonNull(AlekiShipsJukeboxSongs.PIRATE_CRAFTING.getKey()))));
 
-    public static final RegistryObject<Item> CANNON = ITEMS.register("cannon",
+    public static final DeferredItem<CannonItem> CANNON = ITEMS.register("cannon",
             () -> new CannonItem(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> OAR = ITEMS.register("oar",
+    public static final DeferredItem<Item> OAR = ITEMS.register("oar",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> ANCHOR = ITEMS.register("anchor",
+    public static final DeferredItem<Item> ANCHOR = ITEMS.register("anchor",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> ROWBOAT_ICON_ONLY = ITEMS.register("rowboat_icon_only",
+    public static final DeferredItem<Item> ROWBOAT_ICON_ONLY = ITEMS.register("rowboat_icon_only",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> SLOOP_ICON_ONLY = ITEMS.register("sloop_icon_only",
+    public static final DeferredItem<Item> SLOOP_ICON_ONLY = ITEMS.register("sloop_icon_only",
             () -> new Item(new Item.Properties().stacksTo(1)));
 }
