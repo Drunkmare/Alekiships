@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentTypes;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
@@ -69,6 +70,7 @@ public final class AlekiShips {
     private static void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VanillaWood.registerFrames();
+            CompartmentTypes.init();
 
             WindModels.register(Level.OVERWORLD, OverworldWindModel::new);
         });

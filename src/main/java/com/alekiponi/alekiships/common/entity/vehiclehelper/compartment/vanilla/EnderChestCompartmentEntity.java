@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
@@ -15,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -65,9 +65,9 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
         }
     };
 
-    public EnderChestCompartmentEntity(final CompartmentType<? extends EnderChestCompartmentEntity> compartmentType,
+    public EnderChestCompartmentEntity(final EntityType<? extends EnderChestCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level);
+        super(entityType, level);
     }
 
     @Override

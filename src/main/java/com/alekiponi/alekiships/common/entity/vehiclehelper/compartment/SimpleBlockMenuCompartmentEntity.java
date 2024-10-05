@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
@@ -8,12 +7,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuConstructor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -21,15 +21,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEntity implements SimpleBlockMenuCompartment, MenuConstructor {
 
-    public SimpleBlockMenuCompartmentEntity(
-            final CompartmentType<? extends SimpleBlockMenuCompartmentEntity> compartmentType, final Level level) {
-        super(compartmentType, level);
+    protected SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
+            final Level level) {
+        super(entityType, level);
     }
 
-    public SimpleBlockMenuCompartmentEntity(
-            final CompartmentType<? extends SimpleBlockMenuCompartmentEntity> entityType, final Level level,
-            final ItemStack itemStack) {
-        super(entityType, level, itemStack);
+    protected SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
+            final Level level, final BlockState blockState) {
+        super(entityType, level, blockState);
     }
 
     @Override

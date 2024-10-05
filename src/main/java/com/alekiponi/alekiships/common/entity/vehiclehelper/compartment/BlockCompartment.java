@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -10,8 +11,15 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Interface for compartment entities that contain blocks.
@@ -30,6 +38,77 @@ public interface BlockCompartment {
      * {@link #readBlockstate(BlockCompartment, CompoundTag)} and {@link #saveBlockstate(BlockCompartment, CompoundTag)}
      */
     String HELD_BLOCK_KEY = "heldBlock";
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
+     *
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
+     *                                {@link Block}s {@link Block#defaultBlockState()}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentFactory<E> create(
+            final BlockCompartmentFactory<E> blockCompartmentFactory) {
+        return (entityType, level, itemStack) -> {
+            if (!(itemStack.getItem() instanceof BlockItem blockItem)) return null;
+            return blockCompartmentFactory.create(entityType, level, blockItem.getBlock().defaultBlockState());
+        };
+    }
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
+     *
+     * @param defaultStateModifier A function provided the default state and returning the final state passed to
+     *                             {@link #setDisplayBlockState(BlockState)}
+     */
+    @SuppressWarnings("unused")
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
+            final Function<BlockState, BlockState> defaultStateModifier) {
+        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack, defaultStateModifier);
+    }
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
+     *
+     * @param defaultStateModifier A function provided the {@link BlockCompartment} and the default state. The return
+     *                             value is passed to {@link #setDisplayBlockState(BlockState)}
+     */
+    @SuppressWarnings("unused")
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
+            final BiFunction<E, BlockState, BlockState> defaultStateModifier) {
+        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack,
+                blockState -> defaultStateModifier.apply(compartmentEntity, blockState));
+    }
+
+    /**
+     * Basic initialization for a {@link BlockCompartment} using the default state
+     *
+     * @param compartmentEntity The Compartment Entity
+     * @param itemStack         The {@link ItemStack}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
+            final E compartmentEntity, final ItemStack itemStack) {
+        return initialize(compartmentEntity, itemStack, Function.identity());
+    }
+
+    /**
+     * Initialization for a {@link BlockCompartment}
+     *
+     * @param compartmentEntity    The Compartment Entity
+     * @param itemStack            The {@link ItemStack}
+     * @param defaultStateModifier A function provided the default state returning the state used for
+     *                             {@link #setDisplayBlockState(BlockState)}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
+            final E compartmentEntity, final ItemStack itemStack,
+            final Function<BlockState, BlockState> defaultStateModifier) {
+        if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
+            return CompartmentType.InitializationResult.fail(String.format(
+                    "Attempted to create %s using a stack of %s but it's not a BlockItem. Report this issue to the developers of the entity type",
+                    compartmentEntity.getType(), itemStack));
+        }
+
+        compartmentEntity.setDisplayBlockState(defaultStateModifier.apply(blockItem.getBlock().defaultBlockState()));
+        return CompartmentType.InitializationResult.success();
+    }
 
     /**
      * Reads a blockstate and sets it to the block compartment via {@link #setDisplayBlockState(BlockState)}
@@ -96,4 +175,14 @@ public interface BlockCompartment {
     Level level();
 
     void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume, final float pitch);
+
+    /**
+     * A factory for a compartment which takes in a {@link BlockState}. See
+     * {@link BlockCompartmentEntity#BlockCompartmentEntity(EntityType, Level, BlockState)} as an example
+     * constructor usage
+     */
+    @FunctionalInterface
+    interface BlockCompartmentFactory<E extends AbstractCompartmentEntity & BlockCompartment> {
+        E create(EntityType<E> entityType, Level level, BlockState blockState);
+    }
 }

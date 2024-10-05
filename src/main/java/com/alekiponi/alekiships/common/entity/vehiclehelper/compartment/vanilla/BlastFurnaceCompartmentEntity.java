@@ -1,10 +1,10 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.BlastFurnaceMenu;
@@ -15,14 +15,9 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
-    public BlastFurnaceCompartmentEntity(final CompartmentType<? extends BlastFurnaceCompartmentEntity> compartmentType,
+    public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level, RecipeType.BLASTING);
-    }
-
-    public BlastFurnaceCompartmentEntity(final CompartmentType<? extends BlastFurnaceCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, RecipeType.BLASTING, itemStack);
+        super(entityType, level, RecipeType.BLASTING);
     }
 
     @Override

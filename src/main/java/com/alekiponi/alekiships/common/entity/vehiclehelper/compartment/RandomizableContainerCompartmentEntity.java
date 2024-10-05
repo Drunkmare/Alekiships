@@ -1,18 +1,21 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SeededContainerLoot;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -30,21 +33,12 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
     private long lootTableSeed;
 
     /**
-     * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int)
+     * @see ContainerCompartmentEntity#ContainerCompartmentEntity(EntityType, Level, int)
      */
     protected RandomizableContainerCompartmentEntity(
-            final CompartmentType<? extends RandomizableContainerCompartmentEntity> compartmentType, final Level level,
+            final EntityType<? extends RandomizableContainerCompartmentEntity> entityType, final Level level,
             final int slotCount) {
-        super(compartmentType, level, slotCount);
-    }
-
-    /**
-     * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int, ItemStack)
-     */
-    protected RandomizableContainerCompartmentEntity(
-            final CompartmentType<? extends RandomizableContainerCompartmentEntity> compartmentType, final Level level,
-            final int slotCount, final ItemStack itemStack) {
-        super(compartmentType, level, slotCount, itemStack);
+        super(entityType, level, slotCount);
     }
 
     @Override
@@ -117,6 +111,24 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
     }
 
     @Override
+    protected void applyImplicitComponents(final DataComponentInput componentInput) {
+        super.applyImplicitComponents(componentInput);
+        final SeededContainerLoot seededContainerLoot = componentInput.get(DataComponents.CONTAINER_LOOT);
+        if (seededContainerLoot != null) {
+            this.lootTable = seededContainerLoot.lootTable();
+            this.lootTableSeed = seededContainerLoot.seed();
+        }
+    }
+
+    @Override
+    protected void collectImplicitComponents(final DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        if (this.lootTable != null) {
+            builder.set(DataComponents.CONTAINER_LOOT, new SeededContainerLoot(this.lootTable, this.lootTableSeed));
+        }
+    }
+
+    @Override
     protected void saveContents(final CompoundTag compoundTag) {
         this.addChestVehicleSaveData(compoundTag, this.registryAccess());
     }
@@ -132,21 +144,12 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
     public abstract static class RandomizableContainerMenuCompartmentEntity extends RandomizableContainerCompartmentEntity implements MenuProvider {
 
         /**
-         * @see RandomizableContainerCompartmentEntity#RandomizableContainerCompartmentEntity(CompartmentType, Level, int)
+         * @see RandomizableContainerCompartmentEntity#RandomizableContainerCompartmentEntity(EntityType, Level, int)
          */
         protected RandomizableContainerMenuCompartmentEntity(
-                final CompartmentType<? extends RandomizableContainerMenuCompartmentEntity> compartmentType,
-                final Level level, final int slotCount) {
-            super(compartmentType, level, slotCount);
-        }
-
-        /**
-         * @see RandomizableContainerCompartmentEntity#RandomizableContainerCompartmentEntity(CompartmentType, Level, int, ItemStack)
-         */
-        protected RandomizableContainerMenuCompartmentEntity(
-                final CompartmentType<? extends RandomizableContainerMenuCompartmentEntity> compartmentType,
-                final Level level, final int slotCount, final ItemStack itemStack) {
-            super(compartmentType, level, slotCount, itemStack);
+                final EntityType<? extends RandomizableContainerMenuCompartmentEntity> entityType, final Level level,
+                final int slotCount) {
+            super(entityType, level, slotCount);
         }
 
         @Override

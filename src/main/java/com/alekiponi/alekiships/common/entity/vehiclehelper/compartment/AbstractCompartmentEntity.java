@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.component.DataComponentMap;
@@ -20,6 +19,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -53,9 +53,9 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     protected int vehiclePassengerIndex = -1;
     private int notRidingTicks = 0;
 
-    public AbstractCompartmentEntity(final CompartmentType<? extends AbstractCompartmentEntity> compartmentType,
-                                     final Level level) {
-        super(compartmentType, level);
+    public AbstractCompartmentEntity(final EntityType<? extends AbstractCompartmentEntity> entityType,
+            final Level level) {
+        super(entityType, level);
     }
 
     @Override

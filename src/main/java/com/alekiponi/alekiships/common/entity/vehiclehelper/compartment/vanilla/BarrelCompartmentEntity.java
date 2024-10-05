@@ -1,10 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,6 +15,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -66,17 +65,8 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
         }
     };
 
-    public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-            final Level level) {
-        super(compartmentType, level, SLOT_COUNT);
-    }
-
-    public BarrelCompartmentEntity(final CompartmentType<? extends BarrelCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, SLOT_COUNT, itemStack);
-
-        this.setDisplayBlockState(Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)
-                .setValue(BarrelBlock.OPEN, false));
+    public BarrelCompartmentEntity(final EntityType<? extends BarrelCompartmentEntity> entityType, final Level level) {
+        super(entityType, level, SLOT_COUNT);
     }
 
     @Override

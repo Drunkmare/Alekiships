@@ -1,19 +1,19 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.GrindstoneBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,15 +21,14 @@ public class GrindstoneCompartmentEntity extends SimpleBlockMenuCompartmentEntit
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.grindstone_title");
 
-    public GrindstoneCompartmentEntity(final CompartmentType<? extends GrindstoneCompartmentEntity> compartmentType,
+    public GrindstoneCompartmentEntity(final EntityType<? extends GrindstoneCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level);
+        super(entityType, level);
     }
 
-    public GrindstoneCompartmentEntity(final CompartmentType<? extends GrindstoneCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, itemStack);
-        this.setDisplayBlockState(this.getDisplayBlockState().setValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
+    public GrindstoneCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
+            final Level level, final BlockState blockState) {
+        super(entityType, level, blockState.setValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
     }
 
     @Nullable

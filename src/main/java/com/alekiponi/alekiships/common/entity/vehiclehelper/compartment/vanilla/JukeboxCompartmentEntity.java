@@ -1,10 +1,10 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.ClientboundJukeboxCompartmentMusicPacket;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -17,6 +17,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.JukeboxPlayable;
@@ -40,20 +41,9 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
             this::setChanged, this);
     private ItemStack itemStack = ItemStack.EMPTY;
 
-    public JukeboxCompartmentEntity(final CompartmentType<? extends JukeboxCompartmentEntity> compartmentType,
+    public JukeboxCompartmentEntity(final EntityType<? extends JukeboxCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level);
-    }
-
-    public JukeboxCompartmentEntity(final CompartmentType<? extends JukeboxCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, itemStack);
-
-        final CompoundTag compoundtag = itemStack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY)
-                .copyTag();
-        if (compoundtag.contains(JukeboxBlockEntity.SONG_ITEM_TAG_ID)) {
-            this.readCommonNBTData(compoundtag);
-        }
+        super(entityType, level);
     }
 
     @Override
@@ -130,13 +120,6 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     }
 
     @Override
-    public CompoundTag saveForItemStack() {
-        final CompoundTag compoundTag = new CompoundTag();
-        this.writeCommonNBTData(compoundTag);
-        return compoundTag;
-    }
-
-    @Override
     public ItemStack getTheItem() {
         return this.itemStack;
     }
@@ -203,6 +186,20 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
                 Containers.dropItemStack(this.level(), this.getX(), yPos, this.getZ(), itemStack);
             }
         }
+    }
+
+    @Override
+    public void applyComponentsFromItemStack(final ItemStack itemStack) {
+        this.readCommonNBTData(itemStack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag());
+    }
+
+    @Override
+    public DataComponentMap collectComponents() {
+        final var builder = DataComponentMap.builder();
+        final CompoundTag compoundTag = new CompoundTag();
+        this.writeCommonNBTData(compoundTag);
+        builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(compoundTag));
+        return builder.build();
     }
 
     public static class JukeboxCompartmentSongPlayer {

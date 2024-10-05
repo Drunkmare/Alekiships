@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.RandomizableContainerCompartmentEntity;
 import com.alekiponi.alekiships.mixins.accessors.ShulkerBoxMenuAccessor;
 import com.alekiponi.alekiships.util.CommonHelper;
@@ -78,20 +78,23 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Nullable
     private DyeColor color;
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
+    public ShulkerBoxCompartmentEntity(final EntityType<? extends ShulkerBoxCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level, SLOT_COUNT);
+        super(entityType, level, SLOT_COUNT);
     }
 
-    public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
+    public static ShulkerBoxCompartmentEntity create(final EntityType<ShulkerBoxCompartmentEntity> entityType,
             final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, SLOT_COUNT, itemStack);
-
+        final ShulkerBoxCompartmentEntity shulkerBoxCompartmentEntity = new ShulkerBoxCompartmentEntity(entityType,
+                level);
+        CompartmentCloneable.initialize(shulkerBoxCompartmentEntity, itemStack);
         if (itemStack.getItem() instanceof BlockItem blockItem) {
             if (blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
-                this.color = shulkerBoxBlock.getColor();
+                shulkerBoxCompartmentEntity.color = shulkerBoxBlock.getColor();
             }
         }
+
+        return shulkerBoxCompartmentEntity;
     }
 
     @Override

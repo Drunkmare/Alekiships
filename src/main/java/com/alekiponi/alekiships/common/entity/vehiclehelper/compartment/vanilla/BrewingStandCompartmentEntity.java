@@ -1,11 +1,12 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -15,6 +16,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.Containers;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.BrewingStandMenu;
@@ -23,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrewingStandBlock;
@@ -78,16 +81,9 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
     @Nullable
     private Item ingredient;
 
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
+    public BrewingStandCompartmentEntity(final EntityType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
-    }
-
-    public BrewingStandCompartmentEntity(final CompartmentType<? extends BrewingStandCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, SLOT_COUNT, itemStack);
-
-        this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
     }
 
     private static void doBrew(final Level level, final BlockPos pos, final NonNullList<ItemStack> items) {
@@ -280,18 +276,13 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
     }
 
     @Override
-    public void loadFromStackNBT(final CompoundTag compoundTag) {
-        super.loadFromStackNBT(compoundTag);
+    protected void loadBlockEntityData(final CompoundTag compoundTag) {
         this.loadCommonNBTData(compoundTag);
     }
 
     @Override
-    public CompoundTag saveForItemStack() {
-        final CompoundTag compoundTag = super.saveForItemStack();
-
+    protected void saveBlockEntityData(final CompoundTag compoundTag) {
         this.saveCommonNBTData(compoundTag);
-
-        return compoundTag;
     }
 
     private void loadCommonNBTData(final CompoundTag compoundTag) {

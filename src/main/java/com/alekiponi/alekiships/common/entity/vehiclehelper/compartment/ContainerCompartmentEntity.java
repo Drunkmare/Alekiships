@@ -1,12 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.*;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -16,15 +13,16 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 /**
  * This can be thought of as similar to {@link BaseContainerBlockEntity} but for compartments.
@@ -32,7 +30,6 @@ import javax.annotation.Nullable;
  */
 public abstract class ContainerCompartmentEntity extends AbstractCompartmentEntity implements Container, CompartmentCloneable {
 
-    public static final String CUSTOM_NAME_KEY = "CustomName";
     /**
      * The slot count of this container
      */
@@ -45,60 +42,78 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     /**
      * @param slotCount The amount of slots the compartment should have
      */
-    protected ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
+    protected ContainerCompartmentEntity(final EntityType<? extends ContainerCompartmentEntity> entityType,
             final Level level, final int slotCount) {
-        super(compartmentType, level);
+        super(entityType, level);
         this.slotCount = slotCount;
         this.itemStacks = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     }
 
     /**
-     * @param slotCount The amount of slots the compartment should have
-     * @param itemStack The {@link ItemStack} the compartment is being constructed from. This stack will be used to set
-     *                  the custom name and if {@link BlockItem#getBlockEntityData(ItemStack)} returns a tag it'll be
-     *                  passed to {@link #loadFromStackNBT(CompoundTag)}
+     * Applies the applicable {@link DataComponentType}s to the {@link ContainerCompartmentEntity}.
+     * <p>
+     * If you override this you'll want to override {@link #collectImplicitComponents(DataComponentMap.Builder)} too
      */
-    protected ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
-            final Level level, final int slotCount, final ItemStack itemStack) {
-        this(compartmentType, level, slotCount);
-        if (itemStack.has(DataComponents.CUSTOM_NAME)) {
-            this.setCustomName(itemStack.get(DataComponents.CUSTOM_NAME));
-        }
-
-        final CompoundTag blockEntityTag = itemStack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY)
-                .copyTag();
-        this.loadFromStackNBT(blockEntityTag);
-    }
-
-    /**
-     * Called from {@link ContainerCompartmentEntity} during construction to load values from NBT
-     */
-    protected void loadFromStackNBT(final CompoundTag compoundTag) {
-        this.readContents(compoundTag);
-        if (compoundTag.contains(CUSTOM_NAME_KEY, Tag.TAG_STRING)) {
-            this.setCustomName(
-                    Component.Serializer.fromJson(compoundTag.getString(CUSTOM_NAME_KEY), this.registryAccess()));
-        }
+    protected void applyImplicitComponents(final DataComponentInput componentInput) {
+        this.loadBlockEntityData(
+                componentInput.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag());
+        this.setCustomName(componentInput.get(DataComponents.CUSTOM_NAME));
+        componentInput.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(this.itemStacks);
     }
 
     @Override
-    public CompoundTag saveForItemStack() {
-        final CompoundTag compoundTag = new CompoundTag();
-        this.saveContents(compoundTag);
-
-        final Component customName = this.getCustomName();
-        if (customName != null) {
-            compoundTag.putString(CUSTOM_NAME_KEY, Component.Serializer.toJson(customName, this.registryAccess()));
-        }
-
-        return compoundTag;
+    public final void applyComponentsFromItemStack(final ItemStack itemStack) {
+        this.applyComponents(itemStack.getPrototype(), itemStack.getComponentsPatch());
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * Angers nearby piglins if the source of damage is a player
+     * Called to load custom data serialized as {@link DataComponents#BLOCK_ENTITY_DATA} NBT
      */
+    protected void loadBlockEntityData(final CompoundTag compoundTag) {
+    }
+
+    /**
+     * Called to save custom data serialized as {@link DataComponents#BLOCK_ENTITY_DATA} NBT
+     */
+    protected void saveBlockEntityData(final CompoundTag compoundTag) {
+    }
+
+    @Override
+    public final DataComponentMap collectComponents() {
+        final var builder = DataComponentMap.builder();
+        this.collectImplicitComponents(builder);
+        return builder.build();
+    }
+
+    /**
+     * Collects the components that are put into the cloned {@link ItemStack}
+     * <p>
+     * If you override this you'll want to override {@link #applyImplicitComponents(DataComponentInput)}} too
+     */
+    protected void collectImplicitComponents(final DataComponentMap.Builder builder) {
+        builder.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+        builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.itemStacks));
+        final CompoundTag compoundTag = new CompoundTag();
+        this.saveBlockEntityData(compoundTag);
+        builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(compoundTag));
+    }
+
+    private void applyComponents(final DataComponentMap components, final DataComponentPatch patch) {
+        final DataComponentMap componentPatch = PatchedDataComponentMap.fromPatch(components, patch);
+        this.applyImplicitComponents(new DataComponentInput() {
+            @Nullable
+            @Override
+            public <T> T get(final DataComponentType<T> component) {
+                return componentPatch.get(component);
+            }
+
+            @Override
+            public <T> T getOrDefault(final DataComponentType<? extends T> component, T defaultValue) {
+                return componentPatch.getOrDefault(component, defaultValue);
+            }
+        });
+    }
+
     @Override
     protected void destroy(final DamageSource damageSource) {
         super.destroy(damageSource);
@@ -223,27 +238,34 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         return this.itemStacks.stream().allMatch(ItemStack::isEmpty);
     }
 
+    protected interface DataComponentInput {
+        @Nullable
+        <T> T get(final DataComponentType<T> component);
+
+        <T> T getOrDefault(final DataComponentType<? extends T> component, final T defaultValue);
+
+        @Nullable
+        default <T> T get(final Supplier<? extends DataComponentType<T>> component) {
+            return get(component.get());
+        }
+
+        @SuppressWarnings("unused")
+        default <T> T getOrDefault(final Supplier<? extends DataComponentType<T>> component, final T defaultValue) {
+            return getOrDefault(component.get(), defaultValue);
+        }
+    }
+
     /**
      * Simple {@link MenuProvider} implementation for {@link ContainerCompartmentEntity}
      */
     public abstract static class ContainerMenuCompartmentEntity extends ContainerCompartmentEntity implements MenuProvider {
 
         /**
-         * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int)
+         * @see ContainerCompartmentEntity#ContainerCompartmentEntity(EntityType, Level, int)
          */
-        protected ContainerMenuCompartmentEntity(
-                final CompartmentType<? extends ContainerMenuCompartmentEntity> compartmentType, final Level level,
-                final int slotCount) {
-            super(compartmentType, level, slotCount);
-        }
-
-        /**
-         * @see ContainerCompartmentEntity#ContainerCompartmentEntity(CompartmentType, Level, int, ItemStack)
-         */
-        protected ContainerMenuCompartmentEntity(
-                final CompartmentType<? extends ContainerMenuCompartmentEntity> compartmentType, final Level level,
-                final int slotCount, final ItemStack itemStack) {
-            super(compartmentType, level, slotCount, itemStack);
+        protected ContainerMenuCompartmentEntity(final EntityType<? extends ContainerMenuCompartmentEntity> entityType,
+                final Level level, final int slotCount) {
+            super(entityType, level, slotCount);
         }
 
         @Override

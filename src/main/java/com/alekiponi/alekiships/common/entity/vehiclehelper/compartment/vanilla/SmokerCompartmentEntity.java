@@ -1,9 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.SmokerMenu;
@@ -14,14 +14,8 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
-    public SmokerCompartmentEntity(final CompartmentType<? extends SmokerCompartmentEntity> compartmentType,
-            final Level level) {
-        super(compartmentType, level, RecipeType.SMOKING);
-    }
-
-    public SmokerCompartmentEntity(final CompartmentType<? extends SmokerCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, RecipeType.SMOKING, itemStack);
+    public SmokerCompartmentEntity(final EntityType<? extends SmokerCompartmentEntity> entityType, final Level level) {
+        super(entityType, level, RecipeType.SMOKING);
     }
 
     @Override

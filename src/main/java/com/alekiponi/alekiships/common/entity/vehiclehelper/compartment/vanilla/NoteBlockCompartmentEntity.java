@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -15,11 +14,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.gameevent.GameEvent;
 
@@ -31,19 +32,14 @@ public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
     @Nullable
     private ResourceLocation noteBlockSound;
 
-    public NoteBlockCompartmentEntity(final CompartmentType<? extends NoteBlockCompartmentEntity> compartmentType,
+    public NoteBlockCompartmentEntity(final EntityType<? extends NoteBlockCompartmentEntity> entityType,
             final Level level) {
-        super(compartmentType, level);
+        super(entityType, level);
     }
 
-    public NoteBlockCompartmentEntity(final CompartmentType<? extends NoteBlockCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, itemStack);
-
-        final CompoundTag blockEntityData = BlockItem.getBlockEntityData(itemStack);
-        if (blockEntityData != null) {
-            this.readCommonSaveData(blockEntityData);
-        }
+    public NoteBlockCompartmentEntity(final EntityType<? extends NoteBlockCompartmentEntity> entityType,
+            final Level level, final BlockState blockState) {
+        super(entityType, level, blockState);
     }
 
     @Override

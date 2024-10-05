@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
@@ -22,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.StackedContents;
@@ -29,7 +29,6 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
@@ -107,25 +106,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         }
     };
 
-    protected AbstractFurnaceCompartmentEntity(
-            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
-            final RecipeType<? extends AbstractCookingRecipe> recipeType) {
-        super(compartmentType, level, SLOT_COUNT);
+    protected AbstractFurnaceCompartmentEntity(final EntityType<? extends AbstractFurnaceCompartmentEntity> entityType,
+            final Level level, final RecipeType<? extends AbstractCookingRecipe> recipeType) {
+        super(entityType, level, SLOT_COUNT);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
-    }
-
-    protected AbstractFurnaceCompartmentEntity(
-            final CompartmentType<? extends AbstractFurnaceCompartmentEntity> compartmentType, final Level level,
-            final RecipeType<? extends AbstractCookingRecipe> recipeType, final ItemStack itemStack) {
-        super(compartmentType, level, SLOT_COUNT, itemStack);
-        this.quickCheck = RecipeManager.createCheck(recipeType);
-        this.recipeType = recipeType;
-
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            this.setDisplayBlockState(
-                    blockItem.getBlock().defaultBlockState().setValue(AbstractFurnaceBlock.LIT, this.isLit()));
-        }
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,
@@ -442,19 +427,13 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     @Override
-    public void loadFromStackNBT(final CompoundTag compoundTag) {
-        super.loadFromStackNBT(compoundTag);
-
+    protected void loadBlockEntityData(final CompoundTag compoundTag) {
         this.loadCommonNBTData(compoundTag);
     }
 
     @Override
-    public CompoundTag saveForItemStack() {
-        final CompoundTag compoundTag = super.saveForItemStack();
-
+    protected void saveBlockEntityData(final CompoundTag compoundTag) {
         this.saveCommonNBTData(compoundTag);
-
-        return compoundTag;
     }
 
     private void loadCommonNBTData(final CompoundTag compoundTag) {

@@ -1,28 +1,22 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.FurnaceMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
-    public FurnaceCompartmentEntity(final CompartmentType<? extends FurnaceCompartmentEntity> compartmentType,
+    public FurnaceCompartmentEntity(final EntityType<? extends FurnaceCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, RecipeType.SMELTING);
-    }
-
-    public FurnaceCompartmentEntity(final CompartmentType<? extends FurnaceCompartmentEntity> compartmentType,
-            final Level level, final ItemStack itemStack) {
-        super(compartmentType, level, RecipeType.SMELTING, itemStack);
     }
 
     @Override

@@ -63,9 +63,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     protected boolean canAddOnlyBlocks;
     protected boolean canAddCannons;
 
-
-    public EmptyCompartmentEntity(final CompartmentType<? extends EmptyCompartmentEntity> compartmentType,
-                                  final Level level) {
+    public EmptyCompartmentEntity(final EntityType<? extends EmptyCompartmentEntity> compartmentType,
+            final Level level) {
         super(compartmentType, level);
         canAddNonPlayers = true;
         canAddOnlyBlocks = false;
@@ -434,10 +433,11 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 return InteractionResult.FAIL;
             }
 
-            final AbstractCompartmentEntity compartmentEntity = compartmentType.get()
+            final Optional<? extends AbstractCompartmentEntity> maybeCompartment = compartmentType.get()
                     .create(this.level(), heldStack.copy());
+
             // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
-            if (null == compartmentEntity) {
+            if (maybeCompartment.isEmpty()) {
                 if (!this.canAddOnlyBLocks()) {
                     return player.startRiding(this) ? InteractionResult.SUCCESS : InteractionResult.PASS;
                 }
@@ -446,8 +446,9 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
             heldStack.shrink(1);
 
-            this.swapCompartments(compartmentEntity);
-            compartmentEntity.onPlaced();
+            final AbstractCompartmentEntity newCompartment = maybeCompartment.get();
+            this.swapCompartments(newCompartment);
+            newCompartment.onPlaced();
             this.gameEvent(GameEvent.EQUIP);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
