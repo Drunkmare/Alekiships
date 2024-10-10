@@ -3,10 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
-import com.alekiponi.alekiships.common.menu.AbstractFurnaceCompartmentMenu;
-import com.alekiponi.alekiships.common.menu.BlastFurnaceCompartmentMenu;
-import com.alekiponi.alekiships.common.menu.FurnaceCompartmentMenu;
-import com.alekiponi.alekiships.common.menu.SmokerCompartmentMenu;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -31,6 +27,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
@@ -64,9 +61,7 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
 
 /**
  * This compartment entity mimics vanillas {@link AbstractFurnaceBlockEntity}. If your BE extends from that class you'll
- * want to extend from this for your compartment. We also provide {@link FurnaceCompartmentMenu},
- * {@link BlastFurnaceCompartmentMenu} and {@link SmokerCompartmentMenu}. If you extend or use the vanilla menu
- * counterparts you'll need to use or extend our menus as well
+ * want to extend from this for your compartment
  */
 public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity.ContainerMenuCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
     public static final int SLOT_COUNT = 3;
@@ -148,7 +143,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,
-                                         final float experience) {
+            final float experience) {
         int i = Mth.floor(recipeIndex * experience);
         float f = Mth.frac(recipeIndex * experience);
         if (f != 0 && Math.random() < f) {
@@ -518,7 +513,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     protected abstract void animateTick();
 
     @Override
-    protected abstract AbstractFurnaceCompartmentMenu createMenu(final int id, final Inventory playerInventory);
+    protected abstract AbstractFurnaceMenu createMenu(final int id, final Inventory playerInventory);
 
     @Override
     public <T> LazyOptional<T> getCapability(final Capability<T> capability, @Nullable final Direction facing) {

@@ -4,6 +4,9 @@
   "package": "com.alekiponi.alekiships.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "accessors.ExplosionAccessor",
+    "accessors.ShulkerBoxMenuAccessor",
+    "minecraft.FurnaceResultSlotMixin",
     "minecraft.LivingEntityMixin",
     "minecraft.PlayerMixin",
     "minecraft.ServerEntityMixin"

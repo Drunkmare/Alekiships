@@ -5,6 +5,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.mixins.accessors.ExplosionAccessor;
 import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -34,37 +35,38 @@ import java.util.Set;
 public class CannonballExplosion extends Explosion {
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-                               final double pToBlowY, final double pToBlowZ, final float pRadius, final List<BlockPos> pPositions) {
+            final double pToBlowY, final double pToBlowZ, final float pRadius, final List<BlockPos> pPositions) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pPositions);
     }
 
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-                               final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
-                               final BlockInteraction pBlockInteraction, final List<BlockPos> pPositions) {
+            final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
+            final BlockInteraction pBlockInteraction, final List<BlockPos> pPositions) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction, pPositions);
     }
 
     @SuppressWarnings("unused")
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource, final double pToBlowX,
-                               final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
-                               final BlockInteraction pBlockInteraction) {
+            final double pToBlowY, final double pToBlowZ, final float pRadius, final boolean pFire,
+            final BlockInteraction pBlockInteraction) {
         super(pLevel, pSource, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire, pBlockInteraction);
     }
 
     public CannonballExplosion(final Level pLevel, @Nullable final Entity pSource,
-                               @Nullable final DamageSource pDamageSource, @Nullable final ExplosionDamageCalculator pDamageCalculator,
-                               final double pToBlowX, final double pToBlowY, final double pToBlowZ, final float pRadius,
-                               final boolean pFire, final BlockInteraction pBlockInteraction) {
+            @Nullable final DamageSource pDamageSource, @Nullable final ExplosionDamageCalculator pDamageCalculator,
+            final double pToBlowX, final double pToBlowY, final double pToBlowZ, final float pRadius,
+            final boolean pFire, final BlockInteraction pBlockInteraction) {
         super(pLevel, pSource, pDamageSource, pDamageCalculator, pToBlowX, pToBlowY, pToBlowZ, pRadius, pFire,
                 pBlockInteraction);
     }
 
     @Override
     public void explode() {
+        final ExplosionAccessor self = (ExplosionAccessor) this;
         // This method is primarily copied as is from vanilla. Anything we add or change should be commented
 
-        this.level.gameEvent(this.source, GameEvent.EXPLODE, this.getPosition());
+        self.getLevel().gameEvent(self.getSource(), GameEvent.EXPLODE, this.getPosition());
         final Set<BlockPos> set = Sets.newHashSet();
 
         for (int j = 0; j < 16; ++j) {
@@ -78,27 +80,28 @@ public class CannonballExplosion extends Explosion {
                         d0 /= d3;
                         d1 /= d3;
                         d2 /= d3;
-                        float f = this.radius * (0.7F + this.level.random.nextFloat() * 0.6F);
-                        double d4 = this.x;
-                        double d6 = this.y;
-                        double d8 = this.z;
+                        float f = self.getRadius() * (0.7F + self.getLevel().random.nextFloat() * 0.6F);
+                        double d4 = self.x();
+                        double d6 = self.y();
+                        double d8 = self.z();
 
                         for (; f > 0; f -= 0.22500001F) {
                             final BlockPos blockpos = BlockPos.containing(d4, d6, d8);
-                            final BlockState blockstate = this.level.getBlockState(blockpos);
-                            final FluidState fluidstate = this.level.getFluidState(blockpos);
-                            if (!this.level.isInWorldBounds(blockpos)) {
+                            final BlockState blockstate = self.getLevel().getBlockState(blockpos);
+                            final FluidState fluidstate = self.getLevel().getFluidState(blockpos);
+                            if (!self.getLevel().isInWorldBounds(blockpos)) {
                                 break;
                             }
 
-                            final Optional<Float> optional = this.damageCalculator.getBlockExplosionResistance(this,
-                                    this.level, blockpos, blockstate, fluidstate);
+                            final Optional<Float> optional = self.getDamageCalculator()
+                                    .getBlockExplosionResistance(this, self.getLevel(), blockpos, blockstate,
+                                            fluidstate);
                             if (optional.isPresent()) {
                                 f -= (float) ((optional.get() + 0.3) * 0.3);
                             }
 
-                            if (f > 0 && this.damageCalculator.shouldBlockExplode(this, this.level, blockpos,
-                                    blockstate, f)) {
+                            if (f > 0 && self.getDamageCalculator()
+                                    .shouldBlockExplode(this, self.getLevel(), blockpos, blockstate, f)) {
                                 set.add(blockpos);
                             }
 
@@ -111,21 +114,21 @@ public class CannonballExplosion extends Explosion {
             }
         }
 
-        this.toBlow.addAll(set);
-        final double diameter = this.radius * 2;
+        self.getToBlow().addAll(set);
+        final double diameter = self.getRadius() * 2;
 
         final List<Entity> list;
         {
-            final int k1 = Mth.floor(this.x - diameter - 1);
-            final int l1 = Mth.floor(this.x + diameter + 1);
-            final int i2 = Mth.floor(this.y - diameter - 1);
-            final int i1 = Mth.floor(this.y + diameter + 1);
-            final int j2 = Mth.floor(this.z - diameter - 1);
-            final int j1 = Mth.floor(this.z + diameter + 1);
-            list = this.level.getEntities(this.source, new AABB(k1, i2, j2, l1, i1, j1));
+            final int k1 = Mth.floor(self.x() - diameter - 1);
+            final int l1 = Mth.floor(self.x() + diameter + 1);
+            final int i2 = Mth.floor(self.y() - diameter - 1);
+            final int i1 = Mth.floor(self.y() + diameter + 1);
+            final int j2 = Mth.floor(self.z() - diameter - 1);
+            final int j1 = Mth.floor(self.z() + diameter + 1);
+            list = self.getLevel().getEntities(self.getSource(), new AABB(k1, i2, j2, l1, i1, j1));
         }
 
-        ForgeEventFactory.onExplosionDetonate(this.level, this, list, diameter);
+        ForgeEventFactory.onExplosionDetonate(self.getLevel(), this, list, diameter);
 
         for (final Entity entity : list) {
             if (entity.ignoreExplosion()) continue;
@@ -133,9 +136,9 @@ public class CannonballExplosion extends Explosion {
             final double d12 = Math.sqrt(entity.distanceToSqr(this.getPosition())) / diameter;
             if (d12 > 1) continue;
 
-            double distanceX = entity.getX() - this.x;
-            double distanceY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.y;
-            double distanceZ = entity.getZ() - this.z;
+            double distanceX = entity.getX() - self.x();
+            double distanceY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - self.x();
+            double distanceZ = entity.getZ() - self.x();
             final double d13 = Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
 
             if (d13 == 0) continue;
@@ -167,11 +170,13 @@ public class CannonballExplosion extends Explosion {
             if (entity instanceof final LivingEntity livingentity) {
                 // Prevent knock-back for players on colliders (and therefore a boat)
                 if (livingentity instanceof final Player player) {
-                    final List<Entity> entities = this.level.getEntities(player, player.getBoundingBox().inflate(0, 0.1, 0),
-                            EntitySelector.CAN_BE_COLLIDED_WITH);
+                    final List<Entity> entities = self.getLevel()
+                            .getEntities(player, player.getBoundingBox().inflate(0, 0.1, 0),
+                                    EntitySelector.CAN_BE_COLLIDED_WITH);
                     boolean flag = false;
                     for (Entity entity1 : entities) {
-                        if (entity1 instanceof AbstractVehicle vehicle && vehicle.collectPlayersToTakeWith().contains(player)) {
+                        if (entity1 instanceof AbstractVehicle vehicle && vehicle.collectPlayersToTakeWith()
+                                .contains(player)) {
                             flag = true;
                             break;
                         }
@@ -196,7 +201,7 @@ public class CannonballExplosion extends Explosion {
 
             if (entity instanceof final Player player) {
                 if (!player.isSpectator() && (!player.isCreative() || !player.getAbilities().flying)) {
-                    this.hitPlayers.put(player, vec31);
+                    self.getHitPlayers().put(player, vec31);
                 }
             } else {
                 entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
