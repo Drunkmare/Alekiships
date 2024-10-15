@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
+import com.alekiponi.alekiships.client.AlekiShipsSounds;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -38,6 +39,7 @@ public class AlekiShips {
         AlekiShipsBlocks.BLOCKS.register(eventBus);
         AlekiShipsEntities.ENTITY_TYPES.register(eventBus);
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(eventBus);
+        AlekiShipsSounds.SOUNDS.register(eventBus);
 
         eventBus.addListener(this::setup);
         AlekishipsConfig.init();

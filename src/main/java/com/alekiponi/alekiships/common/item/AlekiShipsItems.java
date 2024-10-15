@@ -1,7 +1,10 @@
 package com.alekiponi.alekiships.common.item;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.AlekiShipsSounds;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.RecordItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -13,6 +16,9 @@ public final class AlekiShipsItems {
 
     public static final RegistryObject<Item> CANNONBALL = ITEMS.register("cannonball",
             () -> new Item(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<RecordItem> MUSIC_DISC_PIRATE_CRAFTING = ITEMS.register("music_disc_pirate_crafting",
+        () -> new RecordItem(2, AlekiShipsSounds.MUSIC_DISC_PIRATE_CRAFTING, (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE), 6340));
 
     public static final RegistryObject<Item> CANNON = ITEMS.register("cannon",
             () -> new CannonItem(new Item.Properties().stacksTo(1)));

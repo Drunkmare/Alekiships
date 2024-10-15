@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.data.loot;
 
+import java.util.function.BiConsumer;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -11,8 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-
-import java.util.function.BiConsumer;
 
 public class AlekiShipsStructureLoot implements LootTableSubProvider {
 
@@ -72,6 +71,8 @@ public class AlekiShipsStructureLoot implements LootTableSubProvider {
         lootTable.withPool(DataGenHelper.lootPoolOf(AlekiShipsItems.CANNONBALL.get(), 1, 6));
 
         lootTable.withPool(DataGenHelper.lootPoolOf(Items.FLINT_AND_STEEL, 0, 1));
+
+        lootTable.withPool(DataGenHelper.lootPoolOf(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING.get(), 0, 1));
 
         lootTable.withPool(DataGenHelper.lootPoolOf(plankItem, 0, 32));
 

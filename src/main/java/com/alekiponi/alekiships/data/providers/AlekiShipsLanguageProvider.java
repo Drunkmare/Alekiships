@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.data.providers;
 
+import java.util.Locale;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
@@ -11,8 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.Locale;
 
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
@@ -32,6 +31,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
         this.add("press_button", "Press");
         this.add("eject_passengers", "to eject");
+
 
         this.addTranslationsForJade();
 
@@ -60,6 +60,9 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addItem(AlekiShipsItems.SLOOP_ICON_ONLY, "Sloop (ICON ONLY)");
         this.addItem(AlekiShipsItems.ROWBOAT_ICON_ONLY, "Rowboat (ICON ONLY)");
         this.addItem(AlekiShipsItems.OAR, "Oar");
+
+        this.add("item.alekiships.music_disc_pirate_crafting.desc", "Captain Thrack - Pirate Crafting");
+        this.addItem(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING, "Music Disc");
     }
 
     private void addTranslationsForEntities() {

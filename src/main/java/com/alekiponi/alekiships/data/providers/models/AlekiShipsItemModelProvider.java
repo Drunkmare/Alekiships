@@ -27,6 +27,7 @@ public class AlekiShipsItemModelProvider extends ItemModelProvider {
         //this.heldItem(AlekiShipsItems.ANCHOR.get());
         this.basicItem(AlekiShipsItems.SLOOP_ICON_ONLY.get());
         this.basicItem(AlekiShipsItems.ROWBOAT_ICON_ONLY.get());
+        this.basicItem(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING.get());
         //this.heldItem(AlekiShipsItems.OAR.get());
     }
 

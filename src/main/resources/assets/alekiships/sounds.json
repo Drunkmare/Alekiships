@@ -1,0 +1,10 @@
+{
+  "music_disc_pirate_crafting": {
+    "sounds": [
+      {
+        "name": "alekiships:music_disc_pirate_crafting",
+        "stream": true
+      }
+    ]
+  }
+}

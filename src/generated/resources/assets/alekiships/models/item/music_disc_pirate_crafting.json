@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "alekiships:item/music_disc_pirate_crafting"
+  }
+}

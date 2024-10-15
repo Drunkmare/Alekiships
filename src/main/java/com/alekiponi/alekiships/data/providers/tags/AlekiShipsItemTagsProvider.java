@@ -1,10 +1,14 @@
 package com.alekiponi.alekiships.data.providers.tags;
 
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -12,9 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 public class AlekiShipsItemTagsProvider extends ItemTagsProvider {
 
@@ -35,6 +36,8 @@ public class AlekiShipsItemTagsProvider extends ItemTagsProvider {
                 .addTag(AlekiShipsTags.Items.CRAFTING_TABLES).addTag(AlekiShipsTags.Items.SHULKER_BOXES);
 
         this.tag(AlekiShipsTags.Items.CRAFTING_TABLES).add(Items.CRAFTING_TABLE);
+
+        this.tag(ItemTags.MUSIC_DISCS).add(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING.get());
 
         {
             final var shulkerBoxes = this.tag(AlekiShipsTags.Items.SHULKER_BOXES).add(Items.SHULKER_BOX);
