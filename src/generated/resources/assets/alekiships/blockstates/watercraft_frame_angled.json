@@ -9,12 +9,11 @@
       "y": 270
     },
     "facing=east,shape=outer_left": {
-      "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 180
+      "model": "alekiships:block/watercraft_frame/angled/outer"
     },
     "facing=east,shape=outer_right": {
       "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 270
+      "y": 90
     },
     "facing=east,shape=straight": {
       "model": "alekiships:block/watercraft_frame/angled/straight",
@@ -30,11 +29,10 @@
     },
     "facing=north,shape=outer_left": {
       "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 90
+      "y": 270
     },
     "facing=north,shape=outer_right": {
-      "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 180
+      "model": "alekiships:block/watercraft_frame/angled/outer"
     },
     "facing=north,shape=straight": {
       "model": "alekiships:block/watercraft_frame/angled/straight",
@@ -49,10 +47,11 @@
     },
     "facing=south,shape=outer_left": {
       "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 270
+      "y": 90
     },
     "facing=south,shape=outer_right": {
-      "model": "alekiships:block/watercraft_frame/angled/outer"
+      "model": "alekiships:block/watercraft_frame/angled/outer",
+      "y": 180
     },
     "facing=south,shape=straight": {
       "model": "alekiships:block/watercraft_frame/angled/straight"
@@ -65,11 +64,12 @@
       "y": 90
     },
     "facing=west,shape=outer_left": {
-      "model": "alekiships:block/watercraft_frame/angled/outer"
+      "model": "alekiships:block/watercraft_frame/angled/outer",
+      "y": 180
     },
     "facing=west,shape=outer_right": {
       "model": "alekiships:block/watercraft_frame/angled/outer",
-      "y": 90
+      "y": 270
     },
     "facing=west,shape=straight": {
       "model": "alekiships:block/watercraft_frame/angled/straight",
