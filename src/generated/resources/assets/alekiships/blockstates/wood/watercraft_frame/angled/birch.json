@@ -177,7 +177,7 @@
     {
       "apply": {
         "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "north",
@@ -188,7 +188,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "north",
@@ -200,7 +200,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "north",
@@ -212,7 +212,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "north",
@@ -224,7 +224,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "north",
@@ -234,8 +234,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 180
+        "model": "alekiships:block/watercraft_frame/angled/outer"
       },
       "when": {
         "facing": "north",
@@ -244,9 +243,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first"
       },
       "when": {
         "facing": "north",
@@ -256,9 +253,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second"
       },
       "when": {
         "facing": "north",
@@ -268,9 +263,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third"
       },
       "when": {
         "facing": "north",
@@ -280,9 +273,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth"
       },
       "when": {
         "facing": "north",
@@ -449,7 +440,7 @@
     {
       "apply": {
         "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "south",
@@ -460,7 +451,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "south",
@@ -472,7 +463,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "south",
@@ -484,7 +475,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "south",
@@ -496,7 +487,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "south",
@@ -506,7 +497,8 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/watercraft_frame/angled/outer"
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 180
       },
       "when": {
         "facing": "south",
@@ -515,7 +507,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "south",
@@ -525,7 +519,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "south",
@@ -535,7 +531,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "south",
@@ -545,7 +543,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "south",
@@ -720,7 +720,8 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/watercraft_frame/angled/outer"
+        "model": "alekiships:block/watercraft_frame/angled/outer",
+        "y": 180
       },
       "when": {
         "facing": "west",
@@ -729,7 +730,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "west",
@@ -739,7 +742,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "west",
@@ -749,7 +754,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "west",
@@ -759,7 +766,9 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth"
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
+        "uvlock": true,
+        "y": 180
       },
       "when": {
         "facing": "west",
@@ -770,7 +779,7 @@
     {
       "apply": {
         "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "west",
@@ -781,7 +790,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "west",
@@ -793,7 +802,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "west",
@@ -805,7 +814,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "west",
@@ -817,7 +826,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
         "uvlock": true,
-        "y": 90
+        "y": 270
       },
       "when": {
         "facing": "west",
@@ -1001,8 +1010,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 180
+        "model": "alekiships:block/watercraft_frame/angled/outer"
       },
       "when": {
         "facing": "east",
@@ -1011,9 +1019,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first"
       },
       "when": {
         "facing": "east",
@@ -1023,9 +1029,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second"
       },
       "when": {
         "facing": "east",
@@ -1035,9 +1039,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third"
       },
       "when": {
         "facing": "east",
@@ -1047,9 +1049,7 @@
     },
     {
       "apply": {
-        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
-        "uvlock": true,
-        "y": 180
+        "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth"
       },
       "when": {
         "facing": "east",
@@ -1060,7 +1060,7 @@
     {
       "apply": {
         "model": "alekiships:block/watercraft_frame/angled/outer",
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "east",
@@ -1071,7 +1071,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/first",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "east",
@@ -1083,7 +1083,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/second",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "east",
@@ -1095,7 +1095,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/third",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "east",
@@ -1107,7 +1107,7 @@
       "apply": {
         "model": "alekiships:block/wood/watercraft_frame/angled/birch/outer/fourth",
         "uvlock": true,
-        "y": 270
+        "y": 90
       },
       "when": {
         "facing": "east",

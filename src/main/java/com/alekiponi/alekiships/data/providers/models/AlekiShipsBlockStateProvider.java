@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.*;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.VanillaWood;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -38,12 +39,7 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
             final ModelFile inner, final ModelFile outer) {
         return blockState -> {
             final StairsShape shape = blockState.getValue(StairBlock.SHAPE);
-            final int yRot;
-            if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
-                yRot = ((int) blockState.getValue(StairBlock.FACING).toYRot() + 270) % 360;
-            } else {
-                yRot = (int) blockState.getValue(StairBlock.FACING).toYRot();
-            }
+            final int yRot = angledBoatFrameYRot(shape, blockState.getValue(StairBlock.FACING));
 
             return ConfiguredModel.builder().modelFile(
                             shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
@@ -88,12 +84,7 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
                 AngledWoodenBoatFrameBlock.SHAPE.getPossibleValues().forEach(shape -> {
                     final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get());
 
-                    final int yRot;
-                    if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
-                        yRot = ((int) facing.toYRot() + 270) % 360;
-                    } else {
-                        yRot = (int) facing.toYRot();
-                    }
+                    final int yRot = angledBoatFrameYRot(shape, facing);
 
                     multipartBuilder.part().modelFile(
                                     shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
@@ -120,6 +111,18 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
                 });
             });
         };
+    }
+
+    /**
+     * Helper to get a models Y rotation for angled boat frames.
+     */
+    public static int angledBoatFrameYRot(final StairsShape shape, final Direction facing) {
+        return switch (shape) {
+            case INNER_RIGHT, STRAIGHT -> ((int) facing.toYRot());
+            case OUTER_LEFT -> (int) facing.toYRot() + 90;
+            case OUTER_RIGHT -> (int) facing.toYRot() + 180;
+            case INNER_LEFT -> (int) facing.toYRot() + 270;
+        } % 360;
     }
 
     @Override
