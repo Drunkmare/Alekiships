@@ -1,0 +1,33 @@
+# Loader metadata
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+issueTrackerURL = "https://gitlab.com/alekiponi1/alekiships/-/issues"
+
+# Us
+[[mods]]
+modId = "${modId}"
+version = "${modVersion}"
+displayName = "${modName}"
+logoFile = "icon.png"
+authors = "alekiponi"
+credits = "Contributors: alekiponi, Traister101, vexxel. Translations: PL - Freeziu, RU - Windflame, CZ - celdak"
+description = '''A new generation of vanilla-friendly ships. Simulated sailing, placeable containers, walkable decks -- oh, and cannons!'''
+
+# Dependencies
+[[dependencies.${modId}]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neoForgeVersionRange}"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${modId}]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraftVersionRange}"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "${modId}.mixins.json"
