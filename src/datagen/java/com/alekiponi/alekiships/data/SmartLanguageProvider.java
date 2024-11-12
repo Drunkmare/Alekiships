@@ -1,17 +1,18 @@
 package com.alekiponi.alekiships.data;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
- * Smarter {@link net.minecraftforge.common.data.LanguageProvider} that checks to make
+ * Smarter {@link LanguageProvider} that checks to make
  * sure registered objects have lang
  */
 public abstract class SmartLanguageProvider implements DataProvider {
@@ -50,15 +51,15 @@ public abstract class SmartLanguageProvider implements DataProvider {
         this.addTranslations();
 
         for (final Block block : this.getKnownBlocks()) {
-            this.validateEntry(block.getDescriptionId(), ForgeRegistries.BLOCKS.getKey(block));
+            this.validateEntry(block.getDescriptionId(), BuiltInRegistries.BLOCK.getKey(block));
         }
 
         for (final Item item : this.getKnownItems()) {
-            this.validateEntry(item.getDescriptionId(), ForgeRegistries.ITEMS.getKey(item));
+            this.validateEntry(item.getDescriptionId(), BuiltInRegistries.ITEM.getKey(item));
         }
 
         for (final EntityType<?> entityType : this.getKnownEntityTypes()) {
-            this.validateEntry(entityType.getDescriptionId(), ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+            this.validateEntry(entityType.getDescriptionId(), BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
         }
 
         if (!this.data.isEmpty()) return this.save(cache,
@@ -114,15 +115,6 @@ public abstract class SmartLanguageProvider implements DataProvider {
     }
 
     @SuppressWarnings("unused")
-    public void addEnchantment(final Supplier<? extends Enchantment> key, final String name) {
-        this.add(key.get(), name);
-    }
-
-    public void add(final Enchantment key, final String name) {
-        this.add(key.getDescriptionId(), name);
-    }
-
-    @SuppressWarnings("unused")
     public void addEffect(final Supplier<? extends MobEffect> key, final String name) {
         this.add(key.get(), name);
     }
@@ -138,6 +130,20 @@ public abstract class SmartLanguageProvider implements DataProvider {
 
     public void add(final EntityType<?> key, final String name) {
         this.add(key.getDescriptionId(), name);
+    }
+
+    public void add(final TagKey<?> tagKey, final String name) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("tag.");
+
+        final ResourceLocation registryIdentifier = tagKey.registry().location();
+        final ResourceLocation tagResourceLocation = tagKey.location();
+
+        stringBuilder.append(registryIdentifier.toShortLanguageKey().replace("/", ".")).append(".")
+                .append(tagResourceLocation.getNamespace()).append(".")
+                .append(tagResourceLocation.getPath().replace("/", ".").replace(":", "."));
+
+        this.add(stringBuilder.toString(), name);
     }
 
     public void add(final String key, final String value) {

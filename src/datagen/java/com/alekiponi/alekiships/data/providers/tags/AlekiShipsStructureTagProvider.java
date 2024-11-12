@@ -9,7 +9,7 @@ import net.minecraft.data.tags.StructureTagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public class AlekiShipsStructureTagProvider extends StructureTagsProvider {
     }
 
     private static ResourceKey<Structure> createKey(final String name) {
-        return ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(AlekiShips.MOD_ID, name));
+        return ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, name));
     }
 
     @Override

@@ -10,11 +10,11 @@ import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
@@ -27,9 +27,9 @@ public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
         this.tag(AlekiShipsTags.Entities.SLOOPS)
-                .add(AlekiShipsEntities.SLOOPS.values().stream().map(RegistryObject::get).toArray(EntityType[]::new));
+                .add(AlekiShipsEntities.SLOOPS.values().stream().map(Supplier::get).toArray(EntityType[]::new));
         this.tag(AlekiShipsTags.Entities.ROWBOATS)
-                .add(AlekiShipsEntities.ROWBOATS.values().stream().map(RegistryObject::get).toArray(EntityType[]::new));
+                .add(AlekiShipsEntities.ROWBOATS.values().stream().map(Supplier::get).toArray(EntityType[]::new));
 
         this.tag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
                 .add(AlekiShipsEntities.VEHICLE_PART.get(), AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get(),
@@ -55,11 +55,12 @@ public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 AlekiShipsEntities.JUKEBOX_COMPARTMENT_ENTITY.get());
 
         // Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
-        this.tag(TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("carryon", "entity_blacklist")))
+        this.tag(TagKey.create(Registries.ENTITY_TYPE,
+                        ResourceLocation.fromNamespaceAndPath("carryon", "entity_blacklist")))
                 .add(AlekiShipsEntities.CANNONBALL_ENTITY.get()).addTag(AlekiShipsTags.Entities.SLOOPS)
                 .addTag(AlekiShipsTags.Entities.ROWBOATS).addTag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
                 .addTag(AlekiShipsTags.Entities.COMPARTMENTS)
-                .add(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.values().stream().map(RegistryObject::get)
+                .add(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.values().stream().map(Supplier::get)
                         .toArray(EntityType[]::new));
     }
 }

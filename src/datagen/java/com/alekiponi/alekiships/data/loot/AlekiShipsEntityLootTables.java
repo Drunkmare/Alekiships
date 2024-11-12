@@ -7,15 +7,16 @@ import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,12 +27,11 @@ public class AlekiShipsEntityLootTables extends EntityLootSubProvider {
     public static final int SLOOP_FRAMES = 24;
     public static final float DESTRUCTION_MODIFIER = 0.2F;
     private static final Set<EntityType<?>> VEHICLE_LOOT_TABLE_TYPES = Stream.concat(
-                    AlekiShipsEntities.ROWBOATS.values().stream().map(RegistryObject::get),
-                    AlekiShipsEntities.SLOOPS.values().stream().map(RegistryObject::get))
-            .collect(Collectors.toUnmodifiableSet());
+            AlekiShipsEntities.ROWBOATS.values().stream().map(Supplier::get),
+            AlekiShipsEntities.SLOOPS.values().stream().map(Supplier::get)).collect(Collectors.toUnmodifiableSet());
 
-    public AlekiShipsEntityLootTables() {
-        super(FeatureFlags.REGISTRY.allFlags());
+    public AlekiShipsEntityLootTables(final HolderLookup.Provider provider) {
+        super(FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     public static LootTable.Builder createRowboatLootTable(final BoatMaterial material) {
@@ -81,13 +81,12 @@ public class AlekiShipsEntityLootTables extends EntityLootSubProvider {
         AlekiShipsEntities.SLOOPS.forEach(this::dropSloopTable);
     }
 
-    protected final void dropSloopTable(final BoatMaterial material,
-            RegistryObject<EntityType<SloopEntity>> registryObject) {
+    protected final void dropSloopTable(final BoatMaterial material, Supplier<EntityType<SloopEntity>> registryObject) {
         this.add(registryObject.get(), createSloopLootTable(material));
     }
 
     protected final void dropRowboatTable(final BoatMaterial material,
-            RegistryObject<EntityType<RowboatEntity>> registryObject) {
+            Supplier<EntityType<RowboatEntity>> registryObject) {
         this.add(registryObject.get(), createRowboatLootTable(material));
     }
 
@@ -98,6 +97,6 @@ public class AlekiShipsEntityLootTables extends EntityLootSubProvider {
 
     @Override
     protected Stream<EntityType<?>> getKnownEntityTypes() {
-        return AlekiShipsEntities.ENTITY_TYPES.getEntries().stream().map(RegistryObject::get);
+        return AlekiShipsEntities.ENTITY_TYPES.getEntries().stream().map(Supplier::get);
     }
 }

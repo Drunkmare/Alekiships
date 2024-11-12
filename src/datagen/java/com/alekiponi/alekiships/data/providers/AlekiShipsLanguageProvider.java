@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.data.providers;
 
-import java.util.Locale;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
@@ -11,7 +10,10 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.Locale;
+import java.util.stream.Stream;
 
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
@@ -121,17 +123,19 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return AlekiShipsBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+        final Stream<Block> objectStream = AlekiShipsBlocks.BLOCKS.getEntries().stream().map(DeferredHolder::get);
+        return objectStream::iterator;
     }
 
     @Override
     protected Iterable<Item> getKnownItems() {
-        return AlekiShipsItems.ITEMS.getEntries().stream().map(RegistryObject::get)::iterator;
+        final Stream<Item> stream = AlekiShipsItems.ITEMS.getEntries().stream().map(DeferredHolder::get);
+        return stream::iterator;
     }
 
     @Override
     protected Iterable<EntityType<?>> getKnownEntityTypes() {
-        return AlekiShipsEntities.ENTITY_TYPES.getEntries().stream().<EntityType<?>>map(RegistryObject::get)::iterator;
+        return AlekiShipsEntities.ENTITY_TYPES.getEntries().stream().<EntityType<?>>map(DeferredHolder::get)::iterator;
     }
 
     /**

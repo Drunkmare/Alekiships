@@ -14,14 +14,14 @@ import com.alekiponi.alekiships.data.providers.tags.AlekiShipsStructureTagProvid
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class DataGenerators {
 
     @SubscribeEvent
@@ -41,8 +41,8 @@ public final class DataGenerators {
                 new AlekiShipsEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(),
                 new AlekiShipsStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new AlekiShipsRecipeProvider(packOutput));
-        generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput));
+        generator.addProvider(event.includeServer(), new AlekiShipsRecipeProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(),
                 AlekiShipsAdvancementsProvider.create(packOutput, lookupProvider, existingFileHelper));
 

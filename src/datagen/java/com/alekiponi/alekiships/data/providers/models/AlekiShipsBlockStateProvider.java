@@ -13,10 +13,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.Locale;
 import java.util.function.BiConsumer;
@@ -60,7 +60,7 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
             IntStream.range(0, 4).forEach(progress -> {
                 final var plankModel = blockStateProvider.models().withExistingParent(
                         String.format(Locale.ROOT, "block/wood/watercraft_frame/flat/%s/%s", wood.getSerializedName(),
-                                PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
+                                PROGRESS_STRINGS[progress]), ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                                 String.format(Locale.ROOT, "block/watercraft_frame/flat/template/%s",
                                         PROGRESS_STRINGS[progress]))).texture("plank", plankTexture);
 
@@ -97,7 +97,7 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
                         final var plankModel = blockStateProvider.models().withExistingParent(
                                         String.format(Locale.ROOT, "block/wood/watercraft_frame/angled/%s/%s/%s",
                                                 wood.getSerializedName(), modelShape, PROGRESS_STRINGS[progress]),
-                                        new ResourceLocation(AlekiShips.MOD_ID,
+                                        ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                                                 String.format(Locale.ROOT, "block/watercraft_frame/angled/template/%s/%s",
                                                         modelShape, PROGRESS_STRINGS[progress])))
                                 .texture("plank", plankTexture);

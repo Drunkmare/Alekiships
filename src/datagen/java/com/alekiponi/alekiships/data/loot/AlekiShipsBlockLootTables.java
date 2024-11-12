@@ -6,25 +6,21 @@ import com.alekiponi.alekiships.common.block.FlatWoodenBoatFrameBlock;
 import com.alekiponi.alekiships.common.block.ProcessedBoatFrame;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class AlekiShipsBlockLootTables extends BlockLootSubProvider {
 
-    @SuppressWarnings("unused")
-    protected AlekiShipsBlockLootTables(final Set<Item> explosionResistant) {
-        super(explosionResistant, FeatureFlags.REGISTRY.allFlags());
-    }
-
-    public AlekiShipsBlockLootTables() {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+    public AlekiShipsBlockLootTables(final HolderLookup.Provider provider) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     public static <B extends Block & ProcessedBoatFrame> LootPool.Builder createProcessedFrameTable(final B block,
@@ -54,15 +50,14 @@ public class AlekiShipsBlockLootTables extends BlockLootSubProvider {
     }
 
     private void dropAngledWoodenFrame(final BoatMaterial material,
-            RegistryObject<AngledWoodenBoatFrameBlock> registryObject) {
+            Supplier<AngledWoodenBoatFrameBlock> registryObject) {
         this.add(registryObject.get(), this.createSingleItemTable(AlekiShipsBlocks.BOAT_FRAME_ANGLED.get()).withPool(
                 this.applyExplosionCondition(material.getDeckItem(),
                         createProcessedFrameTable(registryObject.get(), material.getDeckItem(),
                                 AngledWoodenBoatFrameBlock.FULLY_PROCESSED + 1))));
     }
 
-    private void dropFlatWoodenFrame(final BoatMaterial material,
-            RegistryObject<FlatWoodenBoatFrameBlock> registryObject) {
+    private void dropFlatWoodenFrame(final BoatMaterial material, Supplier<FlatWoodenBoatFrameBlock> registryObject) {
         this.add(registryObject.get(), this.createSingleItemTable(AlekiShipsBlocks.BOAT_FRAME_FLAT.get()).withPool(
                 this.applyExplosionCondition(material.getDeckItem(),
                         createProcessedFrameTable(registryObject.get(), material.getDeckItem(),
@@ -71,6 +66,7 @@ public class AlekiShipsBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return AlekiShipsBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+        return AlekiShipsBlocks.BLOCKS.getEntries().stream()
+                .map(blockDeferredHolder -> ((Block) blockDeferredHolder.get()))::iterator;
     }
 }

@@ -7,12 +7,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class AlekiShipsBlockTagsProvider extends BlockTagsProvider {
 
@@ -25,8 +25,8 @@ public class AlekiShipsBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(final HolderLookup.Provider provider) {
         {
             final var tag = this.tag(AlekiShipsTags.Blocks.WOODEN_WATERCRAFT_FRAMES);
-            AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.values().stream().map(RegistryObject::get).forEach(tag::add);
-            AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.values().stream().map(RegistryObject::get).forEach(tag::add);
+            AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.values().stream().map(Supplier::get).forEach(tag::add);
+            AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.values().stream().map(Supplier::get).forEach(tag::add);
         }
 
         this.tag(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED).add(Blocks.KELP);
