@@ -1,38 +1,27 @@
 package com.alekiponi.alekiships.util.advancements;
 
-import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import com.mojang.serialization.Codec;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.Optional;
+
 public class GenericTrigger extends SimpleCriterionTrigger<GenericTrigger.TriggerInstance> {
-    private final ResourceLocation id;
 
-    // This is patterned after, read: copied from, TFC... could use a bit of restructure probably
-    public GenericTrigger(ResourceLocation id) {
-        this.id = id;
-    }
-
-    public void trigger(ServerPlayer player) {
-        this.trigger(player, instance -> true);
-    }
+    public static final Codec<GenericTrigger.TriggerInstance> CODEC = EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(
+            "player").xmap(TriggerInstance::new, TriggerInstance::player).codec();
 
     @Override
-    protected GenericTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate predicate, DeserializationContext context) {
-        return new GenericTrigger.TriggerInstance(predicate);
+    public Codec<TriggerInstance> codec() {
+        return CODEC;
     }
 
-    @Override
-    public ResourceLocation getId() {
-        return id;
+    public void trigger(final ServerPlayer player) {
+        trigger(player, instance -> true);
     }
 
-    public class TriggerInstance extends AbstractCriterionTriggerInstance {
-        public TriggerInstance(ContextAwarePredicate predicate) {
-            super(id, predicate);
-        }
+    public record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance {
     }
 }

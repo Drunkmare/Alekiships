@@ -37,6 +37,7 @@ public final class AlekiShips {
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(modBus);
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsJukeboxSongs.SONGS.register(modBus);
+        AlekiShipsAdvancements.TRIGGERS.register(modBus);
 
         modBus.addListener(this::setup);
         AlekishipsConfig.init();
@@ -50,7 +51,6 @@ public final class AlekiShips {
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VanillaWood.registerFrames();
-            AlekiShipsAdvancements.registerTriggers();
 
             WindModels.register(Level.OVERWORLD, OverworldWindModel::new);
         });
