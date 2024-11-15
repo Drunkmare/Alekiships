@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.client;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.entity.CannonRenderer;
 import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
@@ -11,16 +10,14 @@ import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.client.renderer.entity.NoopRenderer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
 
-@Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class RenderEventHandler {
 
     @SubscribeEvent
-    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+    public static void registerLayers(final RegisterLayerDefinitions event) {
         event.registerLayerDefinition(RowboatEntityModel.LAYER_LOCATION, RowboatEntityModel::createBodyLayer);
     }
 

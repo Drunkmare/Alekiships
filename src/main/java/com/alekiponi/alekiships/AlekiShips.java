@@ -44,7 +44,7 @@ public final class AlekiShips {
         PacketHandler.init();
 
         if (dist == Dist.CLIENT) {
-            AlekiShipsClientEvents.init();
+            AlekiShipsClientEvents.init(modBus);
         }
     }
 
