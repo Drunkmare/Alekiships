@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-public final class ClientEvents {
+public final class AlekiShipsClientForgeEvents {
 
     @SubscribeEvent
     public static void onClickInput(final InputEvent.InteractionKeyMappingTriggered event) {
