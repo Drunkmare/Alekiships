@@ -57,7 +57,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.alekiponi.alekiships.util.ClientHelper.*;
@@ -189,8 +189,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
             Player player = this.level().getNearestPlayer(this, 5 * 16);
             if (player != null) {
                 if (this.distanceTo(player) < 4 * 16 && !this.hasAllHelpers()) {
-                    PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                            new ServerboundFlagVehicleForUpdatePacket(true, this.getId()));
+                    PacketDistributor.sendToServer(new ServerboundFlagVehicleForUpdatePacket(true,this));
                 }
             }
         }

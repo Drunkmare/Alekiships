@@ -1,74 +1,50 @@
 package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public final class PacketHandler {
-    private static final String PROTOCOL_VERSION = ModList.get().getModFileById(AlekiShips.MOD_ID).versionString();
 
-    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(AlekiShips.MOD_ID, "network"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals);
+    public static void init(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(
+                ModList.get().getModFileById(AlekiShips.MOD_ID).versionString());
 
-    public static void send(final PacketDistributor.PacketTarget target, final Object message) {
-        CHANNEL.send(target, message);
+        // Client -> Server
+        registrar.playToServer(ServerboundCompartmentInputPacket.TYPE, ServerboundCompartmentInputPacket.CODEC,
+                onServer(ServerboundCompartmentInputPacket::handle));
+        registrar.playToServer(ServerboundSwitchEntityPacket.TYPE, ServerboundSwitchEntityPacket.CODEC,
+                onServer(ServerboundSwitchEntityPacket::handle));
+        registrar.playToServer(ServerboundSloopControlPacket.TYPE, ServerboundSloopControlPacket.CODEC,
+                onServer(ServerboundSloopControlPacket::handle));
+        registrar.playToServer(ServerboundPickCompartmentPacket.TYPE, ServerboundPickCompartmentPacket.CODEC,
+                onServer(ServerboundPickCompartmentPacket::handle));
+        registrar.playToServer(ServerboundFlagVehicleForUpdatePacket.TYPE, ServerboundFlagVehicleForUpdatePacket.CODEC,
+                onServer(ServerboundFlagVehicleForUpdatePacket::handle));
+
+        // Server -> Client
+        registrar.playToClient(ClientboundCleatLinkPacket.TYPE, ClientboundCleatLinkPacket.CODEC,
+                onClient(ClientboundCleatLinkPacket::handle));
+//        registrar.playToClient(ClientboundJukeboxStartMusicPacket.TYPE, ClientboundJukeboxStartMusicPacket.CODEC,
+//                onClient(ClientboundJukeboxStartMusicPacket::handle));
+//        registrar.playToClient(ClientboundJukeboxStopMusicPacket.TYPE, ClientboundJukeboxStopMusicPacket.CODEC,
+//                onClient(ClientboundJukeboxStopMusicPacket::handle));
     }
 
-    public static void init() {
-        int id = 0;
-        CHANNEL.messageBuilder(ServerboundCompartmentInputPacket.class, id++)
-                .encoder(ServerboundCompartmentInputPacket::encoder)
-                .decoder(ServerboundCompartmentInputPacket::new)
-                .consumerMainThread(ServerboundCompartmentInputPacket::handle)
-                .add();
+    private static <T extends CustomPacketPayload> IPayloadHandler<T> onClient(final Consumer<T> handler) {
+        return (payload, context) -> context.enqueueWork(() -> handler.accept(payload));
+    }
 
-        CHANNEL.messageBuilder(ServerboundSwitchEntityPacket.class, id++)
-                .encoder(ServerboundSwitchEntityPacket::encoder)
-                .decoder(ServerboundSwitchEntityPacket::new)
-                .consumerMainThread(ServerboundSwitchEntityPacket::handle)
-                .add();
-
-        CHANNEL.messageBuilder(ServerboundSloopControlPacket.class, id++)
-                .encoder(ServerboundSloopControlPacket::encoder)
-                .decoder(ServerboundSloopControlPacket::new)
-                .consumerMainThread(ServerboundSloopControlPacket::handle)
-                .add();
-
-        CHANNEL.messageBuilder(ServerboundPickCompartmentPacket.class, id++)
-                .encoder(ServerboundPickCompartmentPacket::encoder)
-                .decoder(ServerboundPickCompartmentPacket::new)
-                .consumerMainThread(ServerboundPickCompartmentPacket::handle)
-                .add();
-
-        CHANNEL.messageBuilder(ClientboundCleatLinkPacket.class, id++)
-                .encoder(ClientboundCleatLinkPacket::encoder)
-                .decoder(ClientboundCleatLinkPacket::new)
-                .consumerMainThread(
-                        (clientBoundCleatLinkPacket, contextSupplier) -> clientBoundCleatLinkPacket.handle())
-                .add();
-
-        CHANNEL.messageBuilder(ServerboundFlagVehicleForUpdatePacket.class, id++)
-                .encoder(ServerboundFlagVehicleForUpdatePacket::encoder)
-                .decoder(ServerboundFlagVehicleForUpdatePacket::new)
-                .consumerMainThread(ServerboundFlagVehicleForUpdatePacket::handle)
-                .add();
-
-        CHANNEL.messageBuilder(ClientboundJukeboxStartMusicPacket.class, id++)
-                .encoder(ClientboundJukeboxStartMusicPacket::encoder)
-                .decoder(ClientboundJukeboxStartMusicPacket::new)
-                .consumerMainThread(
-                        (clientboundJukeboxStartMusicPacket, contextSupplier) -> clientboundJukeboxStartMusicPacket.handle())
-                .add();
-
-        CHANNEL.messageBuilder(ClientboundJukeboxStopMusicPacket.class, id++)
-                .encoder(ClientboundJukeboxStopMusicPacket::encoder)
-                .decoder(ClientboundJukeboxStopMusicPacket::new)
-                .consumerMainThread(
-                        (clientboundJukeboxStopMusicPacket, contextSupplier) -> clientboundJukeboxStopMusicPacket.handle())
-                .add();
+    private static <T extends CustomPacketPayload> IPayloadHandler<T> onServer(
+            final BiConsumer<T, ServerPlayer> handler) {
+        return (payload, context) -> context.enqueueWork(
+                () -> handler.accept(payload, (ServerPlayer) context.player()));
     }
 }

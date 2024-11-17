@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
+import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -20,6 +21,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 @Mod(AlekiShips.MOD_ID)
@@ -30,6 +32,9 @@ public final class AlekiShips {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public AlekiShips(final IEventBus modBus, final Dist dist) {
+        modBus.addListener(PacketHandler::init);
+        modBus.addListener(this::setup);
+
         AlekiShipsTabs.CREATIVE_MODE_TABS.register(modBus);
         AlekiShipsItems.ITEMS.register(modBus);
         AlekiShipsBlocks.BLOCKS.register(modBus);
@@ -39,12 +44,11 @@ public final class AlekiShips {
         AlekiShipsJukeboxSongs.SONGS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
 
-        modBus.addListener(this::setup);
         AlekishipsConfig.init();
-        PacketHandler.init();
 
         if (dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init(modBus);
+            AlekiShipsClientForgeEvents.init(NeoForge.EVENT_BUS);
         }
     }
 

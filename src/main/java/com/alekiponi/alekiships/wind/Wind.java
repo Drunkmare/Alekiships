@@ -2,6 +2,9 @@ package com.alekiponi.alekiships.wind;
 
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.CommonHelper;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
@@ -16,6 +19,11 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public final class Wind {
+
+    // TODO maybe Lombok so we can generate the two getters?
+    public static final StreamCodec<ByteBuf, Wind> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.FLOAT,
+            Wind::getSpeed, ByteBufCodecs.FLOAT, Wind::getAngle, Wind::new);
+
     public static final Wind ZERO = fromComponents(0, 0);
     /**
      * The wind speed, always a positive value
@@ -43,5 +51,13 @@ public final class Wind {
 
     public static Wind fromVec(final Vec2 vec2) {
         return fromComponents(vec2.x, vec2.y);
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public float getAngle() {
+        return angle;
     }
 }

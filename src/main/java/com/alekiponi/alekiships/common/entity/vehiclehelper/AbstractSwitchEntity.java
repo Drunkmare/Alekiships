@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
-import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundSwitchEntityPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -12,7 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
@@ -26,8 +25,7 @@ public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper imp
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         if(this.level().isClientSide()){
-            PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                    new ServerboundSwitchEntityPacket(!this.getSwitched(), this.getId()));
+            PacketDistributor.sendToServer(new ServerboundSwitchEntityPacket(!this.getSwitched(), this));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

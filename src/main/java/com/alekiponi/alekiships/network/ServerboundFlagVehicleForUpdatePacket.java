@@ -1,38 +1,51 @@
 package com.alekiponi.alekiships.network;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractSwitchEntity;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-public class ServerboundFlagVehicleForUpdatePacket {
+import javax.annotation.Nullable;
+
+public final class ServerboundFlagVehicleForUpdatePacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<ServerboundFlagVehicleForUpdatePacket> TYPE = new CustomPacketPayload.Type<>(
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "vehicle_passenger_update_flag"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFlagVehicleForUpdatePacket> CODEC = StreamCodec.ofMember(
+            ServerboundFlagVehicleForUpdatePacket::encoder, ServerboundFlagVehicleForUpdatePacket::new);
+
     private final boolean flag;
-    private final int entityID;
+    private final int entityId;
 
-    public ServerboundFlagVehicleForUpdatePacket(boolean flag, int entityID) {
+    public ServerboundFlagVehicleForUpdatePacket(final boolean flag, final AbstractVehicle vehicle) {
         this.flag = flag;
-        this.entityID = entityID;
+        this.entityId = vehicle.getId();
     }
 
-    public ServerboundFlagVehicleForUpdatePacket(FriendlyByteBuf buffer) {
+    ServerboundFlagVehicleForUpdatePacket(final FriendlyByteBuf buffer) {
         this.flag = buffer.readBoolean();
-        this.entityID = buffer.readInt();
+        this.entityId = buffer.readInt();
     }
 
-    public void encoder(FriendlyByteBuf buffer) {
+    void encoder(final FriendlyByteBuf buffer) {
         buffer.writeBoolean(this.flag);
-        buffer.writeInt(this.entityID);
+        buffer.writeInt(this.entityId);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            Entity entity = context.get().getSender().level().getEntity(this.entityID);
-            if(entity instanceof AbstractVehicle) {
-                ((AbstractVehicle) entity).setFlaggedForPassengerUpdate(this.flag);
-            }
-        });
+    void handle(@Nullable final ServerPlayer player) {
+        if (player == null) return;
+
+        if (player.level().getEntity(this.entityId) instanceof final AbstractVehicle vehicle) {
+            vehicle.setFlaggedForPassengerUpdate(this.flag);
+        }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

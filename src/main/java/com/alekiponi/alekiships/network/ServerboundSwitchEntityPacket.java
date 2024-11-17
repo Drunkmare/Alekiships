@@ -1,46 +1,52 @@
 package com.alekiponi.alekiships.network;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractSwitchEntity;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
-public class ServerboundSwitchEntityPacket {
+public final class ServerboundSwitchEntityPacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<ServerboundSwitchEntityPacket> TYPE = new CustomPacketPayload.Type<>(
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "switch_entity"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSwitchEntityPacket> CODEC = StreamCodec.ofMember(
+            ServerboundSwitchEntityPacket::encoder, ServerboundSwitchEntityPacket::new);
+
     private final boolean switched;
-    private final int entityID;
+    private final int entityId;
 
-    public ServerboundSwitchEntityPacket(boolean switched, int entityID) {
+    public ServerboundSwitchEntityPacket(final boolean switched, final AbstractSwitchEntity switchEntity) {
         this.switched = switched;
-        this.entityID = entityID;
+        this.entityId = switchEntity.getId();
     }
 
-    public ServerboundSwitchEntityPacket(FriendlyByteBuf buffer) {
+    ServerboundSwitchEntityPacket(final FriendlyByteBuf buffer) {
         this.switched = buffer.readBoolean();
-        this.entityID = buffer.readInt();
+        this.entityId = buffer.readInt();
     }
 
-    public void encoder(FriendlyByteBuf buffer) {
+    void encoder(final FriendlyByteBuf buffer) {
         buffer.writeBoolean(this.switched);
-        buffer.writeInt(this.entityID);
+        buffer.writeInt(this.entityId);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            Entity entity = context.get().getSender().level().getEntity(this.entityID);
-            ServerPlayer serverPlayer = context.get().getSender();
-            if(entity instanceof AbstractSwitchEntity) {
-                assert serverPlayer != null;
-                if (entity.distanceTo(serverPlayer) < 10) {
-                    ((AbstractSwitchEntity) entity).setSwitched(this.switched);
-                }
-            }
+    void handle(@Nullable final ServerPlayer player) {
+        if (player == null) return;
+        if (player.level().getEntity(this.entityId) instanceof final AbstractSwitchEntity abstractSwitchEntity) {
+            if (!(abstractSwitchEntity.distanceTo(player) < 10)) return;
 
-        });
+            abstractSwitchEntity.setSwitched(this.switched);
+        }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.wind.Wind;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,6 +22,9 @@ public final class AlekiShipsEntityDataSerializers {
     public static final Supplier<EntityDataSerializer<DyeColor>> DYE_COLOR = register("dye_color",
             () -> EntityDataSerializer.forValueType(DyeColor.STREAM_CODEC));
 
+    public static final Supplier<EntityDataSerializer<Wind>> WIND = register("wind",
+            () -> EntityDataSerializer.forValueType(Wind.STREAM_CODEC));
+
     private static final StreamCodec<ByteBuf, Optional<DyeColor>> OPTIONAL_DYE_COLOR_CODEC = new StreamCodec<>() {
         public void encode(final ByteBuf byteBuf, Optional<DyeColor> dyeColor) {
             if (dyeColor.isPresent()) {
@@ -38,14 +42,6 @@ public final class AlekiShipsEntityDataSerializers {
 
     public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
             "optional_dye_color", () -> EntityDataSerializer.forValueType(OPTIONAL_DYE_COLOR_CODEC));
-
-//  TODO Our wind type needs a StreamCodec ugh
-//
-//    public static final Supplier<EntityDataSerializer<Wind>> WIND = register("",
-//            () -> EntityDataSerializer.simple((friendlyByteBuf, windVector) -> {
-//                friendlyByteBuf.writeFloat(windVector.speed);
-//                friendlyByteBuf.writeFloat(windVector.angle);
-//            }, friendlyByteBuf -> new Wind(friendlyByteBuf.readFloat(), friendlyByteBuf.readFloat())));
 
     private static <T extends EntityDataSerializer<?>> DeferredHolder<EntityDataSerializer<?>, T> register(
             final String name, final Supplier<T> dataSerializer) {

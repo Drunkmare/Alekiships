@@ -1,66 +1,62 @@
 package com.alekiponi.alekiships.network;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
-public class ServerboundPickCompartmentPacket {
+public record ServerboundPickCompartmentPacket(int entityId, ItemStack itemStack,
+                                               int slotIndex) implements CustomPacketPayload {
 
-    private final int compartmentID;
-    private final ItemStack itemStack;
-    private final int slotIndex;
+    public static final CustomPacketPayload.Type<ServerboundPickCompartmentPacket> TYPE = new CustomPacketPayload.Type<>(
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "pick_compartment"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundPickCompartmentPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, ServerboundPickCompartmentPacket::entityId,
+            ItemStack.validatedStreamCodec(ItemStack.OPTIONAL_STREAM_CODEC),
+            ServerboundPickCompartmentPacket::itemStack, ByteBufCodecs.VAR_INT,
+            ServerboundPickCompartmentPacket::slotIndex, ServerboundPickCompartmentPacket::new);
 
-    public ServerboundPickCompartmentPacket(final int compartmentID, final ItemStack itemStack, final int slotIndex) {
-        this.compartmentID = compartmentID;
-        this.itemStack = itemStack.copy();
-        this.slotIndex = slotIndex;
+    public ServerboundPickCompartmentPacket(final Entity entity, final ItemStack itemStack, final int slotIndex) {
+        this(entity.getId(), itemStack.copy(), slotIndex);
     }
 
-    protected ServerboundPickCompartmentPacket(final FriendlyByteBuf byteBuf) {
-        this.compartmentID = byteBuf.readInt();
-        this.itemStack = byteBuf.readItem();
-        this.slotIndex = byteBuf.readInt();
-    }
+    void handle(@Nullable final ServerPlayer player) {
+        if (player == null) return;
 
-    public void encoder(final FriendlyByteBuf byteBuf) {
-        byteBuf.writeInt(this.compartmentID);
-        byteBuf.writeItemStack(this.itemStack, false);
-        byteBuf.writeInt(this.slotIndex);
-    }
+        if (!player.gameMode.isCreative()) return;
 
-    public void handle(final Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            final ServerPlayer player = context.get().getSender();
-            if (player == null) return;
+        if (!this.itemStack.isItemEnabled(player.level().enabledFeatures())) return;
 
-            if (!player.gameMode.isCreative()) return;
+        if (!this.itemStack.isEmpty()) {
 
-            if (!this.itemStack.isItemEnabled(player.level().enabledFeatures())) return;
+            final Entity entity = player.level().getEntity(this.entityId);
 
-            if (!this.itemStack.isEmpty()) {
-
-                final Entity entity = player.level().getEntity(this.compartmentID);
-
-                if (entity instanceof CompartmentCloneable compartment) {
-                    this.itemStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compartment.saveForItemStack());
-                }
+            if (entity instanceof CompartmentCloneable compartment) {
+                this.itemStack.applyComponents(compartment.collectComponents());
             }
+        }
 
-            final boolean validSlot = this.slotIndex >= 1 && this.slotIndex <= 45;
-            final boolean nonEmptyStack = this.itemStack.isEmpty() || this.itemStack.getDamageValue() >= 0 && this.itemStack.getCount() <= 64 && !this.itemStack.isEmpty();
-            if (validSlot && nonEmptyStack) {
-                player.inventoryMenu.getSlot(this.slotIndex).setByPlayer(this.itemStack);
-                player.inventoryMenu.broadcastChanges();
-            } else if (this.slotIndex < 0 && nonEmptyStack /*&& dropSpamTickCount < 200*/) {
+        final boolean validSlot = this.slotIndex >= 1 && this.slotIndex <= 45;
+        final boolean nonEmptyStack = this.itemStack.isEmpty() || this.itemStack.getDamageValue() >= 0 && this.itemStack.getCount() <= 64 && !this.itemStack.isEmpty();
+        if (validSlot && nonEmptyStack) {
+            player.inventoryMenu.getSlot(this.slotIndex).setByPlayer(this.itemStack);
+            player.inventoryMenu.broadcastChanges();
+        } else if (this.slotIndex < 0 && nonEmptyStack /*&& dropSpamTickCount < 200*/) {
 //                dropSpamTickCount += 20;
-                player.drop(this.itemStack, true);
-            }
-        });
+            player.drop(this.itemStack, true);
+        }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -1,58 +1,65 @@
 package com.alekiponi.alekiships.network;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
-public class ServerboundCompartmentInputPacket {
+public final class ServerboundCompartmentInputPacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<ServerboundCompartmentInputPacket> TYPE = new CustomPacketPayload.Type<>(
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "compartment_input"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCompartmentInputPacket> CODEC = StreamCodec.ofMember(
+            ServerboundCompartmentInputPacket::encoder, ServerboundCompartmentInputPacket::new);
+
     private final boolean inputLeft;
     private final boolean inputRight;
     private final boolean inputUp;
     private final boolean inputDown;
+    private final int entityId;
 
-    private final int entityID;
-
-    public ServerboundCompartmentInputPacket(boolean inputLeft, boolean inputRight, boolean inputUp, boolean inputDown, int id) {
-        this.inputLeft = inputLeft;
-        this.inputRight = inputRight;
-        this.inputUp = inputUp;
-        this.inputDown = inputDown;
-        this.entityID = id;
+    public ServerboundCompartmentInputPacket(final EmptyCompartmentEntity emptyCompartment) {
+        this.inputLeft = emptyCompartment.getInputLeft();
+        this.inputRight = emptyCompartment.getInputRight();
+        this.inputUp = emptyCompartment.getInputUp();
+        this.inputDown = emptyCompartment.getInputDown();
+        this.entityId = emptyCompartment.getId();
     }
 
-    public ServerboundCompartmentInputPacket(FriendlyByteBuf buffer) {
+    ServerboundCompartmentInputPacket(final RegistryFriendlyByteBuf buffer) {
         this.inputLeft = buffer.readBoolean();
         this.inputRight = buffer.readBoolean();
         this.inputUp = buffer.readBoolean();
         this.inputDown = buffer.readBoolean();
-        this.entityID = buffer.readInt();
+        this.entityId = buffer.readInt();
     }
 
-    public void encoder(FriendlyByteBuf buffer) {
+    void encoder(final RegistryFriendlyByteBuf buffer) {
         buffer.writeBoolean(this.inputLeft);
         buffer.writeBoolean(this.inputRight);
         buffer.writeBoolean(this.inputUp);
         buffer.writeBoolean(this.inputDown);
-        buffer.writeInt(this.entityID);
+        buffer.writeInt(this.entityId);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            Entity entity = context.get().getSender().level().getEntity(this.entityID);
-            ServerPlayer player = context.get().getSender();
-            if(entity instanceof EmptyCompartmentEntity compartment) {
-                assert player != null;
-                if (player.distanceTo(compartment) < 2) {
-                    compartment.setInput(this.inputLeft, this.inputRight, this.inputUp, this.inputDown);
-                }
+    void handle(@Nullable final ServerPlayer player) {
+        if (player == null) return;
+        final Entity entity = player.level().getEntity(this.entityId);
+        if (entity instanceof EmptyCompartmentEntity compartment) {
+            if (player.distanceTo(compartment) < 2) {
+                compartment.setInput(this.inputLeft, this.inputRight, this.inputUp, this.inputDown);
             }
-        });
+        }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

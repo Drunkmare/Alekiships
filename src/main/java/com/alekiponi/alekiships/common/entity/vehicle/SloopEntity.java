@@ -18,7 +18,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCom
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
-import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundSloopControlPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
@@ -44,7 +43,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
@@ -395,8 +394,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.tickDynamicControls();
 
         if (this.level().isClientSide() && this.getControllingPassenger() != null && this.isControlledByLocalInstance()) {
-            PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                    new ServerboundSloopControlPacket(this.getMainsheetLength(), this.getMainBoomRotation(), this.getRudderRotation(), this.getId()));
+            PacketDistributor.sendToServer(
+                    new ServerboundSloopControlPacket(this));
         }
     }
 

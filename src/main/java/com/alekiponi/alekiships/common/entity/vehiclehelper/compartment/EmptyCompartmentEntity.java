@@ -12,7 +12,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractPassthroughH
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
@@ -39,7 +38,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -278,6 +277,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     }
 
 
+    // TODO this should probably not also send packets?
     public void setInput(final boolean inputLeft, final boolean inputRight, final boolean inputUp,
                          final boolean inputDown) {
         if (this.getFirstPassenger() instanceof Player) {
@@ -299,8 +299,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 shouldUpdateServer = true;
             }
             if (this.level().isClientSide() && shouldUpdateServer) {
-                PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                        new ServerboundCompartmentInputPacket(inputLeft, inputRight, inputUp, inputDown, this.getId()));
+                PacketDistributor.sendToServer(new ServerboundCompartmentInputPacket(this));
             }
         } else {
             this.setInputLeft(false);
@@ -308,8 +307,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             this.setInputUp(false);
             this.setInputDown(false);
             if (this.level().isClientSide()) {
-                PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                        new ServerboundCompartmentInputPacket(false, false, false, false, this.getId()));
+                PacketDistributor.sendToServer(new ServerboundCompartmentInputPacket(this));
             }
 
         }

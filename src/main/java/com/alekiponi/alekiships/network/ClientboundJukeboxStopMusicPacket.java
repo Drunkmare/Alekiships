@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
+// TODO, this doesn't appear to be needed anymore
 public final class ClientboundJukeboxStopMusicPacket {
 
     private final int entityId;

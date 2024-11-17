@@ -29,7 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -170,8 +170,7 @@ public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons
 
 
             if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
-                PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                        new ClientboundCleatLinkPacket(this, null));
+                PacketDistributor.sendToPlayersTrackingEntity(this, new ClientboundCleatLinkPacket(this, null));
             }
         }
 
@@ -206,8 +205,7 @@ public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons
         this.leashHolder = pLeashHolder;
         this.leashInfoTag = null;
         if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                    new ClientboundCleatLinkPacket(this, this.leashHolder));
+            PacketDistributor.sendToPlayersTrackingEntity(this, new ClientboundCleatLinkPacket(this, this.leashHolder));
         }
 
     }

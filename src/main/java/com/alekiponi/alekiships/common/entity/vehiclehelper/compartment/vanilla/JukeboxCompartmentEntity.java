@@ -198,19 +198,19 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     private void startPlaying() {
         this.recordStartedTick = this.tickCount;
         this.isPlaying = true;
-        if (!this.level().isClientSide) {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                    new ClientboundJukeboxStartMusicPacket(this, this.getFirstItem().getItem()));
-        }
+//        if (!this.level().isClientSide) {
+//            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
+//                    new ClientboundJukeboxStartMusicPacket(this, this.getFirstItem().getItem()));
+//        }
         this.setChanged();
     }
 
     private void stopPlaying() {
         this.isPlaying = false;
-        if (!this.level().isClientSide) {
-            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                    new ClientboundJukeboxStopMusicPacket(this));
-        }
+//        if (!this.level().isClientSide) {
+//            PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
+//                    new ClientboundJukeboxStopMusicPacket(this));
+//        }
         this.setChanged();
     }
 

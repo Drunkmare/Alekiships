@@ -1,6 +1,4 @@
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-@FieldsAreNonnullByDefault
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault @FieldsAreNonnullByDefault
 package com.alekiponi.alekiships.network;
 
 import net.minecraft.FieldsAreNonnullByDefault;
