@@ -30,8 +30,6 @@ public final class PacketHandler {
                 onServer(ServerboundFlagVehicleForUpdatePacket::handle));
 
         // Server -> Client
-        registrar.playToClient(ClientboundCleatLinkPacket.TYPE, ClientboundCleatLinkPacket.CODEC,
-                onClient(ClientboundCleatLinkPacket::handle));
 //        registrar.playToClient(ClientboundJukeboxStartMusicPacket.TYPE, ClientboundJukeboxStartMusicPacket.CODEC,
 //                onClient(ClientboundJukeboxStartMusicPacket::handle));
 //        registrar.playToClient(ClientboundJukeboxStopMusicPacket.TYPE, ClientboundJukeboxStopMusicPacket.CODEC,
