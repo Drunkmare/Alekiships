@@ -3,7 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.IHaveIcons;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.network.ClientBoundCleatLinkPacket;
+import com.alekiponi.alekiships.network.ClientboundCleatLinkPacket;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
@@ -171,7 +171,7 @@ public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons
 
             if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
                 PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                        new ClientBoundCleatLinkPacket(this, null));
+                        new ClientboundCleatLinkPacket(this, null));
             }
         }
 
@@ -207,7 +207,7 @@ public class CleatEntity extends AbstractPassthroughHelper implements IHaveIcons
         this.leashInfoTag = null;
         if (!this.level().isClientSide() && pBroadcastPacket && this.level() instanceof ServerLevel) {
             PacketHandler.send(PacketDistributor.TRACKING_ENTITY.with(() -> this),
-                    new ClientBoundCleatLinkPacket(this, this.leashHolder));
+                    new ClientboundCleatLinkPacket(this, this.leashHolder));
         }
 
     }

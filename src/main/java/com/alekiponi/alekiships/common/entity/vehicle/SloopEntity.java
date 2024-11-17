@@ -19,7 +19,7 @@ import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.network.ServerBoundSloopPacket;
+import com.alekiponi.alekiships.network.ServerboundSloopControlPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
@@ -396,7 +396,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         if (this.level().isClientSide() && this.getControllingPassenger() != null && this.isControlledByLocalInstance()) {
             PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                    new ServerBoundSloopPacket(this.getMainsheetLength(), this.getMainBoomRotation(), this.getRudderRotation(), this.getId()));
+                    new ServerboundSloopControlPacket(this.getMainsheetLength(), this.getMainBoomRotation(), this.getRudderRotation(), this.getId()));
         }
     }
 

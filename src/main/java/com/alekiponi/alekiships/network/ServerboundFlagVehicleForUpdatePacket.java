@@ -8,16 +8,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
-public class ServerBoundFlagVehicleForUpdatePacket {
+public class ServerboundFlagVehicleForUpdatePacket {
     private final boolean flag;
     private final int entityID;
 
-    public ServerBoundFlagVehicleForUpdatePacket(boolean flag, int entityID) {
+    public ServerboundFlagVehicleForUpdatePacket(boolean flag, int entityID) {
         this.flag = flag;
         this.entityID = entityID;
     }
 
-    public ServerBoundFlagVehicleForUpdatePacket(FriendlyByteBuf buffer) {
+    public ServerboundFlagVehicleForUpdatePacket(FriendlyByteBuf buffer) {
         this.flag = buffer.readBoolean();
         this.entityID = buffer.readInt();
     }

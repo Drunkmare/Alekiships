@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
-import com.alekiponi.alekiships.network.ServerBoundPickCompartmentPacket;
+import com.alekiponi.alekiships.network.ServerboundPickCompartmentPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ public interface CompartmentCloneable {
      * Saves the compartment contents to an {@link ItemStack}. This tag is stored under {@value BlockItem#BLOCK_ENTITY_TAG}
      * as that's what vanilla does for block entity cloning.
      *
-     * @apiNote This method is called on the client (when in creative) and on the server via {@link ServerBoundPickCompartmentPacket}
+     * @apiNote This method is called on the client (when in creative) and on the server via {@link ServerboundPickCompartmentPacket}
      */
     CompoundTag saveForItemStack();
 }

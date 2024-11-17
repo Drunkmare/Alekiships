@@ -15,7 +15,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.network.ServerBoundFlagVehicleForUpdatePacket;
+import com.alekiponi.alekiships.network.ServerboundFlagVehicleForUpdatePacket;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
 import javax.annotation.Nullable;
@@ -190,7 +190,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
             if (player != null) {
                 if (this.distanceTo(player) < 4 * 16 && !this.hasAllHelpers()) {
                     PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                            new ServerBoundFlagVehicleForUpdatePacket(true, this.getId()));
+                            new ServerboundFlagVehicleForUpdatePacket(true, this.getId()));
                 }
             }
         }

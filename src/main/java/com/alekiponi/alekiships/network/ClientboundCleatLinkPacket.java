@@ -12,16 +12,16 @@ import javax.annotation.Nullable;
 /**
  * Replicates {@link ClientboundSetEntityLinkPacket} for {@link CleatEntity}.
  */
-public class ClientBoundCleatLinkPacket {
+public class ClientboundCleatLinkPacket {
     private final int cleatId;
     private final int designationId;
 
-    public ClientBoundCleatLinkPacket(final CleatEntity cleat, @Nullable final Entity designation) {
+    public ClientboundCleatLinkPacket(final CleatEntity cleat, @Nullable final Entity designation) {
         this.cleatId = cleat.getId();
         this.designationId = designation != null ? designation.getId() : 0;
     }
 
-    public ClientBoundCleatLinkPacket(final FriendlyByteBuf byteBuf) {
+    public ClientboundCleatLinkPacket(final FriendlyByteBuf byteBuf) {
         this.cleatId = byteBuf.readInt();
         this.designationId = byteBuf.readInt();
     }

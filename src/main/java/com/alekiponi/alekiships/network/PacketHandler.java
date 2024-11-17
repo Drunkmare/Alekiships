@@ -32,29 +32,29 @@ public final class PacketHandler {
                 .consumerMainThread(ServerboundSwitchEntityPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(ServerBoundSloopPacket.class, id++)
-                .encoder(ServerBoundSloopPacket::encoder)
-                .decoder(ServerBoundSloopPacket::new)
-                .consumerMainThread(ServerBoundSloopPacket::handle)
+        CHANNEL.messageBuilder(ServerboundSloopControlPacket.class, id++)
+                .encoder(ServerboundSloopControlPacket::encoder)
+                .decoder(ServerboundSloopControlPacket::new)
+                .consumerMainThread(ServerboundSloopControlPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(ServerBoundPickCompartmentPacket.class, id++)
-                .encoder(ServerBoundPickCompartmentPacket::encoder)
-                .decoder(ServerBoundPickCompartmentPacket::new)
-                .consumerMainThread(ServerBoundPickCompartmentPacket::handle)
+        CHANNEL.messageBuilder(ServerboundPickCompartmentPacket.class, id++)
+                .encoder(ServerboundPickCompartmentPacket::encoder)
+                .decoder(ServerboundPickCompartmentPacket::new)
+                .consumerMainThread(ServerboundPickCompartmentPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(ClientBoundCleatLinkPacket.class, id++)
-                .encoder(ClientBoundCleatLinkPacket::encoder)
-                .decoder(ClientBoundCleatLinkPacket::new)
+        CHANNEL.messageBuilder(ClientboundCleatLinkPacket.class, id++)
+                .encoder(ClientboundCleatLinkPacket::encoder)
+                .decoder(ClientboundCleatLinkPacket::new)
                 .consumerMainThread(
                         (clientBoundCleatLinkPacket, contextSupplier) -> clientBoundCleatLinkPacket.handle())
                 .add();
 
-        CHANNEL.messageBuilder(ServerBoundFlagVehicleForUpdatePacket.class, id++)
-                .encoder(ServerBoundFlagVehicleForUpdatePacket::encoder)
-                .decoder(ServerBoundFlagVehicleForUpdatePacket::new)
-                .consumerMainThread(ServerBoundFlagVehicleForUpdatePacket::handle)
+        CHANNEL.messageBuilder(ServerboundFlagVehicleForUpdatePacket.class, id++)
+                .encoder(ServerboundFlagVehicleForUpdatePacket::encoder)
+                .decoder(ServerboundFlagVehicleForUpdatePacket::new)
+                .consumerMainThread(ServerboundFlagVehicleForUpdatePacket::handle)
                 .add();
 
         CHANNEL.messageBuilder(ClientboundJukeboxStartMusicPacket.class, id++)

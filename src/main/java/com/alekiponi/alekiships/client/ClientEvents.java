@@ -1,18 +1,15 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.network.ServerBoundPickCompartmentPacket;
+import com.alekiponi.alekiships.network.ServerboundPickCompartmentPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.model.ArmorStandArmorModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -56,7 +53,7 @@ public final class ClientEvents {
 
         inventory.setPickedItem(pickResult);
         PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                new ServerBoundPickCompartmentPacket(entity.getId(), minecraft.player.getMainHandItem(),
+                new ServerboundPickCompartmentPacket(entity.getId(), minecraft.player.getMainHandItem(),
                         Inventory.INVENTORY_SIZE + inventory.selected));
 
         event.setCanceled(true);

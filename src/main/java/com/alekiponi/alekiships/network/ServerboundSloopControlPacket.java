@@ -8,20 +8,20 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ServerBoundSloopPacket {
+public class ServerboundSloopControlPacket {
     private final float sheetLength;
     private final float boomRotation;
     private final float rudderAngle;
     private final int entityID;
 
-    public ServerBoundSloopPacket(float sheetLength, float boomRotation, float rudderAngle, int entityID) {
+    public ServerboundSloopControlPacket(float sheetLength, float boomRotation, float rudderAngle, int entityID) {
         this.sheetLength = sheetLength;
         this.boomRotation = boomRotation;
         this.rudderAngle = rudderAngle;
         this.entityID = entityID;
     }
 
-    public ServerBoundSloopPacket(FriendlyByteBuf buffer){
+    public ServerboundSloopControlPacket(FriendlyByteBuf buffer){
         this.sheetLength = buffer.readFloat();
         this.boomRotation = buffer.readFloat();
         this.rudderAngle = buffer.readFloat();

@@ -10,19 +10,19 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ServerBoundPickCompartmentPacket {
+public class ServerboundPickCompartmentPacket {
 
     private final int compartmentID;
     private final ItemStack itemStack;
     private final int slotIndex;
 
-    public ServerBoundPickCompartmentPacket(final int compartmentID, final ItemStack itemStack, final int slotIndex) {
+    public ServerboundPickCompartmentPacket(final int compartmentID, final ItemStack itemStack, final int slotIndex) {
         this.compartmentID = compartmentID;
         this.itemStack = itemStack.copy();
         this.slotIndex = slotIndex;
     }
 
-    protected ServerBoundPickCompartmentPacket(final FriendlyByteBuf byteBuf) {
+    protected ServerboundPickCompartmentPacket(final FriendlyByteBuf byteBuf) {
         this.compartmentID = byteBuf.readInt();
         this.itemStack = byteBuf.readItem();
         this.slotIndex = byteBuf.readInt();
