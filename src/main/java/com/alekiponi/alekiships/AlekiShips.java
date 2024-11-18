@@ -19,7 +19,9 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
@@ -31,9 +33,12 @@ public final class AlekiShips {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public AlekiShips(final IEventBus modBus, final Dist dist) {
+    public AlekiShips(final ModContainer modContainer, final IEventBus modBus, final Dist dist) {
         modBus.addListener(PacketHandler::init);
         modBus.addListener(this::setup);
+
+        modContainer.registerConfig(ModConfig.Type.CLIENT, AlekishipsConfig.CLIENT_SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, AlekishipsConfig.SERVER_SPEC);
 
         AlekiShipsTabs.CREATIVE_MODE_TABS.register(modBus);
         AlekiShipsItems.ITEMS.register(modBus);
@@ -43,8 +48,6 @@ public final class AlekiShips {
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsJukeboxSongs.SONGS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
-
-        AlekishipsConfig.init();
 
         if (dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init(modBus);

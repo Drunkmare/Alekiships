@@ -1,30 +1,30 @@
 package com.alekiponi.alekiships.events.config;
 
-import java.util.function.Function;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-// TODO remove if this continues to be empty
-public final class ClientConfig
-{
-    public ForgeConfigSpec.EnumValue<RudderSchemes> rudderControlScheme;
+public final class ClientConfig {
 
-    ClientConfig(final ForgeConfigSpec.Builder innerBuilder)
-    {
-        //noinspection unused
-        final Function<String, ForgeConfigSpec.Builder> builder = (name) -> innerBuilder.translation(
-            "alekiships.config.client." + name);
+    public static final ClientConfig CONFIG;
+    public static final ModConfigSpec CONFIG_SPEC;
 
-        this.rudderControlScheme = builder.apply("tillerControlScheme")
-            .comment(
-                "Change how the rudder behaves on boats that have them")
-            .defineEnum("tillerControlScheme", RudderSchemes.RETURN_TO_CENTER, RudderSchemes.values());
+    static {
+        final var pair = new ModConfigSpec.Builder().configure(ClientConfig::new);
 
+        //Store the resulting values
+        CONFIG = pair.getLeft();
+        CONFIG_SPEC = pair.getRight();
     }
 
-    public enum RudderSchemes
-    {
+    public final ModConfigSpec.EnumValue<RudderSchemes> rudderControlScheme;
+
+    ClientConfig(final ModConfigSpec.Builder builder) {
+        this.rudderControlScheme = builder.translation("alekiships.config.client.tillerControlScheme")
+                .comment("Change how the rudder behaves on boats that have them")
+                .defineEnum("tillerControlScheme", RudderSchemes.RETURN_TO_CENTER);
+    }
+
+    public enum RudderSchemes {
         RETURN_TO_CENTER,
         STAY_IN_PLACE
-
     }
 }

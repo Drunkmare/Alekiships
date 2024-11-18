@@ -1,22 +1,13 @@
 package com.alekiponi.alekiships.events.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.function.Function;
-
-// TODO remove if this continues to be empty
 public final class ServerConfig {
-    public ForgeConfigSpec.BooleanValue windAffectsBoatsWithNoAnchor;
+    public final ModConfigSpec.BooleanValue windAffectsBoatsWithNoAnchor;
 
-    ServerConfig(final ForgeConfigSpec.Builder innerBuilder) {
-        //noinspection unused
-        final Function<String, ForgeConfigSpec.Builder> builder = (name) -> innerBuilder.translation(
-                "alekiships.config.server." + name);
-
-        this.windAffectsBoatsWithNoAnchor = builder.apply("windAffectsBoatsWithNoAnchor")
-                .comment(
-                        "When true, boats with no anchor will drift in the wind")
+    ServerConfig(final ModConfigSpec.Builder builder) {
+        this.windAffectsBoatsWithNoAnchor = builder.translation("alekiships.config.server.windAffectsBoatsWithNoAnchor")
+                .comment("When true, boats with no anchor will drift in the wind")
                 .define("windAffectsBoatsWithNoAnchor", false);
-
     }
 }

@@ -1,25 +1,29 @@
 package com.alekiponi.alekiships.events.config;
 
-import java.util.function.Function;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AlekishipsConfig {
 
-    public static final ServerConfig SERVER = register(ModConfig.Type.SERVER, ServerConfig::new);
-    public static final ClientConfig CLIENT = register(ModConfig.Type.CLIENT, ClientConfig::new);
+    public static final ServerConfig SERVER;
+    public static final ModConfigSpec SERVER_SPEC;
+    public static final ClientConfig CLIENT;
+    public static final ModConfigSpec CLIENT_SPEC;
 
-    public static void init() {
-    }
+    static {
+        {
+            final var pair = new ModConfigSpec.Builder().configure(ClientConfig::new);
 
-    private static <C> C register(@SuppressWarnings("SameParameterValue") final ModConfig.Type type,
-            final Function<ForgeConfigSpec.Builder, C> factory) {
-        final Pair<C, ForgeConfigSpec> specPair = (new ForgeConfigSpec.Builder()).configure(factory);
+            //Store the resulting values
+            CLIENT = pair.getLeft();
+            CLIENT_SPEC = pair.getRight();
+        }
 
-        ModLoadingContext.get().registerConfig(type, specPair.getRight());
+        {
+            final var pair = new ModConfigSpec.Builder().configure(ServerConfig::new);
 
-        return specPair.getLeft();
+            //Store the resulting values
+            SERVER = pair.getLeft();
+            SERVER_SPEC = pair.getRight();
+        }
     }
 }
