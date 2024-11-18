@@ -4,10 +4,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class EnderChestCompartmentRenderer extends ChestCompartmentRenderer<EnderChestCompartmentEntity> {
 
     public EnderChestCompartmentRenderer(final EntityRendererProvider.Context context) {

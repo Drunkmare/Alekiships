@@ -15,17 +15,15 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.EnumMap;
 
-@OnlyIn(Dist.CLIENT)
 public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
-    public static final ResourceLocation DAMAGE_OVERLAY = new ResourceLocation(AlekiShips.MOD_ID,
+    public static final ResourceLocation DAMAGE_OVERLAY = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/rowboat/damage_overlay.png");
     protected final RowboatEntityModel rowboatModel = new RowboatEntityModel();
     protected final ResourceLocation rowboatTexture;
@@ -35,10 +33,11 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
      * This is primarily for us as it hardcodes the Firmaciv namespace.
      */
     public RowboatRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
-        this(context, new ResourceLocation(AlekiShips.MOD_ID,
+        this(context, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                         "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName()),
-                CommonHelper.mapOfKeys(DyeColor.class, dyeColor -> new ResourceLocation(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
+                CommonHelper.mapOfKeys(DyeColor.class,
+                        dyeColor -> ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
+                                "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
     }
 
     /**
@@ -55,9 +54,10 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     @Override
     public void render(final RowboatEntity rowboatEntity, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+            final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
         if (LightTexture.block(packedLight) < rowboatEntity.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(rowboatEntity.getCompartmentBlockLight(), getSkyLightLevel(rowboatEntity, rowboatEntity.blockPosition()));
+            packedLight = LightTexture.pack(rowboatEntity.getCompartmentBlockLight(),
+                    getSkyLightLevel(rowboatEntity, rowboatEntity.blockPosition()));
         }
 
         poseStack.pushPose();
@@ -83,8 +83,7 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
             return;
         }
 
-        this.rowboatModel.renderToBuffer(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1,
-                1);
+        this.rowboatModel.renderToBuffer(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
         switch (rowboatEntity.getOars()) {
             case ZERO -> {
@@ -108,10 +107,11 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
         if (0 < rowboatEntity.getDamage()) {
             final VertexConsumer damageVertexConsumer = bufferSource.getBuffer(
                     RenderType.entityTranslucent(DAMAGE_OVERLAY));
-            float alpha = Mth.clamp((rowboatEntity.getDamage() / (rowboatEntity.getDamageThreshold())) * 0.75f, 0,
-                    0.5f);
-            this.rowboatModel.renderToBuffer(poseStack, damageVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1,
-                    1, 1, alpha);
+            int alpha = Math.round(
+                    Mth.clamp((rowboatEntity.getDamage() / (rowboatEntity.getDamageThreshold())) * 0.75f, 0,
+                            0.5f) * 255);
+            this.rowboatModel.renderToBuffer(poseStack, damageVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY,
+                    FastColor.ARGB32.color(alpha, 1, 1, 1));
         }
 
 

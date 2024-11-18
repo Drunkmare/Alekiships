@@ -18,7 +18,7 @@ import net.minecraft.world.entity.Entity;
 
 public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "canon"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("modid", "canon"), "main");
     private final ModelPart barrel;
     private final ModelPart base;
 
@@ -74,8 +74,8 @@ public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        barrel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        barrel.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

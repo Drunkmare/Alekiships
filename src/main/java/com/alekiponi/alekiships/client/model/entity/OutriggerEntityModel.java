@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 public class OutriggerEntityModel<T extends AbstractAlekiBoatEntity> extends EntityModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("modid", "outrigger_canoe_v2"), "main");
+            ResourceLocation.fromNamespaceAndPath("modid", "outrigger_canoe_v2"), "main");
     private final ModelPart hull;
     private final ModelPart cleat;
     private final ModelPart bow;
@@ -240,16 +240,16 @@ public class OutriggerEntityModel<T extends AbstractAlekiBoatEntity> extends Ent
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-            float red, float green, float blue, float alpha) {
-        hull.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        cleat.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        spars.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        stern.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        outrigger.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        mast.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        sail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        lashings.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        netting.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            int color) {
+        hull.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        cleat.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        spars.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        stern.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        outrigger.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        mast.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        sail.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        lashings.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        netting.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

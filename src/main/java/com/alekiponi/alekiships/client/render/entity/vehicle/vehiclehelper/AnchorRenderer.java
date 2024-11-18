@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class AnchorRenderer extends EntityRenderer<AnchorEntity> {
-    private static final ResourceLocation ANCHOR = new ResourceLocation(AlekiShips.MOD_ID,
+    private static final ResourceLocation ANCHOR = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/anchor.png");
     private final AnchorEntityModel<AnchorEntity> model = new AnchorEntityModel<>();
 
@@ -43,7 +43,7 @@ public class AnchorRenderer extends EntityRenderer<AnchorEntity> {
         this.model.setupAnim(anchor, 0, 0, 0, 0, 0);
         final VertexConsumer vertexconsumer = bufferSource.getBuffer(
                 this.model.renderType(this.getTextureLocation(anchor)));
-        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         final Entity vehicle = anchor.getVehicle();
         assert vehicle != null;

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Entity;
 
 public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
-    private static final ResourceLocation CLEAT_KNOT = new ResourceLocation(AlekiShips.MOD_ID,
+    private static final ResourceLocation CLEAT_KNOT = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/cleat_knot.png");
     private final CleatKnotEntityModel<CleatEntity> model = new CleatKnotEntityModel<>();
 
@@ -64,7 +64,7 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
             final VertexConsumer vertexconsumer = bufferSource.getBuffer(
                     this.model.renderType(this.getTextureLocation(cleat)));
 
-            this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
             if (vehicle.renderCleatKnotSides()) {
                 model.getSides().render(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);

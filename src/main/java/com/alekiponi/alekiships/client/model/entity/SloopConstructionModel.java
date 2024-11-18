@@ -11,22 +11,22 @@ public class SloopConstructionModel extends SloopEntityModel{
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        //static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                               int color) {
+        //static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         ModelPart non_sided = static_parts.getChild("non_sided");
         ModelPart port = static_parts.getChild("sided").getChild("port");
         ModelPart starboard = static_parts.getChild("sided").getChild("starboard");
-        port.getChild("sidewall_port_bow").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port.getChild("sidewall_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port.getChild("cleats_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port.getChild("hull_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port.getChild("transom_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        port.getChild("sidewall_port_bow").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port.getChild("sidewall_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port.getChild("cleats_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port.getChild("hull_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port.getChild("transom_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 
-        starboard.getChild("sidewall_starboard_bow").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard.getChild("sidewall_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard.getChild("cleats_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard.getChild("hull_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard.getChild("transom_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        starboard.getChild("sidewall_starboard_bow").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.getChild("sidewall_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.getChild("cleats_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.getChild("hull_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.getChild("transom_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
     private ModelPart getSided(){return this.static_parts.getChild("sided");}

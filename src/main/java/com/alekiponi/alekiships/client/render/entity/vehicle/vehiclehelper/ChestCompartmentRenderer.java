@@ -15,12 +15,9 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Calendar;
 
-@OnlyIn(Dist.CLIENT)
 public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartmentEntity & LidCompartment> extends CompartmentRenderer<CompartmentEntity> {
 
     private static final String BOTTOM = "bottom";

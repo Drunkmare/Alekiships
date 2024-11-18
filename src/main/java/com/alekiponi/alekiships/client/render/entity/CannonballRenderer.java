@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CannonballRenderer extends EntityRenderer<CannonballEntity> {
 
-    private static final ResourceLocation CANNONBALL = new ResourceLocation(AlekiShips.MOD_ID,
+    private static final ResourceLocation CANNONBALL = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/cannonball.png");
 
     private final CannonballEntityModel<CannonballEntity> model = new CannonballEntityModel<>();
@@ -31,7 +31,7 @@ public class CannonballRenderer extends EntityRenderer<CannonballEntity> {
         poseStack.translate(0, -1.4f, 0);
         this.model.setupAnim(entity, 0, 0, 0, 0, 0);
         VertexConsumer vertexconsumer = bufferSource.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }

@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ConstructionRenderer extends EntityRenderer<ConstructionEntity> {
 
-    private static final ResourceLocation HAMMER = new ResourceLocation(AlekiShips.MOD_ID,
+    private static final ResourceLocation HAMMER = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/construction.png");
 
     private final ConstructionEntityModel<ConstructionEntity> model = new ConstructionEntityModel<>();
@@ -46,7 +46,7 @@ public class ConstructionRenderer extends EntityRenderer<ConstructionEntity> {
 
         final VertexConsumer vertexconsumer = bufferSource.getBuffer(
                 RenderType.entityCutout(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 
 public class ConstructionEntityModel<T extends Entity> extends EntityModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlekiShips.MOD_ID, "construction_entity"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "construction_entity"), "main");
     private final ModelPart bone;
 
     public ConstructionEntityModel() {
@@ -27,8 +27,8 @@ public class ConstructionEntityModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        bone.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        bone.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
     public static LayerDefinition createBodyLayer() {

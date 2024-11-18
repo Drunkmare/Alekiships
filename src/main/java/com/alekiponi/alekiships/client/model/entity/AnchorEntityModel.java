@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 
 public class AnchorEntityModel<T extends Entity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation(AlekiShips.MOD_ID, "anchor_entity"), "main");
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "anchor_entity"), "main");
     private final ModelPart rope;
     private final ModelPart anchor;
 
@@ -65,8 +65,8 @@ public class AnchorEntityModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        rope.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        anchor.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        rope.render(poseStack, vertexConsumer, packedLight, packedOverlay,color);
+        anchor.render(poseStack, vertexConsumer, packedLight, packedOverlay,color);
     }
 }

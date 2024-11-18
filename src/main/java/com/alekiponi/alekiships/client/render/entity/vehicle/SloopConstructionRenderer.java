@@ -19,27 +19,24 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.FACING;
 import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.SHAPE;
 
-@OnlyIn(Dist.CLIENT)
 public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstructionEntity> {
 
     protected final SloopConstructionModel sloopModel = new SloopConstructionModel();
     protected final AnchorEntityModel anchorModel = new AnchorEntityModel();
     protected final ResourceLocation sloopTexture;
 
-    private static final ResourceLocation ANCHOR = new ResourceLocation(AlekiShips.MOD_ID, "textures/entity/watercraft/anchor.png");
+    private static final ResourceLocation ANCHOR = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "textures/entity/watercraft/anchor.png");
     private final BlockRenderDispatcher blockRenderer;
 
     /**
      * This is primarily for us as it hardcodes the Firmaciv namespace.
      */
     public SloopConstructionRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
-        this(context, new ResourceLocation(AlekiShips.MOD_ID,
+        this(context, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                 "textures/entity/watercraft/sloop_construction/" + vanillaWood.getSerializedName() + ".png"));
     }
 
@@ -79,56 +76,56 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
         }
         poseStack.translate(0, 1.57F, 0);
         final VertexConsumer vertexConsumer = bufferSource.getBuffer(this.sloopModel.renderType(getTextureLocation(constructionEntity)));
-        this.sloopModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.sloopModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
 
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.DECK.ordinal()){
             //render keel
-            this.sloopModel.getKeel().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.sloopModel.getKeel().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.BOWSPRIT.ordinal()){
             //render deck
             for(ModelPart part : sloopModel.getDeck()){
-                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.MAST.ordinal()){
             //render bowsprit
-            this.sloopModel.getBowsprit().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.sloopModel.getBowsprit().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.BOOM.ordinal()){
             //render mast
-            this.sloopModel.getMast().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.sloopModel.getMast().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.MAINSAIL.ordinal()){
             //render boom and gaff
             /*
             for(ModelPart part : sloopModel.getBoomGaff()){
             }*/
-            sloopModel.getBoomGaff()[0].render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            sloopModel.getBoomGaff()[0].render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.JIBSAIl.ordinal()){
             //render mainsail furled
-            this.sloopModel.getMainsail().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.sloopModel.getMainsail().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RAILINGS_STERN.ordinal()){
             //render jibsail furled
             poseStack.pushPose();
             poseStack.translate(0,-1.57F,0);
-            this.sloopModel.getJibsailFurled().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.sloopModel.getJibsailFurled().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RAILINGS_BOW.ordinal()){
             //render stern railing
             for(ModelPart part : sloopModel.getSternRailing()){
-                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.ANCHOR.ordinal()){
             //render bow railing
 
             for(ModelPart part : sloopModel.getBowRailing()){
-                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
         if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RIGGING.ordinal()){
@@ -139,7 +136,7 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
             poseStack.mulPose(Axis.ZP.rotationDegrees(60));
 
             final VertexConsumer vertexConsumerAnchor = bufferSource.getBuffer(this.anchorModel.renderType(ANCHOR));
-            this.anchorModel.renderToBuffer(poseStack, vertexConsumerAnchor, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            this.anchorModel.renderToBuffer(poseStack, vertexConsumerAnchor, packedLight, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
 

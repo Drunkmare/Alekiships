@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(AlekiShips.MOD_ID, "cleat_knot_model"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "cleat_knot_model"), "main");
 	private final ModelPart sides;
 	private final ModelPart middle;
 
@@ -55,7 +55,7 @@ public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> 
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		middle.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+		middle.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 	}
 }

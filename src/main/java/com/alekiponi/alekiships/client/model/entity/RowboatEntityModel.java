@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 public class RowboatEntityModel extends EntityModel<RowboatEntity> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation(AlekiShips.MOD_ID, "rowboat_entity"), "main");
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "rowboat_entity"), "main");
 
     private final ModelPart waterocclusion;
     private final ModelPart hull;
@@ -290,18 +290,18 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        hull.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bow_floor.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        seats.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port_bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard_bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        port.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        starboard.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        oarlocks.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        keel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        transom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        cleat.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                               int color) {
+        hull.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        bow_floor.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        seats.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port_bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard_bow.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        port.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        oarlocks.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        keel.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        transom.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        cleat.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

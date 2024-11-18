@@ -48,7 +48,7 @@ public class ShulkerBoxCompartmentRenderer extends CompartmentRenderer<ShulkerBo
         shulkerLid.setPos(0, 24 - compartmentEntity.getOpenNess(partialTicks) * 0.5F * 16, 0);
         shulkerLid.yRot = 270 * compartmentEntity.getOpenNess(partialTicks) * ((float) Math.PI / 180);
         final VertexConsumer vertexconsumer = material.buffer(bufferSource, RenderType::entityCutoutNoCull);
-        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        this.model.renderToBuffer(poseStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 }

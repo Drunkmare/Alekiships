@@ -1268,14 +1268,14 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        windlass.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        rudder.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        mainsheet_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        rope_spiral.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        telltail.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        //jibsheet_transform_checker.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+                               int color) {
+        static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        windlass.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        rudder.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        mainsheet_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        rope_spiral.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        telltail.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        //jibsheet_transform_checker.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
 

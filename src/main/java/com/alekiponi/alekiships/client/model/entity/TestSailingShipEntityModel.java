@@ -15,7 +15,7 @@ import net.minecraft.world.entity.Entity;
 
 public class TestSailingShipEntityModel<T extends Entity> extends EntityModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "anothershipfortesting"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("modid", "anothershipfortesting"), "main");
     private final ModelPart static_parts;
     private final ModelPart sail1;
     private final ModelPart sail2;
@@ -58,10 +58,10 @@ public class TestSailingShipEntityModel<T extends Entity> extends EntityModel<T>
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        sail1.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        sail2.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        sail3.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        sail1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        sail2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        sail3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }
