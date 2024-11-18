@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.events;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
@@ -23,26 +22,25 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.slf4j.Logger;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ForgeEventHandler {
+public final class ForgeEventHandler {
 
     public static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+    private static void onPlayerLeave(final PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
 
-        if (player.level().getServer().isSingleplayer() && player.level().getServer().isSingleplayerOwner(player.getGameProfile())) {
+        if (player.level().getServer().isSingleplayer() && player.level().getServer()
+                .isSingleplayerOwner(player.getGameProfile())) {
             // do singleplayer behavior
             if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
                 AbstractVehicle vehicle = compartment.getTrueVehicle();
@@ -111,7 +109,7 @@ public class ForgeEventHandler {
      * Eject entities from compartments
      */
     @SubscribeEvent
-    public static void onEntityInteract(final PlayerInteractEvent.EntityInteract event) {
+    private static void onEntityInteract(final PlayerInteractEvent.EntityInteract event) {
         if (!(event.getTarget() instanceof final LivingEntity living)) return;
         if (!living.isPassenger()) return;
         if (!(living.getVehicle() instanceof EmptyCompartmentEntity)) return;
@@ -126,7 +124,7 @@ public class ForgeEventHandler {
      * Intercept the normal entity attack handling, so we can prevent the attack sound from being played on compartments
      */
     @SubscribeEvent
-    public static void onPlayerAttack(final AttackEntityEvent event) {
+    private static void onPlayerAttack(final AttackEntityEvent event) {
         final Entity target = event.getTarget();
         if (!(target instanceof AbstractCompartmentEntity)) return;
         if (target instanceof EmptyCompartmentEntity) return;
@@ -145,12 +143,13 @@ public class ForgeEventHandler {
 
     /**
      * Cancel Suffocation damage when riding our boats
+     * TODO ensure this works correctly
      */
     @SubscribeEvent
-    public static void onLivingAttack(final LivingAttackEvent event) {
+    private static void onLivingAttack(final LivingDamageEvent.Pre event) {
         if (event.getSource().is(DamageTypes.IN_WALL)) {
             if (event.getEntity().getVehicle() instanceof EmptyCompartmentEntity) {
-                event.setCanceled(true);
+                event.setNewDamage(0);
             }
         }
     }
@@ -159,7 +158,10 @@ public class ForgeEventHandler {
      * Try leash our cleats to the clicked fence
      */
     @SubscribeEvent
-    public static void onBlockClick(final PlayerInteractEvent.RightClickBlock event) {
+    private static void onBlockClick(final PlayerInteractEvent.RightClickBlock event) {
+        // TODO vanilla appears to handle this for us now
+        if (true) return;
+
         final Level level = event.getLevel();
 
         // Only do server logic

@@ -8,6 +8,7 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
+import com.alekiponi.alekiships.events.ForgeEventHandler;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
@@ -48,6 +49,8 @@ public final class AlekiShips {
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsJukeboxSongs.SONGS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
+
+        NeoForge.EVENT_BUS.register(ForgeEventHandler.class);
 
         if (dist == Dist.CLIENT) {
             AlekiShipsClientEvents.init(modBus);
