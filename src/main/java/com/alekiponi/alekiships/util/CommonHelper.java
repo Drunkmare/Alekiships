@@ -20,8 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -187,7 +187,7 @@ public class CommonHelper {
                 int i;
                 for(i = 0; i < sizeInventory; ++i) {
                     ItemStack slot = inventory.getStackInSlot(i);
-                    if (canItemStacksStackRelaxed(slot, stack)) {
+                    if (ItemStack.isSameItemSameComponents(slot, stack)) {
                         stack = inventory.insertItem(i, stack, simulate);
                         if (stack.isEmpty()) {
                             break;
@@ -229,23 +229,6 @@ public class CommonHelper {
             return stack;
         } else {
             return stack;
-        }
-    }
-
-    /**
-     * Copied from Forge to support multiloader
-     */
-    public static boolean canItemStacksStackRelaxed(@NotNull ItemStack a, @NotNull ItemStack b) {
-        if (!a.isEmpty() && !b.isEmpty() && a.getItem() == b.getItem()) {
-            if (!a.isStackable()) {
-                return false;
-            } else if (a.hasTag() != b.hasTag()) {
-                return false;
-            } else {
-                return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
-            }
-        } else {
-            return false;
         }
     }
 
@@ -359,13 +342,13 @@ public class CommonHelper {
     }
 
     /**
-     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player, int)} but for entities
+     * Like {@link Container#stillValidBlockEntity(BlockEntity, Player, float)} but for entities
      *
      * @param maxDistance The max distance to the entity
      * @return If the passed entity is in range for a menu to be open
      */
-    public static boolean stillValidEntity(final Entity entity, final Player player, final int maxDistance) {
-        return !entity.isRemoved() && entity.position().closerThan(player.position(), maxDistance);
+    public static boolean stillValidEntity(final Entity entity, final Player player, final float maxDistance) {
+        return !entity.isRemoved() && player.canInteractWithEntity(entity, maxDistance);
     }
 
     /**
