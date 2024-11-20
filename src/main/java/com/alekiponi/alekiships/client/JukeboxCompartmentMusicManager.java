@@ -7,21 +7,35 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.RecordItem;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.JukeboxPlayable;
+import net.minecraft.world.item.JukeboxSong;
 
-@OnlyIn(Dist.CLIENT)
+import static net.minecraft.core.component.DataComponents.*;
+
+
 public final class JukeboxCompartmentMusicManager {
 
     private static final Int2ObjectMap<SoundInstance> PLAYING_RECORDS = new Int2ObjectOpenHashMap<>();
 
-    public static void playMusic(final JukeboxCompartmentEntity entity, final RecordItem recorditem) {
-        Minecraft.getInstance().gui.setNowPlaying(recorditem.getDisplayName());
-        final EntityBoundSoundInstance soundInstance = new EntityBoundSoundInstance(recorditem.getSound(),
+    public static void playMusic(final JukeboxCompartmentEntity entity, final Item recorditem)
+    {
+
+        JukeboxPlayable playable = recorditem.getDefaultInstance().getComponents().get(JUKEBOX_PLAYABLE);
+
+
+        if (playable.song().asEither().left().isPresent())
+        {
+            JukeboxSong song = playable.song().asEither().left().get().value();
+
+            Minecraft.getInstance().gui.setNowPlaying(song.description());
+            final EntityBoundSoundInstance soundInstance = new EntityBoundSoundInstance(song.soundEvent().value(),
                 SoundSource.RECORDS, 2, 1, entity, entity.level().random.nextLong());
-        PLAYING_RECORDS.put(entity.getId(), soundInstance);
-        Minecraft.getInstance().getSoundManager().play(soundInstance);
+            PLAYING_RECORDS.put(entity.getId(), soundInstance);
+            Minecraft.getInstance().getSoundManager().play(soundInstance);
+        }
+
+
     }
 
     public static void stopMusic(final JukeboxCompartmentEntity entity) {

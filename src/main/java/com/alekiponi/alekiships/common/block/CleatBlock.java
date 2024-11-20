@@ -1,7 +1,9 @@
 package com.alekiponi.alekiships.common.block;
 
+import java.util.stream.Stream;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,9 +16,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.stream.Stream;
-
 public class CleatBlock extends AbstractHullSideBlock {
+
+    public static final MapCodec<CleatBlock> CODEC = simpleCodec(CleatBlock::new);
+
+    public MapCodec<CleatBlock> codec()
+    {
+        return CODEC;
+    }
+
     private static final VoxelShape SHAPE_NORTH = Stream.of(
                     Block.box(5, 0, 2, 11, 2, 4))
             .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();

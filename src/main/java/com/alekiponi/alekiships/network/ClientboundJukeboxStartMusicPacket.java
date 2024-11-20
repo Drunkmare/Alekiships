@@ -6,8 +6,9 @@ import com.alekiponi.alekiships.util.ClientHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
+
+import static net.minecraft.core.component.DataComponents.*;
 
 // TODO, this doesn't appear to be needed anymore
 public final class ClientboundJukeboxStartMusicPacket {
@@ -40,8 +41,8 @@ public final class ClientboundJukeboxStartMusicPacket {
 
         final Item item = Item.byId(this.itemId);
 
-        if (!(item instanceof RecordItem recordItem)) return;
+        if (!(item.getDefaultInstance().getComponents().has(JUKEBOX_PLAYABLE))) return;
 
-        JukeboxCompartmentMusicManager.playMusic((jukeboxCompartment), recordItem);
+        JukeboxCompartmentMusicManager.playMusic((jukeboxCompartment), item);
     }
 }

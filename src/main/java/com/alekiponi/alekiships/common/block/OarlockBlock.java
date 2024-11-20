@@ -1,7 +1,9 @@
 package com.alekiponi.alekiships.common.block;
 
+import java.util.stream.Stream;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,11 +21,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.stream.Stream;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.ROWBOAT_COMPLETED;
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
 public class OarlockBlock extends AbstractHullSideBlock {
+    public static final MapCodec<OarlockBlock> CODEC = simpleCodec(OarlockBlock::new);
+
+    public MapCodec<OarlockBlock> codec()
+    {
+        return CODEC;
+    }
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;

@@ -1,11 +1,12 @@
 package com.alekiponi.alekiships.common.block;
 
+import java.util.IdentityHashMap;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,13 +23,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import javax.annotation.Nullable;
-import java.util.IdentityHashMap;
 
 public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
 
@@ -65,27 +62,24 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
-            final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
+    {
+        final BoatFrame frameBlock = getFrame(stack.getItem());
 
-        final ItemStack heldStack = player.getItemInHand(hand);
-
-        final BoatFrame frameBlock = getFrame(heldStack.getItem());
-
-        if (frameBlock == null) return InteractionResult.PASS;
+        if (frameBlock == null) return ItemInteractionResult.FAIL;
 
         final BlockState frameBlockstate = frameBlock.withPropertiesOf(blockState);
 
         level.setBlockAndUpdate(blockPos, frameBlockstate);
 
-        if (!player.getAbilities().instabuild) heldStack.shrink(1);
+        if (!player.getAbilities().instabuild) stack.shrink(1);
 
         final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
 
         level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
-        return InteractionResult.SUCCESS;
+            (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
+
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -127,10 +121,4 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
         return this.defaultBlockState().setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public boolean isPathfindable(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos,
-            final PathComputationType computationType) {
-        return computationType == PathComputationType.WATER && blockGetter.getFluidState(blockPos).is(FluidTags.WATER);
-    }
 }
