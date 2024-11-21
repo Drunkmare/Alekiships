@@ -47,8 +47,12 @@ public final class AlekiShipsEntities {
                     (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
                     MobCategory.MISC)));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_empty", EntityType.Builder.of(EmptyCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = register(
+            "compartment_empty",
+            EntityType.Builder.of(EmptyCompartmentEntity::new, MobCategory.MISC).sized(0.6F, 0.7F).fireImmune()
+                    // TODO I think this '0.6F * 0.75F' value for passengerAttachments is correct, but I'm not quite sure.
+                    //  I believe this replaces Entity#getPassengersRidingOffset
+                    .noSummon().ridingOffset(0.125F).passengerAttachments(0.6F * 0.75F));
 
     public static final DeferredHolder<EntityType<?>, EntityType<BlockCompartmentEntity>> BLOCK_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_block", EntityType.Builder.of(BlockCompartmentEntity::new, MobCategory.MISC));

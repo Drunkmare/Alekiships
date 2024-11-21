@@ -72,12 +72,12 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_INPUT_LEFT, false);
-        this.entityData.define(DATA_ID_INPUT_RIGHT, false);
-        this.entityData.define(DATA_ID_INPUT_UP, false);
-        this.entityData.define(DATA_ID_INPUT_DOWN, false);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_INPUT_LEFT, false);
+        builder.define(DATA_ID_INPUT_RIGHT, false);
+        builder.define(DATA_ID_INPUT_UP, false);
+        builder.define(DATA_ID_INPUT_DOWN, false);
     }
 
     public boolean canAddNonPlayers() {
@@ -105,12 +105,15 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         return this.getPassengers().isEmpty() && !this.isRemoved();
     }
 
+    /// TODO this should probably use {@link #getPassengerRidingPosition}. But I don't want to mess anything up -Traister
     @Override
     protected void positionRider(final Entity passenger, final Entity.MoveFunction moveFunction) {
         super.positionRider(passenger, moveFunction);
         float localX = 0.0F;
         float localZ = 0.0F;
-        float localY = (float) ((this.isRemoved() ? 0.01 : this.getPassengersRidingOffset()) + passenger.getMyRidingOffset());
+        // TODO I'm quite iffy on this being totally correct, really we should just override something else now I think
+        float localY = (float) ((this.isRemoved() ? 0.01 : this.getPassengerRidingPosition(
+                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
         if (passenger instanceof Player) {
             localY = 0;
             // TODO remove instance check and use abstraction / positionRiderByIndex()
@@ -161,11 +164,6 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
             armorStand.setNoBasePlate(true);
         }
         //this.clampRotation(passenger);
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        return 0.6d * 0.75D;
     }
 
     protected Vec3 positionPassengerLocally(float localX, float localY, float localZ) {
