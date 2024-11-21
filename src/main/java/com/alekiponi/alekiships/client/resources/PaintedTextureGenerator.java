@@ -9,14 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.slf4j.Logger;
 
 /**
  * Generates painted textures at runtime from a base texture and a directory of textures with the names of vanilla dyes.
  */
-@OnlyIn(Dist.CLIENT)
 public class PaintedTextureGenerator implements ResourceManagerReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -64,9 +61,9 @@ public class PaintedTextureGenerator implements ResourceManagerReloadListener {
                 continue;
             }
 
-            Minecraft.getInstance().textureManager.register(outPath,
-                    new PaintedTexture(baseTexturePath, paintTexturePath));
+            Minecraft.getInstance().getTextureManager()
+                    .register(outPath, new PaintedTexture(baseTexturePath, paintTexturePath));
         }
-        Minecraft.getInstance().textureManager.register(basePath, new SimpleTexture(baseTexturePath));
+        Minecraft.getInstance().getTextureManager().register(basePath, new SimpleTexture(baseTexturePath));
     }
 }

@@ -9,15 +9,12 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-@OnlyIn(Dist.CLIENT)
 public class PaintedTexture extends AbstractTexture {
 
     private static final Logger LOGGER = LogUtils.getLogger();
