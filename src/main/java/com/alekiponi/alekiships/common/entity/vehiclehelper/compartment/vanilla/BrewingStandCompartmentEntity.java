@@ -28,12 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrewingStandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -79,8 +74,6 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
             return NUM_DATA_VALUES;
         }
     };
-    private LazyOptional<? extends IItemHandler>[] directionalHandlers = SidedInvWrapper.create(this, Direction.UP,
-            Direction.DOWN, Direction.NORTH);
     @Nullable
     private boolean[] lastPotionCount;
     @Nullable
@@ -338,29 +331,5 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
     @Override
     protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory) {
         return new BrewingStandMenu(id, playerInventory, this, this.dataAccess);
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(final Capability<T> capability, @Nullable final Direction facing) {
-        if (!this.isAlive() || facing == null || capability != ForgeCapabilities.ITEM_HANDLER)
-            return super.getCapability(capability, facing);
-
-        if (facing == Direction.UP) return this.directionalHandlers[0].cast();
-
-        if (facing == Direction.DOWN) return this.directionalHandlers[1].cast();
-
-        return this.directionalHandlers[2].cast();
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        Arrays.stream(this.directionalHandlers).forEach(LazyOptional::invalidate);
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        this.directionalHandlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     }
 }
