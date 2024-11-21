@@ -2,8 +2,8 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.util.CommonHelper;
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -18,15 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
@@ -45,7 +41,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
      * The container contents. You shouldn't usually modify this directly, instead rely on the {@link Container} interface
      */
     protected final NonNullList<ItemStack> itemStacks;
-    private LazyOptional<IItemHandler> itemHandler = LazyOptional.of(this::createItemHandler);
 
     /**
      * @param slotCount The amount of slots the compartment should have
@@ -66,12 +61,13 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     protected ContainerCompartmentEntity(final CompartmentType<? extends ContainerCompartmentEntity> compartmentType,
             final Level level, final int slotCount, final ItemStack itemStack) {
         this(compartmentType, level, slotCount);
-        if (itemStack.hasCustomHoverName()) {
-            this.setCustomName(itemStack.getHoverName());
+        if (itemStack.has(DataComponents.CUSTOM_NAME)) {
+            this.setCustomName(itemStack.get(DataComponents.CUSTOM_NAME));
         }
 
-        final CompoundTag blockEntityTag = BlockItem.getBlockEntityData(itemStack);
-        if (blockEntityTag != null) this.loadFromStackNBT(blockEntityTag);
+        final CompoundTag blockEntityTag = itemStack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY)
+                .copyTag();
+        this.loadFromStackNBT(blockEntityTag);
     }
 
     /**
@@ -80,7 +76,8 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     protected void loadFromStackNBT(final CompoundTag compoundTag) {
         this.readContents(compoundTag);
         if (compoundTag.contains(CUSTOM_NAME_KEY, Tag.TAG_STRING)) {
-            this.setCustomName(Component.Serializer.fromJson(compoundTag.getString(CUSTOM_NAME_KEY)));
+            this.setCustomName(
+                    Component.Serializer.fromJson(compoundTag.getString(CUSTOM_NAME_KEY), this.registryAccess()));
         }
     }
 
@@ -89,8 +86,9 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         final CompoundTag compoundTag = new CompoundTag();
         this.saveContents(compoundTag);
 
-        if (this.hasCustomName()) {
-            compoundTag.putString(CUSTOM_NAME_KEY, Component.Serializer.toJson(this.getCustomName()));
+        final Component customName = this.getCustomName();
+        if (customName != null) {
+            compoundTag.putString(CUSTOM_NAME_KEY, Component.Serializer.toJson(customName, this.registryAccess()));
         }
 
         return compoundTag;
@@ -149,7 +147,7 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
      * @param compoundTag The tag to save the container contents to
      */
     protected void saveContents(final CompoundTag compoundTag) {
-        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false);
+        ContainerHelper.saveAllItems(compoundTag, this.itemStacks, false, this.registryAccess());
     }
 
     /**
@@ -161,7 +159,7 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
      * @param compoundTag The tag to read the contents to
      */
     protected void readContents(final CompoundTag compoundTag) {
-        ContainerHelper.loadAllItems(compoundTag, this.itemStacks);
+        ContainerHelper.loadAllItems(compoundTag, this.itemStacks, this.registryAccess());
     }
 
     @Override
@@ -223,33 +221,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     @Override
     public boolean isEmpty() {
         return this.itemStacks.stream().allMatch(ItemStack::isEmpty);
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(final Capability<T> capability, final @Nullable Direction facing) {
-        if (this.isAlive() && capability == ForgeCapabilities.ITEM_HANDLER) return this.itemHandler.cast();
-        return super.getCapability(capability, facing);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        this.itemHandler.invalidate();
-    }
-
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        this.itemHandler = LazyOptional.of(this::createItemHandler);
-    }
-
-    /**
-     * Supplier for the generic, non sided {@link IItemHandler}
-     *
-     * @return An {@link IItemHandler} for this container.
-     */
-    protected IItemHandler createItemHandler() {
-        return new InvWrapper(this);
     }
 
     /**

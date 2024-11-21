@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.LidCompa
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -251,14 +252,15 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
                 return this.enderChestInventory.toString();
             }
 
+
             @Override
-            public void fromTag(final ListTag containerNBT) {
-                this.enderChestInventory.fromTag(containerNBT);
+            public ListTag createTag(final HolderLookup.Provider levelRegistry) {
+                return this.enderChestInventory.createTag(levelRegistry);
             }
 
             @Override
-            public ListTag createTag() {
-                return this.enderChestInventory.createTag();
+            public void fromTag(final ListTag tag, final HolderLookup.Provider levelRegistry) {
+                this.enderChestInventory.fromTag(tag, levelRegistry);
             }
 
             @Override

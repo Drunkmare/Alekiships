@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -19,15 +20,14 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
 
 public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
-
     public static final byte PLAY_NOTE_EVENT = 10;
+    private static final String TAG_NOTE_BLOCK_SOUND = "note_block_sound";
     @Nullable
     private ResourceLocation noteBlockSound;
 
@@ -51,7 +51,7 @@ public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
         super.addAdditionalSaveData(compoundTag);
 
         if (this.noteBlockSound != null) {
-            compoundTag.putString(SkullBlockEntity.TAG_NOTE_BLOCK_SOUND, this.noteBlockSound.toString());
+            compoundTag.putString(TAG_NOTE_BLOCK_SOUND, this.noteBlockSound.toString());
         }
     }
 
@@ -63,9 +63,8 @@ public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
     }
 
     private void readCommonSaveData(final CompoundTag compoundTag) {
-        if (compoundTag.contains(SkullBlockEntity.TAG_NOTE_BLOCK_SOUND, Tag.TAG_STRING)) {
-            this.noteBlockSound = ResourceLocation.tryParse(
-                    compoundTag.getString(SkullBlockEntity.TAG_NOTE_BLOCK_SOUND));
+        if (compoundTag.contains(TAG_NOTE_BLOCK_SOUND, Tag.TAG_STRING)) {
+            this.noteBlockSound = ResourceLocation.tryParse(compoundTag.getString(TAG_NOTE_BLOCK_SOUND));
         }
     }
 
@@ -93,10 +92,8 @@ public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
         if (heldStack.getItem() instanceof BlockItem blockItem) {
             this.setDisplayBlockState(this.getDisplayBlockState()
                     .setValue(NoteBlock.INSTRUMENT, blockItem.getBlock().defaultBlockState().instrument()));
-            final CompoundTag blockEntityData = BlockItem.getBlockEntityData(heldStack);
-            if (blockEntityData != null) {
-                this.readCommonSaveData(blockEntityData);
-            }
+            //noinspection DataFlowIssue
+            this.noteBlockSound = heldStack.getOrDefault(DataComponents.NOTE_BLOCK_SOUND, this.noteBlockSound);
 
             this.playNote(player);
             return InteractionResult.CONSUME;

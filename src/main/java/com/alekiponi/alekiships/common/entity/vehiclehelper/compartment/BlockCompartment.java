@@ -57,6 +57,7 @@ public interface BlockCompartment {
      * Plays the hit sound for the passed {@link BlockCompartment}
      */
     static void playHitSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
         CommonHelper.playHitSound(blockCompartment::playSound, blockCompartment.getDisplayBlockState().getSoundType());
     }
 
@@ -64,6 +65,7 @@ public interface BlockCompartment {
      * Plays the break sound for the passed {@link BlockCompartment}
      */
     static void playBreakSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
         CommonHelper.playBreakSound(blockCompartment::playSound,
                 blockCompartment.getDisplayBlockState().getSoundType());
     }
@@ -72,6 +74,7 @@ public interface BlockCompartment {
      * Plays the place sound for the passed {@link BlockCompartment}
      */
     static void playPlaceSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
         CommonHelper.playPlaceSound(blockCompartment::playSound,
                 blockCompartment.getDisplayBlockState().getSoundType());
     }

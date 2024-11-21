@@ -6,6 +6,9 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.util.CommonHelper;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -56,10 +59,10 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_HURT, 0);
-        this.entityData.define(DATA_ID_HURT_DIR, 1);
-        this.entityData.define(DATA_ID_DAMAGE, 0F);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_HURT, 0);
+        builder.define(DATA_ID_HURT_DIR, 1);
+        builder.define(DATA_ID_DAMAGE, 0F);
     }
 
     /**
@@ -167,15 +170,16 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         }
     }
 
+    // TODO, see if I work as expected
     @Override
-    public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-                       final int pPosRotationIncrements, final boolean teleport) {
+    public void lerpTo(final double posX, final double posY, final double posZ, final float yRot, final float xRot,
+            final int steps) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;
-        this.lerpYRot = yaw;
-        this.lerpXRot = pitch;
-        this.lerpSteps = 10;
+        this.lerpYRot = yRot;
+        this.lerpXRot = xRot;
+        this.lerpSteps = steps;
     }
 
     @Override
@@ -229,7 +233,7 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             final ItemStack itemStack = this.getDropStack();
             if (this.hasCustomName()) {
-                itemStack.setHoverName(this.getCustomName());
+                itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
             }
 
             Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
@@ -255,11 +259,6 @@ public abstract class AbstractCompartmentEntity extends Entity implements IHaveI
      */
     public double getBuoyancy() {
         return -0.01;
-    }
-
-    @Override
-    public double getMyRidingOffset() {
-        return 0.125D;
     }
 
     @Nullable

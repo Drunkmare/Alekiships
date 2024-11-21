@@ -4,45 +4,57 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.JukeboxPlayable;
 import net.minecraft.world.item.JukeboxSong;
-
-import static net.minecraft.core.component.DataComponents.*;
-
 
 public final class JukeboxCompartmentMusicManager {
 
-    private static final Int2ObjectMap<SoundInstance> PLAYING_RECORDS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<JukeboxCompartmentSoundInstance> PLAYING = new Int2ObjectOpenHashMap<>();
 
-    public static void playMusic(final JukeboxCompartmentEntity entity, final Item recorditem)
-    {
-
-        JukeboxPlayable playable = recorditem.getDefaultInstance().getComponents().get(JUKEBOX_PLAYABLE);
-
-
-        if (playable.song().asEither().left().isPresent())
-        {
-            JukeboxSong song = playable.song().asEither().left().get().value();
-
-            Minecraft.getInstance().gui.setNowPlaying(song.description());
-            final EntityBoundSoundInstance soundInstance = new EntityBoundSoundInstance(song.soundEvent().value(),
-                SoundSource.RECORDS, 2, 1, entity, entity.level().random.nextLong());
-            PLAYING_RECORDS.put(entity.getId(), soundInstance);
-            Minecraft.getInstance().getSoundManager().play(soundInstance);
-        }
-
-
+    public static void playMusic(final JukeboxCompartmentEntity entity, final Holder<JukeboxSong> songHolder) {
+        final JukeboxSong song = songHolder.value();
+        final var soundInstance = new JukeboxCompartmentSoundInstance(entity, song.soundEvent().value());
+        PLAYING.put(entity.getId(), soundInstance);
+        Minecraft.getInstance().getSoundManager().play(soundInstance);
+        Minecraft.getInstance().gui.setNowPlaying(song.description());
     }
 
     public static void stopMusic(final JukeboxCompartmentEntity entity) {
-        final SoundInstance soundInstance = PLAYING_RECORDS.get(entity.getId());
+        final var soundInstance = PLAYING.get(entity.getId());
         if (soundInstance != null) {
             Minecraft.getInstance().getSoundManager().stop(soundInstance);
-            PLAYING_RECORDS.remove(entity.getId());
+            PLAYING.remove(entity.getId());
+        }
+    }
+
+    public static class JukeboxCompartmentSoundInstance extends AbstractTickableSoundInstance {
+
+        private final JukeboxCompartmentEntity jukeboxCompartment;
+
+        protected JukeboxCompartmentSoundInstance(final JukeboxCompartmentEntity jukeboxCompartment,
+                final SoundEvent soundEvent) {
+            super(soundEvent, SoundSource.RECORDS, SoundInstance.createUnseededRandom());
+            this.jukeboxCompartment = jukeboxCompartment;
+            this.volume = 4;
+            this.pitch = 1;
+            this.x = (float) this.jukeboxCompartment.getX();
+            this.y = (float) this.jukeboxCompartment.getY();
+            this.z = (float) this.jukeboxCompartment.getZ();
+        }
+
+        @Override
+        public void tick() {
+            if (this.jukeboxCompartment.isRemoved()) {
+                this.stop();
+            } else {
+                this.x = (float) this.jukeboxCompartment.getX();
+                this.y = (float) this.jukeboxCompartment.getY();
+                this.z = (float) this.jukeboxCompartment.getZ();
+            }
         }
     }
 }

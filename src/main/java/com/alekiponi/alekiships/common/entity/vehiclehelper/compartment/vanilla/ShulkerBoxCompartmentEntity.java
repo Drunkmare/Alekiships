@@ -6,14 +6,12 @@ import com.alekiponi.alekiships.mixins.accessors.ShulkerBoxMenuAccessor;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +24,7 @@ import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -35,15 +34,12 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmentEntity.RandomizableContainerMenuCompartmentEntity implements WorldlyContainer, IEntityAdditionalSpawnData {
+public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmentEntity.RandomizableContainerMenuCompartmentEntity implements WorldlyContainer, IEntityWithComplexSpawn {
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
@@ -82,11 +78,6 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Nullable
     private DyeColor color;
 
-    @Override
-    public double getBuoyancy() {
-        return this.tickCount % 21 > 10 ? -0.01 : 0.01;
-    }
-
     public ShulkerBoxCompartmentEntity(final CompartmentType<? extends ShulkerBoxCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
@@ -101,6 +92,11 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
                 this.color = shulkerBoxBlock.getColor();
             }
         }
+    }
+
+    @Override
+    public double getBuoyancy() {
+        return this.tickCount % 21 > 10 ? -0.01 : 0.01;
     }
 
     @Override
@@ -157,12 +153,12 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     }
 
     @Override
-    public void writeSpawnData(final FriendlyByteBuf buffer) {
+    public void writeSpawnData(final RegistryFriendlyByteBuf buffer) {
         buffer.writeByte(this.color == null ? NULL_COLOR : color.getId());
     }
 
     @Override
-    public void readSpawnData(final FriendlyByteBuf additionalData) {
+    public void readSpawnData(final RegistryFriendlyByteBuf additionalData) {
         final byte colorID = additionalData.readByte();
         if (NULL_COLOR != colorID) {
             this.color = DyeColor.byId(colorID);
@@ -199,13 +195,8 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Override
     public ItemStack getDropStack() {
         final ItemStack dropStack = new ItemStack(ShulkerBoxBlock.getBlockByColor(this.color));
-        final CompoundTag compoundTag = new CompoundTag();
 
-        ContainerHelper.saveAllItems(compoundTag, this.getItemStacks(), false);
-
-        if (!compoundTag.isEmpty()) {
-            dropStack.addTagElement(BlockItem.BLOCK_ENTITY_TAG, compoundTag);
-        }
+        dropStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.itemStacks));
 
         return dropStack;
     }
@@ -254,18 +245,8 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
         CommonHelper.playPlaceSound(this::playSound, SoundType.STONE);
     }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
     @Nullable
     public DyeColor getColor() {
         return this.color;
-    }
-
-    @Override
-    protected IItemHandler createItemHandler() {
-        return new SidedInvWrapper(this, Direction.UP);
     }
 }

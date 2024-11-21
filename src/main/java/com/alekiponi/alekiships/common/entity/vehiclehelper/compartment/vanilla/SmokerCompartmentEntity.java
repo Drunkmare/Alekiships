@@ -42,8 +42,8 @@ public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     }
 
     @Override
-    protected int getBurnDuration(final ItemStack itemStack) {
-        return super.getBurnDuration(itemStack) / 2;
+    protected int getBurnDuration(final ItemStack fuelStack) {
+        return super.getBurnDuration(fuelStack) / 2;
     }
 
     @Override

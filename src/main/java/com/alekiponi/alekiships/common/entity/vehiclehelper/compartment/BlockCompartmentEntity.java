@@ -50,9 +50,9 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
     }
 
     @Override

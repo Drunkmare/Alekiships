@@ -198,7 +198,8 @@ public final class AlekiShipsEntities {
      */
     private static <E extends AbstractCompartmentEntity> DeferredHolder<EntityType<?>, CompartmentType<E>> registerCompartment(
             final String name, final CompartmentType.Builder<E> builder) {
-        return register(name, builder.sized(0.6F, 0.7F).fireImmune().noSummon(), true);
+        // TODO Icky cast. Remember to make this not stupid with compartment type rework!
+        return register(name, ((CompartmentType.Builder<E>) builder.sized(0.6F, 0.7F).fireImmune().noSummon().ridingOffset(0.125F)), true);
     }
 
     /**

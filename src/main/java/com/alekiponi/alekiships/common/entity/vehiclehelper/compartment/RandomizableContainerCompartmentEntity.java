@@ -3,9 +3,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper.compartment;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CompartmentType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.ContainerHelper;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -18,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,10 +25,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class RandomizableContainerCompartmentEntity extends ContainerCompartmentEntity implements ContainerEntity {
 
-    public static final String LOOT_TABLE_TAG = RandomizableContainerBlockEntity.LOOT_TABLE_TAG;
-    public static final String LOOT_TABLE_SEED_TAG = RandomizableContainerBlockEntity.LOOT_TABLE_SEED_TAG;
     @Nullable
-    private ResourceLocation lootTable;
+    private ResourceKey<LootTable> lootTable;
     private long lootTableSeed;
 
     /**
@@ -89,12 +86,12 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
     @Nullable
     @Override
     @SuppressWarnings("unused")
-    public final ResourceLocation getLootTable() {
+    public final ResourceKey<LootTable> getLootTable() {
         return this.lootTable;
     }
 
     @Override
-    public final void setLootTable(@Nullable final ResourceLocation lootTable) {
+    public final void setLootTable(@Nullable final ResourceKey<LootTable> lootTable) {
         this.lootTable = lootTable;
     }
 
@@ -121,27 +118,12 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
 
     @Override
     protected void saveContents(final CompoundTag compoundTag) {
-        if (this.lootTable == null) {
-            super.saveContents(compoundTag);
-            return;
-        }
-
-        compoundTag.putString(LOOT_TABLE_TAG, this.lootTable.toString());
-        if (this.lootTableSeed != 0) {
-            compoundTag.putLong(LOOT_TABLE_SEED_TAG, this.lootTableSeed);
-        }
+        this.addChestVehicleSaveData(compoundTag, this.registryAccess());
     }
 
     @Override
     protected void readContents(final CompoundTag compoundTag) {
-        this.itemStacks.clear();
-        if (!compoundTag.contains(LOOT_TABLE_TAG, Tag.TAG_STRING)) {
-            ContainerHelper.loadAllItems(compoundTag, this.itemStacks);
-            return;
-        }
-
-        this.setLootTable(new ResourceLocation(compoundTag.getString(LOOT_TABLE_TAG)));
-        this.setLootTableSeed(compoundTag.getLong(LOOT_TABLE_SEED_TAG));
+        this.readChestVehicleSaveData(compoundTag, this.registryAccess());
     }
 
     /**

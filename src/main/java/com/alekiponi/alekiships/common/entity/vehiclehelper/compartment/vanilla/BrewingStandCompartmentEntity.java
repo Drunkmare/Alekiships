@@ -27,8 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrewingStandBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -91,47 +90,44 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
         this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
     }
 
-    private static void doBrew(final Level level, final BlockPos blockPos, final NonNullList<ItemStack> itemStacks) {
-        if (ForgeEventFactory.onPotionAttemptBrew(itemStacks)) return;
-        final ItemStack itemstack = itemStacks.get(INGREDIENT_SLOT);
+    private static void doBrew(final Level level, final BlockPos pos, final NonNullList<ItemStack> items) {
+        if (EventHooks.onPotionAttemptBrew(items)) return;
+        ItemStack ingredientStack = items.get(INGREDIENT_SLOT);
+        final PotionBrewing potionBrewing = level.potionBrewing();
 
-        BrewingRecipeRegistry.brewPotions(itemStacks, itemstack, SLOTS_FOR_SIDES);
-        ForgeEventFactory.onPotionBrewed(itemStacks);
-        if (itemstack.hasCraftingRemainingItem()) {
-            final ItemStack craftingRemainder = itemstack.getCraftingRemainingItem();
-            itemstack.shrink(1);
-
-            if (itemstack.isEmpty()) {
-                itemStacks.set(INGREDIENT_SLOT, craftingRemainder);
-                level.levelEvent(1035, blockPos, 0);
-                return;
-            }
-
-            Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), craftingRemainder);
-
-            itemStacks.set(INGREDIENT_SLOT, itemstack);
-            level.levelEvent(1035, blockPos, 0);
-            return;
+        for (int bottleSlot = 0; bottleSlot < 3; bottleSlot++) {
+            items.set(bottleSlot, potionBrewing.mix(ingredientStack, items.get(bottleSlot)));
         }
 
-        itemstack.shrink(1);
-        itemStacks.set(INGREDIENT_SLOT, itemstack);
-        level.levelEvent(1035, blockPos, 0);
+        EventHooks.onPotionBrewed(items);
+        if (ingredientStack.hasCraftingRemainingItem()) {
+            final ItemStack craftingRemainder = ingredientStack.getCraftingRemainingItem();
+            ingredientStack.shrink(1);
+            if (ingredientStack.isEmpty()) {
+                ingredientStack = craftingRemainder;
+            } else {
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
+            }
+        } else ingredientStack.shrink(1);
+
+        items.set(INGREDIENT_SLOT, ingredientStack);
+        level.levelEvent(1035, pos, 0);
     }
 
-    private static boolean isBrewable(final NonNullList<ItemStack> itemStacks) {
-        final ItemStack itemstack = itemStacks.get(INGREDIENT_SLOT);
-        if (!itemstack.isEmpty()) return BrewingRecipeRegistry.canBrew(itemStacks, itemstack, SLOTS_FOR_SIDES);
-
-        if (itemstack.isEmpty()) return false;
-
-        if (!PotionBrewing.isIngredient(itemstack)) {
+    private static boolean isBrewable(final PotionBrewing potionBrewing, final NonNullList<ItemStack> items) {
+        final ItemStack ingredientStack = items.get(INGREDIENT_SLOT);
+        if (ingredientStack.isEmpty()) {
+            return false;
+        }
+        if (!potionBrewing.isIngredient(ingredientStack)) {
             return false;
         }
 
-        for (int i = 0; i < 3; ++i) {
-            final ItemStack itemStack = itemStacks.get(i);
-            if (!itemStack.isEmpty() && PotionBrewing.hasMix(itemStack, itemstack)) return true;
+        for (int bottleIndex = 0; bottleIndex < 3; bottleIndex++) {
+            final ItemStack itemStack = items.get(bottleIndex);
+            if (!itemStack.isEmpty() && potionBrewing.hasMix(itemStack, ingredientStack)) {
+                return true;
+            }
         }
 
         return false;
@@ -161,7 +157,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
             }
         }
 
-        final boolean canBrew = isBrewable(this.itemStacks);
+        final boolean canBrew = isBrewable(this.level().potionBrewing(), this.itemStacks);
         final ItemStack ingredientStack = this.getItem(INGREDIENT_SLOT);
         if (this.brewTime > 0) {
             --this.brewTime;
@@ -208,9 +204,9 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -231,15 +227,14 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
 
     @Override
     public boolean canPlaceItem(final int slotIndex, final ItemStack itemStack) {
-        if (slotIndex == INGREDIENT_SLOT) {
-            return BrewingRecipeRegistry.isValidIngredient(itemStack);
-        }
+        final PotionBrewing potionbrewing = this.level().potionBrewing();
 
-        if (slotIndex == FUEL_SLOT) {
-            return itemStack.is(Items.BLAZE_POWDER);
-        }
+        if (slotIndex == INGREDIENT_SLOT) return potionbrewing.isIngredient(itemStack);
 
-        return BrewingRecipeRegistry.isValidInput(itemStack) && this.getItem(slotIndex).isEmpty();
+        if (slotIndex == FUEL_SLOT) return itemStack.is(Items.BLAZE_POWDER);
+
+        return (potionbrewing.isInput(itemStack) || itemStack.is(Items.GLASS_BOTTLE)) && this.getItem(slotIndex)
+                .isEmpty();
     }
 
     @Override

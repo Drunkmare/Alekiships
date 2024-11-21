@@ -5,7 +5,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCom
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -29,15 +27,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
@@ -46,7 +41,6 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -57,7 +51,7 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
  * This compartment entity mimics vanillas {@link AbstractFurnaceBlockEntity}. If your BE extends from that class you'll
  * want to extend from this for your compartment
  */
-public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity.ContainerMenuCompartmentEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, BlockCompartment {
+public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartmentEntity.ContainerMenuCompartmentEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, BlockCompartment {
     public static final int SLOT_COUNT = 3;
     public static final String BURN_TIME_KEY = "BurnTime";
     public static final String COOK_TIME_KEY = "CookTime";
@@ -72,7 +66,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private static final int[] SLOTS_FOR_DOWN = new int[]{SLOT_RESULT, SLOT_FUEL};
     private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FUEL};
     private final RecipeType<? extends AbstractCookingRecipe> recipeType;
-    private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
+    private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> quickCheck;
     private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
     protected int litTime;
     protected int litDuration;
@@ -146,14 +140,14 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     private static int getTotalCookTime(final Level pLevel, final AbstractFurnaceCompartmentEntity furnaceCompartment) {
-        return furnaceCompartment.quickCheck.getRecipeFor(furnaceCompartment, pLevel)
-                .map(AbstractCookingRecipe::getCookingTime).orElse(BURN_TIME_STANDARD);
+        return furnaceCompartment.quickCheck.getRecipeFor(new SingleRecipeInput(furnaceCompartment.getItem(SLOT_INPUT)),
+                pLevel).map(recipeHolder -> recipeHolder.value().getCookingTime()).orElse(BURN_TIME_STANDARD);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -171,12 +165,13 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         }
 
         final ItemStack fuelStack = this.getItem(SLOT_FUEL);
-        final boolean inputSlotEmpty = !this.getItem(SLOT_INPUT).isEmpty();
+        final ItemStack inputStack = this.getItem(SLOT_INPUT);
+        final boolean inputSlotEmpty = !inputStack.isEmpty();
         final boolean fuelSlotEmpty = !fuelStack.isEmpty();
         if (this.isLit() || fuelSlotEmpty && inputSlotEmpty) {
-            AbstractCookingRecipe recipe;
+            final RecipeHolder<? extends AbstractCookingRecipe> recipe;
             if (inputSlotEmpty) {
-                recipe = this.quickCheck.getRecipeFor(this, this.level()).orElse(null);
+                recipe = this.quickCheck.getRecipeFor(new SingleRecipeInput(inputStack), this.level()).orElse(null);
             } else {
                 recipe = null;
             }
@@ -226,26 +221,28 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
 
     @Override
     @Nullable
-    public Recipe<?> getRecipeUsed() {
+    public RecipeHolder<?> getRecipeUsed() {
         return null;
     }
 
     @Override
-    public void setRecipeUsed(final @Nullable Recipe<?> recipe) {
+    public void setRecipeUsed(final @Nullable RecipeHolder<?> recipe) {
         if (recipe != null) {
-            ResourceLocation resourceLocation = recipe.getId();
+            final ResourceLocation resourceLocation = recipe.id();
             this.recipesUsed.addTo(resourceLocation, 1);
         }
     }
 
-    private boolean burn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
+    private boolean burn(final RegistryAccess registryAccess,
+            final @Nullable RecipeHolder<? extends AbstractCookingRecipe> cookingRecipe,
             final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
         if (cookingRecipe == null || !this.canBurn(registryAccess, cookingRecipe, itemStacks, maxStackSize)) {
             return false;
         }
 
-        final ItemStack inputStack = itemStacks.get(SLOT_INPUT);
-        final ItemStack recipeOutput = cookingRecipe.assemble(this, registryAccess);
+        final ItemStack inputStack = itemStacks.getFirst();
+        final ItemStack recipeOutput = cookingRecipe.value()
+                .assemble(new SingleRecipeInput(inputStack), registryAccess);
         final ItemStack outputSlot = itemStacks.get(SLOT_RESULT);
         if (outputSlot.isEmpty()) {
             itemStacks.set(SLOT_RESULT, recipeOutput.copy());
@@ -262,15 +259,21 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         return true;
     }
 
-    protected int getBurnDuration(final ItemStack itemStack) {
-        return ForgeHooks.getBurnTime(itemStack, this.recipeType);
+    protected int getBurnDuration(final ItemStack fuelStack) {
+        if (fuelStack.isEmpty()) {
+            return 0;
+        } else {
+            return fuelStack.getBurnTime(this.recipeType);
+        }
     }
 
-    private boolean canBurn(final RegistryAccess registryAccess, final @Nullable AbstractCookingRecipe cookingRecipe,
+    private boolean canBurn(final RegistryAccess registryAccess,
+            final @Nullable RecipeHolder<? extends AbstractCookingRecipe> cookingRecipe,
             final NonNullList<ItemStack> itemStacks, final int maxStackSize) {
-        if (itemStacks.get(SLOT_INPUT).isEmpty() || cookingRecipe == null) return false;
+        if (itemStacks.getFirst().isEmpty() || cookingRecipe == null) return false;
 
-        final ItemStack itemstack = cookingRecipe.assemble(this, registryAccess);
+        final ItemStack itemstack = cookingRecipe.value()
+                .assemble(new SingleRecipeInput(itemStacks.getFirst()), registryAccess);
         if (itemstack.isEmpty()) {
             return false;
         }
@@ -294,10 +297,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     }
 
     public void awardUsedRecipesAndPopExperience(final ServerPlayer player) {
-        final List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(player.serverLevel(), player.position());
+        final List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(player.serverLevel(),
+                player.position());
         player.awardRecipes(list);
 
-        for (final Recipe<?> recipe : list) {
+        for (final var recipe : list) {
             if (recipe != null) {
                 player.triggerRecipeCrafted(recipe, this.itemStacks);
             }
@@ -306,13 +310,14 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         this.recipesUsed.clear();
     }
 
-    public List<Recipe<?>> getRecipesToAwardAndPopExperience(final ServerLevel level, final Vec3 vec3) {
-        List<Recipe<?>> list = Lists.newArrayList();
+    public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(final ServerLevel level, final Vec3 vec3) {
+        final List<RecipeHolder<?>> list = Lists.newArrayList();
 
-        for (final Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+        for (final var entry : this.recipesUsed.object2IntEntrySet()) {
             level.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
                 list.add(recipe);
-                createExperience(level, vec3, entry.getIntValue(), ((AbstractCookingRecipe) recipe).getExperience());
+                createExperience(level, vec3, entry.getIntValue(),
+                        ((AbstractCookingRecipe) recipe.value()).getExperience());
             });
         }
 
@@ -365,29 +370,21 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             return false;
         }
 
-        if (slotIndex == SLOT_FUEL) {
-            final ItemStack itemstack = this.getItem(SLOT_FUEL);
-
-            if (0 < ForgeHooks.getBurnTime(itemStack, this.recipeType)) {
-                return true;
-            }
-
-            return itemStack.is(Items.BUCKET) && !itemstack.is(Items.BUCKET);
+        if (slotIndex != SLOT_FUEL) {
+            return true;
         }
 
-        return true;
+        final ItemStack itemstack = this.itemStacks.get(SLOT_FUEL);
+        return itemStack.getBurnTime(this.recipeType) > 0 || itemStack.is(Items.BUCKET) && !itemstack.is(Items.BUCKET);
     }
 
     @Override
     public void setItem(final int slotIndex, final ItemStack itemStack) {
         final ItemStack currentStack = this.getItem(slotIndex);
-        final boolean flag = !itemStack.isEmpty() && ItemStack.isSameItemSameTags(currentStack, itemStack);
-        super.setItem(slotIndex, itemStack);
-        if (itemStack.getCount() > this.getMaxStackSize()) {
-            itemStack.setCount(this.getMaxStackSize());
-        }
-
-        if (slotIndex == 0 && !flag) {
+        final boolean flag = !itemStack.isEmpty() && ItemStack.isSameItemSameComponents(currentStack, itemStack);
+        this.itemStacks.set(slotIndex, itemStack);
+        itemStack.limitSize(this.getMaxStackSize());
+        if (slotIndex == SLOT_INPUT && !flag) {
             this.cookingTotalTime = getTotalCookTime(this.level(), this);
             this.cookingProgress = 0;
             this.setChanged();
@@ -472,7 +469,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
             final CompoundTag compoundtag = compoundTag.getCompound(RECIPES_USED_KEY);
 
             for (final String recipeKey : compoundtag.getAllKeys()) {
-                this.recipesUsed.put(new ResourceLocation(recipeKey), compoundtag.getInt(recipeKey));
+                this.recipesUsed.put(ResourceLocation.tryParse(recipeKey), compoundtag.getInt(recipeKey));
             }
         }
     }

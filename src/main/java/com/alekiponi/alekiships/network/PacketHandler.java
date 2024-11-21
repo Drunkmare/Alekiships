@@ -30,10 +30,9 @@ public final class PacketHandler {
                 onServer(ServerboundFlagVehicleForUpdatePacket::handle));
 
         // Server -> Client
-//        registrar.playToClient(ClientboundJukeboxStartMusicPacket.TYPE, ClientboundJukeboxStartMusicPacket.CODEC,
-//                onClient(ClientboundJukeboxStartMusicPacket::handle));
-//        registrar.playToClient(ClientboundJukeboxStopMusicPacket.TYPE, ClientboundJukeboxStopMusicPacket.CODEC,
-//                onClient(ClientboundJukeboxStopMusicPacket::handle));
+        registrar.playToClient(ClientboundJukeboxCompartmentMusicPacket.TYPE,
+                ClientboundJukeboxCompartmentMusicPacket.CODEC,
+                onClient(ClientboundJukeboxCompartmentMusicPacket::handle));
     }
 
     private static <T extends CustomPacketPayload> IPayloadHandler<T> onClient(final Consumer<T> handler) {
