@@ -23,7 +23,7 @@ val neoVersionRange: String = "[21.0.167,21.0.168 )"
 val emiVersion: String = "1.1.10+1.21"
 val jeiVersion: String = "19.5.2.66"
 val topVersion: String = "1.21_neo-12.0.4-6"
-val jadeFileID: String = "4614153"
+val jadeFileID: String = "5591256"
 
 val datagenOutput: String = "src/generated/resources"
 

@@ -11,17 +11,16 @@ import net.minecraft.world.item.ItemStack;
 import snownee.jade.api.*;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElementHelper;
-import snownee.jade.impl.ui.ProgressArrowElement;
 
 public enum FurnaceCompartmentProvider implements IEntityComponentProvider, IServerDataProvider<EntityAccessor> {
     INSTANCE;
 
-    private static final ResourceLocation NAME = new ResourceLocation(AlekiShips.MOD_ID, "furnace");
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "furnace");
 
     @Override
     public void appendTooltip(final ITooltip tooltip, final EntityAccessor entityAccessor,
             final IPluginConfig iPluginConfig) {
-        tooltip.remove(Identifiers.UNIVERSAL_ITEM_STORAGE);
+        tooltip.remove(JadeIds.UNIVERSAL_ITEM_STORAGE);
 
         final CompoundTag serverData = entityAccessor.getServerData();
         final int progress = serverData.getInt("progress");
@@ -32,13 +31,15 @@ public enum FurnaceCompartmentProvider implements IEntityComponentProvider, ISer
                 ItemStack.EMPTY);
 
         for (int slotIndex = 0; slotIndex < furnaceItems.size(); ++slotIndex) {
-            inventory.set(slotIndex, ItemStack.of(furnaceItems.getCompound(slotIndex)));
+            inventory.set(slotIndex, ItemStack.parseOptional(entityAccessor.getEntity().registryAccess(),
+                    furnaceItems.getCompound(slotIndex)));
         }
 
-        final IElementHelper helper = tooltip.getElementHelper();
+        final IElementHelper helper = IElementHelper.get();
+        //noinspection SequencedCollectionMethodCanBeUsed
         tooltip.add(helper.item(inventory.get(AbstractFurnaceCompartmentEntity.SLOT_INPUT)));
         tooltip.append(helper.item(inventory.get(AbstractFurnaceCompartmentEntity.SLOT_FUEL)));
-        tooltip.append(new ProgressArrowElement((float) progress / (float) serverData.getInt("total")));
+        tooltip.append(helper.progress((float) progress / (float) serverData.getInt("total")));
         tooltip.append(helper.item(inventory.get(AbstractFurnaceCompartmentEntity.SLOT_RESULT)));
     }
 
@@ -49,7 +50,7 @@ public enum FurnaceCompartmentProvider implements IEntityComponentProvider, ISer
         {
             final ListTag items = new ListTag();
             for (int slotIndex = 0; slotIndex < AbstractFurnaceCompartmentEntity.SLOT_COUNT; ++slotIndex) {
-                items.add(furnaceCompartment.getItem(slotIndex).save(new CompoundTag()));
+                items.add(furnaceCompartment.getItem(slotIndex).saveOptional(furnaceCompartment.registryAccess()));
             }
             compoundTag.put("furnace", items);
         }

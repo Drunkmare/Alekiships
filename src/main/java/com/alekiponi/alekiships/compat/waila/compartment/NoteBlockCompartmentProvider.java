@@ -23,7 +23,7 @@ public enum NoteBlockCompartmentProvider implements IEntityComponentProvider {
 
     private static final String[] PITCH = {"F♯/G♭", "G", "G♯/A♭", "A", "A♯/B♭", "B", "C", "C♯/D♭", "D", "D♯/E♭", "E", "F"};
     private static final ChatFormatting[] OCTAVE = new ChatFormatting[]{ChatFormatting.WHITE, ChatFormatting.YELLOW, ChatFormatting.GOLD};
-    private static final ResourceLocation NAME = new ResourceLocation(AlekiShips.MOD_ID, "note_block");
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "note_block");
 
     @Override
     public void appendTooltip(final ITooltip tooltip, final EntityAccessor entityAccessor,
