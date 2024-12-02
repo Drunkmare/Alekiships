@@ -14,7 +14,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.ColliderEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.network.ServerboundFlagVehicleForUpdatePacket;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
@@ -26,18 +25,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -140,11 +137,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     public abstract float getPassengerSizeLimit();
 
     @Override
-    protected float getEyeHeight(final Pose pose, final EntityDimensions entityDimensions) {
-        return entityDimensions.height;
-    }
-
-    @Override
     public void tick() {
         if(!this.isFunctional()){
             hasAllParts = false;
@@ -222,12 +214,13 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return MovementEmission.EVENTS;
     }
 
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_HURT, 0);
-        this.entityData.define(DATA_ID_HURTDIR, 1);
-        this.entityData.define(DATA_ID_DAMAGE, 0.0F);
-        this.entityData.define(DATA_ID_DELTA_ROTATION, 0f);
-        this.entityData.define(DATA_ID_ACCELERATION, 0f);
+    @Override
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_HURT, 0);
+        builder.define(DATA_ID_HURTDIR, 1);
+        builder.define(DATA_ID_DAMAGE, 0.0F);
+        builder.define(DATA_ID_DELTA_ROTATION, 0f);
+        builder.define(DATA_ID_ACCELERATION, 0f);
     }
 
     @Override
@@ -251,18 +244,13 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
 
 
     @Override
-    protected Vec3 getRelativePortalPosition(final Direction.Axis axis, final BlockUtil.FoundRectangle portal) {
+    public Vec3 getRelativePortalPosition(final Direction.Axis axis, final BlockUtil.FoundRectangle portal) {
         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(
                 super.getRelativePortalPosition(axis, portal));
     }
 
     public boolean shouldShowName() {
         return this.isCustomNameVisible();
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        return 0;
     }
 
     @Override
@@ -324,15 +312,16 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return !this.isRemoved();
     }
 
+    // TODO, see if I work as expected
     @Override
-    public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-                       final int pPosRotationIncrements, final boolean teleport) {
+    public void lerpTo(final double posX, final double posY, final double posZ, final float yRot, final float xRot,
+            final int steps) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;
-        this.lerpYRot = yaw;
-        this.lerpXRot = pitch;
-        this.lerpSteps = 10;
+        this.lerpYRot = yRot;
+        this.lerpXRot = xRot;
+        this.lerpSteps = steps;
     }
 
     @Override
@@ -742,6 +731,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         return count;
     }
 
+    /// TODO this should probably use {@link #getPassengerRidingPosition}. But I don't want to mess anything up -Traister
     @Override
     protected void positionRider(final Entity passenger, final MoveFunction moveFunction)
     {
@@ -758,10 +748,13 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
         }
     }
 
+    /// TODO revamp with {@link #getPassengerRidingPosition} in mind
     protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
-        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
+        final Entity passenger = this.getPassengers().get(index);
+        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengerRidingPosition(
+                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
         switch (index) {
             case 0 -> {
                 localX = 0.3f;
@@ -1011,13 +1004,12 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
      * with vehicles that should drop multiple things such as the {@link SloopEntity}
      */
     protected void dropFromLootTable(final ServerLevel serverLevel, final DamageSource damageSource) {
-        final ResourceLocation resourcelocation = this.getLootTable();
-        final LootTable loottable = serverLevel.getServer().getLootData().getLootTable(resourcelocation);
+        final LootTable loottable = serverLevel.getServer().reloadableRegistries().getLootTable(this.getLootTable());
         final LootParams.Builder lootBuilder = (new LootParams.Builder(serverLevel)).withParameter(
                         LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.ORIGIN, this.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, damageSource.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, damageSource.getDirectEntity());
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, damageSource.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, damageSource.getDirectEntity());
 
         final LootParams lootparams = lootBuilder.create(LootContextParamSets.ENTITY);
         loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
@@ -1083,7 +1075,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveIcons, IHav
     /**
      * @return The loot table that should be used
      */
-    public ResourceLocation getLootTable() {
+    public ResourceKey<LootTable> getLootTable() {
         return this.getType().getDefaultLootTable();
     }
 

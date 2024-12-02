@@ -45,8 +45,8 @@ public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper imp
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_SWITCH, false);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_SWITCH, false);
     }
 
     @Override

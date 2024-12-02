@@ -62,23 +62,23 @@ public class CannonEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_DAMAGE, 0F);
-        this.entityData.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
-        this.entityData.define(DATA_ID_X_ROT, 0F);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_DAMAGE, 0F);
+        builder.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
+        builder.define(DATA_ID_X_ROT, 0F);
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         this.fuse = compoundTag.getInt(FUSE_KEY);
-        this.setCannonball(ItemStack.of(compoundTag.getCompound(CANNONBALL_KEY)));
+        this.setCannonball(ItemStack.parseOptional(this.registryAccess(), compoundTag.getCompound(CANNONBALL_KEY)));
         this.setDamage(compoundTag.getFloat(DAMAGE_KEY));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt(FUSE_KEY, this.fuse);
-        compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(new CompoundTag()));
+        compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(this.registryAccess()));
         compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
     }
 
@@ -150,7 +150,7 @@ public class CannonEntity extends Entity {
 
             this.light(player);
             player.swing(hand);
-            heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            heldItem.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             return InteractionResult.SUCCESS;
         } else if (heldItem.is(Items.FLINT_AND_STEEL)) {
             return InteractionResult.FAIL;
@@ -210,7 +210,7 @@ public class CannonEntity extends Entity {
 
         this.fuse = -1;
         this.setCannonball(ItemStack.EMPTY);
-        this.playSound(SoundEvents.GENERIC_EXPLODE, 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
+        this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
 
         final CannonballEntity cannonball = new CannonballEntity(this);
 
@@ -271,13 +271,13 @@ public class CannonEntity extends Entity {
 
     @Override
     public void lerpTo(final double posX, final double posY, final double posZ, final float yaw, final float pitch,
-                       final int pPosRotationIncrements, final boolean teleport) {
+            final int steps) {
         this.lerpX = posX;
         this.lerpY = posY;
         this.lerpZ = posZ;
         this.lerpYRot = yaw;
         this.lerpXRot = pitch;
-        this.lerpSteps = 10;
+        this.lerpSteps = steps;
     }
 
     protected void destroy(@SuppressWarnings("unused") final DamageSource damageSource) {

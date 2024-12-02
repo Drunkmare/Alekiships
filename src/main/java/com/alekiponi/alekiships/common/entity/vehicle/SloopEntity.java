@@ -23,6 +23,8 @@ import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 import javax.annotation.Nullable;
+
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -33,6 +35,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -41,8 +44,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
@@ -176,11 +179,14 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return new float[]{1.5f, 0.75f};
     }
 
+    /// TODO revamp with {@link #getPassengerRidingPosition} in mind
     @Override
     protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
-        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
+        final Entity passenger = this.getPassengers().get(index);
+        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengerRidingPosition(
+                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
         float holdLevel = -0.05f;
         float deckLevel = 0.625f;
         switch (index) {
@@ -597,7 +603,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         }
 
         if (heldItem.is(Items.NAME_TAG)) {
-            if (heldItem.hasCustomHoverName() && !this.getName().equals(heldItem.getHoverName())) {
+            final var customName = heldItem.get(DataComponents.CUSTOM_NAME);
+            if (customName != null) {
                 if (!this.level().isClientSide() && this.isAlive() && this.isFunctional()) {
                     this.setCustomName(heldItem.getHoverName());
                     if (!player.getAbilities().instabuild) {
@@ -607,9 +614,9 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                 }
 
                 return InteractionResult.sidedSuccess(player.level().isClientSide);
-            } else {
-                return InteractionResult.PASS;
             }
+
+            return InteractionResult.PASS;
         }
 
 
@@ -629,18 +636,18 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_MAIN_BOOM_ROTATION, 0f);
-        this.entityData.define(DATA_ID_RUDDER_ROTATION, 0f);
-        this.entityData.define(DATA_ID_MAINSAIL_ACTIVE, false);
-        this.entityData.define(DATA_ID_JIBSAIL_ACTIVE, false);
-        this.entityData.define(DATA_ID_TICKS_NO_RIDERS, 0);
-        this.entityData.define(DATA_ID_MAINSHEET_LENGTH, 0f);
-        this.entityData.define(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
-        this.entityData.define(DATA_ID_MAINSAIL_DYE, DyeColor.WHITE);
-        this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
-        this.entityData.define(DATA_ID_ICEBREAKER, false);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_MAIN_BOOM_ROTATION, 0f);
+        builder.define(DATA_ID_RUDDER_ROTATION, 0f);
+        builder.define(DATA_ID_MAINSAIL_ACTIVE, false);
+        builder.define(DATA_ID_JIBSAIL_ACTIVE, false);
+        builder.define(DATA_ID_TICKS_NO_RIDERS, 0);
+        builder.define(DATA_ID_MAINSHEET_LENGTH, 0f);
+        builder.define(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
+        builder.define(DATA_ID_MAINSAIL_DYE, DyeColor.WHITE);
+        builder.define(DATA_ID_PAINT_COLOR, Optional.empty());
+        builder.define(DATA_ID_ICEBREAKER, false);
     }
 
     @Override

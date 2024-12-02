@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 
@@ -16,7 +17,7 @@ public class ColliderEntity extends AbstractPassthroughHelper implements IHaveIc
     }
 
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
 
     }
 
@@ -68,7 +69,7 @@ public class ColliderEntity extends AbstractPassthroughHelper implements IHaveIc
     @Override
     public EntityDimensions getDimensions(Pose pPose) {
         if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
-            return new EntityDimensions(vehicle.getDefaultColliderDimensions()[0], vehicle.getDefaultColliderDimensions()[1], false);
+            return  EntityDimensions.scalable(vehicle.getDefaultColliderDimensions()[0], vehicle.getDefaultColliderDimensions()[1]);
         }
         return super.getDimensions(pPose);
     }

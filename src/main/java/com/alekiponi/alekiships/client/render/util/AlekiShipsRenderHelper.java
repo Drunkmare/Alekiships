@@ -40,10 +40,10 @@ public class AlekiShipsRenderHelper {
         float f5 = p_174310_ * f;
         float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
         float f7 = p_174312_ * f;
-        pConsumer.vertex(pMatrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).color(f2, f3, f4, 1.0F).uv2(k)
-                .endVertex();
-        pConsumer.vertex(pMatrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).color(f2, f3, f4, 1.0F)
-                .uv2(k).endVertex();
+        // TODO make sure this is right
+        pConsumer.addVertex(pMatrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setUv2(i,j);
+        pConsumer.addVertex(pMatrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F)
+                .setUv2(i,j);
     }
 
     public static <E extends Entity> void renderRope(Entity pEntity, float pPartialTicks, PoseStack pPoseStack,

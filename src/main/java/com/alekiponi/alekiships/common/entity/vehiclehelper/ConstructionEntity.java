@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractUnderConstructionEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +17,8 @@ public class ConstructionEntity extends AbstractPassthroughHelper {
     }
 
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+
     }
 
     public float getSpin(float pPartialTicks) {

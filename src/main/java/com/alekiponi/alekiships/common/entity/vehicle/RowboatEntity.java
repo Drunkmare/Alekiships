@@ -114,7 +114,10 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
-        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
+        // TODO
+        final Entity passenger = this.getPassengers().get(index);
+        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengerRidingPosition(
+                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
         switch (index) {
             case 0 -> {
                 // front / pilot seat
@@ -269,10 +272,10 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
-        this.entityData.define(DATA_ID_PAINT_COLOR, Optional.empty());
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
+        builder.define(DATA_ID_PAINT_COLOR, Optional.empty());
     }
 
     @Override
@@ -314,11 +317,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
         compoundTag.putByte("oars", (byte) this.getOars().getId());
 
         this.getPaintColor().ifPresent(dyeColor -> compoundTag.putByte("paint", (byte) dyeColor.getId()));
-    }
-
-    @Override
-    public float getStepHeight() {
-        return 0.0f;
     }
 
     public enum Oars {

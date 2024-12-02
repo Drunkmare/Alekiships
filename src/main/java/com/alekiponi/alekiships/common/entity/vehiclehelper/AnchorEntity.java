@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -52,9 +53,8 @@ public class AnchorEntity extends AbstractHelper {
         return new Vec3(0.0D, 0.0d, 0.0f);
     }
 
-
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
 
     }
 

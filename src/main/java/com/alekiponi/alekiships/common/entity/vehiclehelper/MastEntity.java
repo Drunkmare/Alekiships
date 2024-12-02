@@ -19,7 +19,7 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class MastEntity extends AbstractPassthroughHelper {
                     this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
         }
-        if (stack.is(Tags.Items.SHEARS)) {
+        if (stack.is(Tags.Items.TOOLS_SHEAR)) {
             CommonHelper.giveItemToPlayer(player, this.getBanner());
             this.setBanner(ItemStack.EMPTY);
             this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.5F,
@@ -104,13 +104,13 @@ public class MastEntity extends AbstractPassthroughHelper {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_BANNER, ItemStack.EMPTY);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_BANNER, ItemStack.EMPTY);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        this.setBanner(ItemStack.of(pCompound.getCompound("banner")));
+        this.setBanner(ItemStack.parse(this.registryAccess(),pCompound.getCompound("banner")).orElse(ItemStack.EMPTY));
     }
 
     @Override
@@ -129,6 +129,6 @@ public class MastEntity extends AbstractPassthroughHelper {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
-        pCompound.put("banner", this.getBanner().save(new CompoundTag()));
+        pCompound.put("banner", this.getBanner().save(this.registryAccess()));
     }
 }

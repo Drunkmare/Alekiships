@@ -63,12 +63,15 @@ public class VehiclePart extends Entity {
         super.tick();
     }
 
+    /// TODO this should probably use {@link #getPassengerRidingPosition}. But I don't want to mess anything up -Traister
     @Override
     protected void positionRider(final net.minecraft.world.entity.Entity passenger, final net.minecraft.world.entity.Entity.MoveFunction moveFunction) {
 
         if (!(this.getVehicle() instanceof AbstractVehicle abstractVehicle)) return;
 
-        final double localY = ((this.isRemoved() ? 0.01 : this.getPassengersRidingOffset()) + passenger.getMyRidingOffset());
+        // TODO I'm quite iffy on this being totally correct, really we should just override something else now I think
+        final double localY = ((this.isRemoved() ? 0.01 : this.getPassengerRidingPosition(
+                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
 
         moveFunction.accept(passenger, this.getX(), this.getY() + localY, this.getZ());
         passenger.setPos(this.getX(), this.getY() + localY, this.getZ());
@@ -264,8 +267,8 @@ public class VehiclePart extends Entity {
 
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(DATA_ID_COMPARTMENT_ROTATION, 0f);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        builder.define(DATA_ID_COMPARTMENT_ROTATION, 0f);
     }
 
     public void setCompartmentRotation(float rotation) {

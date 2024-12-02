@@ -72,10 +72,10 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_ANCHOR_DISTANCE, 0f);
-        this.entityData.define(DATA_ID_ANCHORED, false);
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_ANCHOR_DISTANCE, 0f);
+        builder.define(DATA_ID_ANCHORED, false);
     }
 
     @Override

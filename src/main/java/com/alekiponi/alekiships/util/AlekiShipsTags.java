@@ -18,7 +18,7 @@ public final class AlekiShipsTags {
         public static final TagKey<Block> WOODEN_WATERCRAFT_FRAMES = create("wooden_watercraft_frames");
 
         private static TagKey<Block> create(final String id) {
-            return TagKey.create(Registries.BLOCK, new ResourceLocation(AlekiShips.MOD_ID, id));
+            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 
@@ -41,7 +41,7 @@ public final class AlekiShipsTags {
         public static final TagKey<Item> ICEBREAKER_UPGRADES = create("icebreaker_upgrades");
 
         public static TagKey<Item> create(final String id) {
-            return TagKey.create(Registries.ITEM, new ResourceLocation(AlekiShips.MOD_ID, id));
+            return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 
@@ -64,7 +64,7 @@ public final class AlekiShipsTags {
         public static final TagKey<EntityType<?>> COMPARTMENTS = create("compartments");
 
         public static TagKey<EntityType<?>> create(final String id) {
-            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(AlekiShips.MOD_ID, id));
+            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 
@@ -75,7 +75,7 @@ public final class AlekiShipsTags {
         public static final TagKey<Structure> UNFINISHED_ROWBOAT = create("unfinished_rowboat");
 
         public static TagKey<Structure> create(final String id) {
-            return TagKey.create(Registries.STRUCTURE, new ResourceLocation(AlekiShips.MOD_ID, id));
+            return TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 }

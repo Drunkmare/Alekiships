@@ -18,7 +18,6 @@ import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -35,8 +34,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -72,13 +72,14 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.boatMaterial = boatMaterial;
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_PADDLE_LEFT, false);
-        this.entityData.define(DATA_ID_PADDLE_RIGHT, false);
+    @Override
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_PADDLE_LEFT, false);
+        builder.define(DATA_ID_PADDLE_RIGHT, false);
 
-        this.entityData.define(DATA_ID_WIND_VECTOR, Wind.ZERO);
-        this.entityData.define(DATA_ID_IMMOBILE, false);
+        builder.define(DATA_ID_WIND_VECTOR, Wind.ZERO);
+        builder.define(DATA_ID_IMMOBILE, false);
     }
 
     public float renderSizeForCompartments() {
@@ -617,11 +618,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Nullable
     @Override
-    public Entity changeDimension(final ServerLevel destination) {
-        final Entity entity = super.changeDimension(destination);
+    public Entity changeDimension(final DimensionTransition transition) {
+        final Entity entity = super.changeDimension(transition);
         if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
             // Update our wind model when the dimension changes
-            alekiBoat.windModel = WindModels.get(destination);
+            alekiBoat.windModel = WindModels.get(transition.newLevel());
         }
         return entity;
     }
