@@ -13,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ArmorStandRenderer.class)
 public abstract class ArmorStandRendererMixin {
-    @Inject(method = "setupRotations(Lnet/minecraft/world/entity/decoration/ArmorStand;Lcom/mojang/blaze3d/vertex/PoseStack;FFF)V", at = @At(value = "HEAD"), cancellable = true)
-    public void injectTurnWithVehicle(ArmorStand pEntityLiving, PoseStack pPoseStack, float pAgeInTicks, float pRotationYaw, float pPartialTicks, CallbackInfo ci){
-        if(pEntityLiving.getVehicle() instanceof EmptyCompartmentEntity vehicle){
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(180-vehicle.getYRot()));
+    @Inject(method = "setupRotations(Lnet/minecraft/world/entity/decoration/ArmorStand;Lcom/mojang/blaze3d/vertex/PoseStack;FFFF)V", at = @At(value = "HEAD"), cancellable = true)
+    public void injectTurnWithVehicle(final ArmorStand entity, final PoseStack poseStack, final float bob,
+            final float yBodyRot, final float partialTick, final float scale, final CallbackInfo ci){
+        if(entity.getVehicle() instanceof EmptyCompartmentEntity vehicle){
+            poseStack.mulPose(Axis.YP.rotationDegrees(180-vehicle.getYRot()));
             ci.cancel();
         }
     }

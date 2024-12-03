@@ -8,14 +8,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.FurnaceResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(FurnaceResultSlot.class)
 public class FurnaceResultSlotMixin extends Slot {
+
+    @Shadow
+    @Final
+    private Player player;
 
     public FurnaceResultSlotMixin(final Container pContainer, final int pSlot, final int pX, final int pY) {
         super(pContainer, pSlot, pX, pY);
@@ -26,11 +31,10 @@ public class FurnaceResultSlotMixin extends Slot {
      * This mixin is to do exactly that.
      * @author Traister101
      */
-    @Inject(method = "checkTakeAchievements", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "FIELD", target = "Lnet/minecraft/world/inventory/FurnaceResultSlot;container:Lnet/minecraft/world/Container;"))
-    private void alekiships$rewardAbstractFurnaceCompartmentXP(final ItemStack pStack, final CallbackInfo ci,
-            final Player p, final ServerPlayer serverPlayer) {
+    @Inject(method = "checkTakeAchievements", at = @At(value = "FIELD", target = "Lnet/minecraft/world/inventory/FurnaceResultSlot;container:Lnet/minecraft/world/Container;"))
+    private void alekiships$rewardAbstractFurnaceCompartmentXP(final ItemStack pStack, final CallbackInfo ci) {
         if (this.container instanceof AbstractFurnaceCompartmentEntity furnaceCompartment) {
-            furnaceCompartment.awardUsedRecipesAndPopExperience(serverPlayer);
+            furnaceCompartment.awardUsedRecipesAndPopExperience(((ServerPlayer) this.player));
         }
     }
 }

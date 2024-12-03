@@ -28,10 +28,10 @@ public abstract class CameraMixin {
     protected abstract void setPosition(double pX, double pY, double pZ);
 
     @Shadow
-    protected abstract void move(double pDistanceOffset, double pVerticalOffset, double pHorizontalOffset);
+    protected abstract void move(final float zoom, final float dy, final float dx);
 
     @Shadow
-    protected abstract double getMaxZoom(double pStartingDistance);
+    protected abstract float getMaxZoom(final float maxZoom);
 
     @Shadow
     private float xRot;
@@ -51,8 +51,8 @@ public abstract class CameraMixin {
             if(compartment.getTrueVehicle() != null){
                 AbstractVehicle vehicle = compartment.getTrueVehicle();
 
-                double boatSize = vehicle.getBbWidth();
-                double cameraDistance = 4.0f;
+                float boatSize = vehicle.getBbWidth();
+                float cameraDistance = 4.0f;
                 if(boatSize >1){
                     cameraDistance = cameraDistance * (boatSize);
                 }
@@ -77,7 +77,7 @@ public abstract class CameraMixin {
                     this.setRotation(this.yRot + 180.0F, -this.xRot);
                 }
 
-                this.move(-this.getMaxZoom(cameraDistance), 0.0, 0.0);
+                this.move(-this.getMaxZoom(cameraDistance), 0.0F, 0.0F);
             }
         }
 
