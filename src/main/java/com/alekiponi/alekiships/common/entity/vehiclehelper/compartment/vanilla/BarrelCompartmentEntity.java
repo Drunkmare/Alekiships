@@ -70,9 +70,9 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -132,12 +132,6 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
     @Override
     protected void onHurt(final DamageSource damageSource) {
         BlockCompartment.playHitSound(this);
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        // Offset so players stand on us
-        return 0.4;
     }
 
     @Override

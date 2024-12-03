@@ -57,8 +57,11 @@ public final class AlekiShipsEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<BlockCompartmentEntity>> BLOCK_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_block", EntityType.Builder.of(BlockCompartmentEntity::new, MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<BarrelCompartmentEntity>> BARREL_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_barrel", EntityType.Builder.of(BarrelCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<BarrelCompartmentEntity>> BARREL_COMPARTMENT_ENTITY = register(
+            "compartment_barrel",
+            EntityType.Builder.of(BarrelCompartmentEntity::new, MobCategory.MISC).fireImmune().noSummon()
+                    // TODO this should be correct. Players should "stand" on us when riding.
+                    .passengerAttachments(0.4F));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChestCompartmentEntity>> CHEST_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_chest", EntityType.Builder.of(ChestCompartmentEntity::new, MobCategory.MISC));
