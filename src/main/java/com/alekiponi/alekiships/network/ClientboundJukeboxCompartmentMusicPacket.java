@@ -20,7 +20,7 @@ public record ClientboundJukeboxCompartmentMusicPacket(int entityId,
                                                        Optional<Integer> songId) implements CustomPacketPayload {
 
     public static final Type<ClientboundJukeboxCompartmentMusicPacket> TYPE = new Type<>(
-            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "vehicle_passenger_update_flag"));
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "jukebox_compartment_music"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundJukeboxCompartmentMusicPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, ClientboundJukeboxCompartmentMusicPacket::entityId,
             ByteBufCodecs.optional(ByteBufCodecs.VAR_INT), ClientboundJukeboxCompartmentMusicPacket::songId,
