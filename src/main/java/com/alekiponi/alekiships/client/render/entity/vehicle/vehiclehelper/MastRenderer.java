@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BannerItem;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 
 import java.util.List;
 
@@ -90,13 +92,14 @@ public class MastRenderer extends EntityRenderer<MastEntity> {
     }
 
     public void renderBanner(ItemStack bannerItem, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+        final BannerPatternLayers patterns = bannerItem.getOrDefault(DataComponents.BANNER_PATTERNS,
+                BannerPatternLayers.EMPTY);
+        final DyeColor color = ((BannerItem) bannerItem.getItem()).getColor();
 
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = BannerBlockEntity.createPatterns(((BannerItem) bannerItem.getItem()).getColor(), BannerBlockEntity.getItemPatterns(bannerItem));
         pPoseStack.pushPose();
         pPoseStack.scale(0.6666667F, -0.6666667F, -0.6666667F);
-
-
-        BannerRenderer.renderPatterns(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, this.flag, ModelBakery.BANNER_BASE, true, list);
+        BannerRenderer.renderPatterns(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, this.flag,
+                ModelBakery.BANNER_BASE, true, color, patterns);
         pPoseStack.popPose();
     }
 
