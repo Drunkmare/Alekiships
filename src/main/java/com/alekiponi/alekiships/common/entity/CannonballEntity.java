@@ -1,25 +1,63 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.util.CannonballExplosion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundExplodePacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class CannonballEntity extends Projectile {
+
+    public static final ExplosionDamageCalculator CANNONBALL_EXPLOSION_CALCULATOR = new ExplosionDamageCalculator() {
+
+        @Override
+        public float getKnockbackMultiplier(final Entity entity) {
+            return switch (entity) {
+                case final LivingEntity livingEntity -> {
+                    if (!(livingEntity instanceof final Player player)) yield super.getKnockbackMultiplier(entity);
+
+                    for (final var touchedEntity : player.level()
+                            .getEntities(player, player.getBoundingBox().inflate(0, 0.1, 0),
+                                    EntitySelector.CAN_BE_COLLIDED_WITH)) {
+                        if (!(touchedEntity instanceof AbstractVehicle vehicle)) continue;
+                        if (!vehicle.collectPlayersToTakeWith().contains(player)) continue;
+
+                        yield 0;
+                    }
+                    yield super.getKnockbackMultiplier(entity);
+                }
+                case CannonEntity ignored -> 0;
+                default -> super.getKnockbackMultiplier(entity);
+            };
+        }
+
+        @Override
+        public float getEntityDamageAmount(final Explosion explosion, final Entity entity) {
+            return switch (entity) {
+                case AbstractAlekiBoatEntity ignored -> 100;
+                case Boat ignored -> 10_000;
+                // TODO this seems stupid but should be the same behavior as in the previous custom Explosion class
+                //  so don't blame me -Traister
+                case Player ignored -> 1;
+                default -> super.getEntityDamageAmount(explosion, entity);
+            };
+        }
+    };
 
     public CannonballEntity(final EntityType<? extends CannonballEntity> entityType, final Level level) {
         super(entityType, level);
@@ -42,7 +80,7 @@ public class CannonballEntity extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         // We define no custom synced data
     }
 
@@ -83,7 +121,7 @@ public class CannonballEntity extends Projectile {
 
         {
             final HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (hitResult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, hitResult)) {
+            if (hitResult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitResult)) {
                 this.onHit(hitResult);
             }
         }
@@ -111,36 +149,11 @@ public class CannonballEntity extends Projectile {
     }
 
     protected void explode(final float radius) {
-        final Level level = this.level();
+        if (this.level().isClientSide()) return;
 
-        if (level.isClientSide()) return;
-
-        final Explosion.BlockInteraction blockInteraction = level.getGameRules().getBoolean(
-                GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
-        final CannonballExplosion explosion = new CannonballExplosion(level, this, null, null, this.getX(),
-                this.getY(0.0625D), this.getZ(), radius, false, blockInteraction);
-
-        if (ForgeEventFactory.onExplosionStart(level, explosion)) return;
-
-        explosion.explode();
-        explosion.finalizeExplosion(true);
-
-        if (!(level instanceof ServerLevel serverLevel)) return;
-
-        if (!explosion.interactsWithBlocks()) {
-            explosion.clearToBlow();
-        }
-
-        final double x = this.getX();
-        final double y = this.getY();
-        final double z = this.getZ();
-        // We have to manually send a packet to all players in range
-        for (final ServerPlayer serverPlayer : serverLevel.players()) {
-            if (serverPlayer.distanceToSqr(x, y, z) < 4096) {
-                serverPlayer.connection.send(new ClientboundExplodePacket(x, y, z, radius, explosion.getToBlow(),
-                        explosion.getHitPlayers().get(serverPlayer)));
-            }
-        }
+        this.level()
+                .explode(this, Explosion.getDefaultDamageSource(this.level(), this), CANNONBALL_EXPLOSION_CALCULATOR,
+                        this.getX(), this.getY(0.0625D), this.getZ(), radius, false, Level.ExplosionInteraction.TNT);
     }
 
     @Override
