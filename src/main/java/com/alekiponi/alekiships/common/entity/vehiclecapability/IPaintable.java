@@ -1,6 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
+import java.util.Optional;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+import javax.annotation.Nullable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -9,10 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
 public interface IPaintable {
     void clearPaint();
@@ -40,6 +39,13 @@ public interface IPaintable {
         if (heldItem.is(Items.WATER_BUCKET)) {
             this.clearPaint();
             player.swing(hand);
+
+            if (!player.getAbilities().instabuild)
+            {
+                heldItem.setCount(0);
+                player.setItemInHand(hand, Items.BUCKET.getDefaultInstance());
+            }
+
             return InteractionResult.SUCCESS;
         }
 

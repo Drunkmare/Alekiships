@@ -1,11 +1,15 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -14,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,12 +28,23 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import oshi.util.tuples.Pair;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntity {
 
     public final BoatMaterial boatMaterial;
+
+    private static final String KEEL_KEY = "keel";
+    private static final String DECK_KEY = "deck";
+    private static final String BOWSPRIT_KEY = "bowsprit";
+    private static final String MAST_KEY = "mast";
+    private static final String BOOM_KEY = "boom";
+    private static final String MAINSAIL_KEY = "mailsail";
+    private static final String JIBSAIL_KEY = "jibsail";
+    private static final String RAILING_BOW_KEY = "railingBow";
+    private static final String RAILING_STERN_KEY = "railingStern";
+    private static final String ANCHOR_KEY = "anchor";
+    private static final String RIGGING_KEY = "rigging";
+    private static final String STAGE_KEY = "stage";
+
     private static final int KEEL_ITEM_NUMBER = 8;
 
     private static final int DECK_ITEM_NUMBER = 20;
@@ -160,7 +174,8 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         super.defineSynchedData(builder);
         builder.define(DATA_ID_KEEL, ItemStack.EMPTY);
         builder.define(DATA_ID_DECK, ItemStack.EMPTY);
@@ -274,34 +289,38 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
-        this.setKeel(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("keel")));
-        this.setDeck(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("deck")));
-        this.setBowsprit(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("bowsprit")));
-        this.setMast(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("mast")));
-        this.setBoom(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("boom")));
-        this.setMainsail(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("mainsail")));
-        this.setJibsail(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("jibsail")));
-        this.setRailingsBow(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("railingsBow")));
-        this.setRailingsStern(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("railingStern")));
-        this.setAnchor(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("anchor")));
-        this.setRigging(ItemStack.parseOptional(this.registryAccess(),compoundTag.getCompound("rigging")));
-        this.setConstructionStage(ConstructionState.getByOrdinal(compoundTag.getInt("stage")));
+
+        RegistryAccess access = this.registryAccess();
+
+        this.setKeel(CommonHelper.deserializeItemStack(compoundTag.getCompound(KEEL_KEY), access));
+        this.setBowsprit(CommonHelper.deserializeItemStack(compoundTag.getCompound(BOWSPRIT_KEY), access));
+        this.setMast(CommonHelper.deserializeItemStack(compoundTag.getCompound(MAST_KEY), access));
+        this.setBoom(CommonHelper.deserializeItemStack(compoundTag.getCompound(BOOM_KEY), access));
+        this.setMainsail(CommonHelper.deserializeItemStack(compoundTag.getCompound(MAINSAIL_KEY), access));
+        this.setJibsail(CommonHelper.deserializeItemStack(compoundTag.getCompound(JIBSAIL_KEY), access));
+        this.setRailingsBow(CommonHelper.deserializeItemStack(compoundTag.getCompound(RAILING_BOW_KEY), access));
+        this.setRailingsStern(CommonHelper.deserializeItemStack(compoundTag.getCompound(RAILING_STERN_KEY), access));
+        this.setAnchor(CommonHelper.deserializeItemStack(compoundTag.getCompound(ANCHOR_KEY), access));
+        this.setRigging(CommonHelper.deserializeItemStack(compoundTag.getCompound(RIGGING_KEY), access));
+        this.setConstructionStage(ConstructionState.getByOrdinal(compoundTag.getInt(STAGE_KEY)));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
-        compoundTag.put("keel", this.getKeel().save(this.registryAccess()));
-        compoundTag.put("deck", this.getDeck().save(this.registryAccess()));
-        compoundTag.put("bowsprit", this.getBowsprit().save(this.registryAccess()));
-        compoundTag.put("mast", this.getMast().save(this.registryAccess()));
-        compoundTag.put("boom", this.getBoom().save(this.registryAccess()));
-        compoundTag.put("mainsail", this.getMainsail().save(this.registryAccess()));
-        compoundTag.put("jibsail", this.getJibsail().save(this.registryAccess()));
-        compoundTag.put("railingsBow", this.getRailingsBow().save(this.registryAccess()));
-        compoundTag.put("railingsStern", this.getRailingsStern().save(this.registryAccess()));
-        compoundTag.put("anchor", this.getAnchor().save(this.registryAccess()));
-        compoundTag.put("rigging", this.getRigging().save(this.registryAccess()));
-        compoundTag.putInt("stage", this.getConstructionStage().ordinal());
+
+        RegistryAccess access = this.registryAccess();
+
+        compoundTag.put(KEEL_KEY, CommonHelper.serializeItemStack(this.getKeel(), access));
+        compoundTag.put(BOWSPRIT_KEY, CommonHelper.serializeItemStack(this.getBowsprit(), access));
+        compoundTag.put(MAST_KEY, CommonHelper.serializeItemStack(this.getMast(), access));
+        compoundTag.put(BOOM_KEY, CommonHelper.serializeItemStack(this.getBoom(), access));
+        compoundTag.put(MAINSAIL_KEY, CommonHelper.serializeItemStack(this.getMainsail(), access));
+        compoundTag.put(JIBSAIL_KEY, CommonHelper.serializeItemStack(this.getJibsail(), access));
+        compoundTag.put(RAILING_BOW_KEY, CommonHelper.serializeItemStack(this.getRailingsBow(), access));
+        compoundTag.put(RAILING_STERN_KEY, CommonHelper.serializeItemStack(this.getRailingsStern(), access));
+        compoundTag.put(ANCHOR_KEY, CommonHelper.serializeItemStack(this.getAnchor(), access));
+        compoundTag.put(RIGGING_KEY, CommonHelper.serializeItemStack(this.getRigging(), access));
+        compoundTag.putInt(STAGE_KEY, this.getConstructionStage().ordinal());
     }
 
     @Override
@@ -339,10 +358,7 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
-        // TODO
-        final Entity passenger = this.getPassengers().get(index);
-        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengerRidingPosition(
-                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
+        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
         ConstructionState stage = this.getConstructionStage();
         switch (stage) {
             case KEEL -> {

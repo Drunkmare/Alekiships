@@ -1,11 +1,11 @@
 package com.alekiponi.alekiships.wind;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
 
 public final class WindModels {
 
@@ -38,5 +38,18 @@ public final class WindModels {
             return NOOP;
         }
         return windModel.create(level);
+    }
+
+    /**
+     * Get a {@link WindModel} for the passed dimension transition
+     *
+     * @param transition The dimension transition
+     * @return The registered wind model or {@link #NOOP}
+     */
+    public static WindModel get(final DimensionTransition transition)
+    {
+
+        return get(transition.newLevel());
+
     }
 }

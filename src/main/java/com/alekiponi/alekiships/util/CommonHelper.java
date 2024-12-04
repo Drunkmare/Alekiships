@@ -1,7 +1,18 @@
 package com.alekiponi.alekiships.util;
 
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,17 +30,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CommonHelper {
     @Nullable
@@ -384,4 +391,16 @@ public class CommonHelper {
         void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
                 final float pitch);
     }
+
+    public static Tag serializeItemStack(ItemStack stack, HolderLookup.Provider holderLookupProvider)
+    {
+        return ItemStack.CODEC.encodeStart(holderLookupProvider.createSerializationContext(NbtOps.INSTANCE), stack).getOrThrow();
+    }
+
+    public static ItemStack deserializeItemStack(Tag tag, HolderLookup.Provider holderLookupProvider)
+    {
+        return ItemStack.CODEC.parse(holderLookupProvider.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow();
+    }
+
+
 }

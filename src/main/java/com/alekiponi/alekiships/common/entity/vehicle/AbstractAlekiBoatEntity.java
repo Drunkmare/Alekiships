@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import java.util.ArrayList;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAmTiny;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
@@ -11,6 +12,7 @@ import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
 import com.alekiponi.alekiships.wind.WindModels;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -37,9 +39,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public static final int PADDLE_LEFT = 0;
@@ -73,12 +72,14 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         builder.define(DATA_ID_PADDLE_LEFT, false);
+
         builder.define(DATA_ID_PADDLE_RIGHT, false);
 
         builder.define(DATA_ID_WIND_VECTOR, Wind.ZERO);
+
         builder.define(DATA_ID_IMMOBILE, false);
     }
 
@@ -618,11 +619,15 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Nullable
     @Override
-    public Entity changeDimension(final DimensionTransition transition) {
+    public Entity changeDimension(final DimensionTransition transition)
+    {
         final Entity entity = super.changeDimension(transition);
+
+
+
         if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
             // Update our wind model when the dimension changes
-            alekiBoat.windModel = WindModels.get(transition.newLevel());
+            alekiBoat.windModel = WindModels.get(transition);
         }
         return entity;
     }

@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import java.util.ArrayList;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
@@ -13,9 +14,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.ArrayList;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
 public class SailSwitchEntity extends AbstractSwitchEntity{
 

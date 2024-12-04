@@ -114,10 +114,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     protected Vec3 positionRiderByIndex(int index) {
         float localX = 0.0F;
         float localZ = 0.0F;
-        // TODO
-        final Entity passenger = this.getPassengers().get(index);
-        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengerRidingPosition(
-                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
+        float localY = (float) ((this.isRemoved() ? (double) 0.01F : this.getPassengersRidingOffset()));
         switch (index) {
             case 0 -> {
                 // front / pilot seat
@@ -272,8 +269,10 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         super.defineSynchedData(builder);
+
         builder.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
         builder.define(DATA_ID_PAINT_COLOR, Optional.empty());
     }

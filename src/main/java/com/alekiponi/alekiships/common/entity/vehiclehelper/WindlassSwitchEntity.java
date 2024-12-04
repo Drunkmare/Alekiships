@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
+import java.util.ArrayList;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
@@ -14,8 +15,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
 
 public class WindlassSwitchEntity extends AbstractSwitchEntity {
 
@@ -72,7 +71,8 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         super.defineSynchedData(builder);
         builder.define(DATA_ID_ANCHOR_DISTANCE, 0f);
         builder.define(DATA_ID_ANCHORED, false);

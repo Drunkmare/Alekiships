@@ -3,7 +3,12 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMasts;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -24,6 +29,7 @@ public class VehiclePart extends Entity {
     public VehiclePart(final EntityType<?> entityType, final Level level) {
         super(entityType, level);
     }
+
 
     @Override
     public void tick() {
@@ -63,18 +69,13 @@ public class VehiclePart extends Entity {
         super.tick();
     }
 
-    /// TODO this should probably use {@link #getPassengerRidingPosition}. But I don't want to mess anything up -Traister
     @Override
     protected void positionRider(final net.minecraft.world.entity.Entity passenger, final net.minecraft.world.entity.Entity.MoveFunction moveFunction) {
 
         if (!(this.getVehicle() instanceof AbstractVehicle abstractVehicle)) return;
 
-        // TODO I'm quite iffy on this being totally correct, really we should just override something else now I think
-        final double localY = ((this.isRemoved() ? 0.01 : this.getPassengerRidingPosition(
-                passenger).y) + passenger.getVehicleAttachmentPoint(this).y);
-
-        moveFunction.accept(passenger, this.getX(), this.getY() + localY, this.getZ());
-        passenger.setPos(this.getX(), this.getY() + localY, this.getZ());
+        moveFunction.accept(passenger, this.getX(), this.getY(), this.getZ());
+        passenger.setPos(this.getX(), this.getY(), this.getZ());
 
         if ((passenger instanceof AbstractCompartmentEntity || passenger instanceof CleatEntity)) {
             this.setYRot(abstractVehicle.getYRot());
@@ -265,9 +266,9 @@ public class VehiclePart extends Entity {
         return false;
     }
 
-
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         builder.define(DATA_ID_COMPARTMENT_ROTATION, 0f);
     }
 

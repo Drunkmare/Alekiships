@@ -15,6 +15,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper implements IHaveIcons {
 
+    static String SWITCHED_KEY = "switched";
+
     public AbstractSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
@@ -45,18 +47,19 @@ public abstract class AbstractSwitchEntity extends AbstractPassthroughHelper imp
     }
 
     @Override
-    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    {
         builder.define(DATA_ID_SWITCH, false);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        this.setSwitched(pCompound.getBoolean("switched"));
+        this.setSwitched(pCompound.getBoolean(SWITCHED_KEY));
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
-        pCompound.putBoolean("switched", this.getSwitched());
+        pCompound.putBoolean(SWITCHED_KEY, this.getSwitched());
     }
 
 
