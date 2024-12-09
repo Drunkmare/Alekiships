@@ -2,21 +2,19 @@
   "parent": "alekiships:rowboat_completed",
   "criteria": {
     "broadside": {
-      "conditions": {},
       "trigger": "alekiships:full_broadside"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "alekiships.advancements.full_broadside.description"
     },
     "frame": "challenge",
     "hidden": true,
     "icon": {
-      "item": "alekiships:cannonball"
+      "count": 1,
+      "id": "alekiships:cannonball"
     },
-    "show_toast": true,
     "title": {
       "translate": "alekiships.advancements.full_broadside.title"
     }

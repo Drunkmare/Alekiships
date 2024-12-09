@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "alekiships:cannon"
-            ]
+            "items": "alekiships:cannon"
           }
         ]
       },
@@ -15,16 +13,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "alekiships.advancements.cannon.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
-      "item": "alekiships:cannon"
+      "count": 1,
+      "id": "alekiships:cannon"
     },
-    "show_toast": true,
     "title": {
       "translate": "alekiships.advancements.cannon.title"
     }

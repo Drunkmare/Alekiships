@@ -2,21 +2,17 @@
   "parent": "minecraft:story/smelt_iron",
   "criteria": {
     "rowboat": {
-      "conditions": {},
       "trigger": "alekiships:rowboat_completed"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "alekiships.advancements.rowboat_completed.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
-      "item": "alekiships:rowboat_icon_only"
+      "count": 1,
+      "id": "alekiships:rowboat_icon_only"
     },
-    "show_toast": true,
     "title": {
       "translate": "alekiships.advancements.rowboat_completed.title"
     }

@@ -2,9 +2,6 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:iron_block"
-    },
     "I": {
       "item": "minecraft:iron_ingot"
     },
@@ -13,12 +10,11 @@
     }
   },
   "pattern": [
-    "NIN",
-    " I ",
-    "IBI"
+    "III",
+    "N N"
   ],
   "result": {
-    "item": "alekiships:anchor"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "alekiships:cleat"
+  }
 }

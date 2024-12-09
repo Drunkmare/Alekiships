@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:stick"
-            ]
+            "items": "minecraft:stick"
           }
         ]
       },
@@ -23,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "minecraft:wooden_slabs"
+            "items": "#minecraft:wooden_slabs"
           }
         ]
       },
@@ -32,15 +30,14 @@
   },
   "requirements": [
     [
+      "has_the_recipe",
       "has_stick",
-      "has_wooden_slab",
-      "has_the_recipe"
+      "has_wooden_slab"
     ]
   ],
   "rewards": {
     "recipes": [
       "alekiships:crafting/oar"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

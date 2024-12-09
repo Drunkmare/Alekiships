@@ -2,21 +2,18 @@
   "parent": "alekiships:rowboat_completed",
   "criteria": {
     "barrel": {
-      "conditions": {},
       "trigger": "alekiships:ride_barrel"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "alekiships.advancements.ride_barrel.description"
     },
-    "frame": "task",
     "hidden": true,
     "icon": {
-      "item": "minecraft:barrel"
+      "count": 1,
+      "id": "minecraft:barrel"
     },
-    "show_toast": true,
     "title": {
       "translate": "alekiships.advancements.ride_barrel.title"
     }

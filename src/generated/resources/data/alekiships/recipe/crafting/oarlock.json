@@ -11,7 +11,7 @@
     "III"
   ],
   "result": {
-    "item": "alekiships:oarlock"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "alekiships:oarlock"
+  }
 }

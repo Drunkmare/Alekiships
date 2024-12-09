@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:scaffolding"
-            ]
+            "items": "minecraft:scaffolding"
           }
         ]
       },
@@ -15,21 +13,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "alekiships:crafting/watercraft_frame_flat"
+        "recipe": "alekiships:crafting/watercraft_frame_angled"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_scaffolding",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_scaffolding"
     ]
   ],
   "rewards": {
     "recipes": [
-      "alekiships:crafting/watercraft_frame_flat"
+      "alekiships:crafting/watercraft_frame_angled"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

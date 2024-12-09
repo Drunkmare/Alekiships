@@ -5,20 +5,20 @@
     "B": {
       "item": "minecraft:iron_block"
     },
-    "L": {
-      "tag": "minecraft:wooden_slabs"
+    "I": {
+      "item": "minecraft:iron_ingot"
     },
-    "R": {
+    "N": {
       "item": "minecraft:iron_nugget"
     }
   },
   "pattern": [
-    "BBB",
-    "LL ",
-    "R R"
+    "NIN",
+    " I ",
+    "IBI"
   ],
   "result": {
-    "item": "alekiships:cannon"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "alekiships:anchor"
+  }
 }

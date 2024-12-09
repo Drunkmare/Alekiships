@@ -7,13 +7,10 @@
     }
   },
   "pattern": [
-    "  S",
-    " SS",
-    "SS "
+    "SSS"
   ],
   "result": {
-    "count": 5,
-    "item": "alekiships:watercraft_frame_angled"
-  },
-  "show_notification": true
+    "count": 3,
+    "id": "alekiships:watercraft_frame_flat"
+  }
 }

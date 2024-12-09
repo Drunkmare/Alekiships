@@ -1,13 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_iron_ingot": {
+    "has_scaffolding": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:iron_ingot"
-            ]
+            "items": "minecraft:scaffolding"
           }
         ]
       },
@@ -15,21 +13,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "alekiships:crafting/oarlock"
+        "recipe": "alekiships:crafting/watercraft_frame_flat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_iron_ingot",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_scaffolding"
     ]
   ],
   "rewards": {
     "recipes": [
-      "alekiships:crafting/oarlock"
+      "alekiships:crafting/watercraft_frame_flat"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

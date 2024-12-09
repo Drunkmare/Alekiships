@@ -6,7 +6,7 @@
       "tag": "minecraft:wooden_slabs"
     },
     "S": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [
@@ -15,7 +15,7 @@
     "L  "
   ],
   "result": {
-    "item": "alekiships:oar"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "alekiships:oar"
+  }
 }
