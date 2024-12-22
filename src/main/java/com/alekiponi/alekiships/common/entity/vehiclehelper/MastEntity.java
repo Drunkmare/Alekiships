@@ -25,7 +25,7 @@ import net.neoforged.neoforge.common.Tags;
 
 public class MastEntity extends AbstractPassthroughHelper {
 
-    static String BANNER_KEY = "banner";
+    public static final String BANNER_KEY = "banner";
 
     public MastEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -106,12 +106,12 @@ public class MastEntity extends AbstractPassthroughHelper {
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound)
     {
-        pCompound.put(BANNER_KEY, CommonHelper.serializeItemStack(this.getBanner(), this.registryAccess()));
+        pCompound.put(BANNER_KEY, this.getBanner().save(this.registryAccess()));
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        this.setBanner(CommonHelper.deserializeItemStack(pCompound.getCompound(BANNER_KEY), this.registryAccess()));
+        this.setBanner(ItemStack.parseOptional(this.registryAccess(), pCompound.getCompound(BANNER_KEY)));
     }
 
     @Override

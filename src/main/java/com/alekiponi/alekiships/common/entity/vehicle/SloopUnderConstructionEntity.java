@@ -5,7 +5,6 @@ import java.util.Comparator;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -292,16 +291,16 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
         RegistryAccess access = this.registryAccess();
 
-        this.setKeel(CommonHelper.deserializeItemStack(compoundTag.getCompound(KEEL_KEY), access));
-        this.setBowsprit(CommonHelper.deserializeItemStack(compoundTag.getCompound(BOWSPRIT_KEY), access));
-        this.setMast(CommonHelper.deserializeItemStack(compoundTag.getCompound(MAST_KEY), access));
-        this.setBoom(CommonHelper.deserializeItemStack(compoundTag.getCompound(BOOM_KEY), access));
-        this.setMainsail(CommonHelper.deserializeItemStack(compoundTag.getCompound(MAINSAIL_KEY), access));
-        this.setJibsail(CommonHelper.deserializeItemStack(compoundTag.getCompound(JIBSAIL_KEY), access));
-        this.setRailingsBow(CommonHelper.deserializeItemStack(compoundTag.getCompound(RAILING_BOW_KEY), access));
-        this.setRailingsStern(CommonHelper.deserializeItemStack(compoundTag.getCompound(RAILING_STERN_KEY), access));
-        this.setAnchor(CommonHelper.deserializeItemStack(compoundTag.getCompound(ANCHOR_KEY), access));
-        this.setRigging(CommonHelper.deserializeItemStack(compoundTag.getCompound(RIGGING_KEY), access));
+        this.setKeel(ItemStack.parseOptional(access, compoundTag.getCompound(KEEL_KEY)));
+        this.setBowsprit(ItemStack.parseOptional(access, compoundTag.getCompound(BOWSPRIT_KEY)));
+        this.setMast(ItemStack.parseOptional(access, compoundTag.getCompound(MAST_KEY)));
+        this.setBoom(ItemStack.parseOptional(access, compoundTag.getCompound(BOOM_KEY)));
+        this.setMainsail(ItemStack.parseOptional(access, compoundTag.getCompound(MAINSAIL_KEY)));
+        this.setJibsail(ItemStack.parseOptional(access, compoundTag.getCompound(JIBSAIL_KEY)));
+        this.setRailingsBow(ItemStack.parseOptional(access, compoundTag.getCompound(RAILING_BOW_KEY)));
+        this.setRailingsStern(ItemStack.parseOptional(access, compoundTag.getCompound(RAILING_STERN_KEY)));
+        this.setAnchor(ItemStack.parseOptional(access, compoundTag.getCompound(ANCHOR_KEY)));
+        this.setRigging(ItemStack.parseOptional(access, compoundTag.getCompound(RIGGING_KEY)));
         this.setConstructionStage(ConstructionState.getByOrdinal(compoundTag.getInt(STAGE_KEY)));
     }
 
@@ -310,16 +309,16 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
         RegistryAccess access = this.registryAccess();
 
-        compoundTag.put(KEEL_KEY, CommonHelper.serializeItemStack(this.getKeel(), access));
-        compoundTag.put(BOWSPRIT_KEY, CommonHelper.serializeItemStack(this.getBowsprit(), access));
-        compoundTag.put(MAST_KEY, CommonHelper.serializeItemStack(this.getMast(), access));
-        compoundTag.put(BOOM_KEY, CommonHelper.serializeItemStack(this.getBoom(), access));
-        compoundTag.put(MAINSAIL_KEY, CommonHelper.serializeItemStack(this.getMainsail(), access));
-        compoundTag.put(JIBSAIL_KEY, CommonHelper.serializeItemStack(this.getJibsail(), access));
-        compoundTag.put(RAILING_BOW_KEY, CommonHelper.serializeItemStack(this.getRailingsBow(), access));
-        compoundTag.put(RAILING_STERN_KEY, CommonHelper.serializeItemStack(this.getRailingsStern(), access));
-        compoundTag.put(ANCHOR_KEY, CommonHelper.serializeItemStack(this.getAnchor(), access));
-        compoundTag.put(RIGGING_KEY, CommonHelper.serializeItemStack(this.getRigging(), access));
+        compoundTag.put(KEEL_KEY, this.getKeel().save(access));
+        compoundTag.put(BOWSPRIT_KEY, this.getBowsprit().save(access));
+        compoundTag.put(MAST_KEY, this.getMast().save(access));
+        compoundTag.put(BOOM_KEY, this.getBoom().save(access));
+        compoundTag.put(MAINSAIL_KEY, this.getMainsail().save(access));
+        compoundTag.put(JIBSAIL_KEY, this.getJibsail().save(access));
+        compoundTag.put(RAILING_BOW_KEY, this.getRailingsBow().save(access));
+        compoundTag.put(RAILING_STERN_KEY, this.getRailingsStern().save(access));
+        compoundTag.put(ANCHOR_KEY, this.getAnchor().save(access));
+        compoundTag.put(RIGGING_KEY, this.getRigging().save(access));
         compoundTag.putInt(STAGE_KEY, this.getConstructionStage().ordinal());
     }
 

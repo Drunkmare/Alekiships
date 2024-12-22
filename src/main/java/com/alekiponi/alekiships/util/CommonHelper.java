@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -391,16 +388,4 @@ public class CommonHelper {
         void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume,
                 final float pitch);
     }
-
-    public static Tag serializeItemStack(ItemStack stack, HolderLookup.Provider holderLookupProvider)
-    {
-        return ItemStack.CODEC.encodeStart(holderLookupProvider.createSerializationContext(NbtOps.INSTANCE), stack).getOrThrow();
-    }
-
-    public static ItemStack deserializeItemStack(Tag tag, HolderLookup.Provider holderLookupProvider)
-    {
-        return ItemStack.CODEC.parse(holderLookupProvider.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow();
-    }
-
-
 }
