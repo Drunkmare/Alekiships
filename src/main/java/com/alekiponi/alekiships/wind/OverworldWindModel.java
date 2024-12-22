@@ -1,21 +1,21 @@
 package com.alekiponi.alekiships.wind;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.LinearCongruentialGenerator;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
 public class OverworldWindModel implements WindModel {
 
-    private Level level;
+    private final Level level;
 
-    public OverworldWindModel(Level level) {
+    public OverworldWindModel(final Level level) {
         this.level = level;
     }
 
     @Override
-    public Wind getWind(final BlockPos blockPos) {
+    public Wind getWind(final double x, final double y, final double z) {
         // get the wind based on the total world time of the level and the location
         long time = level.getGameTime();
 
@@ -25,7 +25,7 @@ public class OverworldWindModel implements WindModel {
         Random random = this.seededRandom(days, 129341623413L);
         boolean isDay = level.getDayTime() % 24000L < 12000L;
         int windScale = 5000;
-        boolean oddBand = blockPos.getZ() < 0 ? blockPos.getZ() % (windScale * 2) < windScale : blockPos.getZ() % (windScale * 2) > windScale;
+        boolean oddBand = z < 0 ? z % (windScale * 2) < windScale : z % (windScale * 2) > windScale;
         float intensity = random.nextFloat() * 0.3F + 0.3F + 0.4F * level.getRainLevel(0.0F);
         float angle;
         if (isDay && oddBand) {
@@ -40,7 +40,7 @@ public class OverworldWindModel implements WindModel {
 
         angle += random.nextFloat() * 0.2F - 0.1F;
 
-        return new Wind(intensity, (float) Math.toDegrees(angle));
+        return Wind.of(intensity, (float) Math.toDegrees(angle));
 
     }
 

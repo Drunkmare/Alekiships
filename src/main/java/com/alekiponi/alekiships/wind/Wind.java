@@ -7,36 +7,42 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
+import org.jetbrains.annotations.Contract;
 
-import javax.annotation.concurrent.Immutable;
+import java.text.MessageFormat;
 
 /**
  * A simple 2D representation of wind.
  * <p>
  * {@link AlekiShipsEntityDataSerializers#WIND} is available for easy syncing over the network
  *
+ * @param speed The wind speed, always a positive value
+ * @param angle The wind angle [-180;180)
  * @see WindModel
  */
-@Immutable
-public final class Wind {
+public record Wind(float speed, float angle) {
 
-    // TODO maybe Lombok so we can generate the two getters?
     public static final StreamCodec<ByteBuf, Wind> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.FLOAT,
-            Wind::getSpeed, ByteBufCodecs.FLOAT, Wind::getAngle, Wind::new);
+            Wind::speed, ByteBufCodecs.FLOAT, Wind::angle, Wind::new);
 
-    public static final Wind ZERO = fromComponents(0, 0);
-    /**
-     * The wind speed, always a positive value
-     */
-    public final float speed;
-    /**
-     * The wind angle between -180 and +180
-     */
-    public final float angle;
+    public static final Wind ZERO = new Wind(0, 0);
 
-    public Wind(final float speed, final float angle) {
-        this.speed = speed;
-        this.angle = angle;
+    public Wind {
+        if (0 > speed) throw new IllegalArgumentException(MessageFormat.format("Speed:{0} must be positive", speed));
+        if (180 <= angle || -180 > angle) {
+            throw new IllegalArgumentException(MessageFormat.format("Angle:{0} must be [-180;180)", angle));
+        }
+    }
+
+    /**
+     * Safely creates a wind object with untrusted values
+     *
+     * @param speed The speed to be clamped
+     * @param angle The angle to be wrapped
+     */
+    @Contract("_, _ -> new")
+    public static Wind of(final float speed, final float angle) {
+        return new Wind(Math.clamp(speed, 0, Float.MAX_VALUE), Mth.wrapDegrees(angle));
     }
 
     /**
@@ -49,15 +55,23 @@ public final class Wind {
         return new Wind(speed, angle);
     }
 
+    /**
+     * @param vec2 A {@link Vec2} representing the wind
+     * @apiNote Delegates to {@link #fromComponents(float, float)}
+     */
+    @SuppressWarnings("unused")
     public static Wind fromVec(final Vec2 vec2) {
         return fromComponents(vec2.x, vec2.y);
     }
 
-    public float getSpeed() {
-        return speed;
-    }
-
-    public float getAngle() {
-        return angle;
+    /**
+     * Converts this wind object into a {@link Vec2}
+     *
+     * @return A {@link Vec2} representing the wind with its components
+     */
+    @SuppressWarnings("unused")
+    public Vec2 asVec() {
+        final float radians = Mth.DEG_TO_RAD * this.angle;
+        return new Vec2(Mth.cos(radians) * this.speed, Mth.sin(radians) * this.speed);
     }
 }

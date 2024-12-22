@@ -8,8 +8,11 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.wind.OverworldWindModel;
+import com.alekiponi.alekiships.wind.WindModel;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -22,11 +25,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -197,5 +202,16 @@ public final class ForgeEventHandler {
         }
 
         event.setCancellationResult(InteractionResult.SUCCESS);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onLevelLoad(final LevelEvent.Load event) {
+        if (!(event.getLevel() instanceof final Level level)) return;
+
+        final ResourceKey<Level> dimension = level.dimension();
+
+        if (dimension == Level.OVERWORLD) {
+            WindModel.set(level, new OverworldWindModel(level));
+        }
     }
 }

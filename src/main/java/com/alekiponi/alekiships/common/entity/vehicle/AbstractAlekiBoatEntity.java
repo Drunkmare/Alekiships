@@ -11,7 +11,7 @@ import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
-import com.alekiponi.alekiships.wind.WindModels;
+
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -67,7 +67,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, BoatMaterial boatMaterial) {
         super(entityType, level);
-        this.windModel = WindModels.get(level);
+        this.windModel = WindModel.get(level);
         this.boatMaterial = boatMaterial;
     }
 
@@ -221,7 +221,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         if (this.everyNthTickUnique(WIND_UPDATE_TICKS) || !waitForWindUpdateTick) {
             Wind wind = this.windModel.getWind(this.blockPosition());
             //windVector = new Vec2(0.05f,0.05f);
-            if (wind.speed == 0) {
+            if (wind.speed() == 0) {
                 wind = new Wind(-0.03F, 0F);
             }
             this.setWind(wind);
@@ -508,21 +508,21 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public void updateLocalWindAngleAndSpeed() {
-        final double newDirection = this.getWind().angle;
+        final double newDirection = this.getWind().angle();
 
         if (!this.level().isClientSide()) return;
 
         if (this.windLerpTicks > 0) {
             final float lerpStep = ((WIND_UPDATE_TICKS) - this.windLerpTicks) / ((float) WIND_UPDATE_TICKS);
-            final double lerpedRot = Math.round(Mth.rotLerp(lerpStep, this.oldWind.angle, (float) newDirection));
+            final double lerpedRot = Math.round(Mth.rotLerp(lerpStep, this.oldWind.angle(), (float) newDirection));
 
-            this.setWind(new Wind(this.oldWind.speed, Mth.wrapDegrees((float) Math.round(lerpedRot))));
+            this.setWind(new Wind(this.oldWind.speed(), Mth.wrapDegrees((float) Math.round(lerpedRot))));
 
             this.windLerpTicks--;
             return;
         }
 
-        if (newDirection != this.getWind().angle) {
+        if (newDirection != this.getWind().angle()) {
             this.oldWind = this.getWind();
             this.windLerpTicks = WIND_UPDATE_TICKS;
         }
@@ -540,11 +540,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public float getLocalWindAngle() {
-        return this.getWind().angle;
+        return this.getWind().angle();
     }
 
     public float getLocalWindSpeed() {
-        return Mth.clamp(this.getWind().speed, 0, 0.2F);
+        return Mth.clamp(this.getWind().speed(), 0, 0.2F);
     }
 
     @Nullable
@@ -620,7 +620,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         final Entity entity = super.changeDimension(transition);
         if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
             // Update our wind model when the dimension changes
-            alekiBoat.windModel = WindModels.get(transition.newLevel());
+            alekiBoat.windModel = WindModel.get(transition.newLevel());
         }
         return entity;
     }
