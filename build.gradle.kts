@@ -85,7 +85,7 @@ neoForge {
     runs {
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
-            logLevel = Level.INFO
+            logLevel = Level.DEBUG
             systemProperty("forge.enabledGameTestNamespaces", modID)
 
             // Only JBR allows enhanced class redefinition, so ignore the option for any other JDKs
