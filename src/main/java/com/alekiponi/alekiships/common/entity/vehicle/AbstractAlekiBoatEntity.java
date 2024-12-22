@@ -72,14 +72,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
         builder.define(DATA_ID_PADDLE_LEFT, false);
-
         builder.define(DATA_ID_PADDLE_RIGHT, false);
-
         builder.define(DATA_ID_WIND_VECTOR, Wind.ZERO);
-
         builder.define(DATA_ID_IMMOBILE, false);
     }
 
