@@ -616,15 +616,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Nullable
     @Override
-    public Entity changeDimension(final DimensionTransition transition)
-    {
+    public Entity changeDimension(final DimensionTransition transition) {
         final Entity entity = super.changeDimension(transition);
-
-
-
         if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
             // Update our wind model when the dimension changes
-            alekiBoat.windModel = WindModels.get(transition);
+            alekiBoat.windModel = WindModels.get(transition.newLevel());
         }
         return entity;
     }
