@@ -35,8 +35,7 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
 
     private final ModelPart cleat;
 
-    public RowboatEntityModel() {
-        ModelPart root = createBodyLayer().bakeRoot();
+    public RowboatEntityModel(final ModelPart root) {
         this.waterocclusion = root.getChild("waterocclusion");
         this.hull = root.getChild("hull");
         this.oar_port = root.getChild("oar_port");

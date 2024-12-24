@@ -17,15 +17,10 @@ public final class AlekiShipsClientEvents {
 
     private static void onRegisterReloadListeners(final RegisterClientReloadListenersEvent event) {
         {
-            final ResourceLocation rowboatPaint = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                    "entity/watercraft/rowboat/paint");
             final ResourceLocation sloopPaint = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                     "entity/watercraft/sloop/paint");
 
             for (final VanillaWood wood : VanillaWood.values()) {
-                event.registerReloadListener(new PaintedTextureGenerator(
-                        ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                "entity/watercraft/rowboat/" + wood.getSerializedName()), rowboatPaint));
                 event.registerReloadListener(new PaintedTextureGenerator(
                         ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                                 "entity/watercraft/sloop/" + wood.getSerializedName()), sloopPaint));

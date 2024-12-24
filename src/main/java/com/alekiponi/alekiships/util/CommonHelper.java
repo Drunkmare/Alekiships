@@ -2,7 +2,9 @@ package com.alekiponi.alekiships.util;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -33,6 +35,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
+import org.apache.commons.lang3.function.TriFunction;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 
 public class CommonHelper {
@@ -251,6 +255,26 @@ public class CommonHelper {
             final Predicate<E> keyPredicate, final Function<E, V> valueMapper) {
         return Arrays.stream(enumClass.getEnumConstants()).filter(keyPredicate).collect(
                 Collectors.toMap(Function.identity(), valueMapper, (v, v2) -> v, () -> new EnumMap<>(enumClass)));
+    }
+
+    /**
+     * A helper which memoizes a {@link TriFunction}
+     */
+    public static <T, U, V, R> TriFunction<T, U, V, R> memoize(final TriFunction<T, U, V, R> memoTriFunction) {
+        return new TriFunction<>() {
+            private final Map<Triple<T, U, V>, R> cache = new ConcurrentHashMap<>();
+
+            @Override
+            public R apply(final T t, final U u, final V v) {
+                return this.cache.computeIfAbsent(Triple.of(t, u, v),
+                        triple -> memoTriFunction.apply(triple.getLeft(), triple.getMiddle(), triple.getRight()));
+            }
+
+            @Override
+            public String toString() {
+                return "memoize/3[function=" + memoTriFunction + ", size=" + this.cache.size() + "]";
+            }
+        };
     }
 
     /**

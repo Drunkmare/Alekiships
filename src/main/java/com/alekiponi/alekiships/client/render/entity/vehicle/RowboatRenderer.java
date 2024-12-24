@@ -2,9 +2,10 @@ package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
+import com.alekiponi.alekiships.client.render.AlekiShipsRenderTypes;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -19,37 +20,36 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 
+import java.text.MessageFormat;
 import java.util.EnumMap;
+import java.util.function.Function;
 
 public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
-    public static final ResourceLocation DAMAGE_OVERLAY = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
+    public static final ResourceLocation DAMAGE_OVERLAY = AlekiShips.location(
             "textures/entity/watercraft/rowboat/damage_overlay.png");
-    protected final RowboatEntityModel rowboatModel = new RowboatEntityModel();
-    protected final ResourceLocation rowboatTexture;
-    protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
 
-    /**
-     * This is primarily for us as it hardcodes the Firmaciv namespace.
-     */
-    public RowboatRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
-        this(context, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName()),
-                CommonHelper.mapOfKeys(DyeColor.class,
-                        dyeColor -> ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                "textures/entity/watercraft/rowboat/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
-    }
+    public static final EnumMap<DyeColor, ResourceLocation> PAINT_OVERLAYS = CommonHelper.mapOfKeys(DyeColor.class,
+            dyeColor -> AlekiShips.location(MessageFormat.format("textures/entity/watercraft/rowboat/paint/{0}.png",
+                    dyeColor.getSerializedName())));
+
+    protected final RowboatEntityModel rowboatModel;
+    protected final ResourceLocation rowboatTexture;
 
     /**
      * @param rowboatTexture The texture location
-     * @param paintTextures  The texture locations for when the rowboat is painted
      */
-    public RowboatRenderer(final EntityRendererProvider.Context context, final ResourceLocation rowboatTexture,
-            final EnumMap<DyeColor, ResourceLocation> paintTextures) {
+    public RowboatRenderer(final EntityRendererProvider.Context context, final ResourceLocation rowboatTexture) {
         super(context);
+        this.rowboatModel = new RowboatEntityModel(context.bakeLayer(RowboatEntityModel.LAYER_LOCATION));
         this.shadowRadius = 1;
         this.rowboatTexture = rowboatTexture;
-        this.paintTextures = paintTextures;
+    }
+
+    public static EntityRendererProvider<RowboatEntity> provider(final Function<String, ResourceLocation> modLocation,
+            final BoatMaterial boatMaterial) {
+        return context -> new RowboatRenderer(context,
+                modLocation.apply("textures/entity/watercraft/rowboat/" + boatMaterial.getSerializedName() + ".png"));
     }
 
     @Override
@@ -74,8 +74,7 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
         this.rowboatModel.setupAnim(rowboatEntity, partialTicks, 0, -0.1F, 0, 0);
 
-        final VertexConsumer baseVertexConsumer = bufferSource.getBuffer(
-                this.rowboatModel.renderType(this.getTextureLocation(rowboatEntity)));
+        final VertexConsumer baseVertexConsumer = bufferSource.getBuffer(this.getRenderType(rowboatEntity));
 
         if (rowboatEntity.tickCount < 1) {
             poseStack.popPose();
@@ -119,8 +118,15 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
         super.render(rowboatEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }
 
+    private RenderType getRenderType(final RowboatEntity rowboatEntity) {
+        return rowboatEntity.getPaintColor()
+                .map(dyeColor -> AlekiShipsRenderTypes.paintedEntityCutoutNoCull(this.getTextureLocation(rowboatEntity),
+                        PAINT_OVERLAYS.get(dyeColor)))
+                .orElseGet(() -> this.rowboatModel.renderType(this.getTextureLocation(rowboatEntity)));
+    }
+
     @Override
     public ResourceLocation getTextureLocation(final RowboatEntity rowboatEntity) {
-        return rowboatEntity.getPaintColor().map(this.paintTextures::get).orElse(this.rowboatTexture);
+        return this.rowboatTexture;
     }
 }

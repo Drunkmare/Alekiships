@@ -25,7 +25,7 @@ public final class RenderEventHandler {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         for (final VanillaWood vanillaWood : VanillaWood.values()) {
             event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get(),
-                    context -> new RowboatRenderer(context, vanillaWood));
+                    RowboatRenderer.provider(AlekiShips::location, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(),
                     context -> new SloopRenderer(context, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(vanillaWood).get(),
