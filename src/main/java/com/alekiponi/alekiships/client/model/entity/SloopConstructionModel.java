@@ -6,6 +6,10 @@ import net.minecraft.client.model.geom.ModelPart;
 
 public class SloopConstructionModel extends SloopEntityModel{
 
+    public SloopConstructionModel(final ModelPart root) {
+        super(root);
+    }
+
     // getters for each construction state
 
 

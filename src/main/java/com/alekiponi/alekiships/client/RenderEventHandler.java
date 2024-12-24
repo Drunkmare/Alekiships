@@ -1,6 +1,9 @@
 package com.alekiponi.alekiships.client;
 
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
+import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.entity.CannonRenderer;
 import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
@@ -19,6 +22,8 @@ public final class RenderEventHandler {
     @SubscribeEvent
     public static void registerLayers(final RegisterLayerDefinitions event) {
         event.registerLayerDefinition(RowboatEntityModel.LAYER_LOCATION, RowboatEntityModel::createBodyLayer);
+        event.registerLayerDefinition(SloopEntityModel.LAYER_LOCATION, SloopEntityModel::createBodyLayer);
+        event.registerLayerDefinition(AnchorEntityModel.LAYER_LOCATION, AnchorEntityModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -27,9 +32,9 @@ public final class RenderEventHandler {
             event.registerEntityRenderer(AlekiShipsEntities.ROWBOATS.get(vanillaWood).get(),
                     RowboatRenderer.provider(AlekiShips::location, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS.get(vanillaWood).get(),
-                    context -> new SloopRenderer(context, vanillaWood));
+                    SloopRenderer.provider(AlekiShips::location, vanillaWood));
             event.registerEntityRenderer(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(vanillaWood).get(),
-                    context -> new SloopConstructionRenderer(context, vanillaWood));
+                    SloopConstructionRenderer.provider(AlekiShips::location, vanillaWood));
         }
 
         event.registerEntityRenderer(AlekiShipsEntities.EMPTY_COMPARTMENT_ENTITY.get(), NoopRenderer::new);

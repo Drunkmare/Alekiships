@@ -1,11 +1,12 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
 import com.alekiponi.alekiships.client.model.entity.SloopConstructionModel;
+import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
+import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.AnchorRenderer;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
-import com.alekiponi.alekiships.util.VanillaWood;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -20,25 +21,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
+import java.util.function.Function;
+
 import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.FACING;
 import static com.alekiponi.alekiships.common.block.AngledBoatFrameBlock.SHAPE;
 
 public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstructionEntity> {
 
-    protected final SloopConstructionModel sloopModel = new SloopConstructionModel();
-    protected final AnchorEntityModel anchorModel = new AnchorEntityModel();
     protected final ResourceLocation sloopTexture;
-
-    private static final ResourceLocation ANCHOR = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "textures/entity/watercraft/anchor.png");
+    protected final SloopConstructionModel sloopModel;
+    protected final AnchorEntityModel anchorModel;
     private final BlockRenderDispatcher blockRenderer;
-
-    /**
-     * This is primarily for us as it hardcodes the Firmaciv namespace.
-     */
-    public SloopConstructionRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
-        this(context, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                "textures/entity/watercraft/sloop_construction/" + vanillaWood.getSerializedName() + ".png"));
-    }
 
     /**
      * @param sloopTexture The texture location. Must include file extension!
@@ -48,7 +41,15 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
         super(context);
         this.shadowRadius = 0.8F;
         this.sloopTexture = sloopTexture;
+        this.sloopModel = new SloopConstructionModel(context.bakeLayer(SloopEntityModel.LAYER_LOCATION));
+        this.anchorModel = new AnchorEntityModel(context.bakeLayer(AnchorEntityModel.LAYER_LOCATION));
         this.blockRenderer = context.getBlockRenderDispatcher();
+    }
+
+    public static EntityRendererProvider<SloopUnderConstructionEntity> provider(
+            final Function<String, ResourceLocation> modLocation, final BoatMaterial boatMaterial) {
+        return context -> new SloopConstructionRenderer(context, modLocation.apply(
+                "textures/entity/watercraft/sloop_construction/" + boatMaterial.getSerializedName() + ".png"));
     }
 
     @Override
@@ -135,7 +136,8 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
             poseStack.mulPose(Axis.XP.rotationDegrees(90));
             poseStack.mulPose(Axis.ZP.rotationDegrees(60));
 
-            final VertexConsumer vertexConsumerAnchor = bufferSource.getBuffer(this.anchorModel.renderType(ANCHOR));
+            final VertexConsumer vertexConsumerAnchor = bufferSource.getBuffer(this.anchorModel.renderType(
+                    AnchorRenderer.ANCHOR));
             this.anchorModel.renderToBuffer(poseStack, vertexConsumerAnchor, packedLight, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }

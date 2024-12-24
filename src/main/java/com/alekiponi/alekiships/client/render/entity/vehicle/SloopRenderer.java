@@ -2,9 +2,10 @@ package com.alekiponi.alekiships.client.render.entity.vehicle;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
+import com.alekiponi.alekiships.client.render.AlekiShipsRenderTypes;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.alekiponi.alekiships.util.VanillaWood;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -21,7 +22,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
 
+import java.text.MessageFormat;
 import java.util.EnumMap;
+import java.util.function.Function;
 
 import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper.renderTextLine;
 
@@ -29,36 +32,34 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     public static final ResourceLocation DAMAGE_OVERLAY = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/sloop/damage_overlay.png");
+
     public static final EnumMap<DyeColor, ResourceLocation> SAIL_TEXTURES = CommonHelper.mapOfKeys(DyeColor.class,
             dyeColor -> ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
                     "textures/entity/watercraft/sloop/sails/" + dyeColor.getSerializedName() + ".png"));
+
+    public static final EnumMap<DyeColor, ResourceLocation> PAINT_OVERLAYS = CommonHelper.mapOfKeys(DyeColor.class,
+            dyeColor -> AlekiShips.location(MessageFormat.format("textures/entity/watercraft/sloop/paint/{0}.png",
+                    dyeColor.getSerializedName())));
+
     protected final ResourceLocation sloopTexture;
-    protected final EnumMap<DyeColor, ResourceLocation> paintTextures;
-    protected final SloopEntityModel sloopModel = new SloopEntityModel();
+    protected final SloopEntityModel sloopModel;
     private final Font font;
 
     /**
-     * This is primarily for us as it hardcodes the Firmaciv namespace.
+     * @param sloopTexture The texture location
      */
-    public SloopRenderer(final EntityRendererProvider.Context context, final VanillaWood vanillaWood) {
-        this(context, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                        "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName()),
-                CommonHelper.mapOfKeys(DyeColor.class,
-                        dyeColor -> ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                "textures/entity/watercraft/sloop/" + vanillaWood.getSerializedName() + "/" + dyeColor.getSerializedName())));
-    }
-
-    /**
-     * @param sloopTexture  The texture location
-     * @param paintTextures The texture locations for when the sloop is painted
-     */
-    public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture,
-            final EnumMap<DyeColor, ResourceLocation> paintTextures) {
+    public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture) {
         super(context);
         this.shadowRadius = 0.8F;
         this.sloopTexture = sloopTexture;
-        this.paintTextures = paintTextures;
+        this.sloopModel = new SloopEntityModel(context.bakeLayer(SloopEntityModel.LAYER_LOCATION));
         this.font = context.getFont();
+    }
+
+    public static EntityRendererProvider<SloopEntity> provider(final Function<String, ResourceLocation> modLocation,
+            final BoatMaterial boatMaterial) {
+        return context -> new SloopRenderer(context,
+                modLocation.apply("textures/entity/watercraft/sloop/" + boatMaterial.getSerializedName() + ".png"));
     }
 
     @Override
@@ -180,9 +181,16 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
         super.render(sloopEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
     }
 
+    private RenderType getRenderType(final SloopEntity sloopEntity) {
+        return sloopEntity.getPaintColor()
+                .map(dyeColor -> AlekiShipsRenderTypes.paintedEntityCutoutNoCull(this.getTextureLocation(sloopEntity),
+                        PAINT_OVERLAYS.get(dyeColor)))
+                .orElseGet(() -> this.sloopModel.renderType(this.getTextureLocation(sloopEntity)));
+    }
+
     @Override
     public ResourceLocation getTextureLocation(final SloopEntity sloopEntity) {
-        return sloopEntity.getPaintColor().map(this.paintTextures::get).orElse(this.sloopTexture);
+        return this.sloopTexture;
     }
 
     public ResourceLocation getMainsailTexture(final SloopEntity sloopEntity) {

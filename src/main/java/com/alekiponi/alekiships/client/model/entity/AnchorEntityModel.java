@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.model.entity;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.AnchorEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -11,14 +12,13 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class AnchorEntityModel<T extends Entity> extends EntityModel<T> {
+public class AnchorEntityModel extends EntityModel<AnchorEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "anchor_entity"), "main");
     private final ModelPart rope;
     private final ModelPart anchor;
 
-    public AnchorEntityModel() {
-        ModelPart root = createBodyLayer().bakeRoot();
+    public AnchorEntityModel(final ModelPart root) {
         this.rope = root.getChild("rope");
         this.anchor = root.getChild("anchor");
     }
@@ -60,7 +60,7 @@ public class AnchorEntityModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(AnchorEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
     }
 

@@ -17,12 +17,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class AnchorRenderer extends EntityRenderer<AnchorEntity> {
-    private static final ResourceLocation ANCHOR = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
+    public static final ResourceLocation ANCHOR = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/anchor.png");
-    private final AnchorEntityModel<AnchorEntity> model = new AnchorEntityModel<>();
+    private final AnchorEntityModel model;
 
     public AnchorRenderer(final EntityRendererProvider.Context context) {
         super(context);
+        this.model = new AnchorEntityModel(context.bakeLayer(AnchorEntityModel.LAYER_LOCATION));
     }
 
     @Override
