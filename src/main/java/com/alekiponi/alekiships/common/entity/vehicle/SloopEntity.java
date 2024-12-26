@@ -23,6 +23,8 @@ import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 import javax.annotation.Nullable;
+
+import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -45,8 +47,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforgespi.Environment;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
 
 public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
@@ -583,8 +583,14 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        InteractionResult result = this.interactPaint(player, hand);
         final ItemStack heldItem = player.getItemInHand(hand);
+        {
+            final InteractionResult result = IPaintable.interactPaint(player, hand, this);
+            if (result.consumesAction()) {
+                AlekiShipsAdvancements.checkDyeShipBlack(player, this);
+                return result;
+            }
+        }
 
         if (heldItem.is(AlekiShipsTags.Items.ICEBREAKER_UPGRADES) && !this.breaksIce()) {
             this.setIceBreaker(true);
@@ -594,7 +600,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             this.level().playSound(null, this, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.5F,
                     this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
-
         }
 
         if (heldItem.is(Items.NAME_TAG)) {
@@ -605,17 +610,15 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
                     }
-                    checkDyeShipBlack(player, this);
+                    AlekiShipsAdvancements.checkDyeShipBlack(player, this);
                 }
 
                 return InteractionResult.sidedSuccess(player.level().isClientSide);
-            } else {
-                return InteractionResult.PASS;
             }
+            return InteractionResult.PASS;
         }
 
-
-        return result == null ? super.interact(player, hand) : result;
+        return super.interact(player, hand);
     }
 
     @Override

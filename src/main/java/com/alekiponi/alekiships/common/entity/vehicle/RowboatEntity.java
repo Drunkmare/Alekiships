@@ -244,9 +244,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldItem = player.getItemInHand(hand);
 
-        InteractionResult result = this.interactPaint(player, hand);
-        if (result != null){
-            return result;
+        {
+            final InteractionResult result = IPaintable.interactPaint(player, hand, this);
+            if (result.consumesAction()) {
+                return result;
+            }
         }
 
         if (heldItem.is(AlekiShipsItems.OAR.get()) && this.getOars() != Oars.TWO) {

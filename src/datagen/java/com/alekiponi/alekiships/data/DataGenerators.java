@@ -7,10 +7,7 @@ import com.alekiponi.alekiships.data.providers.AlekiShipsLootTableProvider;
 import com.alekiponi.alekiships.data.providers.AlekiShipsRecipeProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
-import com.alekiponi.alekiships.data.providers.tags.AlekiShipsBlockTagsProvider;
-import com.alekiponi.alekiships.data.providers.tags.AlekiShipsEntityTypeTagsProvider;
-import com.alekiponi.alekiships.data.providers.tags.AlekiShipsItemTagsProvider;
-import com.alekiponi.alekiships.data.providers.tags.AlekiShipsStructureTagProvider;
+import com.alekiponi.alekiships.data.providers.tags.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -39,6 +36,8 @@ public final class DataGenerators {
                         existingFileHelper));
         generator.addProvider(event.includeServer(),
                 new AlekiShipsEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(),
+                new AlekiShipsFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(),
                 new AlekiShipsStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new AlekiShipsRecipeProvider(packOutput, lookupProvider));

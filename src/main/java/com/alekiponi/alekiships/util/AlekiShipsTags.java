@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.material.Fluid;
 
 public final class AlekiShipsTags {
 
@@ -65,6 +66,17 @@ public final class AlekiShipsTags {
 
         public static TagKey<EntityType<?>> create(final String id) {
             return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
+        }
+    }
+
+    public static final class Fluids {
+        /**
+         * The tag containing all fluids we consider "paint removers"
+         */
+        public static final TagKey<Fluid> PAINT_REMOVER = create("paint_remover");
+
+        public static TagKey<Fluid> create(final String id) {
+            return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 
