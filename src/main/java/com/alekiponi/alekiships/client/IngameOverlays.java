@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.client;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.event.IconRenderersEvent;
 import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
-import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
@@ -39,8 +37,6 @@ public final class IngameOverlays {
             "sailing_element");
     public static final ResourceLocation SLOOP_CONSTRUCTION = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "sloop_construction");
-    public static final ResourceLocation CANNON_LOAD_STATE = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-            "cannon_load_state");
 
     public static final ResourceLocation SAILING_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/gui/icons/sailing_icons.png");
@@ -50,7 +46,6 @@ public final class IngameOverlays {
     public static final Component PRESS_BUTTON = Component.translatable("press_button");
     public static final Component EJECT_PASSENGERS = Component.translatable("eject_passengers");
     public static final int MAGIC_STRING_COLOR = 16777215;
-    private static final ItemStack FLINT_AND_STEEL = new ItemStack(Items.FLINT_AND_STEEL);
 
     public static void registerOverlays(final RegisterGuiLayersEvent event) {
         ModLoader.postEvent(new IconRenderersEvent.RegisterIconRenderersEvent());
@@ -58,7 +53,6 @@ public final class IngameOverlays {
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, PASSENGER_STATUS, IngameOverlays::renderPassengerStatus);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, SLOOP_CONSTRUCTION,
                 IngameOverlays::renderSloopConstructionStatus);
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, CANNON_LOAD_STATE, IngameOverlays::renderCannonLoadState);
         event.registerAbove(VanillaGuiLayers.HOTBAR, SAILING_ELEMENT, IngameOverlays::renderSailingElement);
     }
 
@@ -155,39 +149,6 @@ public final class IngameOverlays {
         if (!itemStack.isEmpty()) {
             guiGraphics.renderFakeItem(itemStack, 0, 0);
             guiGraphics.renderItemDecorations(minecraft.font, itemStack, 0, 0);
-        }
-
-        stack.popPose();
-    }
-
-    // TODO this should be done via the eventual icon renderer system
-    private static void renderCannonLoadState(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
-        final Minecraft minecraft = Minecraft.getInstance();
-
-        if (minecraft.player == null) return;
-        if (minecraft.gameMode == null) return;
-
-        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
-                .isFirstPerson()) return;
-
-        final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
-
-        if (!(entity instanceof CannonEntity cannon)) return;
-
-        if (cannon.isLit()) return;
-
-        final PoseStack stack = guiGraphics.pose();
-
-        stack.pushPose();
-        stack.translate(guiGraphics.guiWidth() / 2F, guiGraphics.guiHeight() / 2F - 15, 0);
-        stack.scale(1, 1, 1);
-
-        if (cannon.isLoaded()) {
-            guiGraphics.renderFakeItem(FLINT_AND_STEEL, 0, 0);
-        } else {
-            // TODO We should cycle through the valid stacks
-            final ItemStack[] requiredItems = cannon.getRequiredItems();
-            guiGraphics.renderFakeItem(requiredItems[0], 0, 0);
         }
 
         stack.popPose();
