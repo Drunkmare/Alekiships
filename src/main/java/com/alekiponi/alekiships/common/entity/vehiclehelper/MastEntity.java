@@ -106,7 +106,7 @@ public class MastEntity extends AbstractPassthroughHelper {
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound)
     {
-        pCompound.put(BANNER_KEY, this.getBanner().save(this.registryAccess()));
+        pCompound.put(BANNER_KEY, this.getBanner().saveOptional(this.registryAccess()));
     }
 
     @Override

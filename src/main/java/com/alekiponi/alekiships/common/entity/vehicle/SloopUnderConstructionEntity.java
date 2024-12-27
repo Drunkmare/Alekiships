@@ -309,16 +309,16 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
 
         RegistryAccess access = this.registryAccess();
 
-        compoundTag.put(KEEL_KEY, this.getKeel().save(access));
-        compoundTag.put(BOWSPRIT_KEY, this.getBowsprit().save(access));
-        compoundTag.put(MAST_KEY, this.getMast().save(access));
-        compoundTag.put(BOOM_KEY, this.getBoom().save(access));
-        compoundTag.put(MAINSAIL_KEY, this.getMainsail().save(access));
-        compoundTag.put(JIBSAIL_KEY, this.getJibsail().save(access));
-        compoundTag.put(RAILING_BOW_KEY, this.getRailingsBow().save(access));
-        compoundTag.put(RAILING_STERN_KEY, this.getRailingsStern().save(access));
-        compoundTag.put(ANCHOR_KEY, this.getAnchor().save(access));
-        compoundTag.put(RIGGING_KEY, this.getRigging().save(access));
+        compoundTag.put(KEEL_KEY, this.getKeel().saveOptional(access));
+        compoundTag.put(BOWSPRIT_KEY, this.getBowsprit().saveOptional(access));
+        compoundTag.put(MAST_KEY, this.getMast().saveOptional(access));
+        compoundTag.put(BOOM_KEY, this.getBoom().saveOptional(access));
+        compoundTag.put(MAINSAIL_KEY, this.getMainsail().saveOptional(access));
+        compoundTag.put(JIBSAIL_KEY, this.getJibsail().saveOptional(access));
+        compoundTag.put(RAILING_BOW_KEY, this.getRailingsBow().saveOptional(access));
+        compoundTag.put(RAILING_STERN_KEY, this.getRailingsStern().saveOptional(access));
+        compoundTag.put(ANCHOR_KEY, this.getAnchor().saveOptional(access));
+        compoundTag.put(RIGGING_KEY, this.getRigging().saveOptional(access));
         compoundTag.putInt(STAGE_KEY, this.getConstructionStage().ordinal());
     }
 

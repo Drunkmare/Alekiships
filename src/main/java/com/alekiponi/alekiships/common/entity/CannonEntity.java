@@ -78,7 +78,7 @@ public class CannonEntity extends Entity {
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt(FUSE_KEY, this.fuse);
-        compoundTag.put(CANNONBALL_KEY, this.getCannonball().save(this.registryAccess()));
+        compoundTag.put(CANNONBALL_KEY, this.getCannonball().saveOptional(this.registryAccess()));
         compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
     }
 

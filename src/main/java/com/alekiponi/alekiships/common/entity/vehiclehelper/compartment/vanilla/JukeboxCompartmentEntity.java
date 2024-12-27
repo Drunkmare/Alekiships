@@ -7,7 +7,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -95,8 +94,8 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
 
     private void readCommonNBTData(final CompoundTag compoundTag) {
         if (compoundTag.contains(JukeboxBlockEntity.SONG_ITEM_TAG_ID, Tag.TAG_COMPOUND)) {
-            this.itemStack = ItemStack.parse(this.registryAccess(),
-                    compoundTag.getCompound(JukeboxBlockEntity.SONG_ITEM_TAG_ID)).orElse(ItemStack.EMPTY);
+            this.itemStack = ItemStack.parseOptional(this.registryAccess(),
+                    compoundTag.getCompound(JukeboxBlockEntity.SONG_ITEM_TAG_ID));
         } else {
             this.itemStack = ItemStack.EMPTY;
         }
@@ -110,11 +109,11 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
 
     private void writeCommonNBTData(final CompoundTag compoundTag) {
         if (!this.getTheItem().isEmpty()) {
-            compoundTag.put("RecordItem", this.getTheItem().save(this.registryAccess()));
+            compoundTag.put(JukeboxBlockEntity.SONG_ITEM_TAG_ID, this.getTheItem().saveOptional(this.registryAccess()));
         }
 
         if (this.jukeboxCompartmentSongPlayer.getSong() != null) {
-            compoundTag.putLong("ticks_since_song_started",
+            compoundTag.putLong(JukeboxBlockEntity.TICKS_SINCE_SONG_STARTED_TAG_ID,
                     this.jukeboxCompartmentSongPlayer.getTicksSinceSongStarted());
         }
     }
