@@ -5,9 +5,11 @@ import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
 import com.alekiponi.alekiships.common.AlekiShipsAttachments;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentTypes;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
+import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.events.ForgeEventHandler;
@@ -30,6 +32,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -50,6 +53,7 @@ public final class AlekiShips {
 
         AlekiShipsTabs.CREATIVE_MODE_TABS.register(modBus);
         AlekiShipsItems.ITEMS.register(modBus);
+        AlekiShipsComponents.COMPONENTS.register(modBus);
         AlekiShipsBlocks.BLOCKS.register(modBus);
         AlekiShipsEntities.ENTITY_TYPES.register(modBus);
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(modBus);
@@ -79,6 +83,11 @@ public final class AlekiShips {
             VanillaWood.registerFrames();
             CompartmentTypes.init();
         });
+    }
+
+    @SubscribeEvent
+    public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {
+        event.dataPackRegistry(EntityInput.KEY, EntityInput.CODEC, EntityInput.CODEC);
     }
 
     @SubscribeEvent

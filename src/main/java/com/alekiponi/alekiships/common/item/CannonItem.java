@@ -1,7 +1,11 @@
 package com.alekiponi.alekiships.common.item;
 
+import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
+import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,6 +26,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class CannonItem extends Item {
+    public static final ResourceKey<EntityInput> DEFAULT_CANNON_INPUT_KEY = ResourceKey.create(
+            EntityInput.KEY, AlekiShips.location("cannon"));
+
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
 
     public CannonItem(Item.Properties pProperties) {
@@ -54,6 +61,9 @@ public class CannonItem extends Item {
                 if (cannon == null) {
                     return InteractionResultHolder.fail(itemstack);
                 }
+                final ResourceKey<EntityInput> entityInput = itemstack.getOrDefault(
+                        AlekiShipsComponents.ENTITY_INPUT.get(), DEFAULT_CANNON_INPUT_KEY);
+                cannon.setCannonInput(entityInput);
                 cannon.moveTo(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
                 cannon.setYRot(pPlayer.getYRot());
                 if (!pLevel.noCollision(cannon, cannon.getBoundingBox())) {

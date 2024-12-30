@@ -243,7 +243,7 @@ public final class IngameOverlays {
         if (minecraft.player == null) return;
         if (minecraft.gameMode == null) return;
 
-        if (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || !minecraft.options.getCameraType()
+        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
                 .isFirstPerson()) return;
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
@@ -261,7 +261,9 @@ public final class IngameOverlays {
         if (cannon.isLoaded()) {
             guiGraphics.renderFakeItem(FLINT_AND_STEEL, 0, 0);
         } else {
-            guiGraphics.renderFakeItem(cannon.nextRequiredItem(), 0, 0);
+            // TODO We should cycle through the valid stacks
+            final ItemStack[] requiredItems = cannon.getRequiredItems();
+            guiGraphics.renderFakeItem(requiredItems[0], 0, 0);
         }
 
         stack.popPose();

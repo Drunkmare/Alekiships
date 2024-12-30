@@ -1,6 +1,9 @@
 package com.alekiponi.alekiships.data;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.data.providers.AlekiShipsAdvancementsProvider;
 import com.alekiponi.alekiships.data.providers.AlekiShipsLanguageProvider;
 import com.alekiponi.alekiships.data.providers.AlekiShipsLootTableProvider;
@@ -9,13 +12,17 @@ import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvid
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = AlekiShips.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
@@ -25,7 +32,11 @@ public final class DataGenerators {
     public static void gatherData(final GatherDataEvent event) {
         final DataGenerator generator = event.getGenerator();
         final PackOutput packOutput = generator.getPackOutput();
-        final CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+        final CompletableFuture<HolderLookup.Provider> lookupProvider = generator.addProvider(event.includeServer(),
+                new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), datapackEntries(),
+                        Set.of(AlekiShips.MOD_ID))).getRegistryProvider();
+
         final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         final AlekiShipsBlockTagsProvider blockTags = new AlekiShipsBlockTagsProvider(packOutput, lookupProvider,
@@ -48,5 +59,11 @@ public final class DataGenerators {
         generator.addProvider(event.includeClient(), new AlekiShipsLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(), new AlekiShipsItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new AlekiShipsBlockStateProvider(packOutput, existingFileHelper));
+    }
+
+    private static RegistrySetBuilder datapackEntries() {
+        return new RegistrySetBuilder().add(EntityInput.KEY,
+                context -> context.register(CannonItem.DEFAULT_CANNON_INPUT_KEY,
+                        EntityInput.of(SizedIngredient.of(AlekiShipsItems.CANNONBALL, 1))));
     }
 }

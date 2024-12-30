@@ -1,14 +1,19 @@
 package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.item.CannonItem;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,18 +28,18 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import net.neoforged.neoforge.common.util.Lazy;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
-public class CannonEntity extends Entity {
+public class CannonEntity extends Entity implements EntityInput.InputEntity {
     public static final byte EVENT_LIGHT = 10;
     public static final String FUSE_KEY = "Fuse";
-    public static final String CANNONBALL_KEY = "Cannonball";
     public static final String DAMAGE_KEY = "Damage";
     protected static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(CannonEntity.class,
             EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<ItemStack> DATA_ID_CANNONBALL_ITEM = SynchedEntityData.defineId(
-            CannonEntity.class, EntityDataSerializers.ITEM_STACK);
     /**
      * Vanilla only syncs rotation continuously for arrows.
      * As the cannons rotation must be accurate we have to override
@@ -42,9 +47,24 @@ public class CannonEntity extends Entity {
      */
     private static final EntityDataAccessor<Float> DATA_ID_X_ROT = SynchedEntityData.defineId(CannonEntity.class,
             EntityDataSerializers.FLOAT);
-    private static final ItemStack CANNONBALL = new ItemStack(AlekiShipsItems.CANNONBALL.get());
+    private static final EntityDataAccessor<EntityInput.EntityInputState> DATA_ID_ENTITY_INPUT_STATE = SynchedEntityData.defineId(
+            CannonEntity.class, AlekiShipsEntityDataSerializers.ENTITY_INPUT_STATE.get());
     private static final float DAMAGE_TO_BREAK = 8;
     private static final float DAMAGE_RECOVERY = 0.5F;
+    private final NonNullList<ItemStack> inputContents = NonNullList.withSize(EntityInput.MAXIMUM_SIZE,
+            ItemStack.EMPTY);
+    private final Lazy<EntityInput> cannonInput = Lazy.of(
+            () -> EntityInput.getEntityInput(this.registryAccess(), this.getInputState().entityInputKey()));
+    /**
+     * We expect only the client to ever need this so it's lazily evaluated
+     */
+    private final Lazy<ItemStack[]> requiredItems = Lazy.of(() -> {
+        final var inputState = this.getInputState();
+        final SizedIngredient ingredient = this.cannonInput.get().getIngredient(inputState.inputStage());
+        final int count = inputState.remainingInputs();
+        return Arrays.stream(ingredient.getItems()).map(itemStack -> itemStack.copyWithCount(count))
+                .toArray(ItemStack[]::new);
+    });
     protected int lerpSteps;
     protected double lerpX;
     protected double lerpY;
@@ -59,35 +79,48 @@ public class CannonEntity extends Entity {
     public CannonEntity(final EntityType<? extends CannonEntity> entityType, final Level level) {
         super(entityType, level);
         fuse = -1;
+
+        this.setInputState(EntityInput.EntityInputState.getInitialState(this.registryAccess(),
+                CannonItem.DEFAULT_CANNON_INPUT_KEY));
     }
 
     @Override
     protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         builder.define(DATA_ID_DAMAGE, 0F);
-        builder.define(DATA_ID_CANNONBALL_ITEM, ItemStack.EMPTY);
         builder.define(DATA_ID_X_ROT, 0F);
+        builder.define(DATA_ID_ENTITY_INPUT_STATE,
+                EntityInput.EntityInputState.forInput(CannonItem.DEFAULT_CANNON_INPUT_KEY));
+    }
+
+    @Override
+    public void onSyncedDataUpdated(final EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (DATA_ID_ENTITY_INPUT_STATE.equals(key)) {
+            this.requiredItems.invalidate();
+            this.cannonInput.invalidate();
+        }
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         this.fuse = compoundTag.getInt(FUSE_KEY);
-        this.setCannonball(ItemStack.parseOptional(this.registryAccess(), compoundTag.getCompound(CANNONBALL_KEY)));
         this.setDamage(compoundTag.getFloat(DAMAGE_KEY));
+        this.setInputState(EntityInput.EntityInputState.load(compoundTag).orElseGet(this::getInputState));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt(FUSE_KEY, this.fuse);
-        compoundTag.put(CANNONBALL_KEY, this.getCannonball().saveOptional(this.registryAccess()));
         compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
+        this.getInputState().save(compoundTag);
     }
 
     @Override
     public void tick() {
-        if(recentlyFired > 0){
+        if (recentlyFired > 0) {
             recentlyFired--;
         }
-        if (tickCount <= 1){
+        if (tickCount <= 1) {
             fuse = -1;
         }
         if (!this.isPassenger()) {
@@ -140,8 +173,7 @@ public class CannonEntity extends Entity {
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         final ItemStack heldItem = player.getItemInHand(hand);
 
-        final InteractionResult insertResult = this.insertItem(heldItem);
-
+        final InteractionResult insertResult = this.insert(player, hand);
         if (insertResult.consumesAction()) return insertResult;
 
         if (this.isLoaded() && heldItem.is(Items.FLINT_AND_STEEL)) {
@@ -168,22 +200,25 @@ public class CannonEntity extends Entity {
     }
 
     /**
-     * Called to insert an item into the cannon. We only insert cannonballs in vanilla
+     * Insert an item into the cannon. You shouldn't ever need to override this. Please use the entity input system
+     * instead
      *
-     * @param itemStack The item stack to insert
-     * @return The result of the interaction. If {@link InteractionResult#consumesAction()} is
-     * true no further processing is attempted
+     * @param player
+     * @param hand
+     * @return
      */
-    protected InteractionResult insertItem(final ItemStack itemStack) {
-        if (itemStack.is(AlekiShipsItems.CANNONBALL.get())) {
-            if (this.getCannonball().isEmpty()) {
-                this.setCannonball(itemStack.split(1));
-                return InteractionResult.SUCCESS;
-            }
-            return InteractionResult.CONSUME;
+    protected InteractionResult insert(final Player player, final InteractionHand hand) {
+        if (this.isLoaded()) return InteractionResult.PASS;
+
+        final var heldStack = player.getItemInHand(hand);
+
+        final var insertionResult = this.cannonInput.get().tryInsert(this, heldStack, player);
+        if (insertionResult.getResult().consumesAction()) {
+            player.setItemInHand(hand, insertionResult.getObject());
         }
-        return InteractionResult.PASS;
+        return insertionResult.getResult();
     }
+
     /**
      * Lights the cannon
      */
@@ -207,17 +242,18 @@ public class CannonEntity extends Entity {
      * Fires the cannon once the fuse is out. This should also clear whatever contents are necessary
      */
     public void fire() {
-
         this.fuse = -1;
-        this.setCannonball(ItemStack.EMPTY);
+        this.setInputState(this.getInputState().reset());
+        this.inputContents.clear();
         this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.5f, this.level().getRandom().nextFloat() * 0.05F + 0.01F);
 
         final CannonballEntity cannonball = new CannonballEntity(this);
 
         cannonball.setPos(this.position());
         this.level().addFreshEntity(cannonball);
-        final Vec3 movement = new Vec3((Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04), this.getDeltaMovement().y,
-                Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1, -1);
+        final Vec3 movement = new Vec3((Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * 0.04),
+                this.getDeltaMovement().y, Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * 0.04).multiply(-1, 1,
+                -1);
         this.setDeltaMovement(this.getDeltaMovement().add(movement));
     }
 
@@ -281,7 +317,7 @@ public class CannonEntity extends Entity {
     }
 
     protected void destroy(@SuppressWarnings("unused") final DamageSource damageSource) {
-        this.spawnAtLocation(this.getCannonball(), 1);
+        this.dropContents();
         this.spawnAtLocation(new ItemStack(this.getDropItem()), 1);
     }
 
@@ -292,14 +328,6 @@ public class CannonEntity extends Entity {
         } else {
             super.handleEntityEvent(eventID);
         }
-    }
-
-    public ItemStack getCannonball() {
-        return this.entityData.get(DATA_ID_CANNONBALL_ITEM);
-    }
-
-    protected void setCannonball(final ItemStack itemStack) {
-        this.entityData.set(DATA_ID_CANNONBALL_ITEM, itemStack.copy());
     }
 
     public float getDamage() {
@@ -315,7 +343,7 @@ public class CannonEntity extends Entity {
         return this.fuse;
     }
 
-    public boolean recentlyFired(){
+    public boolean recentlyFired() {
         return recentlyFired > 0;
     }
 
@@ -344,14 +372,6 @@ public class CannonEntity extends Entity {
     }
 
     /**
-     * @return The next required ItemStack to load the cannon.
-     * @apiNote The returned stack must not be modified and is expected to be used only in rendering
-     */
-    public ItemStack nextRequiredItem() {
-        return CANNONBALL;
-    }
-
-    /**
      * Vanilla only syncs rotation continuously for arrows.
      * As the cannons rotation must be accurate we have to override this
      */
@@ -369,11 +389,50 @@ public class CannonEntity extends Entity {
         this.entityData.set(DATA_ID_X_ROT, xRot);
     }
 
+    /**
+     * @return The next required ItemStack to load the cannon.
+     * @apiNote The returned stack must not be modified and is expected to be used only in rendering
+     */
+    public ItemStack[] getRequiredItems() {
+        return this.requiredItems.get();
+    }
+
     public boolean isLoaded() {
-        return !this.getCannonball().isEmpty();
+        return this.cannonInput.get().isFinished(this);
     }
 
     public boolean isLit() {
         return this.fuse > -1;
+    }
+
+    public void setCannonInput(final ResourceKey<EntityInput> entityInputKey) {
+        this.dropContents();
+        this.setInputState(EntityInput.EntityInputState.forInput(entityInputKey));
+    }
+
+    private void dropContents() {
+        this.inputContents.forEach(
+                itemStack -> Containers.dropItemStack(this.level(), this.getX(), this.getY() + 1, this.getZ(),
+                        itemStack));
+    }
+
+    @Override
+    public void setInputContents(final int index, final ItemStack itemStack) {
+        this.inputContents.set(index, itemStack);
+    }
+
+    @Override
+    public ItemStack getInputContents(final int index) {
+        return this.inputContents.get(index);
+    }
+
+    @Override
+    public EntityInput.EntityInputState getInputState() {
+        return this.entityData.get(DATA_ID_ENTITY_INPUT_STATE);
+    }
+
+    @Override
+    public void setInputState(final EntityInput.EntityInputState entityInputState) {
+        this.entityData.set(DATA_ID_ENTITY_INPUT_STATE, entityInputState);
     }
 }
