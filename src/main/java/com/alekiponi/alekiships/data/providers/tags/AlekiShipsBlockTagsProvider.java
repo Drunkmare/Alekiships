@@ -31,6 +31,12 @@ public class AlekiShipsBlockTagsProvider extends BlockTagsProvider {
 
         this.tag(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED).add(Blocks.KELP);
 
+        //Ice types
+        this.tag(AlekiShipsTags.Blocks.BREAKABLE_ICE).add(Blocks.ICE);
+        this.tag(AlekiShipsTags.Blocks.BREAKABLE_ICE).add(Blocks.FROSTED_ICE);
+        this.tag(AlekiShipsTags.Blocks.BREAKABLE_ICE).add(Blocks.PACKED_ICE);
+        this.tag(AlekiShipsTags.Blocks.BREAKABLE_ICE).add(Blocks.BLUE_ICE);
+
         // Vanilla mining tags
         this.tag(BlockTags.MINEABLE_WITH_AXE).addTag(AlekiShipsTags.Blocks.WOODEN_WATERCRAFT_FRAMES);
 
