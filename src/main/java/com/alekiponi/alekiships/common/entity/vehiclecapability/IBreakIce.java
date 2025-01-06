@@ -2,6 +2,8 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +35,7 @@ public interface IBreakIce {
             for (int z = -size; z <= size; z++) {
                 for (int y = 0; y < 2; y++) {
                     final BlockState blockState = ((Entity) this).level().getBlockState(blockPos);
-                    if (blockState.is(Blocks.ICE)) {
+                    if (blockState.is(BlockTags.create(new ResourceLocation("alekiships","breakable_ice")))) {
                         flag = true;
                         ((Entity) this).level().destroyBlock(blockPos, false);
                         ((Entity) this).level().setBlock(blockPos, Blocks.WATER.defaultBlockState(), 2);
