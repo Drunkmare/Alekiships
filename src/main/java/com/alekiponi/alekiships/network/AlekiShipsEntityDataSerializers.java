@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.wind.Wind;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.VarInt;
@@ -29,6 +29,10 @@ public final class AlekiShipsEntityDataSerializers {
 
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<EntityInput.EntityInputState>> ENTITY_INPUT_STATE = register(
             "entity_input_state", () -> EntityDataSerializer.forValueType(EntityInput.EntityInputState.STREAM_CODEC));
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<SloopConstructionState>> SLOOP_CONSTRUCTION_STATE = register(
+            "sloop_construction_state",
+            () -> EntityDataSerializer.forValueType(SloopConstructionState.STREAM_CODEC));
 
     private static final StreamCodec<ByteBuf, Optional<DyeColor>> OPTIONAL_DYE_COLOR_CODEC = new StreamCodec<>() {
         public void encode(final ByteBuf byteBuf, Optional<DyeColor> dyeColor) {

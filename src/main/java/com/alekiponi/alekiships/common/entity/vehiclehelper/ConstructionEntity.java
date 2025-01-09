@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ConstructionEntity extends AbstractPassthroughHelper {
@@ -16,8 +17,7 @@ public class ConstructionEntity extends AbstractPassthroughHelper {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
 
     }
 
@@ -35,13 +35,21 @@ public class ConstructionEntity extends AbstractPassthroughHelper {
 
     }
 
+    /**
+     * @return A potentially empty array of accepted ItemStack inputs
+     */
+    public ItemStack[] getRequiredItems() {
+        if (this.getRootVehicle() instanceof AbstractUnderConstructionEntity<?, ?> constructionEntity) {
+            return constructionEntity.getRequiredItems();
+        }
+        return new ItemStack[0];
+    }
+
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        if(this.getRootVehicle() instanceof AbstractUnderConstructionEntity constructionEntity){
-            constructionEntity.interactFromConstructionEntity(player, hand);
-            return InteractionResult.SUCCESS;
+        if (this.getRootVehicle() instanceof AbstractUnderConstructionEntity<?, ?> constructionEntity) {
+            return constructionEntity.interactFromConstructionEntity(player, hand);
         }
         return InteractionResult.FAIL;
     }
-
 }

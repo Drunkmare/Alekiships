@@ -205,7 +205,7 @@ public final class IngameOverlays {
         if (minecraft.player == null) return;
         if (minecraft.gameMode == null) return;
 
-        if (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || !minecraft.options.getCameraType()
+        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
                 .isFirstPerson()) return;
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
@@ -221,16 +221,12 @@ public final class IngameOverlays {
         stack.translate(width / 2F, height / 2F - 15, 0);
         stack.scale(1, 1, 1);
 
-        final ItemStack itemStack = new ItemStack(sloop.getCurrentRequiredItem(), sloop.getNumberItemsLeft());
+        // TODO We should cycle through the valid stacks
+        final ItemStack itemStack = sloop.getRequiredItems()[0];
 
-        guiGraphics.renderFakeItem(itemStack, 0, 0);
-        if (itemStack.getCount() != 1) {
-            stack.pushPose();
-            final String countString = String.valueOf(itemStack.getCount());
-            stack.translate(0, 0, 200);
-            guiGraphics.drawString(minecraft.font, countString, 17 - minecraft.font.width(countString), 9,
-                    MAGIC_STRING_COLOR, true);
-            stack.popPose();
+        if (!itemStack.isEmpty()) {
+            guiGraphics.renderFakeItem(itemStack, 0, 0);
+            guiGraphics.renderItemDecorations(minecraft.font, itemStack, 0, 0);
         }
 
         stack.popPose();

@@ -1,0 +1,106 @@
+{
+  "assemble_blockstate": "minecraft:acacia_planks",
+  "assemble_sound": "minecraft:block.wood.break",
+  "constructed_entity": "alekiships:sloop/acacia",
+  "stages": {
+    "anchor": {
+      "input": {
+        "count": 1,
+        "item": "alekiships:anchor"
+      },
+      "progress_sound": "minecraft:block.metal.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "boom": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:stripped_acacia_log"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "bow_railings": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:acacia_fence"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "bowsprit": {
+      "input": {
+        "count": 6,
+        "item": "minecraft:stripped_acacia_log"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "deck": {
+      "input": {
+        "count": 20,
+        "item": "minecraft:acacia_planks"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "jibsail": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:white_wool"
+      },
+      "progress_sound": "minecraft:block.wool.place",
+      "switch_blockstate": "minecraft:white_wool",
+      "switch_sound": "minecraft:block.wool.break"
+    },
+    "keel": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:stripped_acacia_log"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "mainsail": {
+      "input": {
+        "count": 16,
+        "item": "minecraft:white_wool"
+      },
+      "progress_sound": "minecraft:block.wool.place",
+      "switch_blockstate": "minecraft:white_wool",
+      "switch_sound": "minecraft:block.wool.break"
+    },
+    "mast": {
+      "input": {
+        "count": 12,
+        "item": "minecraft:stripped_acacia_log"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "rigging": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:lead"
+      },
+      "progress_sound": "minecraft:entity.leash_knot.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    },
+    "stern_railings": {
+      "input": {
+        "count": 8,
+        "item": "minecraft:acacia_fence"
+      },
+      "progress_sound": "minecraft:block.wood.place",
+      "switch_blockstate": "minecraft:acacia_planks",
+      "switch_sound": "minecraft:block.wood.break"
+    }
+  }
+}

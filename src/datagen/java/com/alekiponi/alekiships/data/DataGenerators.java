@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.data;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.data.providers.AlekiShipsAdvancementsProvider;
@@ -11,10 +12,12 @@ import com.alekiponi.alekiships.data.providers.AlekiShipsRecipeProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
+import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -63,7 +66,14 @@ public final class DataGenerators {
 
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(EntityInput.KEY,
-                context -> context.register(CannonItem.DEFAULT_CANNON_INPUT_KEY,
-                        EntityInput.of(SizedIngredient.of(AlekiShipsItems.CANNONBALL, 1))));
+                        context -> context.register(CannonItem.DEFAULT_CANNON_INPUT_KEY,
+                                EntityInput.of(SizedIngredient.of(AlekiShipsItems.CANNONBALL, 1))))
+                .add(SloopConstructionState.SloopConstructionStage.KEY, context -> {
+                    for (final VanillaWood wood : VanillaWood.values()) {
+                        context.register(ResourceKey.create(SloopConstructionState.SloopConstructionStage.KEY,
+                                        AlekiShips.location(wood.getSerializedName())),
+                                ConstructionInputGenerators.createConstructionSloop(wood));
+                    }
+                });
     }
 }

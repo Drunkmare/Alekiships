@@ -5,6 +5,7 @@ import com.alekiponi.alekiships.client.model.entity.SloopConstructionModel;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.AnchorRenderer;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -80,56 +81,56 @@ public class SloopConstructionRenderer extends EntityRenderer<SloopUnderConstruc
         this.sloopModel.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
 
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.DECK.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.DECK.ordinal()){
             //render keel
             this.sloopModel.getKeel().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.BOWSPRIT.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.BOWSPRIT.ordinal()){
             //render deck
             for(ModelPart part : sloopModel.getDeck()){
                 part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.MAST.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.MAST.ordinal()){
             //render bowsprit
             this.sloopModel.getBowsprit().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.BOOM.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.BOOM.ordinal()){
             //render mast
             this.sloopModel.getMast().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.MAINSAIL.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.MAINSAIL.ordinal()){
             //render boom and gaff
             /*
             for(ModelPart part : sloopModel.getBoomGaff()){
             }*/
             sloopModel.getBoomGaff()[0].render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.JIBSAIl.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.JIBSAIl.ordinal()){
             //render mainsail furled
             this.sloopModel.getMainsail().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RAILINGS_STERN.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.RAILINGS_STERN.ordinal()){
             //render jibsail furled
             poseStack.pushPose();
             poseStack.translate(0,-1.57F,0);
             this.sloopModel.getJibsailFurled().render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RAILINGS_BOW.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.RAILINGS_BOW.ordinal()){
             //render stern railing
             for(ModelPart part : sloopModel.getSternRailing()){
                 part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.ANCHOR.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.ANCHOR.ordinal()){
             //render bow railing
 
             for(ModelPart part : sloopModel.getBowRailing()){
                 part.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
             }
         }
-        if(constructionEntity.getConstructionStage().ordinal() >= SloopUnderConstructionEntity.ConstructionState.RIGGING.ordinal()){
+        if(constructionEntity.getConstructionState().stage().ordinal() >= SloopConstructionState.SloopConstructionStage.RIGGING.ordinal()){
             poseStack.pushPose();
 
             poseStack.translate(1.34f+1.3,-2.52+1.6,-2.52-0.75);

@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.AlekiShipsAttachments;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentTypes;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
@@ -88,6 +89,9 @@ public final class AlekiShips {
     @SubscribeEvent
     public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(EntityInput.KEY, EntityInput.CODEC, EntityInput.CODEC);
+        event.dataPackRegistry(
+                SloopConstructionState.SloopConstructionStage.KEY, SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
+                SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
     }
 
     @SubscribeEvent
