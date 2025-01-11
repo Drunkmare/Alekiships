@@ -25,6 +25,7 @@ import net.minecraft.world.item.JukeboxSongPlayer;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -132,7 +133,7 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
         if (!this.itemStack.isEmpty() && maybeSong.isPresent()) {
             this.jukeboxCompartmentSongPlayer.play(this.level(), maybeSong.get());
         } else {
-            this.jukeboxCompartmentSongPlayer.stop();
+            this.jukeboxCompartmentSongPlayer.stop(this.level());
         }
     }
 
@@ -241,20 +242,25 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
             }
         }
 
-        public void play(final LevelAccessor level, final Holder<JukeboxSong> song) {
+        public void play(final LevelReader level, final Holder<JukeboxSong> song) {
             this.song = song;
             this.ticksSinceSongStarted = 0;
-            PacketDistributor.sendToPlayersTrackingEntity(this.jukeboxCompartment,
-                    ClientboundJukeboxCompartmentMusicPacket.start(this.jukeboxCompartment, this.song.value()));
+            if (!level.isClientSide()) {
+                PacketDistributor.sendToPlayersTrackingEntity(this.jukeboxCompartment,
+                        ClientboundJukeboxCompartmentMusicPacket.start(this.jukeboxCompartment, this.song.value()));
+            }
             this.onSongChanged.notifyChange();
         }
 
-        public void stop() {
+        public void stop(final LevelReader level) {
             if (this.song != null) {
                 this.song = null;
                 this.ticksSinceSongStarted = 0;
-                PacketDistributor.sendToPlayersTrackingEntity(this.jukeboxCompartment,
-                        ClientboundJukeboxCompartmentMusicPacket.stop(this.jukeboxCompartment));
+
+                if (!level.isClientSide()) {
+                    PacketDistributor.sendToPlayersTrackingEntity(this.jukeboxCompartment,
+                            ClientboundJukeboxCompartmentMusicPacket.stop(this.jukeboxCompartment));
+                }
                 this.onSongChanged.notifyChange();
             }
         }
@@ -262,7 +268,7 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
         public void tick(final LevelAccessor level) {
             if (this.song != null) {
                 if (this.song.value().hasFinished(this.ticksSinceSongStarted)) {
-                    this.stop();
+                    this.stop(level);
                 } else {
                     if (this.shouldEmitJukeboxPlayingEvent()) {
                         spawnMusicParticles(level, this.jukeboxCompartment.position().add(0, 1.2, 0));
