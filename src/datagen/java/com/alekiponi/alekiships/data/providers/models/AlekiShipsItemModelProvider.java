@@ -2,6 +2,8 @@ package com.alekiponi.alekiships.data.providers.models;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CheckReturnValue;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +16,7 @@ import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransforms
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class AlekiShipsItemModelProvider extends ItemModelProvider {
 
@@ -23,34 +26,88 @@ public class AlekiShipsItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        //this.heldItem(AlekiShipsItems.CANNON.get());
+        this.iconWithHeldModel(AlekiShipsItems.CANNON);
         this.basicItem(AlekiShipsItems.CANNONBALL.get());
-        //this.heldItem(AlekiShipsItems.ANCHOR.get());
+        this.iconWithHeldModel(AlekiShipsItems.ANCHOR);
         this.basicItem(AlekiShipsItems.SLOOP_ICON_ONLY.get());
         this.basicItem(AlekiShipsItems.ROWBOAT_ICON_ONLY.get());
         this.basicItem(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING.get());
-        //this.heldItem(AlekiShipsItems.OAR.get());
+        this.iconWithHeldModel(AlekiShipsItems.OAR);
     }
 
-    public ItemModelBuilder heldItem(Item item) {
-        return heldItem(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final Supplier<? extends Item> item) {
+        return this.iconWithHeldModel(item.get());
     }
 
-    public ItemModelBuilder itemNoTexture(ResourceLocation item) {
-        return getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("item/generated"));
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final Item item) {
+        return this.iconWithHeldModel(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
     }
 
-    public ItemModelBuilder heldItem(ResourceLocation item) {
-        return SeparateTransformsModelBuilder.begin(this.itemNoTexture(
-                                ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "held/" + item.getPath())),
-                        existingFileHelper).base(getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("held/")))
-                .perspective(ItemDisplayContext.FIXED, iconItem(item))
-                .perspective(ItemDisplayContext.GROUND, iconItem(item))
-                .perspective(ItemDisplayContext.GUI, iconItem(item)).end();
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final ResourceLocation item) {
+        return this.iconWithHeldModel(item, getExistingFile(item.withPrefix(ITEM_FOLDER + "/held/")));
     }
 
-    public ItemModelBuilder iconItem(ResourceLocation item) {
-        return getBuilder(item.toString()).parent(this.itemNoTexture(
-                ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "icon/" + item.getPath())));
+    @CanIgnoreReturnValue
+    @SuppressWarnings("unused")
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final Supplier<? extends Item> item,
+            final ModelFile heldModel) {
+        return this.iconWithHeldModel(item.get(), heldModel);
+    }
+
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final Item item,
+            final ModelFile heldModel) {
+        return this.iconWithHeldModel(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)), heldModel);
+    }
+
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final ResourceLocation item,
+            final ModelFile heldModel) {
+        return this.iconWithHeldModel(item, heldModel, this.icon(item));
+    }
+
+    @CanIgnoreReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> iconWithHeldModel(final ResourceLocation item,
+            final ModelFile heldModel, final ModelFile iconModel) {
+        return this.getTransformedItemModelBuilder(item).base(nested().parent(heldModel))
+                .perspective(ItemDisplayContext.GUI, nested().parent(iconModel))
+                .perspective(ItemDisplayContext.GROUND, nested().parent(iconModel))
+                .perspective(ItemDisplayContext.FIXED, nested().parent(iconModel));
+    }
+
+    @CanIgnoreReturnValue
+    @SuppressWarnings("unused")
+    private ItemModelBuilder icon(final Item item) {
+        return this.icon(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
+    }
+
+    @CanIgnoreReturnValue
+    private ItemModelBuilder icon(final ResourceLocation item) {
+        return this.getBuilder(item.withPrefix("item/icon/").toString())
+                .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", item.withPrefix("item/icon/"));
+    }
+
+    @CheckReturnValue
+    @SuppressWarnings("unused")
+    private SeparateTransformsModelBuilder<ItemModelBuilder> getTransformedItemModelBuilder(
+            final Supplier<? extends Item> item) {
+        return this.getTransformedItemModelBuilder(item.get());
+    }
+
+    @CheckReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> getTransformedItemModelBuilder(final Item item) {
+        return this.getTransformedItemModelBuilder(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
+    }
+
+    @CheckReturnValue
+    private SeparateTransformsModelBuilder<ItemModelBuilder> getTransformedItemModelBuilder(
+            final ResourceLocation key) {
+        return this.getBuilder(key.toString())
+                .parent(this.getExistingFile(ResourceLocation.fromNamespaceAndPath("neoforge", "item/default")))
+                .customLoader(SeparateTransformsModelBuilder::begin);
     }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "alekiships:item/anchor"
+    "layer0": "alekiships:item/icon/oar"
   }
 }

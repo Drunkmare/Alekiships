@@ -1,9 +1,9 @@
 {
-  "parent": "forge:item/default",
+  "parent": "neoforge:item/default",
   "base": {
     "parent": "alekiships:item/held/anchor"
   },
-  "loader": "forge:separate_transforms",
+  "loader": "neoforge:separate_transforms",
   "perspectives": {
     "fixed": {
       "parent": "alekiships:item/icon/anchor"
