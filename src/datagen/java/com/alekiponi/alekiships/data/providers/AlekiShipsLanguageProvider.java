@@ -4,8 +4,10 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
+import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -63,7 +65,8 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addItem(AlekiShipsItems.ROWBOAT_ICON_ONLY, "Rowboat (ICON ONLY)");
         this.addItem(AlekiShipsItems.OAR, "Oar");
 
-        this.add("item.alekiships.music_disc_pirate_crafting.desc", "Captain Thrack - Pirate Crafting");
+        this.add(Util.makeDescriptionId("jukebox_song", AlekiShipsJukeboxSongs.PIRATE_CRAFTING.location()),
+                "Captain Thrack - Pirate Crafting");
         this.addItem(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING, "Music Disc");
     }
 

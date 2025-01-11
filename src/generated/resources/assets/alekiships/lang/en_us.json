@@ -114,9 +114,9 @@
   "item.alekiships.cannon": "Cannon",
   "item.alekiships.cannonball": "Cannonball",
   "item.alekiships.music_disc_pirate_crafting": "Music Disc",
-  "item.alekiships.music_disc_pirate_crafting.desc": "Captain Thrack - Pirate Crafting",
   "item.alekiships.oar": "Oar",
   "item.alekiships.rowboat_icon_only": "Rowboat (ICON ONLY)",
   "item.alekiships.sloop_icon_only": "Sloop (ICON ONLY)",
+  "jukebox_song.alekiships.pirate_crafting": "Captain Thrack - Pirate Crafting",
   "press_button": "Press"
 }

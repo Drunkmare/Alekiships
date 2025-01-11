@@ -60,7 +60,6 @@ public final class AlekiShips {
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(modBus);
         AlekiShipsAttachments.ATTACHMENT_TYPES.register(modBus);
         AlekiShipsSounds.SOUNDS.register(modBus);
-        AlekiShipsJukeboxSongs.SONGS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
 
         NeoForge.EVENT_BUS.register(ForgeEventHandler.class);

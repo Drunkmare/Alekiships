@@ -1,0 +1,8 @@
+{
+  "comparator_output": 2,
+  "description": {
+    "translate": "jukebox_song.alekiships.pirate_crafting"
+  },
+  "length_in_seconds": 6340.0,
+  "sound_event": "alekiships:music_disc_pirate_crafting"
+}
