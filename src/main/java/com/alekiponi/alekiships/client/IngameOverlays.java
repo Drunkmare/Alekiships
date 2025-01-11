@@ -4,8 +4,6 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.event.IconRenderersEvent;
 import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,7 +17,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
@@ -35,8 +32,6 @@ public final class IngameOverlays {
             "passenger_status");
     public static final ResourceLocation SAILING_ELEMENT = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "sailing_element");
-    public static final ResourceLocation SLOOP_CONSTRUCTION = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-            "sloop_construction");
 
     public static final ResourceLocation SAILING_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/gui/icons/sailing_icons.png");
@@ -51,8 +46,6 @@ public final class IngameOverlays {
         ModLoader.postEvent(new IconRenderersEvent.RegisterIconRenderersEvent());
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, ENTITY_ICON, IngameOverlays::renderEntityIcon);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, PASSENGER_STATUS, IngameOverlays::renderPassengerStatus);
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, SLOOP_CONSTRUCTION,
-                IngameOverlays::renderSloopConstructionStatus);
         event.registerAbove(VanillaGuiLayers.HOTBAR, SAILING_ELEMENT, IngameOverlays::renderSailingElement);
     }
 
@@ -117,39 +110,6 @@ public final class IngameOverlays {
 
         guiGraphics.drawString(minecraft.font, string, -minecraft.font.width(string) / 2, 0, Color.WHITE.getRGB(),
                 true);
-
-        stack.popPose();
-    }
-
-    private static void renderSloopConstructionStatus(final GuiGraphics guiGraphics, final DeltaTracker deltaTracker) {
-        final Minecraft minecraft = Minecraft.getInstance();
-
-        if (minecraft.player == null) return;
-        if (minecraft.gameMode == null) return;
-
-        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
-                .isFirstPerson()) return;
-
-        final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
-
-        if (!(entity instanceof ConstructionEntity constructionEntity) || !(constructionEntity.getRootVehicle() instanceof SloopUnderConstructionEntity sloop))
-            return;
-
-        final var width = guiGraphics.guiWidth();
-        final var height = guiGraphics.guiHeight();
-
-        final PoseStack stack = guiGraphics.pose();
-        stack.pushPose();
-        stack.translate(width / 2F, height / 2F - 15, 0);
-        stack.scale(1, 1, 1);
-
-        // TODO We should cycle through the valid stacks
-        final ItemStack itemStack = sloop.getRequiredItems()[0];
-
-        if (!itemStack.isEmpty()) {
-            guiGraphics.renderFakeItem(itemStack, 0, 0);
-            guiGraphics.renderItemDecorations(minecraft.font, itemStack, 0, 0);
-        }
 
         stack.popPose();
     }
