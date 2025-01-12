@@ -5,6 +5,8 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
+import com.alekiponi.alekiships.compat.waila.compartment.*;
+import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
 import net.minecraft.Util;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import snownee.jade.api.IJadeProvider;
 
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -115,13 +118,21 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
     }
 
     private void addTranslationsForJade() {
-        this.add("config.jade.plugin_alekiships.jukebox", "Jukebox Compartment");
-        this.add("config.jade.plugin_alekiships.note_block", "Note Block Compartment");
-        this.add("config.jade.plugin_alekiships.furnace", "Furnace Compartment");
-        this.add("config.jade.plugin_alekiships.brewing_stand", "Brewing Stand Compartment");
-        this.add("config.jade.plugin_alekiships.block", "Block Compartment");
+        this.jade(JukeboxCompartmentProvider.INSTANCE, "Jukebox Compartment");
+        this.jade(NoteBlockCompartmentProvider.INSTANCE, "Note Block Compartment");
+        this.jade(FurnaceCompartmentProvider.INSTANCE, "Furnace Compartment");
+        this.jade(BrewingStandCompartmentProvider.INSTANCE, "Brewing Stand Compartment");
+        this.jade(BlockCompartmentProvider.INSTANCE, "Block Compartment");
+        this.jade(ConstructionEntityProvider.INSTANCE, "Construction Entity");
 
-        this.add("alekiships.jade.compartment_block", "%s Compartment");
+        this.add(BlockCompartmentProvider.COMPARTMENT_BLOCK_KEY, "%s Compartment");
+        this.add(ConstructionEntityProvider.INPUTS_REMAINING_KEY, "Inputs remaining: %s");
+        this.add(ConstructionEntityProvider.CURRENT_STAGE_KEY, "Current Stage: %s");
+        this.add(ConstructionEntityProvider.NEXT_STAGE_KEY, "Next Stage: %s");
+    }
+
+    private void jade(final IJadeProvider provider, final String value) {
+        this.add("config.jade.plugin_" + provider.getUid().toLanguageKey(), value);
     }
 
     @Override

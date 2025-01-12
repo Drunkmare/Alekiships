@@ -1,11 +1,13 @@
 package com.alekiponi.alekiships.compat.waila;
 
+import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.AbstractFurnaceCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.BrewingStandCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.JukeboxCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.NoteBlockCompartmentEntity;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
+import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -25,6 +27,8 @@ public class JadeIntegration implements IWailaPlugin {
 
     @Override
     public void registerClient(final IWailaClientRegistration registry) {
+        registry.registerEntityComponent(ConstructionEntityProvider.INSTANCE, ConstructionEntity.class);
+
         registry.registerEntityComponent(JukeboxCompartmentProvider.INSTANCE, JukeboxCompartmentEntity.class);
         registry.registerEntityComponent(NoteBlockCompartmentProvider.INSTANCE, NoteBlockCompartmentEntity.class);
         registry.registerEntityComponent(FurnaceCompartmentProvider.INSTANCE, AbstractFurnaceCompartmentEntity.class);

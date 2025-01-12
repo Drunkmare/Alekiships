@@ -13,6 +13,7 @@ import snownee.jade.api.theme.IThemeHelper;
 public enum BlockCompartmentProvider implements IEntityComponentProvider {
     INSTANCE;
 
+    public static final String COMPARTMENT_BLOCK_KEY = "alekiships.jade.compartment_block";
     private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "block");
 
     @Override
@@ -24,7 +25,7 @@ public enum BlockCompartmentProvider implements IEntityComponentProvider {
                 ((BlockCompartment) entityAccessor.getEntity()).getDisplayBlockState().getBlock().getDescriptionId());
 
         // "<BlockName> Compartment"
-        final MutableComponent name = Component.translatable("alekiships.jade.compartment_block", blockName);
+        final MutableComponent name = Component.translatable(COMPARTMENT_BLOCK_KEY, blockName);
         tooltip.add(0, IThemeHelper.get().title(name), JadeIds.CORE_OBJECT_NAME);
     }
 
