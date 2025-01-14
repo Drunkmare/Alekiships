@@ -3,7 +3,7 @@ package com.alekiponi.alekiships.common.entity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
-import net.minecraft.core.NonNullList;
+import com.alekiponi.alekiships.util.ItemContents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -51,8 +51,6 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
             CannonEntity.class, AlekiShipsEntityDataSerializers.ENTITY_INPUT_STATE.get());
     private static final float DAMAGE_TO_BREAK = 8;
     private static final float DAMAGE_RECOVERY = 0.5F;
-    private final NonNullList<ItemStack> inputContents = NonNullList.withSize(EntityInput.MAXIMUM_SIZE,
-            ItemStack.EMPTY);
     private final Lazy<EntityInput> cannonInput = Lazy.of(
             () -> EntityInput.getEntityInput(this.registryAccess(), this.getInputState().entityInputKey()));
     /**
@@ -65,6 +63,7 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
         return Arrays.stream(ingredient.getItems()).map(itemStack -> itemStack.copyWithCount(count))
                 .toArray(ItemStack[]::new);
     });
+    private final ItemContents inputContents = new ItemContents(EntityInput.MAXIMUM_SIZE);
     protected int lerpSteps;
     protected double lerpX;
     protected double lerpY;
@@ -417,13 +416,13 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
     }
 
     @Override
-    public void setInputContents(final int index, final ItemStack itemStack) {
-        this.inputContents.set(index, itemStack);
+    public ItemStack insert(final int stage, final ItemStack insertStack) {
+        return this.inputContents.insert(stage, insertStack);
     }
 
     @Override
-    public ItemStack getInputContents(final int index) {
-        return this.inputContents.get(index);
+    public int getContentsCount(final int stage) {
+        return this.inputContents.getCount(stage);
     }
 
     @Override

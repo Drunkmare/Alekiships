@@ -135,30 +135,11 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
             final @Nullable LivingEntity entity, @SuppressWarnings("SameParameterValue") final int increment) {
         final var stage = constructedEntity.getConstructionState().stage();
         if (entity != null && entity.hasInfiniteMaterials()) {
-            final ItemStack existingStack = constructedEntity.getConstructionContents(stage);
-
-            if (existingStack.isEmpty()) {
-                final ItemStack itemStack = insertStack.copyWithCount(increment);
-                constructedEntity.setConstructionContents(stage, itemStack);
-            } else constructedEntity.getConstructionContents(stage).grow(increment);
-
+            constructedEntity.insert(stage, insertStack.copyWithCount(increment));
             return insertStack;
         }
 
-        final ItemStack existingStack = constructedEntity.getConstructionContents(stage);
-        if (existingStack.isEmpty()) {
-            final ItemStack itemStack = insertStack.copyWithCount(increment);
-            constructedEntity.setConstructionContents(stage, itemStack);
-            return insertStack.copyWithCount(insertStack.getCount() - increment);
-        }
-
-        if (!ItemStack.isSameItemSameComponents(insertStack, existingStack)) return insertStack;
-
-        final int newCount = Math.min(Math.min(increment, insertStack.getCount()),
-                insertStack.getMaxStackSize() - existingStack.getCount());
-
-        existingStack.grow(newCount);
-        return insertStack.copyWithCount(insertStack.getCount() - newCount);
+        return constructedEntity.insert(stage, insertStack);
     }
 
     /**
@@ -180,7 +161,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
         if (!ingredient.ingredient().test(insertStack)) return InteractionResultHolder.pass(insertStack);
 
         final ItemStack remainder = ConstructionInput.doInsert(constructedEntity, insertStack, entity, 1);
-        if (ingredient.count() > constructedEntity.getConstructionContents(stage).getCount()) {
+        if (ingredient.count() > constructedEntity.getContentsCount(stage)) {
             constructedEntity.setConstructionState(
                     constructionState.withRemaining(constructionState.remainingInputs() - 1));
             return InteractionResultHolder.success(remainder);
@@ -246,18 +227,21 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     public interface ConstructedEntity<E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> {
 
         /**
-         * Sets a stack in the backing storage for the current stage
+         * Inserts a stack in the backing storage for the current stage.
          *
-         * @param stage     The stage
-         * @param itemStack The {@link ItemStack}
+         * @param stage       The stage
+         * @param insertStack The {@link ItemStack} to insert <strong>Do not mutate this</strong>
+         * @return The remainder of the insertion
          */
-        void setConstructionContents(E stage, ItemStack itemStack);
+        ItemStack insert(E stage, ItemStack insertStack);
 
         /**
+         * Gets the current contents in the backing storage for the current stage
+         *
          * @param stage The stage
-         * @return A stack in the backing storage for the provided stage
+         * @return How many contents this stage has
          */
-        ItemStack getConstructionContents(E stage);
+        int getContentsCount(E stage);
 
         /**
          * @return The construction state

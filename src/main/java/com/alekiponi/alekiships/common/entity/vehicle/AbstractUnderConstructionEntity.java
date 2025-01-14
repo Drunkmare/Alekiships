@@ -1,13 +1,12 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
+import com.alekiponi.alekiships.util.ItemContents;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,11 +24,12 @@ import java.util.Arrays;
 public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & ConstructionInput.ConstructionStage<E>, S extends ConstructionInput.ConstructionState<E, S>> extends AbstractVehicle implements IHaveConstructionEntities, ConstructionInput.ConstructedEntity<E, S> {
 
 
+    public static final String CONSTRUCTION_CONTENTS_KEY = "ConstructionContents";
     protected final Lazy<ConstructionInput<E>> constructionInput;
     /**
-     * You typically shouldn't directly access this. Instead, use {@link #getConstructionContents(Enum)} and {@link #setConstructionContents(Enum, ItemStack)}
+     * You typically shouldn't directly access this. Instead use {@link #getContentsCount(Enum)}
      */
-    protected final NonNullList<ItemStack> constructionContents;
+    protected final ItemContents constructionContents;
     /**
      * Lazy as we expect only the client to ever need this
      */
@@ -42,7 +42,7 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
             final Codec<S> stateCodec) {
         super(entityType, level);
         this.stateCodec = stateCodec;
-        this.constructionContents = NonNullList.withSize(constructionContentsCapacity, ItemStack.EMPTY);
+        this.constructionContents = new ItemContents(constructionContentsCapacity);
 
         this.constructionInput = Lazy.of(() -> constructionInputGetter.get(this.registryAccess(),
                 this.getConstructionState().constructionInputKey()));
@@ -72,14 +72,15 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
         this.stateCodec.parse(NbtOps.INSTANCE,
                         compoundTag.get(ConstructionInput.ConstructionState.CONSTRUCTION_STATE_KEY)).result()
                 .ifPresent(this::setConstructionState);
-        ContainerHelper.saveAllItems(compoundTag, this.constructionContents, this.registryAccess());
+        this.constructionContents.deserializeNBT(this.registryAccess(),
+                compoundTag.getCompound(CONSTRUCTION_CONTENTS_KEY));
     }
 
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         this.stateCodec.encodeStart(NbtOps.INSTANCE, this.getConstructionState())
                 .ifSuccess(tag -> compoundTag.put(ConstructionInput.ConstructionState.CONSTRUCTION_INPUT_KEY, tag));
-        ContainerHelper.loadAllItems(compoundTag, this.constructionContents, this.registryAccess());
+        compoundTag.put(CONSTRUCTION_CONTENTS_KEY, this.constructionContents.serializeNBT(this.registryAccess()));
     }
 
     public InteractionResult interactFromConstructionEntity(final Player player, final InteractionHand hand) {
@@ -139,13 +140,13 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
     }
 
     @Override
-    public void setConstructionContents(final E stage, final ItemStack itemStack) {
-        this.constructionContents.set(stage.ordinal(), itemStack);
+    public ItemStack insert(final E stage, final ItemStack insertStack) {
+        return this.constructionContents.insert(stage.ordinal(), insertStack);
     }
 
     @Override
-    public ItemStack getConstructionContents(final E stage) {
-        return this.constructionContents.get(stage.ordinal());
+    public int getContentsCount(final E stage) {
+        return this.constructionContents.getCount(stage.ordinal());
     }
 
     @FunctionalInterface

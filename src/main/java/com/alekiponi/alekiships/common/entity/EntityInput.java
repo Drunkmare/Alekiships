@@ -76,34 +76,13 @@ public final class EntityInput {
     @CheckReturnValue
     private static ItemStack doInsert(final InputEntity inputEntity, final ItemStack insertStack,
             final @Nullable LivingEntity entity, @SuppressWarnings("SameParameterValue") final int increment) {
-        final var inputState = inputEntity.getInputState();
-        final var index = inputState.inputStage();
-
+        final var stage = inputEntity.getInputState().inputStage;
         if (entity != null && entity.hasInfiniteMaterials()) {
-            final ItemStack existingStack = inputEntity.getInputContents(index);
-
-            if (existingStack.isEmpty()) {
-                final ItemStack itemStack = insertStack.copyWithCount(increment);
-                inputEntity.setInputContents(index, itemStack);
-            } else inputEntity.getInputContents(index).grow(increment);
-
+            inputEntity.insert(stage, insertStack.copyWithCount(increment));
             return insertStack;
         }
 
-        final ItemStack existingStack = inputEntity.getInputContents(index);
-        if (existingStack.isEmpty()) {
-            final ItemStack itemStack = insertStack.copyWithCount(increment);
-            inputEntity.setInputContents(index, itemStack);
-            return insertStack.copyWithCount(insertStack.getCount() - increment);
-        }
-
-        if (!ItemStack.isSameItemSameComponents(insertStack, existingStack)) return insertStack;
-
-        final int newCount = Math.min(Math.min(increment, insertStack.getCount()),
-                insertStack.getMaxStackSize() - existingStack.getCount());
-
-        existingStack.grow(newCount);
-        return insertStack.copyWithCount(insertStack.getCount() - newCount);
+        return inputEntity.insert(stage, insertStack);
     }
 
     /**
@@ -128,7 +107,7 @@ public final class EntityInput {
         if (!ingredient.ingredient().test(insertStack)) return InteractionResultHolder.pass(insertStack);
 
         final ItemStack remainder = EntityInput.doInsert(inputEntity, insertStack, entity, 1);
-        if (ingredient.count() < inputEntity.getInputContents(inputStage).getCount()) {
+        if (ingredient.count() < inputEntity.getContentsCount(inputStage)) {
             inputEntity.setInputState(inputState.withRemaining(inputState.remainingInputs - 1));
             return InteractionResultHolder.success(remainder);
         }
@@ -166,18 +145,21 @@ public final class EntityInput {
     public interface InputEntity {
 
         /**
-         * Sets a stack in the backing storage
+         * Inserts a stack in the backing storage for the current stage.
          *
-         * @param index     The index
-         * @param itemStack The {@link ItemStack}
+         * @param stage       The stage
+         * @param insertStack The {@link ItemStack} to insert <strong>Do not mutate this</strong>
+         * @return The remainder of the insertion
          */
-        void setInputContents(int index, ItemStack itemStack);
+        ItemStack insert(int stage, ItemStack insertStack);
 
         /**
-         * @param index The index
-         * @return A stack in the backing storage
+         * Gets the current contents in the backing storage for the current stage
+         *
+         * @param stage The stage
+         * @return How many contents this stage has
          */
-        ItemStack getInputContents(int index);
+        int getContentsCount(int stage);
 
         /**
          * @return The {@link EntityInputState}
