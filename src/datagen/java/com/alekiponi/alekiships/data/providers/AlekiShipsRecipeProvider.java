@@ -1,8 +1,17 @@
 package com.alekiponi.alekiships.data.providers;
 
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
+import com.alekiponi.alekiships.common.recipe.entity.RowboatResult;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.matcher.PropertyMatcher;
 import com.alekiponi.alekiships.data.recipes.CraftingRecipeBuilder;
+import com.alekiponi.alekiships.data.util.EntityMultiblockHelper;
+import com.alekiponi.alekiships.util.OverworldWood;
+import com.alekiponi.alekiships.util.Wood;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -20,6 +29,24 @@ public class AlekiShipsRecipeProvider extends RecipeProvider {
     public AlekiShipsRecipeProvider(final PackOutput packOutput,
             final CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
+    }
+
+    protected static <T extends Wood> void createRowboatRecipes(final RecipeOutput recipeOutput,
+            final HolderLookup.Provider holderLookup, final T[] woodType) {
+        final var fullyProcessedMatcher = PropertyMatcher.single(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
+                AngledWoodenBoatFrameBlock.FULLY_PROCESSED);
+
+        final var rowboatTypes = holderLookup.lookupOrThrow(AlekiShipsRegistries.ROWBOAT_VARIANT);
+        final var frameMaterials = holderLookup.lookupOrThrow(AlekiShipsRegistries.FRAME_MATERIAL);
+        for (final var wood : woodType) {
+            recipeOutput.accept(AlekiShips.location("entity_multiblock/rowboat/" + wood.getSerializedName()),
+                    EntityMultiblockRecipe.builder()
+                            .pattern(EntityMultiblockHelper.rowboatPattern(
+                                    AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), fullyProcessedMatcher,
+                                    frameMaterials.getOrThrow(wood.frameMaterialKey())))
+                            .entityResult(RowboatResult.of(rowboatTypes.getOrThrow(wood.rowboatKey())))
+                            .build(), null);
+        }
     }
 
     @Override
@@ -86,5 +113,12 @@ public class AlekiShipsRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
                 .save(recipeOutput);
+    }
+
+    @Override
+    protected void buildRecipes(final RecipeOutput recipeOutput, final HolderLookup.Provider holderLookup) {
+        super.buildRecipes(recipeOutput, holderLookup);
+
+        createRowboatRecipes(recipeOutput, holderLookup, OverworldWood.values());
     }
 }

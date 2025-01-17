@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
@@ -20,4 +22,9 @@ public interface Wood extends StringRepresentable {
      * @return The resource key for the frame material
      */
     ResourceKey<FrameMaterial> frameMaterialKey();
+
+    /**
+     * @return The resource key for the rowboat variant
+     */
+    ResourceKey<RowboatVariant> rowboatKey();
 }

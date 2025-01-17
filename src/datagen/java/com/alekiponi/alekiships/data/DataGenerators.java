@@ -29,6 +29,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.OverlayMetadataSection;
 import net.minecraft.server.packs.PackType;
@@ -133,6 +134,12 @@ public final class DataGenerators {
                     DataMapBuilderExtensions.add(flatFrame, wood.getPlankItem(),
                             new BoatFrame(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(), material));
                 }
+            }
+        });
+        netherWoodsPack.addProvider(output -> new AlekiShipsRecipeProvider(output, netherRegistries) {
+            @Override
+            protected void buildRecipes(final RecipeOutput recipeOutput, final HolderLookup.Provider holderLookup) {
+                createRowboatRecipes(recipeOutput, holderLookup, NetherWood.values());
             }
         });
     }
