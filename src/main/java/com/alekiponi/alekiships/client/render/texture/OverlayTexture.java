@@ -3,11 +3,11 @@ package com.alekiponi.alekiships.client.render.texture;
 import com.alekiponi.alekiships.client.render.util.TextureHelpers;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -21,15 +21,16 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OverlayTexture extends AbstractTexture {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final BiFunction<ResourceLocation, ResourceLocation, OverlayTexture> CACHE = Util.memoize(
-            OverlayTexture::new);
+    private static final Map<Pair<ResourceLocation, ResourceLocation>, OverlayTexture> CACHE = new ConcurrentHashMap<>();
+
 
     private final ResourceLocation baseTexture;
     private final ResourceLocation overlayTexture;
@@ -42,8 +43,13 @@ public class OverlayTexture extends AbstractTexture {
     public static AbstractTexture getTexture(final ResourceLocation baseTexture,
             final ResourceLocation overlayTexture) {
         try {
-            final var texture = CACHE.apply(baseTexture, overlayTexture);
-            texture.load(Minecraft.getInstance().getResourceManager());
+            final var key = Pair.of(baseTexture, overlayTexture);
+            var texture = CACHE.get(key);
+            if (texture == null) {
+                texture = new OverlayTexture(baseTexture, overlayTexture);
+                CACHE.put(key, texture);
+                texture.load(Minecraft.getInstance().getResourceManager());
+            }
             return texture;
         } catch (final IOException e) {
             if (baseTexture != TextureManager.INTENTIONAL_MISSING_TEXTURE) {
