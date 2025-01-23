@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
@@ -36,8 +37,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
         this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
 
-        this.add("press_button", "Press");
-        this.add("eject_passengers", "to eject");
+        this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
 
         this.addTranslationsForJade();
 

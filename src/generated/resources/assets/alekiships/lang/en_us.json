@@ -20,6 +20,7 @@
   "alekiships.jade.construction_entity.current_stage": "Current Stage: %s",
   "alekiships.jade.construction_entity.next_stage": "Next Stage: %s",
   "alekiships.jade.construction_entity.remaining_inputs": "Inputs remaining: %s",
+  "alekiships.overlay.eject_passengers": "Press %s + %s to eject",
   "block.alekiships.cleat": "Cleat",
   "block.alekiships.oarlock": "Oarlock",
   "block.alekiships.watercraft_frame_angled": "Sloped Shipwright's Scaffolding",
@@ -53,7 +54,6 @@
   "config.jade.plugin_alekiships.jukebox": "Jukebox Compartment",
   "config.jade.plugin_alekiships.note_block": "Note Block Compartment",
   "creativetab.alekiships_tab": "aleki's Nifty Ships",
-  "eject_passengers": "to eject",
   "entity.alekiships.cannon": "Cannon",
   "entity.alekiships.cannonball": "Cannonball",
   "entity.alekiships.compartment_barrel": "Barrel Compartment",
@@ -122,6 +122,5 @@
   "item.alekiships.oar": "Oar",
   "item.alekiships.rowboat_icon_only": "Rowboat (ICON ONLY)",
   "item.alekiships.sloop_icon_only": "Sloop (ICON ONLY)",
-  "jukebox_song.alekiships.pirate_crafting": "Captain Thrack - Pirate Crafting",
-  "press_button": "Press"
+  "jukebox_song.alekiships.pirate_crafting": "Captain Thrack - Pirate Crafting"
 }

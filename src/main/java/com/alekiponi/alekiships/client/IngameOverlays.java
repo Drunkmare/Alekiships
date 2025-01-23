@@ -38,9 +38,7 @@ public final class IngameOverlays {
     public static final ResourceLocation SPEEDOMETER_ICONS = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/gui/icons/speedometer_icons.png");
 
-    public static final Component PRESS_BUTTON = Component.translatable("press_button");
-    public static final Component EJECT_PASSENGERS = Component.translatable("eject_passengers");
-    public static final int MAGIC_STRING_COLOR = 16777215;
+    public static final String EJECT_PASSENGERS_KEY = "alekiships.overlay.eject_passengers";
 
     public static void registerOverlays(final RegisterGuiLayersEvent event) {
         ModLoader.postEvent(new IconRenderersEvent.RegisterIconRenderersEvent());
@@ -72,7 +70,7 @@ public final class IngameOverlays {
         if (minecraft.player == null) return;
         if (minecraft.gameMode == null) return;
 
-        if (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || !minecraft.options.getCameraType()
+        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
                 .isFirstPerson()) return;
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
@@ -104,9 +102,9 @@ public final class IngameOverlays {
         stack.scale(1, 1, 1);
 
         // Should look like: Press Left Shift + Right Button to eject
-        final String string = PRESS_BUTTON.getString() + " " + minecraft.options.keyShift.getTranslatedKeyMessage()
-                .getString() + " + " + minecraft.options.keyUse.getTranslatedKeyMessage()
-                .getString() + " " + EJECT_PASSENGERS.getString();
+        final String string = Component.translatable(EJECT_PASSENGERS_KEY,
+                minecraft.options.keyShift.getTranslatedKeyMessage(),
+                minecraft.options.keyUse.getTranslatedKeyMessage()).getString();
 
         guiGraphics.drawString(minecraft.font, string, -minecraft.font.width(string) / 2, 0, Color.WHITE.getRGB(),
                 true);
@@ -120,15 +118,13 @@ public final class IngameOverlays {
         if (minecraft.player == null) return;
         if (minecraft.gameMode == null) return;
 
-        if (minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) return;
+        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR) return;
 
-        final Minecraft mc = minecraft;
-
-        if (!(mc.player.getRootVehicle() instanceof SloopEntity sloopEntity)) return;
+        if (!(minecraft.player.getRootVehicle() instanceof SloopEntity sloopEntity)) return;
 
         if (sloopEntity.getPilotCompartment() == null) return;
         if (!sloopEntity.getPilotCompartment().hasExactlyOnePlayerPassenger()) return;
-        if (sloopEntity.getPilotCompartment().getFirstPassenger() != mc.player) return;
+        if (sloopEntity.getPilotCompartment().getFirstPassenger() != minecraft.player) return;
 
         final PoseStack stack = guiGraphics.pose();
         stack.pushPose();
@@ -157,11 +153,12 @@ public final class IngameOverlays {
             frameIndex = ticks % 32;
         }
 
-        final int offhandOffset = !mc.player.getOffhandItem().isEmpty() ? 26 : 3;
+        final int offhandOffset = !minecraft.player.getOffhandItem().isEmpty() ? 26 : 3;
 
         // TODO config to add numerical speed instead, config for units
-        if (mc.gui.getDebugOverlay().showDebugScreen()) {
-            guiGraphics.drawString(mc.font, displayBoatSpeed, -134, -8 - offhandOffset, Color.WHITE.getRGB(), true);
+        if (minecraft.gui.getDebugOverlay().showDebugScreen()) {
+            guiGraphics.drawString(minecraft.font, displayBoatSpeed, -134, -8 - offhandOffset, Color.WHITE.getRGB(),
+                    true);
         }
 
         final int angle;
