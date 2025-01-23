@@ -11,7 +11,6 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.Compartm
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
-import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.events.ForgeEventHandler;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
@@ -30,6 +29,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
@@ -49,6 +50,7 @@ public final class AlekiShips {
         modBus.addListener(PacketHandler::init);
         modBus.register(AlekiShips.class);
 
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modContainer.registerConfig(ModConfig.Type.CLIENT, AlekishipsConfig.CLIENT_SPEC);
         modContainer.registerConfig(ModConfig.Type.SERVER, AlekishipsConfig.SERVER_SPEC);
 
@@ -88,8 +90,8 @@ public final class AlekiShips {
     @SubscribeEvent
     public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(EntityInput.KEY, EntityInput.CODEC, EntityInput.CODEC);
-        event.dataPackRegistry(
-                SloopConstructionState.SloopConstructionStage.KEY, SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
+        event.dataPackRegistry(SloopConstructionState.SloopConstructionStage.KEY,
+                SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
     }
 

@@ -31,14 +31,13 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addTranslationsForBlocks();
         this.addTranslationsForItems();
         this.addTranslationsForEntities();
+        this.addTranslationsForConfig();
 
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
         this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
-        this.add("alekiships.config.server.windAffectsBoatsWithNoAnchor", "Wind Affects Boats With No Anchor");
 
         this.add("press_button", "Press");
         this.add("eject_passengers", "to eject");
-
 
         this.addTranslationsForJade();
 
@@ -115,6 +114,12 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addEntityType(AlekiShipsEntities.LOOM_COMPARTMENT_ENTITY, "Loom Compartment");
         this.addEntityType(AlekiShipsEntities.NOTE_BLOCK_COMPARTMENT_ENTITY, "Note Block Compartment");
         this.addEntityType(AlekiShipsEntities.JUKEBOX_COMPARTMENT_ENTITY, "Jukebox Compartment");
+    }
+
+    private void addTranslationsForConfig() {
+        // It feels like there should be a better way to do this so that we stay in sync with changes to the config :|
+        this.add("alekiships.config.server.windAffectsBoatsWithNoAnchor", "Wind Affects Boats With No Anchor");
+        this.add("alekiships.config.client.tillerControlScheme", "Tiller Control Scheme");
     }
 
     private void addTranslationsForJade() {

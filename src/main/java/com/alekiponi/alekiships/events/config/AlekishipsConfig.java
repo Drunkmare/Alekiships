@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.events.config;
 
+import com.alekiponi.alekiships.AlekiShips;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AlekishipsConfig {
@@ -8,6 +9,8 @@ public final class AlekishipsConfig {
     public static final ModConfigSpec SERVER_SPEC;
     public static final ClientConfig CLIENT;
     public static final ModConfigSpec CLIENT_SPEC;
+
+    public static final String LANG_KEY = AlekiShips.MOD_ID + ".config";
 
     static {
         {

@@ -4,22 +4,13 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class ClientConfig {
 
-    public static final ClientConfig CONFIG;
-    public static final ModConfigSpec CONFIG_SPEC;
-
-    static {
-        final var pair = new ModConfigSpec.Builder().configure(ClientConfig::new);
-
-        //Store the resulting values
-        CONFIG = pair.getLeft();
-        CONFIG_SPEC = pair.getRight();
-    }
+    private static final String LANG_KEY = AlekishipsConfig.LANG_KEY + ".client";
 
     public final ModConfigSpec.EnumValue<RudderSchemes> rudderControlScheme;
 
     ClientConfig(final ModConfigSpec.Builder builder) {
-        this.rudderControlScheme = builder.translation("alekiships.config.client.tillerControlScheme")
-                .comment("Change how the rudder behaves on boats that have them")
+        this.rudderControlScheme = builder.comment("Change how the rudder behaves on boats that have them")
+                .translation(LANG_KEY + ".tillerControlScheme")
                 .defineEnum("tillerControlScheme", RudderSchemes.RETURN_TO_CENTER);
     }
 

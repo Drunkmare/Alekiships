@@ -13,6 +13,7 @@
   "alekiships.advancements.rowboat_completed.title": "The Montlake Cut",
   "alekiships.advancements.sloop_completed.description": "Build a Sloop",
   "alekiships.advancements.sloop_completed.title": "Yesler's Wharf",
+  "alekiships.config.client.tillerControlScheme": "Tiller Control Scheme",
   "alekiships.config.server.windAffectsBoatsWithNoAnchor": "Wind Affects Boats With No Anchor",
   "alekiships.failed_multiblock_detection": "No Valid Hull Structure Found",
   "alekiships.jade.compartment_block": "%s Compartment",
