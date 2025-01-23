@@ -2,6 +2,8 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
+import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -9,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -83,6 +86,10 @@ public final class EntityInput {
         }
 
         return inputEntity.insert(stage, insertStack);
+    }
+
+    public static void bootstrap(final BootstrapContext<EntityInput> context) {
+        context.register(CannonItem.DEFAULT_CANNON_INPUT_KEY, of(SizedIngredient.of(AlekiShipsItems.CANNONBALL, 1)));
     }
 
     /**

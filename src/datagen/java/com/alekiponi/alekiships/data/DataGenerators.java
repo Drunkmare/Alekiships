@@ -3,27 +3,22 @@ package com.alekiponi.alekiships.data;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
-import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.common.item.CannonItem;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
-import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.data.providers.*;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
 import com.alekiponi.alekiships.util.VanillaWood;
-import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.network.chat.Component;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.JukeboxSong;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -70,19 +65,17 @@ public final class DataGenerators {
     }
 
     private static RegistrySetBuilder datapackEntries() {
-        return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, context -> {
-                    context.register(AlekiShipsJukeboxSongs.PIRATE_CRAFTING,
-                            new JukeboxSong(AlekiShipsSounds.MUSIC_DISC_PIRATE_CRAFTING, Component.translatable(
-                                    Util.makeDescriptionId("jukebox_song", AlekiShipsJukeboxSongs.PIRATE_CRAFTING.location())),
-                                    6340, 2));
-                }).add(EntityInput.KEY, context -> context.register(CannonItem.DEFAULT_CANNON_INPUT_KEY,
-                        EntityInput.of(SizedIngredient.of(AlekiShipsItems.CANNONBALL, 1))))
-                .add(SloopConstructionState.SloopConstructionStage.KEY, context -> {
-                    for (final VanillaWood wood : VanillaWood.values()) {
-                        context.register(ResourceKey.create(SloopConstructionState.SloopConstructionStage.KEY,
-                                        AlekiShips.location(wood.getSerializedName())),
-                                ConstructionInputGenerators.createConstructionSloop(wood));
-                    }
-                });
+        return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
+                .add(EntityInput.KEY, EntityInput::bootstrap)
+                .add(SloopConstructionState.SloopConstructionStage.KEY, DataGenerators::bootstrapSloopConstruction);
+    }
+
+    private static void bootstrapSloopConstruction(
+            final BootstrapContext<ConstructionInput<SloopConstructionState.SloopConstructionStage>> context) {
+        for (final VanillaWood wood : VanillaWood.values()) {
+            context.register(ResourceKey.create(SloopConstructionState.SloopConstructionStage.KEY,
+                            AlekiShips.location(wood.getSerializedName())),
+                    ConstructionInputGenerators.createConstructionSloop(wood));
+        }
     }
 }
