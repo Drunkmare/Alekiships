@@ -1,14 +1,14 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.*;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.*;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.*;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.*;
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.VanillaWood;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,7 +20,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.EnumMap;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 import static com.alekiponi.alekiships.AlekiShips.MOD_ID;
 

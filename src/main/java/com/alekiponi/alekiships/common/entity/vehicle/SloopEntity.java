@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBreakIce;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
@@ -13,7 +12,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitche
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;

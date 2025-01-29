@@ -7,7 +7,7 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentTypes;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentTypes;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;

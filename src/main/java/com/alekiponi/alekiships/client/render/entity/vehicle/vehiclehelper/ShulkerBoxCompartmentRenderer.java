@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.ShulkerBoxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ShulkerBoxCompartmentEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.ShulkerModel;

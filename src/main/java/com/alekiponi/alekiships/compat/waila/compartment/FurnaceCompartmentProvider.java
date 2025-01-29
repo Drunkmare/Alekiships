@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.AbstractFurnaceCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.AbstractFurnaceCompartmentEntity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

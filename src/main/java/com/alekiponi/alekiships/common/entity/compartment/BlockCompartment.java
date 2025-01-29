@@ -1,0 +1,187 @@
+package com.alekiponi.alekiships.common.entity.compartment;
+
+import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.util.CommonHelper;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+/**
+ * Interface for compartment entities that contain blocks.
+ * See {@link BlockCompartmentEntity} for an example implementation as well as {@link BlockCompartmentRenderer}
+ * which will render the contained blockstate.
+ * <p>
+ * You should sync the held blockstate to the client using {@link SynchedEntityData} taking advantage
+ * of {@link EntityDataSerializers#BLOCK_STATE} or some other mechanism.
+ */
+public interface BlockCompartment {
+
+    /**
+     * The NBT tag key that should be used for serializing the blockstate.
+     * You should use {@link NbtUtils#readBlockState(HolderGetter, CompoundTag)} and
+     * {@link NbtUtils#writeBlockState(BlockState)} to have user-friendly NBT or delegate to
+     * {@link #readBlockstate(BlockCompartment, CompoundTag)} and {@link #saveBlockstate(BlockCompartment, CompoundTag)}
+     */
+    String HELD_BLOCK_KEY = "heldBlock";
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
+     *
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
+     *                                {@link Block}s {@link Block#defaultBlockState()}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentFactory<E> create(
+            final BlockCompartmentFactory<E> blockCompartmentFactory) {
+        return (entityType, level, itemStack) -> {
+            if (!(itemStack.getItem() instanceof BlockItem blockItem)) return null;
+            return blockCompartmentFactory.create(entityType, level, blockItem.getBlock().defaultBlockState());
+        };
+    }
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
+     *
+     * @param defaultStateModifier A function provided the default state and returning the final state passed to
+     *                             {@link #setDisplayBlockState(BlockState)}
+     */
+    @SuppressWarnings("unused")
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
+            final Function<BlockState, BlockState> defaultStateModifier) {
+        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack, defaultStateModifier);
+    }
+
+    /**
+     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
+     *
+     * @param defaultStateModifier A function provided the {@link BlockCompartment} and the default state. The return
+     *                             value is passed to {@link #setDisplayBlockState(BlockState)}
+     */
+    @SuppressWarnings("unused")
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
+            final BiFunction<E, BlockState, BlockState> defaultStateModifier) {
+        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack,
+                blockState -> defaultStateModifier.apply(compartmentEntity, blockState));
+    }
+
+    /**
+     * Basic initialization for a {@link BlockCompartment} using the default state
+     *
+     * @param compartmentEntity The Compartment Entity
+     * @param itemStack         The {@link ItemStack}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
+            final E compartmentEntity, final ItemStack itemStack) {
+        return initialize(compartmentEntity, itemStack, Function.identity());
+    }
+
+    /**
+     * Initialization for a {@link BlockCompartment}
+     *
+     * @param compartmentEntity    The Compartment Entity
+     * @param itemStack            The {@link ItemStack}
+     * @param defaultStateModifier A function provided the default state returning the state used for
+     *                             {@link #setDisplayBlockState(BlockState)}
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
+            final E compartmentEntity, final ItemStack itemStack,
+            final Function<BlockState, BlockState> defaultStateModifier) {
+        if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
+            return CompartmentType.InitializationResult.fail(String.format(
+                    "Attempted to create %s using a stack of %s but it's not a BlockItem. Report this issue to the developers of the entity type",
+                    compartmentEntity.getType(), itemStack));
+        }
+
+        compartmentEntity.setDisplayBlockState(defaultStateModifier.apply(blockItem.getBlock().defaultBlockState()));
+        return CompartmentType.InitializationResult.success();
+    }
+
+    /**
+     * Reads a blockstate and sets it to the block compartment via {@link #setDisplayBlockState(BlockState)}
+     *
+     * @param blockCompartment The block compartment
+     * @param compoundTag      The compound tag which the blockstate was saved to
+     */
+    static void readBlockstate(final BlockCompartment blockCompartment, final CompoundTag compoundTag) {
+        blockCompartment.setDisplayBlockState(
+                NbtUtils.readBlockState(blockCompartment.level().holderLookup(Registries.BLOCK),
+                        compoundTag.getCompound(HELD_BLOCK_KEY)));
+    }
+
+    /**
+     * Saves the return of {@link #getDisplayBlockState()} to the provided {@link CompoundTag}
+     *
+     * @param blockCompartment The block compartment to save
+     * @param compoundTag      The tag to save to
+     */
+    static void saveBlockstate(final BlockCompartment blockCompartment, final CompoundTag compoundTag) {
+        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(blockCompartment.getDisplayBlockState()));
+    }
+
+    /**
+     * Plays the hit sound for the passed {@link BlockCompartment}
+     */
+    static void playHitSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
+        CommonHelper.playHitSound(blockCompartment::playSound, blockCompartment.getDisplayBlockState().getSoundType());
+    }
+
+    /**
+     * Plays the break sound for the passed {@link BlockCompartment}
+     */
+    static void playBreakSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
+        CommonHelper.playBreakSound(blockCompartment::playSound,
+                blockCompartment.getDisplayBlockState().getSoundType());
+    }
+
+    /**
+     * Plays the place sound for the passed {@link BlockCompartment}
+     */
+    static void playPlaceSound(final BlockCompartment blockCompartment) {
+        //noinspection deprecation
+        CommonHelper.playPlaceSound(blockCompartment::playSound,
+                blockCompartment.getDisplayBlockState().getSoundType());
+    }
+
+    /**
+     * Gets the display blockstate
+     *
+     * @return The current display blockstate for this block compartment
+     */
+    BlockState getDisplayBlockState();
+
+    /**
+     * Sets the display blockstate
+     *
+     * @param blockState The new display blockstate for this block compartment
+     */
+    void setDisplayBlockState(final BlockState blockState);
+
+    Level level();
+
+    void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume, final float pitch);
+
+    /**
+     * A factory for a compartment which takes in a {@link BlockState}. See
+     * {@link BlockCompartmentEntity#BlockCompartmentEntity(EntityType, Level, BlockState)} as an example
+     * constructor usage
+     */
+    @FunctionalInterface
+    interface BlockCompartmentFactory<E extends AbstractCompartmentEntity & BlockCompartment> {
+        E create(EntityType<E> entityType, Level level, BlockState blockState);
+    }
+}

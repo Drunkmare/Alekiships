@@ -1,11 +1,11 @@
 package com.alekiponi.alekiships.compat.waila;
 
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.AbstractFurnaceCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.BrewingStandCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.JukeboxCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.NoteBlockCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.AbstractFurnaceCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.NoteBlockCompartmentEntity;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import snownee.jade.api.IWailaClientRegistration;

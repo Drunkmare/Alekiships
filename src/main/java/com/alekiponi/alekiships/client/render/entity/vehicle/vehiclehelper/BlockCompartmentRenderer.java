@@ -1,8 +1,8 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;

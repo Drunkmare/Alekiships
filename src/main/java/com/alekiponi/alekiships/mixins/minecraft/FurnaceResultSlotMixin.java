@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.mixins.minecraft;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.AbstractFurnaceCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.FurnaceCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.AbstractFurnaceCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.FurnaceCompartmentEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

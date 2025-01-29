@@ -4,7 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.event.IconRenderersEvent;
 import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;

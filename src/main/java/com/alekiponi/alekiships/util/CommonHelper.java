@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.CraftingTableCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.CraftingTableCompartment;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;

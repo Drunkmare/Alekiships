@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.mixins.minecraft;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.SimpleBlockMenuCompartment;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.crafting.GrindstoneCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.GrindstoneCompartmentEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;

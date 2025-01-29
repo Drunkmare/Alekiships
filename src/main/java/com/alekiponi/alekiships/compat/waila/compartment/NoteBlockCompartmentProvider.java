@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.NoteBlockCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.NoteBlockCompartmentEntity;
 import com.google.common.base.Joiner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
