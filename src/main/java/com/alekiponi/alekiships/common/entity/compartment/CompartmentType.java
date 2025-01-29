@@ -1,20 +1,20 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
-import com.alekiponi.alekiships.util.AlekiShipsTags;
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.slf4j.Logger;
-import oshi.util.tuples.Pair;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -23,14 +23,13 @@ import java.util.function.Supplier;
  *
  * @param <E> The type of compartment
  */
-// TODO should these go in an actual registry? We could have the predicate defined via datapack? Seems like it could
-//  make a lot more sense now that components are a thing. {@link ChestCompartmentEntity} could use a component for the
-//  used texture for example.
 public class CompartmentType<E extends AbstractCompartmentEntity> {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final ResourceKey<Registry<CompartmentType<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(
+            AlekiShips.location("compartment_type"));
+    public static final Registry<CompartmentType<?>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).sync(true).create();
 
-    private static final ArrayList<Pair<CompartmentType<? extends AbstractCompartmentEntity>, Predicate<ItemStack>>> COMPARTMENT_TYPES = new ArrayList<>();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private final Supplier<? extends EntityType<E>> entityTypeSupplier;
     private final CompartmentFactory<E> compartmentFactory;
@@ -103,24 +102,6 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
     }
 
     /**
-     * Registers a {@link CompartmentType} to be automatically picked and constructed when empty compartments are
-     * right-clicked with an {@link ItemStack} matching the CompartmentTypes ItemStack predicate.
-     *
-     * @param compartmentType The compartment type
-     * @param predicate       The ItemStack predicate that determines if the compartment type should be chosen
-     * @apiNote The predicate should be as exact as possible.
-     * <p>
-     * You may register the same {@link CompartmentType} multiple times. This can be useful if you have for example a
-     * custom furnace that only has a different texture/model as {@link CompartmentTypes#FURNACE_COMPARTMENT}
-     * will display any compatible block. Custom behavior will however require a custom compartment entity.
-     */
-    public static <E extends AbstractCompartmentEntity> CompartmentType<E> register(
-            final CompartmentType<E> compartmentType, final Predicate<ItemStack> predicate) {
-        COMPARTMENT_TYPES.add(new Pair<>(Objects.requireNonNull(compartmentType), Objects.requireNonNull(predicate)));
-        return compartmentType;
-    }
-
-    /**
      * Gets an applicable {@link CompartmentType} for an {@link ItemStack}
      *
      * @param itemStack The {@link ItemStack}
@@ -128,17 +109,8 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
      * this means registry order can effect which is chosen
      */
     public static Optional<CompartmentType<?>> fromStack(final ItemStack itemStack) {
-        if (!itemStack.is(AlekiShipsTags.Items.CAN_PLACE_IN_COMPARTMENTS)) return Optional.empty();
-
-        for (final var predicatePair : COMPARTMENT_TYPES) {
-            if (predicatePair.getB().test(itemStack)) return Optional.of(predicatePair.getA());
-        }
-
-        if (itemStack.getItem() instanceof BlockItem) {
-            return Optional.of(CompartmentTypes.BLOCK_COMPARTMENT);
-        }
-
-        return Optional.empty();
+        final var compartmentPlaceable = itemStack.get(AlekiShipsComponents.COMPARTMENT_PLACEABLE);
+        return compartmentPlaceable == null ? Optional.empty() : Optional.of(compartmentPlaceable.compartmentType());
     }
 
     /**
