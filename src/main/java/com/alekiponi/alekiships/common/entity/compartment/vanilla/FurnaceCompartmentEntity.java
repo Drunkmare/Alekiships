@@ -14,12 +14,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
     public FurnaceCompartmentEntity(final EntityType<? extends FurnaceCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, RecipeType.SMELTING);
+    }
+
+    public FurnaceCompartmentEntity(final EntityType<? extends FurnaceCompartmentEntity> entityType, final Level level,
+            final BlockState blockState) {
+        this(entityType, level);
+        this.setDisplayBlockState(blockState);
     }
 
     @Override

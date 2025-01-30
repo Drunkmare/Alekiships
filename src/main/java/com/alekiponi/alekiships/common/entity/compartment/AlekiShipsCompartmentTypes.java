@@ -21,13 +21,13 @@ public final class AlekiShipsCompartmentTypes {
                     BlockCompartment.create(BlockCompartmentEntity::new)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<BarrelCompartmentEntity>> BARREL_COMPARTMENT = register(
-            "barrel",
-            () -> CompartmentType.postInit(AlekiShipsEntities.BARREL_COMPARTMENT_ENTITY, BlockCompartment::initialize,
-                    CompartmentCloneable::initialize));
+            "barrel", () -> CompartmentType.of(AlekiShipsEntities.BARREL_COMPARTMENT_ENTITY,
+                    BlockCompartment.<BarrelCompartmentEntity>create(BarrelCompartmentEntity::new)
+                            .postInit(CompartmentCloneable::initialize)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<ChestCompartmentEntity>> CHEST_COMPARTMENT = register(
-            "chest", () -> CompartmentType.of(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY,
-                    ChestCompartmentEntity::create));
+            "chest",
+            () -> CompartmentType.of(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY, ChestCompartmentEntity::create));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<EnderChestCompartmentEntity>> ENDER_CHEST_COMPARTMENT = register(
             "ender_chest", () -> CompartmentType.simple(AlekiShipsEntities.ENDER_CHEST_COMPARTMENT_ENTITY));
@@ -37,22 +37,21 @@ public final class AlekiShipsCompartmentTypes {
                     ShulkerBoxCompartmentEntity::create));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<FurnaceCompartmentEntity>> FURNACE_COMPARTMENT = register(
-            "furnace",
-            () -> CompartmentType.postInit(AlekiShipsEntities.FURNACE_COMPARTMENT_ENTITY, BlockCompartment::initialize,
-                    CompartmentCloneable::initialize));
+            "furnace", () -> CompartmentType.of(AlekiShipsEntities.FURNACE_COMPARTMENT_ENTITY,
+                    AbstractFurnaceCompartmentEntity.create(FurnaceCompartmentEntity::new)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<BlastFurnaceCompartmentEntity>> BLAST_FURNACE_COMPARTMENT = register(
-            "blast_furnace", () -> CompartmentType.postInit(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY,
-                    BlockCompartment::initialize, CompartmentCloneable::initialize));
+            "blast_furnace", () -> CompartmentType.of(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY,
+                    AbstractFurnaceCompartmentEntity.create(BlastFurnaceCompartmentEntity::new)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<SmokerCompartmentEntity>> SMOKER_COMPARTMENT = register(
-            "smoker",
-            () -> CompartmentType.postInit(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY, BlockCompartment::initialize,
-                    CompartmentCloneable::initialize));
+            "smoker", () -> CompartmentType.of(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY,
+                    AbstractFurnaceCompartmentEntity.create(SmokerCompartmentEntity::new)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<BrewingStandCompartmentEntity>> BREWING_STAND_COMPARTMENT = register(
-            "brewing_stand", () -> CompartmentType.postInit(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY,
-                    BlockCompartment::initialize, CompartmentCloneable::initialize));
+            "brewing_stand", () -> CompartmentType.of(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY,
+                    BlockCompartment.<BrewingStandCompartmentEntity>create(BrewingStandCompartmentEntity::new)
+                            .postInit(CompartmentCloneable::initialize)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<CraftingTableCompartment>> CRAFTING_TABLE_COMPARTMENT = register(
             "crafting_table", () -> CompartmentType.of(AlekiShipsEntities.WORKBENCH_COMPARTMENT_ENTITY,
@@ -83,9 +82,9 @@ public final class AlekiShipsCompartmentTypes {
                     BlockCompartment.create(NoteBlockCompartmentEntity::new)));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<JukeboxCompartmentEntity>> JUKEBOX_COMPARTMENT = register(
-            "jukebox",
-            () -> CompartmentType.postInit(AlekiShipsEntities.JUKEBOX_COMPARTMENT_ENTITY, BlockCompartment::initialize,
-                    CompartmentCloneable::initialize));
+            "jukebox", () -> CompartmentType.of(AlekiShipsEntities.JUKEBOX_COMPARTMENT_ENTITY,
+                    BlockCompartment.<JukeboxCompartmentEntity>create(JukeboxCompartmentEntity::new)
+                            .postInit(CompartmentCloneable::initialize)));
 
     @SuppressWarnings("SameParameterValue")
     private static <E extends AbstractCompartmentEntity> DeferredHolder<CompartmentType<?>, CompartmentType<E>> register(

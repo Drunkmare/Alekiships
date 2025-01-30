@@ -56,49 +56,12 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
     /**
      * Helper for a simple compartment type without a special factory, merely returning the result of
      * {@link EntityType#create(Level)}. You will usually want to instead use {@link #of(Supplier, CompartmentFactory)}
-     * or {@link #postInit(Supplier, CompartmentPostInitialization[])}
      *
      * @param entityTypeSupplier A supplier for the {@link EntityType}
      */
     public static <E extends AbstractCompartmentEntity> CompartmentType<E> simple(
             final Supplier<? extends EntityType<E>> entityTypeSupplier) {
-        return of(entityTypeSupplier, (entityType, level, itemStack) -> entityType.create(level));
-    }
-
-    /**
-     * Use this for a {@link CompartmentType} whose {@link #compartmentFactory} relies on post-init steps.
-     * In particular post-init steps conforming to the {@link CompartmentPostInitialization} interface. For
-     * built-in examples see {@link CompartmentCloneable#initialize(AbstractCompartmentEntity, ItemStack)} and
-     * {@link BlockCompartment#initialize(AbstractCompartmentEntity, ItemStack)} among others.
-     *
-     * @param entityTypeSupplier  The supplier for the {@link EntityType} associated with this {@link CompartmentType}
-     * @param postInitializations An array of {@link CompartmentPostInitialization}s that will be run to create a
-     *                            compartment via {@link #create(Level, ItemStack)}
-     */
-    @SafeVarargs
-    public static <E extends AbstractCompartmentEntity> CompartmentType<E> postInit(
-            final Supplier<? extends EntityType<E>> entityTypeSupplier,
-            final CompartmentPostInitialization<E>... postInitializations) {
-        return of(entityTypeSupplier, (entityType, level, itemStack) -> {
-            final E e = entityType.create(level);
-
-            if (e == null) {
-                LOGGER.warn(
-                        "Couldn't create an {}. If this is intentional the compartment type shouldn't be registered",
-                        entityType);
-                return null;
-            }
-
-            for (final CompartmentPostInitialization<E> postInitialization : postInitializations) {
-                final InitializationResult initializationResult = postInitialization.initialize(e, itemStack);
-                if (initializationResult.wasSuccessful()) continue;
-
-                LOGGER.error(initializationResult.errorMessage);
-                return null;
-            }
-
-            return e;
-        });
+        return of(entityTypeSupplier, CompartmentFactory.simple());
     }
 
     /**
@@ -127,15 +90,50 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
     /**
      * Like vanillas {@link EntityFactory} but takes an additional {@link ItemStack} parameter to enable
      * the compartments to be constructed with an {@link ItemStack} parameter for easier reasoning of behavior.
-     * You may also wrap a post-initialization step via the factory like
+     * You may also wrap a post-initialization step via {@link CompartmentFactory#postInit(CompartmentPostInitialization)} like
      * {@link CompartmentCloneable#initialize(AbstractCompartmentEntity, ItemStack)}
      *
-     * @param <T> The type of compartment
+     * @param <E> The type of compartment
      */
     @FunctionalInterface
-    public interface CompartmentFactory<T extends AbstractCompartmentEntity> {
+    public interface CompartmentFactory<E extends AbstractCompartmentEntity> {
+
+        /**
+         * A simple compartment factory returning the result of {@link EntityType#create(Level)}
+         */
+        static <E extends AbstractCompartmentEntity> CompartmentFactory<E> simple() {
+            return (entityType, level, itemStack) -> {
+                final var e = entityType.create(level);
+
+                if (e == null) {
+                    LOGGER.warn("Couldn't create an {}. Using EntityType#create(Level). Please inform your mod author",
+                            entityType);
+                    return null;
+                }
+
+                return e;
+            };
+        }
+
         @Nullable
-        T create(final EntityType<T> entityType, final Level level, final ItemStack itemStack);
+        E create(final EntityType<E> entityType, final Level level, final ItemStack itemStack);
+
+        /**
+         * @param postInitialization The compartment post initialization
+         * @return A factory which invokes the provided post initialization and reports any errors
+         */
+        default CompartmentFactory<E> postInit(final CompartmentPostInitialization<E> postInitialization) {
+            return (entityType, level, itemStack) -> {
+                final var e = this.create(entityType, level, itemStack);
+                if (e == null) return null;
+
+                final var initializationResult = postInitialization.initialize(e, itemStack);
+                if (initializationResult.wasSuccessful()) return e;
+
+                LOGGER.error(initializationResult.errorMessage);
+                return null;
+            };
+        }
     }
 
     @FunctionalInterface

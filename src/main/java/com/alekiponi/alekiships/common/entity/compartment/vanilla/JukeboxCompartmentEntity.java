@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ContainerSingleItem;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -46,6 +47,12 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     public JukeboxCompartmentEntity(final EntityType<? extends JukeboxCompartmentEntity> entityType,
             final Level level) {
         super(entityType, level);
+    }
+
+    public JukeboxCompartmentEntity(final EntityType<? extends JukeboxCompartmentEntity> entityType, final Level level,
+            final BlockState blockState) {
+        this(entityType, level);
+        this.setDisplayBlockState(blockState);
     }
 
     @Override

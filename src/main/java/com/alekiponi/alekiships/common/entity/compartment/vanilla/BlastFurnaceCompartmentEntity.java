@@ -15,12 +15,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
     public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,
             final Level level) {
         super(entityType, level, RecipeType.BLASTING);
+    }
+
+    public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,
+            final Level level, final BlockState blockState) {
+        this(entityType, level);
+        this.setDisplayBlockState(blockState);
     }
 
     @Override

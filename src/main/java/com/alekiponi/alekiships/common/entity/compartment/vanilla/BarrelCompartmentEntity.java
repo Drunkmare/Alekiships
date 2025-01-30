@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -67,6 +68,12 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
 
     public BarrelCompartmentEntity(final EntityType<? extends BarrelCompartmentEntity> entityType, final Level level) {
         super(entityType, level, SLOT_COUNT);
+    }
+
+    public BarrelCompartmentEntity(final EntityType<? extends BarrelCompartmentEntity> entityType, final Level level,
+            final BlockState blockState) {
+        this(entityType, level);
+        this.setDisplayBlockState(blockState);
     }
 
     @Override

@@ -85,6 +85,12 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
         super(compartmentType, level, SLOT_COUNT);
     }
 
+    public BrewingStandCompartmentEntity(final EntityType<? extends BrewingStandCompartmentEntity> entityType,
+            final Level level, final BlockState blockState) {
+        this(entityType, level);
+        this.setDisplayBlockState(blockState);
+    }
+
     private static void doBrew(final Level level, final BlockPos pos, final NonNullList<ItemStack> items) {
         if (EventHooks.onPotionAttemptBrew(items)) return;
         ItemStack ingredientStack = items.get(INGREDIENT_SLOT);

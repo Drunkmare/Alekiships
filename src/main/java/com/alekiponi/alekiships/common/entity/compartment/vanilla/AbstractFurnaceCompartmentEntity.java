@@ -1,6 +1,8 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.google.common.collect.Lists;
@@ -37,8 +39,6 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
@@ -113,6 +113,11 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         super(entityType, level, SLOT_COUNT);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
+    }
+
+    public static <E extends AbstractFurnaceCompartmentEntity> CompartmentType.CompartmentFactory<E> create(
+            final BlockCompartment.BlockCompartmentFactory<E> factory) {
+        return BlockCompartment.create(factory).postInit(CompartmentCloneable::initialize);
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,

@@ -13,12 +13,9 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.function.Function;
 
 /**
  * Interface for compartment entities that contain blocks.
@@ -58,38 +55,6 @@ public interface BlockCompartment {
 
             return null;
         };
-    }
-
-    /**
-     * Basic initialization for a {@link BlockCompartment} using the default state
-     *
-     * @param compartmentEntity The Compartment Entity
-     * @param itemStack         The {@link ItemStack}
-     */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
-            final E compartmentEntity, final ItemStack itemStack) {
-        return initialize(compartmentEntity, itemStack, Function.identity());
-    }
-
-    /**
-     * Initialization for a {@link BlockCompartment}
-     *
-     * @param compartmentEntity    The Compartment Entity
-     * @param itemStack            The {@link ItemStack}
-     * @param defaultStateModifier A function provided the default state returning the state used for
-     *                             {@link #setDisplayBlockState(BlockState)}
-     */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.InitializationResult initialize(
-            final E compartmentEntity, final ItemStack itemStack,
-            final Function<BlockState, BlockState> defaultStateModifier) {
-        if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
-            return CompartmentType.InitializationResult.fail(String.format(
-                    "Attempted to create %s using a stack of %s but it's not a BlockItem. Report this issue to the developers of the entity type",
-                    compartmentEntity.getType(), itemStack));
-        }
-
-        compartmentEntity.setDisplayBlockState(defaultStateModifier.apply(blockItem.getBlock().defaultBlockState()));
-        return CompartmentType.InitializationResult.success();
     }
 
     /**
