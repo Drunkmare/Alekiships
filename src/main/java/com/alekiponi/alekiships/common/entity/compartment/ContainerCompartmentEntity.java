@@ -18,6 +18,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
@@ -74,6 +75,13 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
 
     /**
      * Called to save custom data serialized as {@link DataComponents#BLOCK_ENTITY_DATA} NBT
+     *
+     * @implNote Vanilla for some reason enforces that {@link DataComponents#BLOCK_ENTITY_DATA} contains an ID for the
+     * {@link net.minecraft.world.level.block.entity.BlockEntityType BlockEntityType}.
+     * <p>
+     * As of writing this is <i>unused</i> however it still <strong>must be present</strong> in the provided tag else
+     * the component is considered invalid and will almost certainly cause confusing issues later.
+     * Use {@link net.minecraft.world.level.block.entity.BlockEntity#addEntityType(CompoundTag, BlockEntityType) BlockEntity#addEntityType(CompoundTag, BlockEntityType)}
      */
     protected void saveBlockEntityData(final CompoundTag compoundTag) {
     }
@@ -93,9 +101,15 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
     protected void collectImplicitComponents(final DataComponentMap.Builder builder) {
         builder.set(DataComponents.CUSTOM_NAME, this.getCustomName());
         builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.itemStacks));
-        final CompoundTag compoundTag = new CompoundTag();
-        this.saveBlockEntityData(compoundTag);
-        builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(compoundTag));
+        final CompoundTag blockEntityData = new CompoundTag();
+        this.saveBlockEntityData(blockEntityData);
+        builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(blockEntityData));
+        if (blockEntityData.isEmpty()) {
+            // Try and remove from the builder just in case
+            builder.set(DataComponents.BLOCK_ENTITY_DATA, null);
+        } else {
+            builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(blockEntityData));
+        }
     }
 
     private void applyComponents(final DataComponentMap components, final DataComponentPatch patch) {

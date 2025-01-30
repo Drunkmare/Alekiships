@@ -26,6 +26,8 @@ import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrewingStandBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.EventHooks;
 
@@ -279,6 +281,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
 
     @Override
     protected void saveBlockEntityData(final CompoundTag compoundTag) {
+        BlockEntity.addEntityType(compoundTag, BlockEntityType.BREWING_STAND);
         this.saveCommonNBTData(compoundTag);
     }
 

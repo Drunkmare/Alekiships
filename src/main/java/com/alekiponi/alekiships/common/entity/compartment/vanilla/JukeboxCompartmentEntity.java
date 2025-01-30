@@ -27,6 +27,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ContainerSingleItem;
@@ -197,6 +199,7 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     public DataComponentMap collectComponents() {
         final var builder = DataComponentMap.builder();
         final CompoundTag compoundTag = new CompoundTag();
+        BlockEntity.addEntityType(compoundTag, BlockEntityType.JUKEBOX);
         this.writeCommonNBTData(compoundTag);
         builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(compoundTag));
         return builder.build();

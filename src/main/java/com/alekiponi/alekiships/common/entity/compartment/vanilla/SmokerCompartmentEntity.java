@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -11,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
@@ -38,6 +41,12 @@ public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     @Override
     protected int getBurnDuration(final ItemStack fuelStack) {
         return super.getBurnDuration(fuelStack) / 2;
+    }
+
+    @Override
+    protected void saveBlockEntityData(final CompoundTag compoundTag) {
+        BlockEntity.addEntityType(compoundTag, BlockEntityType.SMOKER);
+        super.saveBlockEntityData(compoundTag);
     }
 
     @Override
