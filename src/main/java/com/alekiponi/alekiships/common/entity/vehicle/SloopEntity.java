@@ -644,11 +644,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return null;
     }
 
-    @Override
-    public Item getDropItem() {
-        return this.boatMaterial.getDeckItem();
-    }
-
     @Nullable
     public EmptyCompartmentEntity getSailingCompartment() {
         final net.minecraft.world.entity.Entity vehiclePart = this.getSailingVehiclePartAsEntity();

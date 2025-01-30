@@ -298,11 +298,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         }
     }
 
-    @Deprecated
-    public Item getDropItem() {
-        return Items.AIR;
-    }
-
     @Override
     public void animateHurt(final float pYaw) {
         this.setHurtDir(-this.getHurtDir());
@@ -965,11 +960,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         if (passenger instanceof VehiclePart) {
             super.addPassenger(passenger);
         }
-    }
-
-    @Override
-    public ItemStack getPickResult() {
-        return new ItemStack(this.getDropItem());
     }
 
     /**

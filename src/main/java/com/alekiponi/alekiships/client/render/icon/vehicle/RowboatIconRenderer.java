@@ -22,7 +22,7 @@ public class RowboatIconRenderer extends SingleIconRenderer<RowboatEntity> {
 
     @Override
     protected Icon getCurrentIcon(final RowboatEntity entity, final ItemStack heldStack, final float partialTick) {
-        if (heldStack.is(entity.getDropItem()) && entity.getDamage() > 0) {
+        if (heldStack.is(entity.getBoatMaterial().repairMaterials()) && entity.getDamage() > 0) {
             return Icon.DefaultIcons.HAMMER;
         }
 

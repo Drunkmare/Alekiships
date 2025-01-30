@@ -379,7 +379,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(this.getDropItem())) {
+        if (stack.is(this.getBoatMaterial().repairMaterials())) {
             if (player.getAbilities().instabuild) {
                 this.setDamage(0);
                 return InteractionResult.SUCCESS;
@@ -398,7 +398,13 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public boolean fireImmune() {
-        return this.boatMaterial.withstandsLava();
+        return this.getBoatMaterial().withstandsLava();
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getPickResult() {
+        return new ItemStack(this.getBoatMaterial().getDeckItem());
     }
 
     protected abstract float getMomentumSubtractor();
@@ -567,6 +573,10 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     public float getWindLocalRotation() {
         return Mth.wrapDegrees(this.getLocalWindAngle() - Mth.wrapDegrees(this.getYRot()));
+    }
+
+    public BoatMaterial getBoatMaterial() {
+        return this.boatMaterial;
     }
 
     @Nullable

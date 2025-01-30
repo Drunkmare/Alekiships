@@ -212,11 +212,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    public Item getDropItem() {
-        return this.boatMaterial.getDeckItem();
-    }
-
-    @Override
     protected void dropCustomDestructionLoot(final DamageSource damageSource) {
         super.dropCustomDestructionLoot(damageSource);
         switch (this.getOars()) {

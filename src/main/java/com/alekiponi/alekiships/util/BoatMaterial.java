@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -13,7 +14,9 @@ import java.util.Optional;
  * This represents a unique boat material. This may be wood or another material
  *
  * @apiNote Implementing this on an enum is recommended as these objects are compared using identity
+ * @deprecated Boat materials will be dynamic via datapack registry
  */
+@Deprecated(forRemoval = true)
 public interface BoatMaterial extends StringRepresentable {
 
     /**
@@ -22,6 +25,11 @@ public interface BoatMaterial extends StringRepresentable {
      */
     default Item getDeckItem() {
         return this.getDeckBlock().getBlock().asItem();
+    }
+
+    // TODO temporary bouncer
+    default HolderSet<Item> repairMaterials() {
+        return HolderSet.direct(this.getDeckItem().builtInRegistryHolder());
     }
 
     /**
