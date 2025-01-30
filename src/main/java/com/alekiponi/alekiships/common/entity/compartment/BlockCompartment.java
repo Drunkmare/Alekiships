@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.util.CommonHelper;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -47,34 +47,17 @@ public interface BlockCompartment {
     static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentFactory<E> create(
             final BlockCompartmentFactory<E> blockCompartmentFactory) {
         return (entityType, level, itemStack) -> {
-            if (!(itemStack.getItem() instanceof BlockItem blockItem)) return null;
-            return blockCompartmentFactory.create(entityType, level, blockItem.getBlock().defaultBlockState());
+            final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_DATA);
+            if (compartmentData != null) {
+                return blockCompartmentFactory.create(entityType, level, compartmentData.displayState());
+            }
+
+            if (itemStack.getItem() instanceof BlockItem blockItem) {
+                return blockCompartmentFactory.create(entityType, level, blockItem.getBlock().defaultBlockState());
+            }
+
+            return null;
         };
-    }
-
-    /**
-     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
-     *
-     * @param defaultStateModifier A function provided the default state and returning the final state passed to
-     *                             {@link #setDisplayBlockState(BlockState)}
-     */
-    @SuppressWarnings("unused")
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
-            final Function<BlockState, BlockState> defaultStateModifier) {
-        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack, defaultStateModifier);
-    }
-
-    /**
-     * Creates a {@link CompartmentType.CompartmentPostInitialization} which modifies the default state
-     *
-     * @param defaultStateModifier A function provided the {@link BlockCompartment} and the default state. The return
-     *                             value is passed to {@link #setDisplayBlockState(BlockState)}
-     */
-    @SuppressWarnings("unused")
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentPostInitialization<E> modifyDefaultState(
-            final BiFunction<E, BlockState, BlockState> defaultStateModifier) {
-        return (compartmentEntity, itemStack) -> initialize(compartmentEntity, itemStack,
-                blockState -> defaultStateModifier.apply(compartmentEntity, blockState));
     }
 
     /**

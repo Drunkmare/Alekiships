@@ -26,6 +26,10 @@ public final class AlekiShipsComponents {
             "chest_compartment_data", builder -> builder.persistent(ChestCompartmentData.CODEC)
                     .networkSynchronized(ChestCompartmentData.STREAM_CODEC).cacheEncoding());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockCompartmentData>> BLOCK_COMPARTMENT_DATA = register(
+            "block_compartment_data", builder -> builder.persistent(BlockCompartmentData.CODEC)
+                    .networkSynchronized(BlockCompartmentData.STREAM_CODEC).cacheEncoding());
+
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(final String name,
             final UnaryOperator<DataComponentType.Builder<T>> builder) {
         return COMPONENTS.registerComponentType(name, builder);
