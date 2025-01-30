@@ -26,8 +26,8 @@ public final class AlekiShipsCompartmentTypes {
                     CompartmentCloneable::initialize));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<ChestCompartmentEntity>> CHEST_COMPARTMENT = register(
-            "chest", () -> CompartmentType.postInit(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY,
-                    CompartmentCloneable::initialize));
+            "chest", () -> CompartmentType.of(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY,
+                    ChestCompartmentEntity::create));
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<EnderChestCompartmentEntity>> ENDER_CHEST_COMPARTMENT = register(
             "ender_chest", () -> CompartmentType.simple(AlekiShipsEntities.ENDER_CHEST_COMPARTMENT_ENTITY));

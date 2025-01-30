@@ -1,9 +1,18 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
-import com.alekiponi.alekiships.util.CommonHelper;
+import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
+import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -16,7 +25,6 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +34,13 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
 
     public static final byte CONTAINER_OPEN = 1;
     public static final byte CONTAINER_CLOSE = 2;
-    public static final int SLOT_COUNT = 27;
+    public static final String CHEST_DATA_KEY = "chestData";
+    public static final String DROP_STACK_KEY = "dropStack";
+
+    private static final EntityDataAccessor<ChestCompartmentData> DATA_ID_CHEST_COMPARTMENT_DATA = SynchedEntityData.defineId(
+            ChestCompartmentEntity.class, AlekiShipsEntityDataSerializers.CHEST_COMPARTMENT_DATA.get());
+    private static final EntityDataAccessor<ItemStack> DATA_ID_DROP_STACK = SynchedEntityData.defineId(
+            ChestCompartmentEntity.class, EntityDataSerializers.ITEM_STACK);
 
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -58,15 +72,30 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
     };
 
     public ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level) {
-        this(entityType, level, SLOT_COUNT);
+        this(entityType, level, ChestCompartmentData.VANILLA_CHEST_NORMAL);
     }
 
-    /**
-     * Protected constructor so children can have their own size
-     */
     protected ChestCompartmentEntity(final EntityType<? extends ChestCompartmentEntity> entityType, final Level level,
-            final int slotCount) {
-        super(entityType, level, slotCount);
+            final ChestCompartmentData chestCompartmentData) {
+        super(entityType, level, chestCompartmentData.slotCount());
+        this.entityData.set(DATA_ID_CHEST_COMPARTMENT_DATA, chestCompartmentData);
+    }
+
+    public static ChestCompartmentEntity create(final EntityType<ChestCompartmentEntity> entityType, final Level level,
+            final ItemStack itemStack) {
+        final var chestCompartment = new ChestCompartmentEntity(entityType, level,
+                itemStack.getOrDefault(AlekiShipsComponents.CHEST_COMPARTMENT_DATA,
+                        ChestCompartmentData.VANILLA_CHEST_NORMAL));
+        CompartmentCloneable.initialize(chestCompartment, itemStack);
+        chestCompartment.entityData.set(DATA_ID_DROP_STACK, itemStack);
+        return chestCompartment;
+    }
+
+    @Override
+    protected void defineSynchedData(final SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ID_CHEST_COMPARTMENT_DATA, ChestCompartmentData.VANILLA_CHEST_NORMAL);
+        builder.define(DATA_ID_DROP_STACK, ItemStack.EMPTY);
     }
 
     @Override
@@ -92,18 +121,24 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
 
     @Override
     protected void onHurt(final DamageSource damageSource) {
-        CommonHelper.playHitSound(this::playSound, SoundType.WOOD);
+        this.playSound(this.getChestCompartmentData().hurtSound(), SoundSource.BLOCKS,
+                (this.getChestCompartmentData().soundVolume() + 1) / 8,
+                this.getChestCompartmentData().soundPitch() * 0.5F);
     }
 
     @Override
     protected void onPlaced() {
-        CommonHelper.playPlaceSound(this::playSound, SoundType.WOOD);
+        this.playSound(this.getChestCompartmentData().placeSound(), SoundSource.BLOCKS,
+                (this.getChestCompartmentData().soundVolume() + 1) / 2,
+                this.getChestCompartmentData().soundPitch() * 0.8F);
     }
 
     @Override
     protected void onBreak() {
         super.onBreak();
-        CommonHelper.playBreakSound(this::playSound, SoundType.WOOD);
+        this.playSound(this.getChestCompartmentData().breakSound(), SoundSource.BLOCKS,
+                (this.getChestCompartmentData().soundVolume() + 1) / 2,
+                this.getChestCompartmentData().soundPitch() * 0.8F);
     }
 
     @Override
@@ -124,7 +159,25 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
 
     @Override
     protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory) {
-        return ChestMenu.threeRows(id, playerInventory, this);
+        return this.getChestCompartmentData().createMenu(id, playerInventory, this);
+    }
+
+    @Override
+    protected void addAdditionalSaveData(final CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
+        ChestCompartmentData.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE),
+                this.getChestCompartmentData()).ifSuccess(tag -> compoundTag.put(CHEST_DATA_KEY, tag));
+        compoundTag.put(DROP_STACK_KEY, this.entityData.get(DATA_ID_DROP_STACK).saveOptional(this.registryAccess()));
+    }
+
+    @Override
+    protected void readAdditionalSaveData(final CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        ChestCompartmentData.CODEC.decode(this.registryAccess().createSerializationContext(NbtOps.INSTANCE),
+                compoundTag.get(CHEST_DATA_KEY)).map(Pair::getFirst).ifSuccess(
+                chestCompartmentData -> this.entityData.set(DATA_ID_CHEST_COMPARTMENT_DATA, chestCompartmentData));
+        this.entityData.set(DATA_ID_DROP_STACK,
+                ItemStack.parseOptional(this.registryAccess(), compoundTag.getCompound(DROP_STACK_KEY)));
     }
 
     @Override
@@ -136,14 +189,18 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
         level.broadcastEntityEvent(this, openCount > 0 ? CONTAINER_OPEN : CONTAINER_CLOSE);
     }
 
+    public ChestCompartmentData getChestCompartmentData() {
+        return this.entityData.get(DATA_ID_CHEST_COMPARTMENT_DATA);
+    }
+
     @Override
     public ItemStack getDropStack() {
-        return new ItemStack(Blocks.CHEST.asItem());
+        return this.entityData.get(DATA_ID_DROP_STACK).copy();
     }
 
     @Nullable
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(Blocks.CHEST.asItem());
+        return this.entityData.get(DATA_ID_DROP_STACK).copy();
     }
 }

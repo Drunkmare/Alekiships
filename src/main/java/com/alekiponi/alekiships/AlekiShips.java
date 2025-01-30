@@ -12,6 +12,7 @@ import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
 import com.alekiponi.alekiships.common.item.components.CompartmentPlaceable;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.events.ForgeEventHandler;
@@ -111,7 +112,12 @@ public final class AlekiShips {
                 new CompartmentPlaceable(AlekiShipsCompartmentTypes.BARREL_COMPARTMENT.get())));
 
         event.modify(Items.CHEST, builder -> builder.set(AlekiShipsComponents.COMPARTMENT_PLACEABLE.get(),
-                new CompartmentPlaceable(AlekiShipsCompartmentTypes.CHEST_COMPARTMENT.get())));
+                        new CompartmentPlaceable(AlekiShipsCompartmentTypes.CHEST_COMPARTMENT.get()))
+                .set(AlekiShipsComponents.CHEST_COMPARTMENT_DATA.get(), ChestCompartmentData.VANILLA_CHEST_NORMAL));
+
+        event.modify(Items.TRAPPED_CHEST, builder -> builder.set(AlekiShipsComponents.COMPARTMENT_PLACEABLE.get(),
+                        new CompartmentPlaceable(AlekiShipsCompartmentTypes.CHEST_COMPARTMENT.get()))
+                .set(AlekiShipsComponents.CHEST_COMPARTMENT_DATA.get(), ChestCompartmentData.VANILLA_CHEST_TRAPPED));
 
         event.modify(Items.ENDER_CHEST, builder -> builder.set(AlekiShipsComponents.COMPARTMENT_PLACEABLE.get(),
                 new CompartmentPlaceable(AlekiShipsCompartmentTypes.ENDER_CHEST_COMPARTMENT.get())));

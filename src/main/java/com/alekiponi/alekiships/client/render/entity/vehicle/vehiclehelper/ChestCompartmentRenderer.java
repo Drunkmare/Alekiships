@@ -1,11 +1,13 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
@@ -15,14 +17,19 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Calendar;
+import java.util.function.Function;
 
 public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartmentEntity & LidCompartment> extends CompartmentRenderer<CompartmentEntity> {
 
     private static final String BOTTOM = "bottom";
     private static final String LID = "lid";
     private static final String LOCK = "lock";
+    private static final Function<ResourceLocation, Material> MATERIAL_FUNCTION = Util.memoize(
+            resourceLocation -> new Material(Sheets.CHEST_SHEET, resourceLocation));
+
     protected final boolean xmasTextures;
     private final ModelPart lid;
     private final ModelPart bottom;
@@ -43,13 +50,15 @@ public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartm
 
     @Override
     protected void renderCompartmentContents(final CompartmentEntity compartmentEntity, final float partialTicks,
-                                             final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+            final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
         AbstractVehicle vehicle = compartmentEntity.getTrueVehicle();
         if (LightTexture.block(packedLight) < compartmentEntity.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
         if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
 
         float openAngle = compartmentEntity.getOpenNess(partialTicks);
@@ -81,6 +90,14 @@ public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartm
      * @return The material for rendering the chest model
      */
     protected Material getMaterial(final CompartmentEntity compartmentEntity) {
-        return this.xmasTextures ? Sheets.CHEST_XMAS_LOCATION : Sheets.CHEST_LOCATION;
+        if (this.xmasTextures) {
+            return Sheets.CHEST_XMAS_LOCATION;
+        }
+
+        if (compartmentEntity instanceof final ChestCompartmentEntity chestCompartment) {
+            return MATERIAL_FUNCTION.apply(chestCompartment.getChestCompartmentData().chestTexture());
+        }
+
+        return Sheets.CHEST_LOCATION;
     }
 }
