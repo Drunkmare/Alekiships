@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.data.providers;
 
+import com.google.common.collect.Iterators;
 import snownee.jade.api.IJadeProvider;
 
 import com.alekiponi.alekiships.AlekiShips;
@@ -13,9 +14,14 @@ import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
+import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.NetherWood;
+import com.alekiponi.alekiships.util.OverworldWood;
+import com.alekiponi.alekiships.util.Wood;
 
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -41,6 +47,14 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
 
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
+
+        // Our wood types must be named so our entities can reflect their name
+        Iterators.<Wood>concat(Iterators.forArray(OverworldWood.values()), Iterators.forArray(NetherWood.values()))
+                .forEachRemaining(wood -> {
+                    final var id = AlekiShips.location(wood.getSerializedName());
+                    final var name = DataGenHelper.langify(wood.getSerializedName());
+                    this.add(DynamicBoatMaterial.getDescriptionId(id), name);
+                });
 
         this.addTranslationsForJade();
         this.addTranslationsForJei();

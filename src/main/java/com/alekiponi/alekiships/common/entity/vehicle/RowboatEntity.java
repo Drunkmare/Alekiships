@@ -27,7 +27,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -56,7 +55,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
     protected static final float DAMAGE_THRESHOLD = 128.0f;
     protected static final float DAMAGE_RECOVERY = 5.333f;
-
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
             final BoatMaterial boatMaterial) {

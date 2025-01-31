@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.util.DynamicBoatMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
@@ -38,5 +39,7 @@ public final class AlekiShipsBuiltInRegistries {
         event.dataPackRegistry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.BOAT_MATERIAL, DynamicBoatMaterial.DIRECT_CODEC,
+                DynamicBoatMaterial.DIRECT_CODEC);
     }
 }

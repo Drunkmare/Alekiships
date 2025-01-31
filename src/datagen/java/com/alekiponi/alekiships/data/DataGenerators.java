@@ -12,6 +12,7 @@ import com.alekiponi.alekiships.data.providers.*;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
+import com.alekiponi.alekiships.util.BoatMaterials;
 import com.alekiponi.alekiships.util.VanillaWood;
 
 import net.minecraft.DetectedVersion;
@@ -93,7 +94,8 @@ public final class DataGenerators {
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
                 .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
-                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, DataGenerators::bootstrapSloopConstruction);
+                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, DataGenerators::bootstrapSloopConstruction)
+                .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld);
     }
 
     private static void bootstrapSloopConstruction(

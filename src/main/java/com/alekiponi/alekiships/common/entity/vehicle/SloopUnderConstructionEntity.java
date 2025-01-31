@@ -22,13 +22,10 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
     private static final EntityDataAccessor<SloopConstructionState> DATA_ID_CONSTRUCTION_STATE = SynchedEntityData.defineId(
             SloopUnderConstructionEntity.class, AlekiShipsEntityDataSerializers.SLOOP_CONSTRUCTION_STATE.get());
 
-    public final BoatMaterial boatMaterial;
-
     public SloopUnderConstructionEntity(final EntityType<? extends SloopUnderConstructionEntity> entityType,
             final Level level, final BoatMaterial boatMaterial) {
         super(entityType, level, SloopConstructionState.SloopConstructionStage::getConstructionInput,
                 SloopConstructionState.SloopConstructionStage.SIZE, SloopConstructionState.CODEC);
-        this.boatMaterial = boatMaterial;
         this.setConstructionState(SloopConstructionState.getInitialState(this.registryAccess(),
                 BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).withPath(boatMaterial.getSerializedName())));
     }
