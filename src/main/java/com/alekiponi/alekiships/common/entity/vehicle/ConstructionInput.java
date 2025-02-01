@@ -6,6 +6,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
+import com.alekiponi.alekiships.common.recipe.entity.EntityResult;
+import com.alekiponi.alekiships.common.recipe.entity.SimpleResult;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -38,20 +40,26 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Nullable;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Singular;
+import lombok.ToString;
 
 /**
  * A Datapack object representing a collection of construction inputs.
  * These consist of discrete stages represented by {@link ProgressStage}.
- * When completed it spawns {@link #constructedEntityType}, plays {@link #assembleSound} and creates
+ * When completed it spawns {@link #constructedEntity}, plays {@link #assembleSound} and creates
  * particles using {@link #assembleBlockState}.
  *
  * @param <E> An enum representing the construction stages
  */
+@ToString
+@EqualsAndHashCode
 public final class ConstructionInput<E extends Enum<E> & ConstructionInput.ConstructionStage<E>> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static final ConstructionInput<?> EMPTY = new ConstructionInput(Map.of(), EntityType.PIG, SoundEvents.EMPTY,
-            Blocks.STONE.defaultBlockState());
+    private static final ConstructionInput<?> EMPTY = new ConstructionInput(Map.of(), new SimpleResult(EntityType.PIG),
+            SoundEvents.EMPTY, Blocks.STONE.defaultBlockState());
 
     private static final Codec<BlockState> BLOCK_STATE_CODEC = NeoForgeExtraCodecs.withAlternative(
             BuiltInRegistries.BLOCK.byNameCodec()
@@ -59,13 +67,13 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
 
     public final SoundEvent assembleSound;
     public final BlockState assembleBlockState;
-    public final EntityType<?> constructedEntityType;
+    public final EntityResult constructedEntity;
     private final Map<E, ProgressStage> stages;
 
-    private ConstructionInput(final Map<E, ProgressStage> stages, final EntityType<?> constructedEntityType,
+    private ConstructionInput(final Map<E, ProgressStage> stages, final EntityResult constructedEntity,
             final SoundEvent assembleSound, final BlockState assembleBlockState) {
         this.stages = stages;
-        this.constructedEntityType = constructedEntityType;
+        this.constructedEntity = constructedEntity;
         this.assembleSound = assembleSound;
         this.assembleBlockState = assembleBlockState;
     }
@@ -80,11 +88,13 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     public static <E extends Enum<E> & ConstructionStage<E>> Codec<ConstructionInput<E>> codec(
             final StringRepresentable.StringRepresentableCodec<E> stageCodec, final Supplier<E[]> stagesSupplier) {
         return RecordCodecBuilder.create(instance -> instance.group(
-                        ConstructionInput.stagesCodec(stageCodec, stagesSupplier).fieldOf("stages")
+                        ConstructionInput.stagesCodec(stageCodec, stagesSupplier)
+                                .fieldOf("stages")
                                 .forGetter(constructionInput -> constructionInput.stages),
-                        BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("constructed_entity")
-                                .forGetter(constructionInput -> constructionInput.constructedEntityType),
-                        BuiltInRegistries.SOUND_EVENT.byNameCodec().fieldOf("assemble_sound")
+                        EntityResult.CODEC.fieldOf("constructed_entity")
+                                .forGetter(constructionInput -> constructionInput.constructedEntity),
+                        BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                .fieldOf("assemble_sound")
                                 .forGetter(constructionInput -> constructionInput.assembleSound),
                         BLOCK_STATE_CODEC.fieldOf("assemble_blockstate")
                                 .forGetter(constructionInput -> constructionInput.assembleBlockState))
@@ -112,10 +122,11 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
         }).codec();
     }
 
-    public static <E extends Enum<E> & ConstructionStage<E>> ConstructionInput<E> of(final Map<E, ProgressStage> map,
-            final EntityType<?> constructedEntityType, final SoundEvent assembleSound,
-            final BlockState assembleBlockState) {
-        return map.isEmpty() ? empty() : new ConstructionInput<>(map, constructedEntityType, assembleSound,
+    @Builder
+    public static <E extends Enum<E> & ConstructionStage<E>> ConstructionInput<E> of(
+            final @Singular Map<E, ProgressStage> stages, final EntityResult constructedEntity,
+            final SoundEvent assembleSound, final BlockState assembleBlockState) {
+        return stages.isEmpty() ? empty() : new ConstructionInput<>(stages, constructedEntity, assembleSound,
                 assembleBlockState);
     }
 
@@ -128,7 +139,8 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
             final ResourceKey<? extends Registry<? extends ConstructionInput<E>>> registryKey,
             final HolderLookup.Provider provider,
             final ResourceKey<ConstructionInput<E>> constructionInputResourceKey) {
-        return provider.lookup(registryKey).flatMap(registryLookup -> registryLookup.get(constructionInputResourceKey))
+        return provider.lookup(registryKey)
+                .flatMap(registryLookup -> registryLookup.get(constructionInputResourceKey))
                 .map(Holder::value).orElse(ConstructionInput.empty());
     }
 
@@ -136,7 +148,8 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     private static <E extends Enum<E> & ConstructionStage<E>> ItemStack doInsert(
             final ConstructedEntity<E, ?> constructedEntity, final ItemStack insertStack,
             final @Nullable LivingEntity entity, @SuppressWarnings("SameParameterValue") final int increment) {
-        final var stage = constructedEntity.getConstructionState().stage();
+        final var stage = constructedEntity.getConstructionState()
+                .stage();
         if (entity != null && entity.hasInfiniteMaterials()) {
             constructedEntity.insert(stage, insertStack.copyWithCount(increment));
             return insertStack;
@@ -261,7 +274,8 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
         void setConstructionState(S constructionState);
 
         default boolean isFinished() {
-            final var stage = this.getConstructionState().stage();
+            final var stage = this.getConstructionState()
+                    .stage();
             return stage.compareTo(stage.end()) == 0;
         }
     }
@@ -310,8 +324,8 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
         static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> Codec<S> codec(
                 final ResourceKey<? extends Registry<ConstructionInput<E>>> registryKey, final Codec<E> stageCodec,
                 final E startingStage, final Function3<ResourceKey<ConstructionInput<E>>, E, Integer, S> factory) {
-            return RecordCodecBuilder.create(instance -> instance.group(
-                            ResourceKey.codec(registryKey).fieldOf(CONSTRUCTION_INPUT_KEY)
+            return RecordCodecBuilder.create(instance -> instance.group(ResourceKey.codec(registryKey)
+                                    .fieldOf(CONSTRUCTION_INPUT_KEY)
                                     .forGetter(ConstructionState::constructionInputKey),
                             stageCodec.optionalFieldOf(CURRENT_STAGE_KEY, startingStage).forGetter(ConstructionState::stage),
                             Codec.INT.optionalFieldOf(REMAINING_INPUT_COUNT, 0).forGetter(ConstructionState::remainingInputs))
@@ -364,12 +378,13 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     public record ProgressStage(SizedIngredient ingredient, SoundEvent progressSound, SoundEvent switchSound,
             BlockState switchBlockState) {
 
-        private static final Codec<ProgressStage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        public static final Codec<ProgressStage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         NeoForgeExtraCodecs.withAlternative(SizedIngredient.FLAT_CODEC, SizedIngredient.NESTED_CODEC)
-                                .fieldOf("input").forGetter(ProgressStage::ingredient),
-                        BuiltInRegistries.SOUND_EVENT.byNameCodec().fieldOf("progress_sound")
-                                .forGetter(ProgressStage::progressSound),
-                        BuiltInRegistries.SOUND_EVENT.byNameCodec().fieldOf("switch_sound")
+                                .fieldOf("input")
+                                .forGetter(ProgressStage::ingredient), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                .fieldOf("progress_sound")
+                                .forGetter(ProgressStage::progressSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                .fieldOf("switch_sound")
                                 .forGetter(ProgressStage::switchSound),
                         BLOCK_STATE_CODEC.fieldOf("switch_blockstate").forGetter(ProgressStage::switchBlockState))
                 .apply(instance, ProgressStage::new));

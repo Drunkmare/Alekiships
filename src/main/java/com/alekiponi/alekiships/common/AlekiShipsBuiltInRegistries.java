@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
 import com.alekiponi.alekiships.util.DynamicBoatMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
@@ -26,12 +27,15 @@ public final class AlekiShipsBuiltInRegistries {
             .create();
     public static final Registry<WindModelSerializer<?>> WIND_MODEL_SERIALIZERS = new RegistryBuilder<>(
             AlekiShipsRegistries.WIND_MODEL_SERIALIZERS).sync(true).create();
+    public static final Registry<EntityResultSerializer<?>> ENTITY_RESULT_SERIALIZERS = new RegistryBuilder<>(
+            AlekiShipsRegistries.ENTITY_RESULT_SERIALIZER).sync(true).create();
 
     public static void registerRegistries(final NewRegistryEvent event) {
         event.register(DIRECT_COMPARTMENT_TYPES);
         event.register(COMPARTMENT_TYPE_SERIALIZERS);
         event.register(CHEST_COMPARTMENT_TYPES);
         event.register(WIND_MODEL_SERIALIZERS);
+        event.register(ENTITY_RESULT_SERIALIZERS);
     }
 
     public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {

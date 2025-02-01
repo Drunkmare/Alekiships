@@ -189,15 +189,14 @@ public class SloopUnderConstructionEntity extends AbstractUnderConstructionEntit
         final Direction thisDir = this.getDirection();
         final BlockPos thisPos = this.blockPosition().relative(thisDir, 4).relative(thisDir.getCounterClockWise(), 2);
 
-        final var sloop = constructionInput.constructedEntityType.create(this.level());
-        if (sloop != null) {
-            sloop.setYRot(this.getYRot());
-            sloop.setPos(this.position());
-            this.level().addFreshEntity(sloop);
-            if (player instanceof ServerPlayer serverPlayer) {
+        constructionInput.constructedEntity.createEntity(this.level()).ifPresent(entity -> {
+            entity.setYRot(this.getYRot());
+            entity.setPos(this.position());
+            this.level().addFreshEntity(entity);
+            if (entity instanceof SloopEntity && player instanceof ServerPlayer serverPlayer) {
                 AlekiShipsAdvancements.SLOOP_COMPLETED.trigger(serverPlayer);
             }
-        }
+        });
 
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 7; y++) {

@@ -7,8 +7,9 @@ import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
-import com.alekiponi.alekiships.wind.WindModelSerializer;
+import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
 import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -26,6 +27,8 @@ public class AlekiShipsRegistries {
     public static final ResourceKey<Registry<WindModelSerializer<?>>> WIND_MODEL_SERIALIZERS = createRegistryKey(
             "wind_model_serializers");
     public static final ResourceKey<Registry<DynamicBoatMaterial>> BOAT_MATERIAL = createRegistryKey("boat_material");
+    public static final ResourceKey<Registry<EntityResultSerializer<?>>> ENTITY_RESULT_SERIALIZER = createRegistryKey(
+            "entity_result_serializer");
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(final String name) {
         return ResourceKey.createRegistryKey(AlekiShips.location(name));

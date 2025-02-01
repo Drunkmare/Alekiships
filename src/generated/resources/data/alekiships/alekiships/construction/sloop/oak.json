@@ -1,7 +1,10 @@
 {
   "assemble_blockstate": "minecraft:oak_planks",
   "assemble_sound": "minecraft:block.wood.break",
-  "constructed_entity": "alekiships:sloop/oak",
+  "constructed_entity": {
+    "type": "alekiships:simple",
+    "entity": "alekiships:sloop/oak"
+  },
   "stages": {
     "anchor": {
       "input": {

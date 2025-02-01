@@ -46,7 +46,6 @@ public record SloopConstructionState(ResourceKey<ConstructionInput<SloopConstruc
                 nextStage != nextStage.end() ? constructionInput.getIngredient(nextStage).count() : -1);
     }
 
-
     public enum SloopConstructionStage implements ConstructionInput.ConstructionStage<SloopConstructionStage> {
         KEEL("keel"),
         DECK("deck"),

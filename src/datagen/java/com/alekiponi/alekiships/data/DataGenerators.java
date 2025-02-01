@@ -4,16 +4,14 @@ import weather2.Weather;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+import com.alekiponi.alekiships.common.entity.ConstructionSloopInputs;
 import com.alekiponi.alekiships.common.entity.EntityInput;
-import com.alekiponi.alekiships.common.entity.SloopConstructionState;
-import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.data.providers.*;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
 import com.alekiponi.alekiships.util.BoatMaterials;
-import com.alekiponi.alekiships.util.VanillaWood;
 
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.HolderLookup;
@@ -22,9 +20,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
-import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.OverlayMetadataSection;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
@@ -94,16 +90,7 @@ public final class DataGenerators {
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
                 .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
-                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, DataGenerators::bootstrapSloopConstruction)
+                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrap)
                 .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld);
-    }
-
-    private static void bootstrapSloopConstruction(
-            final BootstrapContext<ConstructionInput<SloopConstructionState.SloopConstructionStage>> context) {
-        for (final VanillaWood wood : VanillaWood.values()) {
-            context.register(ResourceKey.create(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
-                            AlekiShips.location(wood.getSerializedName())),
-                    ConstructionInputGenerators.createConstructionSloop(wood));
-        }
     }
 }
