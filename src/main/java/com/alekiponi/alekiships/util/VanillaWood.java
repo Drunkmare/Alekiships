@@ -3,12 +3,10 @@ package com.alekiponi.alekiships.util;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +14,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * The vanilla wood {@link BoatMaterial} implementation.
@@ -70,16 +67,13 @@ public enum VanillaWood implements BoatMaterial {
     }
 
     @Override
-    public ResourceKey<RowboatVariant> rowboatKey() {
-        return ResourceKey.create(AlekiShipsRegistries.ROWBOAT_VARIANT, AlekiShips.location(this.getSerializedName()));
+    public ResourceKey<ConstructionSloopVariant> sloopConstructionKey() {
+        return ResourceKey.create(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT,
+                AlekiShips.location(this.getSerializedName()));
     }
 
     @Override
-    public Optional<EntityType<? extends AbstractVehicle>> getEntityType(final BoatType boatType) {
-        return switch (boatType) {
-            case ROWBOAT -> Optional.of(AlekiShipsEntities.ROWBOAT.get());
-            case SLOOP -> Optional.of(AlekiShipsEntities.SLOOP.get());
-            case CONSTRUCTION_SLOOP -> Optional.of(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(this).get());
-        };
+    public ResourceKey<RowboatVariant> rowboatKey() {
+        return ResourceKey.create(AlekiShipsRegistries.ROWBOAT_VARIANT, AlekiShips.location(this.getSerializedName()));
     }
 }

@@ -43,10 +43,10 @@ public final class AlekiShipsEntities {
             EntityType.Builder.of(SloopEntity::new, MobCategory.MISC).sized(3F, 0.75F)
                     .setTrackingRange(LARGE_VEHICLE_TRACKING));
 
-    public static final EnumMap<VanillaWood, DeferredHolder<EntityType<?>, EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = CommonHelper.mapOfKeys(
-            VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
-                    (entityType, level) -> new SloopUnderConstructionEntity(entityType, level, vanillaWood),
-                    MobCategory.MISC)));
+    public static final DeferredHolder<EntityType<?>, EntityType<SloopUnderConstructionEntity>> CONSTRUCTION_SLOOP = register(
+            "construction_sloop",
+            EntityType.Builder.of(SloopUnderConstructionEntity::new, MobCategory.MISC).sized(4F, 0.75F)
+                    .setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune());
 
     public static final DeferredHolder<EntityType<?>, EntityType<EmptyCompartmentEntity>> EMPTY_COMPARTMENT_ENTITY = register(
             "compartment_empty",
@@ -162,12 +162,6 @@ public final class AlekiShipsEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<MastEntity>> MAST_ENTITY = register("vehicle_mast",
             EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8.79375f)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
-
-    private static <E extends SloopUnderConstructionEntity> DeferredHolder<EntityType<?>, EntityType<E>> registerSloopConstruction(
-            final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
-        return register("sloop_construction/" + vanillaWood.getSerializedName(),
-                builder.sized(4F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING).fireImmune().noSummon());
-    }
 
     /**
      * Registers a compartment entity

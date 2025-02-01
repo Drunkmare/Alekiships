@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.ConstructionSloopInputs;
 import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariants;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariants;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariants;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
@@ -95,6 +96,7 @@ public final class DataGenerators {
                 .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrapOverworld)
                 .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld)
                 .add(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariants::bootstrapOverworld)
-                .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapOverworld);
+                .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapOverworld)
+                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT, ConstructionSloopVariants::bootstrapOverworld);
     }
 }

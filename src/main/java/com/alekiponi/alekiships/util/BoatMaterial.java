@@ -1,15 +1,12 @@
 package com.alekiponi.alekiships.util;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.Optional;
 
 /**
  * This represents a unique boat material. This may be wood or another material
@@ -38,16 +35,6 @@ public interface BoatMaterial extends StringRepresentable {
     // TODO temporary helper while we migrate away from static boat materials
     ResourceKey<RowboatVariant> rowboatKey();
 
-    /**
-     * @param boatType The entity type that should be returned
-     *
-     * @return An optional entity type for the passed in {@link BoatType}
-     */
-    Optional<EntityType<? extends AbstractVehicle>> getEntityType(final BoatType boatType);
-
-    enum BoatType {
-        ROWBOAT,
-        SLOOP,
-        CONSTRUCTION_SLOOP
-    }
+    // TODO temporary helper while we migrate away from static boat materials
+    ResourceKey<ConstructionSloopVariant> sloopConstructionKey();
 }

@@ -1,14 +1,13 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.mojang.serialization.Codec;
-
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
 import com.alekiponi.alekiships.util.ItemContents;
 
-import net.minecraft.core.HolderLookup;
+import com.mojang.serialization.Codec;
+
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,9 +25,7 @@ import java.util.Arrays;
  */
 public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & ConstructionInput.ConstructionStage<E>, S extends ConstructionInput.ConstructionState<E, S>> extends AbstractVehicle implements IHaveConstructionEntities, ConstructionInput.ConstructedEntity<E, S> {
 
-
     public static final String CONSTRUCTION_CONTENTS_KEY = "ConstructionContents";
-    protected final Lazy<ConstructionInput<E>> constructionInput;
     /**
      * You typically shouldn't directly access this. Instead use {@link #getContentsCount(Enum)}
      */
@@ -41,19 +38,16 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
 
     protected AbstractUnderConstructionEntity(
             final EntityType<? extends AbstractUnderConstructionEntity<E, S>> entityType, final Level level,
-            final ConstructionInputGetter<E> constructionInputGetter, final int constructionContentsCapacity,
-            final Codec<S> stateCodec) {
+            final int constructionContentsCapacity, final Codec<S> stateCodec) {
         super(entityType, level);
         this.stateCodec = stateCodec;
         this.constructionContents = new ItemContents(constructionContentsCapacity);
 
-        this.constructionInput = Lazy.of(() -> constructionInputGetter.get(this.registryAccess(),
-                this.getConstructionState().constructionInputKey()));
         this.requiredItems = Lazy.of(() -> {
             final var constructionState = this.getConstructionState();
             if (this.isFinished()) return new ItemStack[0];
 
-            final var ingredient = this.constructionInput.get().getIngredient(constructionState.stage());
+            final var ingredient = this.getConstructionInput().value().getIngredient(constructionState.stage());
             final int count = constructionState.remainingInputs();
             return Arrays.stream(ingredient.getItems()).map(itemStack -> itemStack.copyWithCount(count))
                     .toArray(ItemStack[]::new);
@@ -72,8 +66,7 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
-        this.stateCodec.parse(NbtOps.INSTANCE,
-                        compoundTag.get(ConstructionInput.ConstructionState.CONSTRUCTION_STATE_KEY)).result()
+        this.stateCodec.parse(NbtOps.INSTANCE, compoundTag.get("construction_state")).result()
                 .ifPresent(this::setConstructionState);
         this.constructionContents.deserializeNBT(this.registryAccess(),
                 compoundTag.getCompound(CONSTRUCTION_CONTENTS_KEY));
@@ -82,7 +75,7 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         this.stateCodec.encodeStart(NbtOps.INSTANCE, this.getConstructionState())
-                .ifSuccess(tag -> compoundTag.put(ConstructionInput.ConstructionState.CONSTRUCTION_INPUT_KEY, tag));
+                .ifSuccess(tag -> compoundTag.put("construction_state", tag));
         compoundTag.put(CONSTRUCTION_CONTENTS_KEY, this.constructionContents.serializeNBT(this.registryAccess()));
     }
 
@@ -91,7 +84,7 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
 
         final var previousStage = this.getConstructionState().stage();
 
-        final var constructionInput = this.constructionInput.get();
+        final var constructionInput = this.getConstructionInput().value();
         final var insertionResult = constructionInput.tryInsert(this, heldItem, player);
         if (!insertionResult.getResult().consumesAction()) return InteractionResult.PASS;
 
@@ -152,8 +145,5 @@ public abstract class AbstractUnderConstructionEntity<E extends Enum<E> & Constr
         return this.constructionContents.getCount(stage.ordinal());
     }
 
-    @FunctionalInterface
-    protected interface ConstructionInputGetter<E extends Enum<E> & ConstructionInput.ConstructionStage<E>> {
-        ConstructionInput<E> get(HolderLookup.Provider provider, ResourceKey<ConstructionInput<E>> resourceKey);
-    }
+    public abstract Holder<ConstructionInput<E>> getConstructionInput();
 }

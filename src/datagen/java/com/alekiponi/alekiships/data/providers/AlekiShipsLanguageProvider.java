@@ -7,6 +7,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
@@ -21,7 +22,6 @@ import com.alekiponi.alekiships.util.Wood;
 
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -54,6 +54,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
                     final var id = AlekiShips.location(wood.getSerializedName());
                     final var name = DataGenHelper.langify(wood.getSerializedName());
                     this.add(DynamicBoatMaterial.getDescriptionId(id), name);
+                    this.add(ConstructionSloopVariant.getDescriptionId(id), name);
                 });
 
         this.addTranslationsForJade();
@@ -92,11 +93,9 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     private void addTranslationsForEntities() {
         // Vehicles
-        AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.forEach(
-                (wood, registryObject) -> this.addEntityType(registryObject,
-                        String.format(Locale.ROOT, "%s Sloop", DataGenHelper.langify(wood.getSerializedName()))));
         this.addEntityType(AlekiShipsEntities.ROWBOAT, "%s Rowboat");
         this.addEntityType(AlekiShipsEntities.SLOOP, "%s Sloop");
+        this.addEntityType(AlekiShipsEntities.CONSTRUCTION_SLOOP, "%s Construction Sloop");
 
         // Misc
         this.addEntityType(AlekiShipsEntities.VEHICLE_PART, "Vehicle Part");

@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
@@ -51,5 +52,7 @@ public final class AlekiShipsBuiltInRegistries {
                 RowboatVariant.DIRECT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariant.DIRECT_CODEC,
                 SloopVariant.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT, ConstructionSloopVariant.DIRECT_CODEC,
+                ConstructionSloopVariant.DIRECT_CODEC);
     }
 }

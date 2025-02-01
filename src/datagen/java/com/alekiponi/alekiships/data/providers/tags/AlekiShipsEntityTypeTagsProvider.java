@@ -10,13 +10,12 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
 
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
@@ -56,8 +55,6 @@ public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
                         ResourceLocation.fromNamespaceAndPath("carryon", "entity_blacklist")))
                 .add(AlekiShipsEntities.CANNONBALL_ENTITY.get()).add(AlekiShipsEntities.ROWBOAT.get())
                 .add(AlekiShipsEntities.SLOOP.get()).addTag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
-                .addTag(AlekiShipsTags.Entities.COMPARTMENTS)
-                .add(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.values().stream().map(Supplier::get)
-                        .toArray(EntityType[]::new));
+                .addTag(AlekiShipsTags.Entities.COMPARTMENTS).add(AlekiShipsEntities.CONSTRUCTION_SLOOP.get());
     }
 }

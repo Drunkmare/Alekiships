@@ -1,9 +1,13 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.mojang.serialization.MapCodec;
+import java.util.stream.Stream;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.util.BoatMaterial;
+
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,8 +20,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.stream.Stream;
 
 public class CleatBlock extends AbstractHullSideBlock {
 
@@ -160,26 +162,23 @@ public class CleatBlock extends AbstractHullSideBlock {
             }
 
 
-            {
-                // TODO also try to initialize the position in a final context to avoid the silly copy
-                //  (lambda is unhappy when it's mutable)
-                final Vec3 finalSpawnPosition = spawnPosition;
-                boatFrameBlock.getBoatMaterial().getEntityType(BoatMaterial.BoatType.CONSTRUCTION_SLOOP)
-                        .ifPresent(entityType -> {
-                            final AbstractVehicle sloop = entityType.create(level);
-                            if (sloop != null) {
-                                sloop.setPos(finalSpawnPosition);
-                                if (structureDirection == Direction.NORTH) {
-                                    sloop.setYRot(180F);
-                                } else if (structureDirection == Direction.EAST) {
-                                    sloop.setYRot(-90F);
-                                } else if (structureDirection == Direction.WEST) {
-                                    sloop.setYRot(90F);
-                                }
-                                level.addFreshEntity(sloop);
-                            }
-                        });
+            // TODO remove me when entity multliblock comes around
+            final var sloopUnderConstructionEntity = new SloopUnderConstructionEntity(
+                    AlekiShipsEntities.CONSTRUCTION_SLOOP.get(), level);
+            final var registryAccess = level.registryAccess().registry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT)
+                    .orElseThrow();
+            sloopUnderConstructionEntity.setConstructionVariant(
+                    registryAccess.getHolder(boatMaterial.sloopConstructionKey()).orElseThrow());
+
+            sloopUnderConstructionEntity.setPos(spawnPosition);
+            if (structureDirection == Direction.NORTH) {
+                sloopUnderConstructionEntity.setYRot(180F);
+            } else if (structureDirection == Direction.EAST) {
+                sloopUnderConstructionEntity.setYRot(-90F);
+            } else if (structureDirection == Direction.WEST) {
+                sloopUnderConstructionEntity.setYRot(90F);
             }
+            level.addFreshEntity(sloopUnderConstructionEntity);
         }
 
 

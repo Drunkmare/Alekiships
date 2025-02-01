@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.util.ItemStackProvider;
@@ -47,7 +48,11 @@ public final class AlekiShipsEntityDataSerializers {
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Holder<RowboatVariant>>> ROWBOAT_VARIANT = register(
             "rowboat_variant", () -> EntityDataSerializer.forValueType(RowboatVariant.STREAM_CODEC));
 
-    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Holder<ConstructionSloopVariant>>> SLOOP_CONSTRUCTION_VARIANT = register(
+            "sloop_construction_variant",
+            () -> EntityDataSerializer.forValueType(ConstructionSloopVariant.STREAM_CODEC));
+
+    public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
             "optional_dye_color",
             () -> EntityDataSerializer.forValueType(ByteBufCodecs.optional(DyeColor.STREAM_CODEC)));
 

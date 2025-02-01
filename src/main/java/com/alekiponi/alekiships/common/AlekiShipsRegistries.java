@@ -7,6 +7,7 @@ import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
@@ -34,6 +35,8 @@ public class AlekiShipsRegistries {
     public static final ResourceKey<Registry<RowboatVariant>> ROWBOAT_VARIANT = createRegistryKey(
             "boat_variant/rowboat");
     public static final ResourceKey<Registry<SloopVariant>> SLOOP_VARIANT = createRegistryKey("boat_variant/sloop");
+    public static final ResourceKey<Registry<ConstructionSloopVariant>> CONSTRUCTION_SLOOP_VARIANT = createRegistryKey(
+            "construction_variant/sloop");
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(final String name) {
         return ResourceKey.createRegistryKey(AlekiShips.location(name));

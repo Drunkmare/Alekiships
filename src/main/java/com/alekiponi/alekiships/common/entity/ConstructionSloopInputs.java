@@ -5,11 +5,12 @@ import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState.SloopConstructionStage;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput.ProgressStage;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopVariants;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.common.recipe.entity.SimpleResult;
-import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.VanillaWood;
+import com.alekiponi.alekiships.common.recipe.entity.SloopResult;
 
+import net.minecraft.core.Holder;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
@@ -70,47 +71,59 @@ public final class ConstructionSloopInputs {
     }
 
     public static void bootstrapOverworld(final BootstrapContext<ConstructionInput<SloopConstructionStage>> context) {
+        final var sloopVariantLookup = context.lookup(AlekiShipsRegistries.SLOOP_VARIANT);
         context.register(OAK,
                 constructionSloopInput(Blocks.OAK_PLANKS.defaultBlockState(), Items.STRIPPED_OAK_LOG, Items.OAK_PLANKS,
-                        Items.WHITE_WOOL, Items.OAK_FENCE, VanillaWood.OAK).build());
+                        Items.WHITE_WOOL, Items.OAK_FENCE, sloopVariantLookup.getOrThrow(SloopVariants.OAK)).build());
         context.register(SPRUCE,
                 constructionSloopInput(Blocks.SPRUCE_PLANKS.defaultBlockState(), Items.STRIPPED_SPRUCE_LOG,
-                        Items.SPRUCE_PLANKS, Items.WHITE_WOOL, Items.SPRUCE_FENCE, VanillaWood.SPRUCE).build());
+                        Items.SPRUCE_PLANKS, Items.WHITE_WOOL, Items.SPRUCE_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.SPRUCE)).build());
         context.register(BIRCH,
                 constructionSloopInput(Blocks.BIRCH_PLANKS.defaultBlockState(), Items.STRIPPED_BIRCH_LOG,
-                        Items.BIRCH_PLANKS, Items.WHITE_WOOL, Items.BIRCH_FENCE, VanillaWood.BIRCH).build());
+                        Items.BIRCH_PLANKS, Items.WHITE_WOOL, Items.BIRCH_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.BIRCH)).build());
         context.register(ACACIA,
                 constructionSloopInput(Blocks.ACACIA_PLANKS.defaultBlockState(), Items.STRIPPED_ACACIA_LOG,
-                        Items.ACACIA_PLANKS, Items.WHITE_WOOL, Items.ACACIA_FENCE, VanillaWood.ACACIA).build());
+                        Items.ACACIA_PLANKS, Items.WHITE_WOOL, Items.ACACIA_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.ACACIA)).build());
         context.register(CHERRY,
                 constructionSloopInput(Blocks.CHERRY_PLANKS.defaultBlockState(), Items.STRIPPED_CHERRY_LOG,
-                        Items.CHERRY_PLANKS, Items.WHITE_WOOL, Items.CHERRY_FENCE, VanillaWood.CHERRY).build());
+                        Items.CHERRY_PLANKS, Items.WHITE_WOOL, Items.CHERRY_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.CHERRY)).build());
         context.register(JUNGLE,
                 constructionSloopInput(Blocks.JUNGLE_PLANKS.defaultBlockState(), Items.STRIPPED_JUNGLE_LOG,
-                        Items.JUNGLE_PLANKS, Items.WHITE_WOOL, Items.JUNGLE_FENCE, VanillaWood.JUNGLE).build());
+                        Items.JUNGLE_PLANKS, Items.WHITE_WOOL, Items.JUNGLE_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.JUNGLE)).build());
         context.register(DARK_OAK,
                 constructionSloopInput(Blocks.DARK_OAK_PLANKS.defaultBlockState(), Items.STRIPPED_DARK_OAK_LOG,
-                        Items.DARK_OAK_PLANKS, Items.WHITE_WOOL, Items.DARK_OAK_FENCE, VanillaWood.DARK_OAK).build());
+                        Items.DARK_OAK_PLANKS, Items.WHITE_WOOL, Items.DARK_OAK_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.DARK_OAK)).build());
         context.register(MANGROVE,
                 constructionSloopInput(Blocks.MANGROVE_PLANKS.defaultBlockState(), Items.STRIPPED_MANGROVE_LOG,
-                        Items.MANGROVE_PLANKS, Items.WHITE_WOOL, Items.MANGROVE_FENCE, VanillaWood.MANGROVE).build());
+                        Items.MANGROVE_PLANKS, Items.WHITE_WOOL, Items.MANGROVE_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.MANGROVE)).build());
         context.register(BAMBOO,
                 constructionSloopInput(Blocks.BAMBOO_PLANKS.defaultBlockState(), Items.STRIPPED_BAMBOO_BLOCK,
-                        Items.BAMBOO_PLANKS, Items.WHITE_WOOL, Items.BAMBOO_FENCE, VanillaWood.BAMBOO).build());
+                        Items.BAMBOO_PLANKS, Items.WHITE_WOOL, Items.BAMBOO_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.BAMBOO)).build());
     }
 
     public static void bootstrapNether(final BootstrapContext<ConstructionInput<SloopConstructionStage>> context) {
+        final var sloopVariantLookup = context.lookup(AlekiShipsRegistries.SLOOP_VARIANT);
         context.register(CRIMSON,
                 constructionSloopInput(Blocks.CRIMSON_PLANKS.defaultBlockState(), Items.STRIPPED_CRIMSON_STEM,
-                        Items.CRIMSON_PLANKS, Items.WHITE_WOOL, Items.CRIMSON_FENCE, VanillaWood.CRIMSON).build());
+                        Items.CRIMSON_PLANKS, Items.WHITE_WOOL, Items.CRIMSON_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.CRIMSON)).build());
         context.register(WARPED,
                 constructionSloopInput(Blocks.WARPED_PLANKS.defaultBlockState(), Items.STRIPPED_WARPED_STEM,
-                        Items.WARPED_PLANKS, Items.WHITE_WOOL, Items.WARPED_FENCE, VanillaWood.WARPED).build());
+                        Items.WARPED_PLANKS, Items.WHITE_WOOL, Items.WARPED_FENCE,
+                        sloopVariantLookup.getOrThrow(SloopVariants.WARPED)).build());
     }
 
     public static ConstructionInput.ConstructionInputBuilder<SloopConstructionStage> constructionSloopInput(
             final BlockState deckBlock, final Item strippedLogItem, final Item deckItem, final Item sailItem,
-            final Item railingItem, final BoatMaterial boatMaterial) {
+            final Item railingItem, final Holder<SloopVariant> sloopVariant) {
 
         @SuppressWarnings("deprecation") final var deckBlockSoundType = deckBlock.getSoundType();
         final SoundEvent stateProgressedSound = deckBlockSoundType.getPlaceSound();
@@ -148,7 +161,7 @@ public final class ConstructionSloopInputs {
                  .stage(RIGGING,
                         new ProgressStage(SizedIngredient.of(Items.LEAD, RIGGING_CABLES), SoundEvents.LEASH_KNOT_PLACE,
                                 switchStateSound, deckBlock))
-                .constructedEntity(new SimpleResult(boatMaterial.getEntityType(BoatMaterial.BoatType.SLOOP).get()))
+                .constructedEntity(new SloopResult(sloopVariant))
                 .assembleSound(SoundEvents.WOOD_BREAK)
                 .assembleBlockState(deckBlock);
     }

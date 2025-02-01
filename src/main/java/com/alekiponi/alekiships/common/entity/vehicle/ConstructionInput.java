@@ -1,23 +1,21 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResult;
 import com.alekiponi.alekiships.common.recipe.entity.SimpleResult;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
@@ -27,7 +25,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -39,6 +36,7 @@ import javax.annotation.Nullable;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -60,10 +58,6 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static final ConstructionInput<?> EMPTY = new ConstructionInput(Map.of(), new SimpleResult(EntityType.PIG),
             SoundEvents.EMPTY, Blocks.STONE.defaultBlockState());
-
-    private static final Codec<BlockState> BLOCK_STATE_CODEC = NeoForgeExtraCodecs.withAlternative(
-            BuiltInRegistries.BLOCK.byNameCodec()
-                    .xmap(Block::defaultBlockState, BlockBehaviour.BlockStateBase::getBlock), BlockState.CODEC);
 
     public final SoundEvent assembleSound;
     public final BlockState assembleBlockState;
@@ -96,9 +90,20 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
                         BuiltInRegistries.SOUND_EVENT.byNameCodec()
                                 .fieldOf("assemble_sound")
                                 .forGetter(constructionInput -> constructionInput.assembleSound),
-                        BLOCK_STATE_CODEC.fieldOf("assemble_blockstate")
+                        AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.fieldOf("assemble_blockstate")
                                 .forGetter(constructionInput -> constructionInput.assembleBlockState))
                 .apply(instance, ConstructionInput::of));
+    }
+
+    public static <E extends Enum<E> & ConstructionStage<E>> StreamCodec<RegistryFriendlyByteBuf, ConstructionInput<E>> streamCodec(
+            final Class<E> enumClass) {
+        return StreamCodec.composite(
+                ByteBufCodecs.map(Object2ObjectOpenHashMap::new, NeoForgeStreamCodecs.enumCodec(enumClass),
+                        ProgressStage.STREAM_CODEC), constructionInput -> constructionInput.stages,
+                EntityResult.STREAM_CODEC, constructionInput -> constructionInput.constructedEntity,
+                ByteBufCodecs.registry(Registries.SOUND_EVENT), constructionInput -> constructionInput.assembleSound,
+                ByteBufCodecs.idMapper(Block::stateById, Block::getId),
+                constructionInput -> constructionInput.assembleBlockState, ConstructionInput::of);
     }
 
     private static <E extends Enum<E> & ConstructionStage<E>> Codec<Map<E, ProgressStage>> stagesCodec(
@@ -124,7 +129,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
 
     @Builder
     public static <E extends Enum<E> & ConstructionStage<E>> ConstructionInput<E> of(
-            final @Singular Map<E, ProgressStage> stages, final EntityResult constructedEntity,
+            @Singular final Map<E, ProgressStage> stages, final EntityResult constructedEntity,
             final SoundEvent assembleSound, final BlockState assembleBlockState) {
         return stages.isEmpty() ? empty() : new ConstructionInput<>(stages, constructedEntity, assembleSound,
                 assembleBlockState);
@@ -133,15 +138,6 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     @SuppressWarnings("unchecked")
     public static <E extends Enum<E> & ConstructionStage<E>> ConstructionInput<E> empty() {
         return ((ConstructionInput<E>) EMPTY);
-    }
-
-    public static <E extends Enum<E> & ConstructionStage<E>> ConstructionInput<E> getConstructionInput(
-            final ResourceKey<? extends Registry<? extends ConstructionInput<E>>> registryKey,
-            final HolderLookup.Provider provider,
-            final ResourceKey<ConstructionInput<E>> constructionInputResourceKey) {
-        return provider.lookup(registryKey)
-                .flatMap(registryLookup -> registryLookup.get(constructionInputResourceKey))
-                .map(Holder::value).orElse(ConstructionInput.empty());
     }
 
     @CheckReturnValue
@@ -285,62 +281,40 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
      * @param <S> The self type
      *
      * @apiNote This should typically be implemented on a record similar to {@link SloopConstructionState}.
-     * @see ConstructionState#streamCodec(ResourceKey, Class, Function3)
-     * @see ConstructionState#codec(ResourceKey, Codec, Enum, Function3)
+     * @see ConstructionState#streamCodec(Class, BiFunction)
+     * @see ConstructionState#codec(Codec, Enum, BiFunction)
      */
     public interface ConstructionState<E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> {
-        String CONSTRUCTION_INPUT_KEY = "ConstructionInputKey";
-        String CURRENT_STAGE_KEY = "CurrentStage";
-        String REMAINING_INPUT_COUNT = "RemainingInputCount";
-        String CONSTRUCTION_STATE_KEY = "ConstructionState";
-
-        /**
-         * Helper for creating a {@link StreamCodec}
-         *
-         * @param registryKey The registry key
-         * @param clazz       The enum class
-         * @param factory     The factory for the {@link ConstructionState} object
-         *
-         * @see ConstructionState#codec(ResourceKey, Codec, Enum, Function3)
-         */
-        static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> StreamCodec<FriendlyByteBuf, S> streamCodec(
-                final ResourceKey<? extends Registry<ConstructionInput<E>>> registryKey, final Class<E> clazz,
-                final Function3<ResourceKey<ConstructionInput<E>>, E, Integer, S> factory) {
-            return StreamCodec.composite(ResourceKey.streamCodec(registryKey), ConstructionState::constructionInputKey,
-                    NeoForgeStreamCodecs.enumCodec(clazz), ConstructionState::stage, ByteBufCodecs.VAR_INT,
-                    ConstructionState::remainingInputs, factory);
-        }
 
         /**
          * Helper for creating a {@link Codec}
          *
-         * @param registryKey   The registry key
          * @param stageCodec    A codec for the construction stage
          * @param startingStage The starting construction stage
          * @param factory       A factory for the {@link ConstructionState} object
          *
-         * @see ConstructionState#streamCodec(ResourceKey, Class, Function3)
+         * @see #streamCodec(Class, BiFunction)
          */
         static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> Codec<S> codec(
-                final ResourceKey<? extends Registry<ConstructionInput<E>>> registryKey, final Codec<E> stageCodec,
-                final E startingStage, final Function3<ResourceKey<ConstructionInput<E>>, E, Integer, S> factory) {
-            return RecordCodecBuilder.create(instance -> instance.group(ResourceKey.codec(registryKey)
-                                    .fieldOf(CONSTRUCTION_INPUT_KEY)
-                                    .forGetter(ConstructionState::constructionInputKey),
-                            stageCodec.optionalFieldOf(CURRENT_STAGE_KEY, startingStage).forGetter(ConstructionState::stage),
-                            Codec.INT.optionalFieldOf(REMAINING_INPUT_COUNT, 0).forGetter(ConstructionState::remainingInputs))
+                final Codec<E> stageCodec, final E startingStage, final BiFunction<E, Integer, S> factory) {
+            return RecordCodecBuilder.create(instance -> instance.group(
+                            stageCodec.optionalFieldOf("current_stage", startingStage).forGetter(ConstructionState::stage),
+                            Codec.INT.optionalFieldOf("remaining_input_count", 0).forGetter(ConstructionState::remainingInputs))
                     .apply(instance, factory));
         }
 
-        static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> S getInitialState(
-                final Function3<ResourceKey<ConstructionInput<E>>, E, Integer, S> factory, final E startingStage,
-                final ResourceKey<Registry<ConstructionInput<E>>> key, final HolderLookup.Provider provider,
-                final ResourceLocation location) {
-            final var constructionInputKey = ResourceKey.create(key, location);
-            final var constructionInput = ConstructionInput.getConstructionInput(key, provider, constructionInputKey);
-            final var count = constructionInput.getIngredient(startingStage).count();
-
-            return factory.apply(constructionInputKey, startingStage, count);
+        /**
+         * Helper for creating a {@link StreamCodec}
+         *
+         * @param clazz   The enum class
+         * @param factory The factory for the {@link ConstructionState} object
+         *
+         * @see ConstructionState#codec(Codec, Enum, BiFunction)
+         */
+        static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> StreamCodec<FriendlyByteBuf, S> streamCodec(
+                final Class<E> clazz, final BiFunction<E, Integer, S> factory) {
+            return StreamCodec.composite(NeoForgeStreamCodecs.enumCodec(clazz), ConstructionState::stage,
+                    ByteBufCodecs.VAR_INT, ConstructionState::remainingInputs, factory);
         }
 
         /**
@@ -352,11 +326,6 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
          * @param constructionInput The current construction input
          */
         S nextStateOf(final ConstructionInput<E> constructionInput);
-
-        /**
-         * @return The current construction input key
-         */
-        ResourceKey<ConstructionInput<E>> constructionInputKey();
 
         /**
          * @return The current stage
@@ -379,14 +348,20 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
             BlockState switchBlockState) {
 
         public static final Codec<ProgressStage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        NeoForgeExtraCodecs.withAlternative(SizedIngredient.FLAT_CODEC, SizedIngredient.NESTED_CODEC)
-                                .fieldOf("input")
-                                .forGetter(ProgressStage::ingredient), BuiltInRegistries.SOUND_EVENT.byNameCodec()
-                                .fieldOf("progress_sound")
-                                .forGetter(ProgressStage::progressSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
-                                .fieldOf("switch_sound")
-                                .forGetter(ProgressStage::switchSound),
-                        BLOCK_STATE_CODEC.fieldOf("switch_blockstate").forGetter(ProgressStage::switchBlockState))
-                .apply(instance, ProgressStage::new));
+                NeoForgeExtraCodecs.withAlternative(SizedIngredient.FLAT_CODEC, SizedIngredient.NESTED_CODEC)
+                        .fieldOf("input")
+                        .forGetter(ProgressStage::ingredient), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                        .fieldOf("progress_sound")
+                        .forGetter(ProgressStage::progressSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                        .fieldOf("switch_sound")
+                        .forGetter(ProgressStage::switchSound),
+                AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.fieldOf("switch_blockstate")
+                        .forGetter(ProgressStage::switchBlockState)).apply(instance, ProgressStage::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ProgressStage> STREAM_CODEC = StreamCodec.composite(
+                SizedIngredient.STREAM_CODEC, ProgressStage::ingredient, ByteBufCodecs.registry(Registries.SOUND_EVENT),
+                ProgressStage::progressSound, ByteBufCodecs.registry(Registries.SOUND_EVENT),
+                ProgressStage::switchSound, ByteBufCodecs.idMapper(Block::stateById, Block::getId),
+                ProgressStage::switchBlockState, ProgressStage::new);
     }
 }
