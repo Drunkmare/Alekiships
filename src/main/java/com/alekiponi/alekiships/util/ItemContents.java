@@ -34,7 +34,9 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
      */
     public ItemContents(final @Range(from = 0, to = Integer.MAX_VALUE) int bucketCount) {
         this.contents = NonNullList.createWithCapacity(bucketCount);
-        this.contents.replaceAll(ignored -> new ItemStackBucket());
+        for (int i = 0; i < bucketCount; i++) {
+            this.contents.add(new ItemStackBucket());
+        }
     }
 
     /**
@@ -111,7 +113,9 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
 
     protected void setSize(final int size) {
         this.contents = NonNullList.createWithCapacity(size);
-        this.contents.replaceAll(ignored -> new ItemStackBucket());
+        for (int i = 0; i < size; i++) {
+            this.contents.add(new ItemStackBucket());
+        }
     }
 
     private void validateBucketIndex(final int bucketIndex) {
@@ -138,16 +142,13 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
                         insertStack.getMaxStackSize() - existingStack.getCount());
 
                 existingStack.grow(newCount);
+                this.totalItems += newCount;
                 return insertStack.copyWithCount(insertStack.getCount() - newCount);
             }
 
-            this.add(insertStack.copy());
+            this.stacks.add(insertStack.copy());
+            this.totalItems += insertStack.getCount();
             return ItemStack.EMPTY;
-        }
-
-        private void add(final ItemStack itemStack) {
-            this.stacks.add(itemStack);
-            this.totalItems += itemStack.getCount();
         }
 
         @Override
