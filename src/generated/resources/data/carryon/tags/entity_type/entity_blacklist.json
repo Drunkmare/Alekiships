@@ -1,8 +1,8 @@
 {
   "values": [
     "alekiships:cannonball",
-    "#alekiships:sloops",
-    "#alekiships:rowboats",
+    "alekiships:rowboat",
+    "alekiships:sloop",
     "#alekiships:vehicle_helpers",
     "#alekiships:compartments",
     "alekiships:sloop_construction/oak",

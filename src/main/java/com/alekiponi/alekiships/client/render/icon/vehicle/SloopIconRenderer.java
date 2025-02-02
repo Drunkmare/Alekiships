@@ -31,7 +31,7 @@ public class SloopIconRenderer extends SingleIconRenderer<SloopEntity> {
             return Icon.DefaultIcons.BRUSH;
         }
 
-        if (heldStack.is(entity.getBoatMaterial().repairMaterials()) && entity.getDamage() > 0) {
+        if (entity.getRepairMaterials().isValidForRepair(entity, heldStack)) {
             return Icon.DefaultIcons.HAMMER;
         }
 

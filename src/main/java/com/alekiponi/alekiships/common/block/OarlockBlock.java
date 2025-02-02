@@ -2,7 +2,9 @@ package com.alekiponi.alekiships.common.block;
 
 import com.mojang.serialization.MapCodec;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.util.BoatMaterial;
 
 import net.minecraft.core.BlockPos;
@@ -30,18 +32,19 @@ public class OarlockBlock extends AbstractHullSideBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final MapCodec<OarlockBlock> CODEC = simpleCodec(OarlockBlock::new);
-    private static final VoxelShape SHAPE_NORTH = Stream.of(
-                    Block.box(3, 0, 0, 13, 3, 3))
-            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-    private static final VoxelShape SHAPE_SOUTH = Stream.of(
-                    Block.box(3, 0, 13, 13, 3, 16))
-            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-    private static final VoxelShape SHAPE_WEST = Stream.of(
-                    Block.box(0, 0, 3, 3, 3, 13))
-            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-    private static final VoxelShape SHAPE_EAST = Stream.of(
-                    Block.box(13, 0, 3, 16, 3, 13))
-            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+    private static final VoxelShape SHAPE_NORTH = Stream.of(Block.box(3, 0, 0, 13, 3, 3))
+            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR))
+            .get();
+    private static final VoxelShape SHAPE_SOUTH = Stream.of(Block.box(3, 0, 13, 13, 3, 16))
+            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR))
+            .get();
+    private static final VoxelShape SHAPE_WEST = Stream.of(Block.box(0, 0, 3, 3, 3, 13))
+            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR))
+            .get();
+    private static final VoxelShape SHAPE_EAST = Stream.of(Block.box(13, 0, 3, 16, 3, 13))
+            .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR))
+            .get();
+
     protected OarlockBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(
@@ -86,22 +89,24 @@ public class OarlockBlock extends AbstractHullSideBlock {
             Direction direction = blockState.getValue(FACING);
             Direction.Axis axis = direction.getClockWise().getAxis();
             if (frameState.getBlock() instanceof AngledBoatFrameBlock && frameState.getBlock() instanceof ProcessedBoatFrame boatFrameBlock) {
-                boatFrameBlock.getBoatMaterial().getEntityType(BoatMaterial.BoatType.ROWBOAT).ifPresent(entityType -> {
-                    final AbstractVehicle rowboat = entityType.create(level);
-                    if (rowboat != null) {
-                        rowboat.setPos(getSpawnPosition(level, thispos, blockState));
-                        if (axis == Direction.Axis.X) {
-                            rowboat.setYRot(90F);
-                        }
-                        level.addFreshEntity(rowboat);
+                // TODO remove me when entity multliblock comes around
+                final var rowboatEntity = new RowboatEntity(AlekiShipsEntities.ROWBOAT.get(), level);
+                final var registryAccess = level.registryAccess()
+                        .registry(AlekiShipsRegistries.ROWBOAT_VARIANT)
+                        .orElseThrow();
+                rowboatEntity.setVariant(
+                        registryAccess.getHolder(boatFrameBlock.getBoatMaterial().rowboatKey()).orElseThrow());
 
-                        for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class,
-                                rowboat.getBoundingBox().inflate(5.0D))) {
-                            ROWBOAT_COMPLETED.trigger(serverplayer);
-                        }
+                rowboatEntity.setPos(getSpawnPosition(level, thispos, blockState));
+                if (axis == Direction.Axis.X) {
+                    rowboatEntity.setYRot(90F);
+                }
+                level.addFreshEntity(rowboatEntity);
 
-                    }
-                });
+                for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class,
+                        rowboatEntity.getBoundingBox().inflate(5.0D))) {
+                    ROWBOAT_COMPLETED.trigger(serverplayer);
+                }
             }
         }
     }

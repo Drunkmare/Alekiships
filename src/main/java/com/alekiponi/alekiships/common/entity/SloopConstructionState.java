@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.mojang.serialization.Codec;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
 
@@ -24,8 +23,8 @@ public record SloopConstructionState(ResourceKey<ConstructionInput<SloopConstruc
     public static final StreamCodec<FriendlyByteBuf, SloopConstructionState> STREAM_CODEC = ConstructionInput.ConstructionState.streamCodec(
             AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, SloopConstructionStage.class, SloopConstructionState::new);
 
-    public static final SloopConstructionState DEFAULT = new SloopConstructionState(
-            ResourceKey.create(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, AlekiShips.location("oak")), SloopConstructionStage.KEEL, 0);
+    public static final SloopConstructionState DEFAULT = new SloopConstructionState(ConstructionSloopInputs.OAK,
+            SloopConstructionStage.KEEL, 0);
 
     public static SloopConstructionState getInitialState(final HolderLookup.Provider provider,
             final ResourceLocation location) {
@@ -77,7 +76,8 @@ public record SloopConstructionState(ResourceKey<ConstructionInput<SloopConstruc
         public static ConstructionInput<SloopConstructionStage> getConstructionInput(
                 final HolderLookup.Provider provider,
                 final ResourceKey<ConstructionInput<SloopConstructionStage>> resourceKey) {
-            return ConstructionInput.getConstructionInput(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, provider, resourceKey);
+            return ConstructionInput.getConstructionInput(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, provider,
+                    resourceKey);
         }
 
         @Override

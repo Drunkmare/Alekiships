@@ -18,6 +18,12 @@ public class AlekiShipsEntityResultSerializers {
     public static final DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<SimpleResult>> SIMPLE = register(
             "simple", SimpleResult.CODEC, SimpleResult.STREAM_CODEC);
 
+    public static final DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<RowboatResult>> ROWBOAT = register(
+            "rowboat", RowboatResult.CODEC, RowboatResult.STREAM_CODEC);
+
+    public static final DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<SloopResult>> SLOOP = register(
+            "sloop", SloopResult.CODEC, SloopResult.STREAM_CODEC);
+
     private static <R extends EntityResult> DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<R>> register(
             final String name, final MapCodec<R> codec,
             final StreamCodec<? super RegistryFriendlyByteBuf, R> streamCodec) {

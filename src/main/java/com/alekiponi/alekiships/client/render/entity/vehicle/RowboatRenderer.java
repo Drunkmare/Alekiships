@@ -8,7 +8,6 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
 import com.alekiponi.alekiships.client.render.AlekiShipsRenderTypes;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.client.renderer.LightTexture;
@@ -24,7 +23,6 @@ import net.minecraft.world.item.DyeColor;
 
 import java.text.MessageFormat;
 import java.util.EnumMap;
-import java.util.function.Function;
 
 public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
@@ -36,22 +34,11 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
                     dyeColor.getSerializedName())));
 
     protected final RowboatEntityModel rowboatModel;
-    protected final ResourceLocation rowboatTexture;
 
-    /**
-     * @param rowboatTexture The texture location
-     */
-    public RowboatRenderer(final EntityRendererProvider.Context context, final ResourceLocation rowboatTexture) {
+    public RowboatRenderer(final EntityRendererProvider.Context context) {
         super(context);
         this.rowboatModel = new RowboatEntityModel(context.bakeLayer(RowboatEntityModel.LAYER_LOCATION));
         this.shadowRadius = 1;
-        this.rowboatTexture = rowboatTexture;
-    }
-
-    public static EntityRendererProvider<RowboatEntity> provider(final Function<String, ResourceLocation> modLocation,
-            final BoatMaterial boatMaterial) {
-        return context -> new RowboatRenderer(context,
-                modLocation.apply("textures/entity/watercraft/rowboat/" + boatMaterial.getSerializedName() + ".png"));
     }
 
     @Override
@@ -129,6 +116,6 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(final RowboatEntity rowboatEntity) {
-        return this.rowboatTexture;
+        return rowboatEntity.getTexture();
     }
 }

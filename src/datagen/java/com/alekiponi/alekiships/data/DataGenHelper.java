@@ -59,8 +59,8 @@ public final class DataGenHelper {
 
     public static <F extends FunctionUserBuilder<? extends F>> F setCountBetween(final F functionBuilder,
             final float min, final float max) {
-        functionBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)));
-        return functionBuilder;
+        //noinspection unchecked
+        return functionBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)));
     }
 
     public static <F extends FunctionUserBuilder<? extends F>> F setCountBetween(final F functionBuilder,

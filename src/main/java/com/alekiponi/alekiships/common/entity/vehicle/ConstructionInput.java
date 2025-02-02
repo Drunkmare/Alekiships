@@ -34,12 +34,12 @@ import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.CheckReturnValue;
-import org.jetbrains.annotations.Nullable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;

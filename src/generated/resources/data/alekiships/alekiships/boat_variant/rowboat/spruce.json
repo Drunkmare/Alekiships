@@ -1,0 +1,14 @@
+{
+  "loot_table": "alekiships:entities/rowboat/spruce",
+  "material": "alekiships:spruce",
+  "repair_material": [
+    {
+      "repair_amount": 8.0,
+      "repair_ingredient": {
+        "item": "minecraft:spruce_planks"
+      },
+      "repair_sound": "minecraft:block.wood.place"
+    }
+  ],
+  "texture": "alekiships:entity/watercraft/rowboat/spruce"
+}

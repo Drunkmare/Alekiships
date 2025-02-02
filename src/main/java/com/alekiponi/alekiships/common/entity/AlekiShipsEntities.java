@@ -36,15 +36,12 @@ public final class AlekiShipsEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
             BuiltInRegistries.ENTITY_TYPE, MOD_ID);
 
-    public static final EnumMap<VanillaWood, DeferredHolder<EntityType<?>, EntityType<RowboatEntity>>> ROWBOATS = CommonHelper.mapOfKeys(
-            VanillaWood.class, vanillaWood -> registerRowboat(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new RowboatEntity(entityType, level, vanillaWood),
-                            MobCategory.MISC)));
+    public static final DeferredHolder<EntityType<?>, EntityType<RowboatEntity>> ROWBOAT = register("rowboat",
+            EntityType.Builder.of(RowboatEntity::new, MobCategory.MISC).sized(1.875F, 0.625F));
 
-    public static final EnumMap<VanillaWood, DeferredHolder<EntityType<?>, EntityType<SloopEntity>>> SLOOPS = CommonHelper.mapOfKeys(
-            VanillaWood.class, vanillaWood -> registerSloop(vanillaWood,
-                    EntityType.Builder.of((entityType, level) -> new SloopEntity(entityType, level, vanillaWood),
-                            MobCategory.MISC)));
+    public static final DeferredHolder<EntityType<?>, EntityType<SloopEntity>> SLOOP = register("sloop",
+            EntityType.Builder.of(SloopEntity::new, MobCategory.MISC).sized(3F, 0.75F)
+                    .setTrackingRange(LARGE_VEHICLE_TRACKING));
 
     public static final EnumMap<VanillaWood, DeferredHolder<EntityType<?>, EntityType<SloopUnderConstructionEntity>>> SLOOPS_UNDER_CONSTRUCTION = CommonHelper.mapOfKeys(
             VanillaWood.class, vanillaWood -> registerSloopConstruction(vanillaWood, EntityType.Builder.of(
@@ -165,17 +162,6 @@ public final class AlekiShipsEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<MastEntity>> MAST_ENTITY = register("vehicle_mast",
             EntityType.Builder.of(MastEntity::new, MobCategory.MISC).sized(0.3F, 8.79375f)
                     .setTrackingRange(VEHICLE_HELPER_TRACKING).noSummon().fireImmune());
-
-    private static <E extends RowboatEntity> DeferredHolder<EntityType<?>, EntityType<E>> registerRowboat(
-            final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {
-        return register("rowboat/" + vanillaWood.getSerializedName(), builder.sized(1.875F, 0.625F));
-    }
-
-    private static <E extends SloopEntity> DeferredHolder<EntityType<?>, EntityType<E>> registerSloop(final VanillaWood vanillaWood,
-            final EntityType.Builder<E> builder) {
-        return register("sloop/" + vanillaWood.getSerializedName(),
-                builder.sized(3F, 0.75F).setTrackingRange(LARGE_VEHICLE_TRACKING));
-    }
 
     private static <E extends SloopUnderConstructionEntity> DeferredHolder<EntityType<?>, EntityType<E>> registerSloopConstruction(
             final VanillaWood vanillaWood, final EntityType.Builder<E> builder) {

@@ -6,6 +6,8 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.ConstructionSloopInputs;
 import com.alekiponi.alekiships.common.entity.EntityInput;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariants;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopVariants;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.data.providers.*;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
@@ -90,7 +92,9 @@ public final class DataGenerators {
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
                 .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
-                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrap)
-                .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld);
+                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrapOverworld)
+                .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld)
+                .add(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariants::bootstrapOverworld)
+                .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapOverworld);
     }
 }

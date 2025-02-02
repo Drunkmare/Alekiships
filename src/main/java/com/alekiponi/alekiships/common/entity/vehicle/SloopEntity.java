@@ -1,5 +1,6 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
@@ -10,17 +11,17 @@ import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.ServerboundSloopControlPacket;
 import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -41,7 +42,7 @@ import net.neoforged.neoforgespi.Environment;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
+public class SloopEntity extends AbstractAlekiBoatEntity<SloopVariant> implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
     protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
             SloopEntity.class, EntityDataSerializers.FLOAT);
@@ -63,6 +64,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
             SloopEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
+    private static final EntityDataAccessor<Holder<SloopVariant>> DATA_ID_SLOOP_VARIANT = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.SLOOP_VARIANT.get());
     public static final int PASSENGER_NUMBER = 25;
     public static final int[] CLEATS = {18, 19, 20, 21};
     public static final int[] COLLIDERS = {14, 15, 16};
@@ -83,9 +86,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     float rudder_rotation;
     int ticks_no_input;
 
-    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
-            final BoatMaterial boatMaterial) {
-        super(entityType, level, boatMaterial);
+    public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level) {
+        super(entityType, level);
         boom_rotation = 0;
         mainsheet_length = 0;
         rudder_rotation = 0;
@@ -623,6 +625,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         builder.define(DATA_ID_PAINT_COLOR, Optional.empty());
         builder.define(DATA_ID_ICEBREAKER, false);
+        final var registry = this.registryAccess().registryOrThrow(AlekiShipsRegistries.SLOOP_VARIANT);
+        builder.define(DATA_ID_SLOOP_VARIANT, registry.getHolder(SloopVariants.DEFAULT).or(registry::getAny).orElseThrow());
     }
 
     @Override
@@ -776,7 +780,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         }
 
         float windForce = CommonHelper.sailForceMultiplierTable(windDifference);
-        return new float[]{windForceAngle, windForce};
+        return new float[]{(float) windForceAngle, (float) windForce};
     }
 
     public float getMainBoomRotation() {
@@ -918,6 +922,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                 AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, paint, this::setPaintColor);
             }
         }
+        SloopVariant.load(pCompound, this.registryAccess(), this::setVariant);
     }
 
     @Override
@@ -950,10 +955,25 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.getPaintColor()
                 .ifPresent(dyeColor -> AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, dyeColor,
                         tag -> pCompound.put("paint", tag)));
+        SloopVariant.save(pCompound, this.getVariant());
+    }
+
+    @Override
+    public Holder<SloopVariant> getVariant() {
+        return this.entityData.get(DATA_ID_SLOOP_VARIANT);
+    }
+
+    @Override
+    public void setVariant(final Holder<SloopVariant> boatVariant) {
+        this.entityData.set(DATA_ID_SLOOP_VARIANT, boatVariant);
     }
 
     @Override
     public boolean breaksIce() {
         return entityData.get(DATA_ID_ICEBREAKER);
+    }
+
+    public ResourceLocation getTexture() {
+        return this.getVariant().value().texture();
     }
 }

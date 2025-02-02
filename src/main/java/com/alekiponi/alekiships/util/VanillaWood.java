@@ -1,9 +1,13 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -31,13 +35,9 @@ public enum VanillaWood implements BoatMaterial {
     BAMBOO(Blocks.BAMBOO_PLANKS, Items.BAMBOO_FENCE, Items.STRIPPED_BAMBOO_BLOCK);
 
     private final Block plankBlock;
-    private final Item railingItem;
-    private final Item strippedLogItem;
 
     VanillaWood(final Block plankBlock, final Item railingItem, final Item strippedLogItem) {
         this.plankBlock = plankBlock;
-        this.railingItem = railingItem;
-        this.strippedLogItem = strippedLogItem;
     }
 
     public static void registerFrames() {
@@ -60,16 +60,6 @@ public enum VanillaWood implements BoatMaterial {
     }
 
     @Override
-    public Item getRailing() {
-        return this.railingItem;
-    }
-
-    @Override
-    public Item getStrippedLog() {
-        return this.strippedLogItem;
-    }
-
-    @Override
     public boolean withstandsLava() {
         return this.equals(WARPED) || this.equals(CRIMSON);
     }
@@ -80,10 +70,15 @@ public enum VanillaWood implements BoatMaterial {
     }
 
     @Override
+    public ResourceKey<RowboatVariant> rowboatKey() {
+        return ResourceKey.create(AlekiShipsRegistries.ROWBOAT_VARIANT, AlekiShips.location(this.getSerializedName()));
+    }
+
+    @Override
     public Optional<EntityType<? extends AbstractVehicle>> getEntityType(final BoatType boatType) {
         return switch (boatType) {
-            case ROWBOAT -> Optional.of(AlekiShipsEntities.ROWBOATS.get(this).get());
-            case SLOOP -> Optional.of(AlekiShipsEntities.SLOOPS.get(this).get());
+            case ROWBOAT -> Optional.of(AlekiShipsEntities.ROWBOAT.get());
+            case SLOOP -> Optional.of(AlekiShipsEntities.SLOOP.get());
             case CONSTRUCTION_SLOOP -> Optional.of(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.get(this).get());
         };
     }

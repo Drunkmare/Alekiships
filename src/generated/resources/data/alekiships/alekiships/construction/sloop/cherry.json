@@ -3,7 +3,7 @@
   "assemble_sound": "minecraft:block.wood.break",
   "constructed_entity": {
     "type": "alekiships:simple",
-    "entity": "alekiships:sloop/cherry"
+    "entity": "alekiships:sloop"
   },
   "stages": {
     "anchor": {

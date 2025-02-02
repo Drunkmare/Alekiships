@@ -28,11 +28,6 @@ public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
-        this.tag(AlekiShipsTags.Entities.SLOOPS)
-                .add(AlekiShipsEntities.SLOOPS.values().stream().map(Supplier::get).toArray(EntityType[]::new));
-        this.tag(AlekiShipsTags.Entities.ROWBOATS)
-                .add(AlekiShipsEntities.ROWBOATS.values().stream().map(Supplier::get).toArray(EntityType[]::new));
-
         this.tag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
                 .add(AlekiShipsEntities.VEHICLE_PART.get(), AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get(),
                         AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get(), AlekiShipsEntities.SAIL_SWITCH_ENTITY.get(),
@@ -59,8 +54,8 @@ public class AlekiShipsEntityTypeTagsProvider extends EntityTypeTagsProvider {
         // Carryon blacklist tags (as of writing carryon has a bug which means these are ignored)
         this.tag(TagKey.create(Registries.ENTITY_TYPE,
                         ResourceLocation.fromNamespaceAndPath("carryon", "entity_blacklist")))
-                .add(AlekiShipsEntities.CANNONBALL_ENTITY.get()).addTag(AlekiShipsTags.Entities.SLOOPS)
-                .addTag(AlekiShipsTags.Entities.ROWBOATS).addTag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
+                .add(AlekiShipsEntities.CANNONBALL_ENTITY.get()).add(AlekiShipsEntities.ROWBOAT.get())
+                .add(AlekiShipsEntities.SLOOP.get()).addTag(AlekiShipsTags.Entities.VEHICLE_HELPERS)
                 .addTag(AlekiShipsTags.Entities.COMPARTMENTS)
                 .add(AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.values().stream().map(Supplier::get)
                         .toArray(EntityType[]::new));

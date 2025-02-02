@@ -1,8 +1,9 @@
 package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 
-import net.minecraft.core.HolderSet;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -27,27 +28,15 @@ public interface BoatMaterial extends StringRepresentable {
         return this.getDeckBlock().getBlock().asItem();
     }
 
-    // TODO temporary bouncer
-    default HolderSet<Item> repairMaterials() {
-        return HolderSet.direct(this.getDeckItem().builtInRegistryHolder());
-    }
-
-    /**
-     * @return The Item instance that's used for the railing of sloops
-     */
-    Item getRailing();
-
-    /**
-     * @return The Item instance that's used for the log parts of sloop construction
-     */
-    Item getStrippedLog();
-
     /**
      * @return Whether this material withstands lava
      */
     boolean withstandsLava();
 
     BlockState getDeckBlock();
+
+    // TODO temporary helper while we migrate away from static boat materials
+    ResourceKey<RowboatVariant> rowboatKey();
 
     /**
      * @param boatType The entity type that should be returned

@@ -1,0 +1,14 @@
+{
+  "loot_table": "alekiships:entities/rowboat/oak",
+  "material": "alekiships:oak",
+  "repair_material": [
+    {
+      "repair_amount": 8.0,
+      "repair_ingredient": {
+        "item": "minecraft:oak_planks"
+      },
+      "repair_sound": "minecraft:block.wood.place"
+    }
+  ],
+  "texture": "alekiships:entity/watercraft/rowboat/oak"
+}

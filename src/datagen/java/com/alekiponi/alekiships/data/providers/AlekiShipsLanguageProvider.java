@@ -92,13 +92,11 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     private void addTranslationsForEntities() {
         // Vehicles
-        AlekiShipsEntities.ROWBOATS.forEach((wood, registryObject) -> this.addEntityType(registryObject,
-                String.format(Locale.ROOT, "%s Rowboat", DataGenHelper.langify(wood.getSerializedName()))));
-        AlekiShipsEntities.SLOOPS.forEach((wood, registryObject) -> this.addEntityType(registryObject,
-                String.format(Locale.ROOT, "%s Sloop", DataGenHelper.langify(wood.getSerializedName()))));
         AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.forEach(
                 (wood, registryObject) -> this.addEntityType(registryObject,
                         String.format(Locale.ROOT, "%s Sloop", DataGenHelper.langify(wood.getSerializedName()))));
+        this.addEntityType(AlekiShipsEntities.ROWBOAT, "%s Rowboat");
+        this.addEntityType(AlekiShipsEntities.SLOOP, "%s Sloop");
 
         // Misc
         this.addEntityType(AlekiShipsEntities.VEHICLE_PART, "Vehicle Part");

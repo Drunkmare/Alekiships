@@ -37,14 +37,6 @@ public final class AlekiShipsTags {
 
     public static final class Entities {
         /**
-         * All sloops
-         */
-        public static final TagKey<EntityType<?>> SLOOPS = create("sloops");
-        /**
-         * All rowboats
-         */
-        public static final TagKey<EntityType<?>> ROWBOATS = create("rowboats");
-        /**
          * Vehicle helpers such as our collision entities
          */
         public static final TagKey<EntityType<?>> VEHICLE_HELPERS = create("vehicle_helpers");
