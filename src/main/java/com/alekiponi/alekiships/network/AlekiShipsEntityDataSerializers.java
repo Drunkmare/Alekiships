@@ -4,9 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.wind.Wind;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.VarInt;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -31,26 +29,11 @@ public final class AlekiShipsEntityDataSerializers {
             "entity_input_state", () -> EntityDataSerializer.forValueType(EntityInput.EntityInputState.STREAM_CODEC));
 
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<SloopConstructionState>> SLOOP_CONSTRUCTION_STATE = register(
-            "sloop_construction_state",
-            () -> EntityDataSerializer.forValueType(SloopConstructionState.STREAM_CODEC));
-
-    private static final StreamCodec<ByteBuf, Optional<DyeColor>> OPTIONAL_DYE_COLOR_CODEC = new StreamCodec<>() {
-        public void encode(final ByteBuf byteBuf, Optional<DyeColor> dyeColor) {
-            if (dyeColor.isPresent()) {
-                VarInt.write(byteBuf, dyeColor.get().getId());
-            } else {
-                VarInt.write(byteBuf, 0);
-            }
-        }
-
-        public Optional<DyeColor> decode(final ByteBuf byteBuf) {
-            int i = VarInt.read(byteBuf);
-            return i == 0 ? Optional.empty() : Optional.of(DyeColor.byId(i));
-        }
-    };
+            "sloop_construction_state", () -> EntityDataSerializer.forValueType(SloopConstructionState.STREAM_CODEC));
 
     public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
-            "optional_dye_color", () -> EntityDataSerializer.forValueType(OPTIONAL_DYE_COLOR_CODEC));
+            "optional_dye_color",
+            () -> EntityDataSerializer.forValueType(ByteBufCodecs.optional(DyeColor.STREAM_CODEC)));
 
     private static <T extends EntityDataSerializer<?>> DeferredHolder<EntityDataSerializer<?>, T> register(
             final String name, final Supplier<T> dataSerializer) {
