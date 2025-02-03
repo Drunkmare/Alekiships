@@ -758,8 +758,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
             mainsail_main.yRot = Mth.rotLerp(pPartialTicks, mainsail_main.yRot, mastRotation);
             mainsail.yRot = Mth.rotLerp(pPartialTicks, mainsail_main.yRot, mastRotation);
 
-            float windWorldAngle = Mth.wrapDegrees(pBoat.getLocalWindAngleAndSpeed()[0]);
-            float windSpeed = pBoat.getLocalWindAngleAndSpeed()[1] * 20f;
+            float windWorldAngle = Mth.wrapDegrees(pBoat.getLocalWindAngle());
+            float windSpeed = pBoat.getLocalWindSpeed() * 20f;
             float sailWorldAngle = Mth.wrapDegrees(pBoat.getSailWorldRotation());
             int airFoilDirection = -1;
 
@@ -843,8 +843,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         ModelPart jibsail = jibsail_main.getChild("jibsail");
         ModelPart jibsheet = jibsail.getChild("jibsheet");
 
-        float windWorldAngle = pBoat.getLocalWindAngleAndSpeed()[0];
-        float windSpeed = pBoat.getLocalWindAngleAndSpeed()[1] * 20f;
+        float windWorldAngle = pBoat.getLocalWindAngle();
+        float windSpeed = pBoat.getLocalWindSpeed() * 20f;
         float sailWorldAngle = Mth.wrapDegrees(pBoat.getSailWorldRotation());
         int airFoilDirection = 1;
 
@@ -997,7 +997,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     private static void animateTelltail(SloopEntity pBoat, float pPartialTicks, ModelPart telltail, ModelPart[] telltailParts, int animationTick) {
 
         float windLocalAngle = Mth.wrapDegrees(pBoat.getWindLocalRotation()-180);
-        float windSpeed = pBoat.getLocalWindAngleAndSpeed()[1] * 20f;
+        float windSpeed = pBoat.getLocalWindSpeed() * 20f;
 
         if (windSpeed < 0.1) {
             windSpeed = 0.1f;
@@ -1142,7 +1142,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         wind_indicator.yRot = (float) (windAngle);
         wind_indicator.zScale = 1;
         wind_indicator.xScale = 1;
-        wind_indicator.zScale = pBoat.getLocalWindAngleAndSpeed()[1] * 5;
+        wind_indicator.zScale = pBoat.getLocalWindSpeed() * 5;
     }
 
     private static void animateSailforceIndicator(SloopEntity pBoat, float pPartialTicks, ModelPart sail_force_indicator) {

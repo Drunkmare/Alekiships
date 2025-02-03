@@ -172,11 +172,12 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickWindInput() {
         if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
-            double windFunction = Mth.clamp(this.getLocalWindAngleAndSpeed()[1], 0.001, 0.002 * this.getBoundingBox().getXsize()) * windDriftMultiplier();
+            double windFunction = Mth.clamp(this.getLocalWindSpeed(), 0.001, 0.002 * this.getBoundingBox().getXsize()) * windDriftMultiplier();
 
             // TODO add a config for enabling / disabling wind drift
 
-            float windDifference = Mth.degreesDifference(this.getLocalWindAngleAndSpeed()[0], Mth.wrapDegrees(this.getYRot()));
+            float windDifference = Mth.degreesDifference(
+                    this.getLocalWindAngle(), Mth.wrapDegrees(this.getYRot()));
 
 
             if (Math.abs(windDifference) < 90) {
@@ -188,8 +189,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
 
             this.setDeltaMovement(this.getDeltaMovement()
-                    .add(Mth.sin(-this.getLocalWindAngleAndSpeed()[0] * ((float) Math.PI / 180F)) * windFunction * 0.55, 0.0D,
-                            Mth.cos(this.getLocalWindAngleAndSpeed()[0] * ((float) Math.PI / 180F)) * windFunction * 0.55));
+                    .add(Mth.sin(-this.getLocalWindAngle() * ((float) Math.PI / 180F)) * windFunction * 0.55, 0.0D,
+                            Mth.cos(this.getLocalWindAngle() * ((float) Math.PI / 180F)) * windFunction * 0.55));
 
 
             if (this.status == MediumStatus.IN_WATER) {
@@ -492,17 +493,6 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         }
     }
 
-    /**
-     * This allocates a new array for each call simply to bundle wind angle and speed together in a single return value.
-     * Our {@link Wind} object has both of these values ({@link #getWind()}) or the alternative
-     * {@link #getLocalWindAngle()} and {@link #getLocalWindSpeed()} can be used instead.
-     * No matter what you call you'll get the same values
-     */
-    @Deprecated(forRemoval = true)
-    public float[] getLocalWindAngleAndSpeed() {
-        return new float[]{this.getLocalWindAngle(), this.getLocalWindSpeed()};
-    }
-
     public float getLocalWindAngle() {
         return this.getWind().angle();
     }
@@ -575,7 +565,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     }
 
     public float getWindLocalRotation() {
-        return Mth.wrapDegrees(getLocalWindAngleAndSpeed()[0] - Mth.wrapDegrees(this.getYRot()));
+        return Mth.wrapDegrees(this.getLocalWindAngle() - Mth.wrapDegrees(this.getYRot()));
     }
 
     @Nullable
