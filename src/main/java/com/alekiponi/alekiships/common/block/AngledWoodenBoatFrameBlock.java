@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -21,18 +22,24 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.BlockHitResult;
 
+import java.util.function.Supplier;
+
 public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements ProcessedBoatFrame {
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
-    public final BoatMaterial boatMaterial;
+    @Deprecated
+    private final BoatMaterial boatMaterial;
+    private final Supplier<Item> frameMaterial;
 
-    public AngledWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
+    public AngledWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Supplier<Item> frameMaterial,
+            final Properties properties) {
         super(properties);
         this.registerDefaultState(
                 this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHAPE, StairsShape.STRAIGHT)
                         .setValue(WATERLOGGED, false).setValue(FRAME_PROCESSED, 0));
         this.boatMaterial = boatMaterial;
+        this.frameMaterial = frameMaterial;
     }
 
     public static void triggerDetection(Level level, BlockPos blockPos) {
@@ -64,7 +71,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         int processState = blockState.getValue(FRAME_PROCESSED);
 
         // Should we do plank stuff
-        if (heldStack.is(this.boatMaterial.getDeckItem())) {
+        if (heldStack.is(this.frameMaterial.get())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
                 if (!player.getAbilities().instabuild) {
@@ -92,7 +99,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
 
         // Try extract
         if (processState <= FULLY_PROCESSED) {
-            CommonHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
+            CommonHelper.giveItemToPlayer(player, new ItemStack(this.frameMaterial.get()));
         }
 
         // Set ourselves back to our base

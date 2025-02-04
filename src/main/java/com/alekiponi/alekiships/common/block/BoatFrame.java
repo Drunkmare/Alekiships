@@ -12,7 +12,9 @@ import org.jetbrains.annotations.Nullable;
  * Typically, boat frames will have processing states in which case you should implement {@link ProcessedBoatFrame}
  *
  * @implSpec This must be implemented on a {@link Block}
+ * @deprecated Will be unnecessary with Entity Multiblock recipes
  */
+@Deprecated(forRemoval = true)
 public interface BoatFrame {
 
     /**

@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -19,18 +20,25 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.triggerDetection;
+import java.util.function.Supplier;
+
+import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.*;
 
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
-    public final BoatMaterial boatMaterial;
 
-    public FlatWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
+    @Deprecated
+    private final BoatMaterial boatMaterial;
+    private final Supplier<Item> frameMaterial;
+
+    public FlatWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Supplier<Item> frameMaterial,
+            final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
         this.boatMaterial = boatMaterial;
+        this.frameMaterial = frameMaterial;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         int processState = blockState.getValue(FRAME_PROCESSED);
 
         // Should we do plank stuff
-        if (heldStack.is(this.boatMaterial.getDeckItem())) {
+        if (heldStack.is(this.frameMaterial.get())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
                 if (!player.getAbilities().instabuild) {
@@ -75,7 +83,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
 
         // Try extract
         if (processState <= FULLY_PROCESSED) {
-            CommonHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
+            CommonHelper.giveItemToPlayer(player, new ItemStack(this.frameMaterial.get()));
         }
 
         // Set ourselves back to our base
