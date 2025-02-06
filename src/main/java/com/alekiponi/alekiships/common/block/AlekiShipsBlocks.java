@@ -44,14 +44,13 @@ public final class AlekiShipsBlocks {
     public static final EnumMap<VanillaWood, DeferredBlock<AngledWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_ANGLED = CommonHelper.mapOfKeys(
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/angled/" + vanillaWood.getSerializedName(),
-                    () -> new AngledWoodenBoatFrameBlock(vanillaWood,
-                            vanillaWood::getDeckItem, BlockBehaviour.Properties.ofFullCopy(BOAT_FRAME_ANGLED.get()).sound(BOAT_FRAME_SOUND)
-                    )));
+                    () -> new AngledWoodenBoatFrameBlock(vanillaWood, vanillaWood::getPlankItem,
+                            BlockBehaviour.Properties.ofFullCopy(BOAT_FRAME_ANGLED.get()).sound(BOAT_FRAME_SOUND))));
 
     public static final EnumMap<VanillaWood, DeferredBlock<FlatWoodenBoatFrameBlock>> WOODEN_BOAT_FRAME_FLAT = CommonHelper.mapOfKeys(
             VanillaWood.class,
             vanillaWood -> registerBlock("wood/watercraft_frame/flat/" + vanillaWood.getSerializedName(),
-                    () -> new FlatWoodenBoatFrameBlock(vanillaWood, vanillaWood::getDeckItem,
+                    () -> new FlatWoodenBoatFrameBlock(vanillaWood, vanillaWood::getPlankItem,
                             BlockBehaviour.Properties.ofFullCopy(BOAT_FRAME_FLAT.get()).sound(BOAT_FRAME_SOUND))));
 
 

@@ -11,7 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Locale;
 
@@ -51,8 +50,7 @@ public enum VanillaWood implements BoatMaterial {
         return this.name().toLowerCase(Locale.ROOT);
     }
 
-    @Override
-    public Item getDeckItem() {
+    public Item getPlankItem() {
         return this.plankBlock.asItem();
     }
 
@@ -61,9 +59,8 @@ public enum VanillaWood implements BoatMaterial {
         return this.equals(WARPED) || this.equals(CRIMSON);
     }
 
-    @Override
-    public BlockState getDeckBlock() {
-        return this.plankBlock.defaultBlockState();
+    public Block getDeckBlockBlock() {
+        return this.plankBlock;
     }
 
     @Override

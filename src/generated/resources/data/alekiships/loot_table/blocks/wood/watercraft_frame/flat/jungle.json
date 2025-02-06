@@ -35,13 +35,6 @@
               }
             }
           ],
-          "functions": [
-            {
-              "add": true,
-              "count": 0.0,
-              "function": "minecraft:set_count"
-            }
-          ],
           "name": "minecraft:jungle_planks"
         },
         {
@@ -57,8 +50,8 @@
           ],
           "functions": [
             {
-              "add": true,
-              "count": 1.0,
+              "add": false,
+              "count": 2.0,
               "function": "minecraft:set_count"
             }
           ],
@@ -77,8 +70,8 @@
           ],
           "functions": [
             {
-              "add": true,
-              "count": 2.0,
+              "add": false,
+              "count": 3.0,
               "function": "minecraft:set_count"
             }
           ],
@@ -97,8 +90,8 @@
           ],
           "functions": [
             {
-              "add": true,
-              "count": 3.0,
+              "add": false,
+              "count": 4.0,
               "function": "minecraft:set_count"
             }
           ],
