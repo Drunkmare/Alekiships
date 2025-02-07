@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.BrewingStandCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;

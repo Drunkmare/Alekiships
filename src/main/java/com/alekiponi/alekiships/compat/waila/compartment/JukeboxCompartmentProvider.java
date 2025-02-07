@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.JukeboxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;

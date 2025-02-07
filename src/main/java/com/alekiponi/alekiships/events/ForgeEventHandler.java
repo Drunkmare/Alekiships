@@ -6,8 +6,8 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitche
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.wind.OverworldWindModel;
 import com.alekiponi.alekiships.wind.WindModel;
 import com.mojang.logging.LogUtils;

@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.client;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.ServerboundPickCompartmentPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

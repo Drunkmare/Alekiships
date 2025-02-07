@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.CompartmentCloneable;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -1,6 +1,6 @@
 package com.alekiponi.alekiships.client;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.vanilla.JukeboxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;

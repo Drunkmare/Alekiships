@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.compartment.BlockCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

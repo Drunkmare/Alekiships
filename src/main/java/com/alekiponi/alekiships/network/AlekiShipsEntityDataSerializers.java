@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.network;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
+import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
 import com.alekiponi.alekiships.wind.Wind;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
@@ -30,6 +31,9 @@ public final class AlekiShipsEntityDataSerializers {
 
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<SloopConstructionState>> SLOOP_CONSTRUCTION_STATE = register(
             "sloop_construction_state", () -> EntityDataSerializer.forValueType(SloopConstructionState.STREAM_CODEC));
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ChestCompartmentData>> CHEST_COMPARTMENT_DATA = register(
+            "chest_compartment_data", () -> EntityDataSerializer.forValueType(ChestCompartmentData.STREAM_CODEC));
 
     public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
             "optional_dye_color",
