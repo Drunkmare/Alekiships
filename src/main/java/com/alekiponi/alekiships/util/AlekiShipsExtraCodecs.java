@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class AlekiShipsExtraCodecs {
@@ -152,5 +154,19 @@ public final class AlekiShipsExtraCodecs {
     public static <T, I> void save(final Codec<T> codec, final DynamicOps<I> ops, final T input,
             final Consumer<I> setter) {
         codec.encodeStart(ops, input).ifSuccess(setter);
+    }
+
+    /**
+     * Helper allowing easier map codec mapping as vanilla doesn't provide these helpers
+     *
+     * @param codec The map codec
+     * @param to    The function to transform to {@code <S>}
+     * @param from  The function to transform to {@code <A>}
+     * @param <S>   The output codec type
+     * @param <A>   The input codec type
+     */
+    public static <S, A> MapCodec<S> flatComapMap(final MapCodec<A> codec, final Function<? super A, ? extends S> to,
+            final Function<? super S, ? extends DataResult<? extends A>> from) {
+        return MapCodec.of(codec.flatComap(from), codec.map(to), () -> codec + "[flatComapMapped]");
     }
 }
