@@ -19,10 +19,11 @@ public class CannonballRenderer extends EntityRenderer<CannonballEntity> {
     private static final ResourceLocation CANNONBALL = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/cannonball.png");
 
-    private final CannonballEntityModel<CannonballEntity> model = new CannonballEntityModel<>();
+    private final CannonballEntityModel model;
 
     public CannonballRenderer(final EntityRendererProvider.Context context) {
         super(context);
+        this.model = new CannonballEntityModel(context.bakeLayer(CannonballEntityModel.LAYER_LOCATION));
     }
 
     @Override

@@ -2,9 +2,7 @@ package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.event.IconRenderersEvent;
-import com.alekiponi.alekiships.client.model.entity.AnchorEntityModel;
-import com.alekiponi.alekiships.client.model.entity.RowboatEntityModel;
-import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
+import com.alekiponi.alekiships.client.model.entity.*;
 import com.alekiponi.alekiships.client.render.entity.CannonRenderer;
 import com.alekiponi.alekiships.client.render.entity.CannonballRenderer;
 import com.alekiponi.alekiships.client.render.entity.vehicle.RowboatRenderer;
@@ -33,6 +31,10 @@ public final class RenderEventHandler {
         event.registerLayerDefinition(RowboatEntityModel.LAYER_LOCATION, RowboatEntityModel::createBodyLayer);
         event.registerLayerDefinition(SloopEntityModel.LAYER_LOCATION, SloopEntityModel::createBodyLayer);
         event.registerLayerDefinition(AnchorEntityModel.LAYER_LOCATION, AnchorEntityModel::createBodyLayer);
+        event.registerLayerDefinition(CannonballEntityModel.LAYER_LOCATION, CannonballEntityModel::createBodyLayer);
+        event.registerLayerDefinition(CannonEntityModel.LAYER_LOCATION, CannonEntityModel::createBodyLayer);
+        event.registerLayerDefinition(CleatKnotEntityModel.LAYER_LOCATION, CleatKnotEntityModel::createBodyLayer);
+        event.registerLayerDefinition(ConstructionEntityModel.LAYER_LOCATION, ConstructionEntityModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -98,8 +100,6 @@ public final class RenderEventHandler {
         event.registerEntityRenderer(AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get(), VehicleCleatRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.ANCHOR_ENTITY.get(), AnchorRenderer::new);
         event.registerEntityRenderer(AlekiShipsEntities.CONSTRUCTION_ENTITY.get(), ConstructionRenderer::new);
-
-        //event.registerEntityRenderer(AlekiShipsEntities.TEST_SAILING_SHIP.get(), TestSailingShipRenderer::new);
     }
 
     @SubscribeEvent

@@ -21,10 +21,11 @@ public class ConstructionRenderer extends EntityRenderer<ConstructionEntity> {
     private static final ResourceLocation HAMMER = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/watercraft/construction.png");
 
-    private final ConstructionEntityModel<ConstructionEntity> model = new ConstructionEntityModel<>();
+    private final ConstructionEntityModel model;
 
     public ConstructionRenderer(final EntityRendererProvider.Context context) {
         super(context);
+        this.model = new ConstructionEntityModel(context.bakeLayer(ConstructionEntityModel.LAYER_LOCATION));
     }
 
     @Override

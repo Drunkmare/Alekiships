@@ -24,10 +24,11 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
     private static final ResourceLocation CLEAT_KNOT = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/cleat_knot.png");
-    private final CleatKnotEntityModel<CleatEntity> model = new CleatKnotEntityModel<>();
+    private final CleatKnotEntityModel model;
 
     public VehicleCleatRenderer(final EntityRendererProvider.Context context) {
         super(context);
+        this.model = new CleatKnotEntityModel(context.bakeLayer(CleatKnotEntityModel.LAYER_LOCATION));
     }
 
     @Override

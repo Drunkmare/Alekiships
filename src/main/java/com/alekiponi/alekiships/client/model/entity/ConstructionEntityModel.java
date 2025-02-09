@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -11,16 +12,14 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class ConstructionEntityModel<T extends Entity> extends EntityModel<T> {
+public class ConstructionEntityModel extends EntityModel<ConstructionEntity> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "construction_entity"), "main");
     private final ModelPart bone;
 
-    public ConstructionEntityModel() {
-        ModelPart root = createBodyLayer().bakeRoot();
+    public ConstructionEntityModel(final ModelPart root) {
         this.bone = root.getChild("bone");
     }
 
@@ -36,7 +35,7 @@ public class ConstructionEntityModel<T extends Entity> extends EntityModel<T> {
     }//@formatter:on
 
     @Override
-    public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw,
+    public void setupAnim(ConstructionEntity pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw,
             float pHeadPitch) {
 
     }

@@ -19,10 +19,11 @@ public class CannonRenderer extends EntityRenderer<CannonEntity> {
     private static final ResourceLocation CANNON = ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
             "textures/entity/cannon.png");
 
-    private final CannonEntityModel<CannonEntity> model = new CannonEntityModel<>();
+    private final CannonEntityModel model;
 
     public CannonRenderer(final EntityRendererProvider.Context context) {
         super(context);
+        this.model = new CannonEntityModel(context.bakeLayer(CannonEntityModel.LAYER_LOCATION));
     }
 
     @Override

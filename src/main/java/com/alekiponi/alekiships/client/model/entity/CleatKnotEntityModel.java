@@ -16,15 +16,14 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 
-public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> {
+public class CleatKnotEntityModel extends EntityModel<CleatEntity> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "cleat_knot_model"), "main");
     private final ModelPart sides;
     private final ModelPart middle;
 
-    public CleatKnotEntityModel() {
-        ModelPart root = createBodyLayer().bakeRoot();
+    public CleatKnotEntityModel(final ModelPart root) {
         this.sides = root.getChild("sides");
         this.middle = root.getChild("middle");
     }
@@ -50,8 +49,8 @@ public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> 
 	}//@formatter:on
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-            float headPitch) {
+    public void setupAnim(CleatEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+            float netHeadYaw, float headPitch) {
 
     }
 

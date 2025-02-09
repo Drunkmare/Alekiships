@@ -16,17 +16,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 
-public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
+public class CannonEntityModel extends EntityModel<CannonEntity> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("modid", "canon"), "main");
     private final ModelPart barrel;
     private final ModelPart base;
 
-    public CannonEntityModel() {
-        ModelPart root = createBodyLayer().bakeRoot();
+    public CannonEntityModel(final ModelPart root) {
         this.barrel = root.getChild("barrel");
         this.base = root.getChild("base");
     }
@@ -67,15 +65,15 @@ public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
         return LayerDefinition.create(meshdefinition, 128, 128);
     }//@formatter:on
 
-    private static void animateSailforceIndicator(CannonEntity cannon, float pPartialTicks, ModelPart barrel) {
+    private static void animateSailforceIndicator(com.alekiponi.alekiships.common.entity.CannonEntity cannon, float pPartialTicks, ModelPart barrel) {
         float barrelAngle = (float) Math.toRadians(cannon.getXRot());
         barrel.xRot = barrelAngle;
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+    public void setupAnim(CannonEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
             float headPitch) {
-        animateSailforceIndicator((CannonEntity) (entity), limbSwingAmount, barrel);
+        animateSailforceIndicator((com.alekiponi.alekiships.common.entity.CannonEntity) (entity), limbSwingAmount, barrel);
     }
 
     @Override
