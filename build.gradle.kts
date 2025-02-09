@@ -25,6 +25,9 @@ val jeiVersion: String = "19.5.2.66"
 val topVersion: String = "1.21_neo-12.0.4-6"
 val jadeFileID: String = "5591256"
 
+// Dev dependencies
+val lombokVersion: String = "1.18.36"
+
 val datagenOutput: String = "src/generated/resources"
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
@@ -157,6 +160,13 @@ repositories {
 
 dependencies {
     "datagenImplementation"(sourceSets["main"].output)
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
 
     // QOL Dev dependencies should use `localRuntime`. `runtimeOnly` is for stuff we actually want at runtime
 

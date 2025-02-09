@@ -13,6 +13,7 @@
         <package name="javax" withSubpackages="true" static="false" />
         <package name="java" withSubpackages="true" static="false" />
         <package name="org.jetbrains.annotations" withSubpackages="true" static="false" />
+        <package name="lombok" withSubpackages="true" static="false" />
         <emptyLine />
         <package name="" withSubpackages="true" static="true" />
       </value>
