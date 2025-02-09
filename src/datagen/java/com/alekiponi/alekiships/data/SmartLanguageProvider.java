@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data;
 
 import com.google.gson.JsonObject;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -12,8 +13,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Smarter {@link LanguageProvider} that checks to make
@@ -62,9 +64,11 @@ public abstract class SmartLanguageProvider implements DataProvider {
             this.validateEntry(entityType.getDescriptionId(), BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
         }
 
-        if (!this.data.isEmpty()) return this.save(cache,
-                this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modid).resolve("lang")
-                        .resolve(this.locale + ".json"));
+        if (!this.data.isEmpty()) {
+            return this.save(cache,
+                    this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modid).resolve("lang")
+                            .resolve(this.locale + ".json"));
+        }
 
         return CompletableFuture.allOf();
     }

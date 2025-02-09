@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.data.providers;
 import com.alekiponi.alekiships.data.loot.AlekiShipsBlockLootTables;
 import com.alekiponi.alekiships.data.loot.AlekiShipsEntityLootTables;
 import com.alekiponi.alekiships.data.loot.AlekiShipsStructureLoot;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;

@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.data.providers;
 
+import snownee.jade.api.IJadeProvider;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
@@ -10,13 +12,14 @@ import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
+
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+
 import net.neoforged.neoforge.registries.DeferredHolder;
-import snownee.jade.api.IJadeProvider;
 
 import java.util.Locale;
 import java.util.stream.Stream;

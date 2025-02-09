@@ -2,14 +2,16 @@ package com.alekiponi.alekiships.data.providers.tags;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.world.level.material.Fluids;
+
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.annotations.Nullable;
 
 public class AlekiShipsFluidTagsProvider extends FluidTagsProvider {
 

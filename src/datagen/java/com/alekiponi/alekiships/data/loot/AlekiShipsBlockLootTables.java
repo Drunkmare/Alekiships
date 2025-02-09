@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.block.FlatWoodenBoatFrameBlock;
 import com.alekiponi.alekiships.common.block.ProcessedBoatFrame;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;

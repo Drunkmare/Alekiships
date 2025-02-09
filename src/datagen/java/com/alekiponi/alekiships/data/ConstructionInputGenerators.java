@@ -1,16 +1,19 @@
 package com.alekiponi.alekiships.data;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 public class ConstructionInputGenerators {

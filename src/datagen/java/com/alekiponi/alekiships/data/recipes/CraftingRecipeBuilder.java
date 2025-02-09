@@ -4,6 +4,7 @@ package com.alekiponi.alekiships.data.recipes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -18,9 +19,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An enhanced crafting recipe builder allowing folder names. Also contains all factory functions for the related builders
@@ -195,8 +196,9 @@ public abstract class CraftingRecipeBuilder<B extends CraftingRecipeBuilder<B>> 
         protected void ensureValid(final ResourceLocation recipeId) {
             super.ensureValid(recipeId);
 
-            if (rows.isEmpty())
+            if (rows.isEmpty()) {
                 throw new IllegalStateException("No pattern is defined for shaped recipe " + recipeId + "!");
+            }
 
             final Set<Character> set = Sets.newHashSet(key.keySet());
             set.remove(' ');
