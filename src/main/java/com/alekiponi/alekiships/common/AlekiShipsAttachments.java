@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
+
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;

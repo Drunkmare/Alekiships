@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import net.minecraft.nbt.CompoundTag;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -22,8 +22,8 @@ public abstract class AbstractHelper extends Entity {
     }
 
     @Nullable
-    public AbstractVehicle getTrueVehicle(){
-        if (this.getRootVehicle() instanceof AbstractVehicle vehicle){
+    public AbstractVehicle getTrueVehicle() {
+        if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
             return vehicle;
         }
         return null;

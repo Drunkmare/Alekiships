@@ -1,16 +1,19 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
-import com.mojang.logging.LogUtils;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
 import net.neoforged.neoforge.registries.RegistryBuilder;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -68,6 +71,7 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
      * Gets an applicable {@link CompartmentType} for an {@link ItemStack}
      *
      * @param itemStack The {@link ItemStack}
+     *
      * @return An applicable compartment for the given item stack. Returns the first compartment found,
      * this means registry order can effect which is chosen
      */
@@ -120,6 +124,7 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
 
         /**
          * @param postInitialization The compartment post initialization
+         *
          * @return A factory which invokes the provided post initialization and reports any errors
          */
         default CompartmentFactory<E> postInit(final CompartmentPostInitialization<E> postInitialization) {

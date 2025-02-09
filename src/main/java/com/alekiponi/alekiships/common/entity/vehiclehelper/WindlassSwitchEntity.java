@@ -1,10 +1,8 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import java.util.ArrayList;
 import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.client.IngameOverlays;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,7 +10,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,14 +20,15 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
 
     protected static final EntityDataAccessor<Boolean> DATA_ID_ANCHORED = SynchedEntityData.defineId(
             WindlassSwitchEntity.class, EntityDataSerializers.BOOLEAN);
+
     public WindlassSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
     @Override
-    public void tick(){
+    public void tick() {
         super.tick();
-        if (!this.isVehicle()){
+        if (!this.isVehicle()) {
             final AnchorEntity anchor = AlekiShipsEntities.ANCHOR_ENTITY.get()
                     .create(this.level());
             assert anchor != null;
@@ -41,18 +39,14 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
             this.level().addFreshEntity(anchor);
         }
 
-        if(this.getFirstPassenger() instanceof AnchorEntity anchor){
-            if(this.getAnchorDistance() > 0 && !this.level().getBlockState(anchor.blockPosition()).isAir()
-                    && this.level().getFluidState(anchor.blockPosition()).isEmpty()){
-                this.setAnchored(true);
-            } else {
-                this.setAnchored(false);
-            }
+        if (this.getFirstPassenger() instanceof AnchorEntity anchor) {
+            this.setAnchored(this.getAnchorDistance() > 0 && !this.level().getBlockState(anchor.blockPosition()).isAir()
+                    && this.level().getFluidState(anchor.blockPosition()).isEmpty());
         }
 
-        if(this.getSwitched() && this.getAnchorDistance() < 100f && !this.getAnchored()){
+        if (this.getSwitched() && this.getAnchorDistance() < 100f && !this.getAnchored()) {
             this.setAnchorDistance(this.getAnchorDistance() + 0.1f);
-        } else if(this.getAnchorDistance() > 0 && !this.getSwitched()){
+        } else if (this.getAnchorDistance() > 0 && !this.getSwitched()) {
             this.setAnchorDistance(this.getAnchorDistance() - 0.1f);
         }
     }
@@ -60,7 +54,8 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
     @Override
     protected void positionRider(Entity pPassenger, Entity.MoveFunction pCallback) {
         if (this.hasPassenger(pPassenger)) {
-            pCallback.accept(pPassenger, this.getX()+0.05, this.getY()-this.getAnchorDistance(), this.getZ()+0.05);
+            pCallback.accept(pPassenger, this.getX() + 0.05, this.getY() - this.getAnchorDistance(),
+                    this.getZ() + 0.05);
 
         }
     }
@@ -71,8 +66,7 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ID_ANCHOR_DISTANCE, 0f);
         builder.define(DATA_ID_ANCHORED, false);
@@ -92,20 +86,20 @@ public class WindlassSwitchEntity extends AbstractSwitchEntity {
         pCompound.putBoolean("isAnchored", this.getAnchored());
     }
 
-    public void setAnchorDistance(float distance) {
-        this.entityData.set(DATA_ID_ANCHOR_DISTANCE, Mth.clamp(distance, 0f,100f));
-    }
-
     public float getAnchorDistance() {
         return this.entityData.get(DATA_ID_ANCHOR_DISTANCE);
     }
 
-    public void setAnchored(boolean anchored) {
-        this.entityData.set(DATA_ID_ANCHORED, anchored);
+    public void setAnchorDistance(float distance) {
+        this.entityData.set(DATA_ID_ANCHOR_DISTANCE, Mth.clamp(distance, 0f, 100f));
     }
 
     public boolean getAnchored() {
         return this.entityData.get(DATA_ID_ANCHORED);
+    }
+
+    public void setAnchored(boolean anchored) {
+        this.entityData.set(DATA_ID_ANCHORED, anchored);
     }
 
 

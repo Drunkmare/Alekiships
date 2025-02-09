@@ -1,10 +1,13 @@
 package com.alekiponi.alekiships.client.render.texture;
 
-import com.alekiponi.alekiships.client.render.util.TextureHelpers;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
+import com.alekiponi.alekiships.client.render.util.TextureHelpers;
+
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -16,7 +19,6 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,6 +78,7 @@ public class OverlayTexture extends AbstractTexture {
      * @param resultSize The size of the output image
      * @param foreground The foreground image
      * @param background The background image
+     *
      * @return A new image combining the foreground and background
      */
     private static NativeImage buildCombinedTexture(final FrameSize resultSize, final NativeImage foreground,
@@ -102,6 +105,7 @@ public class OverlayTexture extends AbstractTexture {
      *
      * @param baseResource    The resource for the base texture
      * @param overlayResource The resource for the overlay texture
+     *
      * @return A painted {@link NativeImage}
      */
     private static NativeImage overlayTexture(final Resource baseResource,

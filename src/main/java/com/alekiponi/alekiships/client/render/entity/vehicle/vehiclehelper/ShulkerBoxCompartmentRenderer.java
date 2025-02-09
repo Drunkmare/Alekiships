@@ -1,9 +1,11 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.ShulkerBoxCompartmentEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ShulkerBoxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+
 import net.minecraft.client.model.ShulkerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -26,13 +28,16 @@ public class ShulkerBoxCompartmentRenderer extends CompartmentRenderer<ShulkerBo
 
     @Override
     protected void renderCompartmentContents(final ShulkerBoxCompartmentEntity compartmentEntity,
-                                             final float partialTicks, final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+            final float partialTicks, final PoseStack poseStack, final MultiBufferSource bufferSource,
+            int packedLight) {
         AbstractVehicle vehicle = compartmentEntity.getTrueVehicle();
         if (LightTexture.block(packedLight) < compartmentEntity.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
         if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
 
         final DyeColor dyecolor = compartmentEntity.getColor();

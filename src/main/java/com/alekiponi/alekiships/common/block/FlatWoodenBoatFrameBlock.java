@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.*;
+import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.triggerDetection;
 
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
@@ -38,8 +39,8 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
-    {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
+            Player player, InteractionHand hand, BlockHitResult hitResult) {
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
@@ -49,13 +50,12 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
         if (heldStack.is(this.boatMaterial.getDeckItem())) {
             // Must be [0,3)
             if (processState < FULLY_PROCESSED) {
-                if (!player.getAbilities().instabuild)
-                {
+                if (!player.getAbilities().instabuild) {
                     heldStack.shrink(1);
                 }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                    level.getRandom().nextFloat() * 0.1F + 0.9F);
+                        level.getRandom().nextFloat() * 0.1F + 0.9F);
                 if (processState + 1 == FULLY_PROCESSED) {
                     triggerDetection(level, blockPos);
                 }
@@ -68,20 +68,18 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult)
-    {
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
+            BlockHitResult hitResult) {
 
         int processState = blockState.getValue(FRAME_PROCESSED);
 
         // Try extract
-        if (processState <= FULLY_PROCESSED)
-        {
+        if (processState <= FULLY_PROCESSED) {
             CommonHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
         }
 
         // Set ourselves back to our base
-        if (processState == 0)
-        {
+        if (processState == 0) {
             final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState();
 
             level.setBlockAndUpdate(blockPos, newState);
@@ -95,8 +93,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
 
     @Override
     @SuppressWarnings("deprecation")
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
-    {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(level, pos, state);
     }
 

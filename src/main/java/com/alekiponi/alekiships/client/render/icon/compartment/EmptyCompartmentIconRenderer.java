@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.client.render.icon.SingleIconRenderer;
 import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+
 import net.minecraft.world.item.ItemStack;
 
 public class EmptyCompartmentIconRenderer extends SingleIconRenderer<EmptyCompartmentEntity> {

@@ -3,9 +3,11 @@ package com.alekiponi.alekiships.client.model.entity;// Made with Blockbench 4.8
 // Paste this class into your mod and generate all required imports
 
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -44,7 +46,8 @@ public class OutriggerEntityModel<T extends AbstractAlekiBoatEntity> extends Ent
         this.netting = root.getChild("netting");
     }
 
-    public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -226,7 +229,7 @@ public class OutriggerEntityModel<T extends AbstractAlekiBoatEntity> extends Ent
 
 
         return LayerDefinition.create(meshdefinition, 256, 256);
-    }
+    }//@formatter:on
 
     public ModelPart getWaterocclusion() {
         return this.waterocclusion;

@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +14,7 @@ public interface IHaveMultipleCleats extends IHaveCleats {
     @Override
     default void tickCleatInput() {
 
-        AbstractVehicle vehicle = (AbstractVehicle)this;
+        AbstractVehicle vehicle = (AbstractVehicle) this;
 
         int count = 0;
         ArrayList<CleatEntity> cleats = this.getCleats();
@@ -60,7 +61,8 @@ public interface IHaveMultipleCleats extends IHaveCleats {
 
                     Vec3 vectorToVehicle = averageCleatPosition.vectorTo(averageLeashHolderPosition).normalize();
 
-                    Vec3 movementVector = vectorToVehicle.multiply(0.04, 0, 0.04).add(0, vehicle.getDeltaMovement().y, 0);
+                    Vec3 movementVector = vectorToVehicle.multiply(0.04, 0, 0.04)
+                            .add(0, vehicle.getDeltaMovement().y, 0);
 
                     if (averageCleatPosition.distanceTo(averageLeashHolderPosition) > 1.0) {
                         vehicle.setDeltaMovement(movementVector);
@@ -83,7 +85,8 @@ public interface IHaveMultipleCleats extends IHaveCleats {
                                 vectorToVehicle.z * -0.03f);
                         double vehicleSize = Mth.clamp(vehicle.getBbWidth(), 1, 100);
                         movementVector = movementVector.multiply(1 / vehicleSize, 0, 1 / vehicleSize);
-                        movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
+                        movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0,
+                                getCleatMovementMultiplier());
                         vehicle.setDeltaMovement(movementVector);
 
                     } else {
@@ -94,7 +97,8 @@ public interface IHaveMultipleCleats extends IHaveCleats {
                     Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(vehicle.getPosition(0)).normalize();
                     Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.001f, vehicle.getDeltaMovement().y,
                             vectorToVehicle.z * -0.001f);
-                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
+                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0,
+                            getCleatMovementMultiplier());
 
                     if (cleat.distanceTo(leashHolder) > 1) {
                         vehicle.setDeltaMovement(movementVector);
@@ -113,7 +117,8 @@ public interface IHaveMultipleCleats extends IHaveCleats {
                     Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(vehicle.getPosition(0)).normalize();
                     Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.01f / count, vehicle.getDeltaMovement().y,
                             vectorToVehicle.z * -0.01f / count);
-                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0, getCleatMovementMultiplier());
+                    movementVector = movementVector.multiply(getCleatMovementMultiplier(), 0,
+                            getCleatMovementMultiplier());
                     if (cleat.distanceTo(leashHolder) > 1) {
                         vehicle.setDeltaMovement(movementVector);
                     } else {

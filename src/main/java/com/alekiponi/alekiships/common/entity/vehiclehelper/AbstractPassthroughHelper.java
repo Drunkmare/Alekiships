@@ -1,12 +1,12 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,18 +18,13 @@ public abstract class AbstractPassthroughHelper extends AbstractHelper {
         super(pEntityType, pLevel);
     }
 
-    @Override
-    public boolean hurt(final DamageSource damageSource, final float amount) {
-        return hurt(this, damageSource, amount);
-    }
-
     public static boolean hurt(Entity entity, final DamageSource damageSource, final float amount) {
 
-        if(damageSource.is(DamageTypes.EXPLOSION) || damageSource.is(DamageTypes.PLAYER_EXPLOSION)){
+        if (damageSource.is(DamageTypes.EXPLOSION) || damageSource.is(DamageTypes.PLAYER_EXPLOSION)) {
             return false;
         }
 
-        if(!(damageSource.getEntity() instanceof Player)){
+        if (!(damageSource.getEntity() instanceof Player)) {
             return false;
         }
 
@@ -38,6 +33,11 @@ public abstract class AbstractPassthroughHelper extends AbstractHelper {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean hurt(final DamageSource damageSource, final float amount) {
+        return hurt(this, damageSource, amount);
     }
 
     @Override

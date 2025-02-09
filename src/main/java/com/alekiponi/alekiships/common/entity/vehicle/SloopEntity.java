@@ -1,18 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import java.util.Optional;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IBreakIce;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.ICannonable;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IDestroyPlants;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMasts;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMultipleCleats;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
-import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
@@ -20,9 +11,8 @@ import com.alekiponi.alekiships.network.ServerboundSloopControlPacket;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
-import javax.annotation.Nullable;
-
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -42,12 +32,36 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforgespi.Environment;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, IPaintable, IHaveAnchorWindlass, IHaveSailSwitches, IHaveMasts, ICannonable, IHaveBlockOnlyCompartments, IDestroyPlants, IHaveMultipleCleats {
 
+    protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> DATA_ID_MAINSHEET_LENGTH = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> DATA_ID_RUDDER_ROTATION = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Boolean> DATA_ID_MAINSAIL_ACTIVE = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_ID_ICEBREAKER = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_ID_JIBSAIL_ACTIVE = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Integer> DATA_ID_TICKS_NO_RIDERS = SynchedEntityData.defineId(
+            SloopEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<DyeColor> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
+    private static final EntityDataAccessor<DyeColor> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
+    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
+            SloopEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
     public final int PASSENGER_NUMBER = 25;
     public final int[] CLEATS = {18, 19, 20, 21};
     public final int[] COLLIDERS = {14, 15, 16};
@@ -57,52 +71,19 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     public final int[] CAN_ADD_CANNONS = {7, 8, 9, 10, 11, 12};
     public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
     public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-
     public final int NO_INPUT_THRESHOLD = 20 * 10;
-
+    public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
+    protected final float PASSENGER_SIZE_LIMIT = 1.4F;
+    protected final int SAIL_TOGGLE_TICKS = 20;
+    protected final float DAMAGE_THRESHOLD = 512.0f;
+    protected final float DAMAGE_RECOVERY = 5.333f;
     float boom_rotation;
     float mainsheet_length;
     float rudder_rotation;
     int ticks_no_input;
 
-    protected static final EntityDataAccessor<Float> DATA_ID_MAIN_BOOM_ROTATION = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.FLOAT);
-
-    protected static final EntityDataAccessor<Float> DATA_ID_MAINSHEET_LENGTH = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.FLOAT);
-
-    protected static final EntityDataAccessor<Float> DATA_ID_RUDDER_ROTATION = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.FLOAT);
-
-    protected static final EntityDataAccessor<Boolean> DATA_ID_MAINSAIL_ACTIVE = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.BOOLEAN);
-
-    protected static final EntityDataAccessor<Boolean> DATA_ID_ICEBREAKER = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.BOOLEAN);
-
-    protected static final EntityDataAccessor<Boolean> DATA_ID_JIBSAIL_ACTIVE = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.BOOLEAN);
-
-    protected static final EntityDataAccessor<Integer> DATA_ID_TICKS_NO_RIDERS = SynchedEntityData.defineId(
-            SloopEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<DyeColor> DATA_ID_MAINSAIL_DYE = SynchedEntityData.defineId(
-            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
-    private static final EntityDataAccessor<DyeColor> DATA_ID_JIBSAIL_DYE = SynchedEntityData.defineId(
-            SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
-    private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
-            SloopEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
-
-    public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
-
-
-    protected final float PASSENGER_SIZE_LIMIT = 1.4F;
-
-    protected final int SAIL_TOGGLE_TICKS = 20;
-    protected final float DAMAGE_THRESHOLD = 512.0f;
-    protected final float DAMAGE_RECOVERY = 5.333f;
-
     public SloopEntity(final EntityType<? extends SloopEntity> entityType, final Level level,
-                       final BoatMaterial boatMaterial) {
+            final BoatMaterial boatMaterial) {
         super(entityType, level, boatMaterial);
         boom_rotation = 0;
         mainsheet_length = 0;
@@ -392,7 +373,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
         this.tickDynamicControls();
 
-        if (this.level().isClientSide() && this.getControllingPassenger() != null && this.isControlledByLocalInstance()) {
+        if (this.level()
+                .isClientSide() && this.getControllingPassenger() != null && this.isControlledByLocalInstance()) {
             PacketDistributor.sendToServer(
                     new ServerboundSloopControlPacket(this));
         }
@@ -408,7 +390,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             if (this.status == MediumStatus.IN_AIR || this.status == MediumStatus.IN_WATER) {
                 float rotationImpact = 0;
 
-                float windDifference = Mth.degreesDifference(getMainsailWindAngleAndForce()[0], Mth.wrapDegrees(this.getYRot()));
+                float windDifference = Mth.degreesDifference(getMainsailWindAngleAndForce()[0],
+                        Mth.wrapDegrees(this.getYRot()));
 
                 if (windDifference > 4) {
                     rotationImpact = 1f;
@@ -428,7 +411,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
             if (this.getMainsailActive() || this.getJibsailActive()) {
 
-                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngle(), Mth.wrapDegrees(this.getSailWorldRotation()));
+                float boomWindDifference = Mth.degreesDifference(this.getLocalWindAngle(),
+                        Mth.wrapDegrees(this.getSailWorldRotation()));
 
                 float sheet = this.getMainsheetLength();
                 float boom = this.getMainBoomRotation();
@@ -498,39 +482,29 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             }
 
             if (!inputRight && !inputLeft) {
-                if (this.isControlledByLocalInstance())
-                {
-                    if (Environment.get().getDist() == Dist.CLIENT)
-                    {
-                        if (AlekishipsConfig.CLIENT.rudderControlScheme.get() == ClientConfig.RudderSchemes.RETURN_TO_CENTER)
-                        {
-                            if (rudder > 0)
-                            {
+                if (this.isControlledByLocalInstance()) {
+                    if (Environment.get().getDist() == Dist.CLIENT) {
+                        if (AlekishipsConfig.CLIENT.rudderControlScheme.get() == ClientConfig.RudderSchemes.RETURN_TO_CENTER) {
+                            if (rudder > 0) {
                                 rudder -= 0.3f;
                             }
-                            if (rudder < 0)
-                            {
+                            if (rudder < 0) {
                                 rudder += 0.3f;
                             }
-                            if (Math.abs(rudder) < 1)
-                            {
+                            if (Math.abs(rudder) < 1) {
                                 rudder = 0;
                             }
                         }
                     }
                 }
-                if (!(this.getControllingPassenger() instanceof Player))
-                {
-                    if (rudder > 0)
-                    {
+                if (!(this.getControllingPassenger() instanceof Player)) {
+                    if (rudder > 0) {
                         rudder -= 0.3f;
                     }
-                    if (rudder < 0)
-                    {
+                    if (rudder < 0) {
                         rudder += 0.3f;
                     }
-                    if (Math.abs(rudder) < 1)
-                    {
+                    if (Math.abs(rudder) < 1) {
                         rudder = 0;
                     }
                 }
@@ -601,8 +575,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         }
 
         if (heldItem.is(Items.NAME_TAG)) {
-            if (heldItem.getComponents().has(DataComponents.CUSTOM_NAME) && !this.getName().equals(heldItem.getHoverName()))
-            {
+            if (heldItem.getComponents().has(DataComponents.CUSTOM_NAME) && !this.getName()
+                    .equals(heldItem.getHoverName())) {
                 if (!this.level().isClientSide() && this.isAlive() && this.isFunctional()) {
                     this.setCustomName(heldItem.getHoverName());
                     if (!player.getAbilities().instabuild) {
@@ -631,8 +605,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
 
         builder.define(DATA_ID_MAIN_BOOM_ROTATION, 0f);
@@ -693,7 +666,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
 
-
     @Override
     protected float getPaddleMultiplier() {
         return 0;
@@ -708,7 +680,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     protected float getMomentumSubtractor() {
         return 0.0005f;
     }
-
 
 
     protected void tickWindInput() {
@@ -737,9 +708,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                         Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * acceleration * keelFactor);
 
                 Vec3 sailAccelerationWithSail = new Vec3(
-                        Mth.sin(-(Mth.wrapDegrees(sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor,
+                        Mth.sin(-(Mth.wrapDegrees(
+                                sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor,
                         0.0D,
-                        Mth.cos((Mth.wrapDegrees(sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor);
+                        Mth.cos((Mth.wrapDegrees(
+                                sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor);
 
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
@@ -766,9 +739,11 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
                         Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * acceleration * keelFactor);
 
                 Vec3 sailAccelerationWithSail = new Vec3(
-                        Mth.sin(-(Mth.wrapDegrees(sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor,
+                        Mth.sin(-(Mth.wrapDegrees(
+                                sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor,
                         0.0D,
-                        Mth.cos((Mth.wrapDegrees(sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor);
+                        Mth.cos((Mth.wrapDegrees(
+                                sailForceAngle)) * ((float) Math.PI / 180F)) * acceleration * sailFactor);
 
                 this.setDeltaMovement(this.getDeltaMovement()
                         .add(sailAccelerationWithKeel).add(sailAccelerationWithSail));
@@ -793,7 +768,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     }
 
     public float[] getMainsailWindAngleAndForce() {
-        float windDifference = Mth.degreesDifference(this.getWindLocalRotation(), Mth.wrapDegrees(this.getMainBoomRotation()));
+        float windDifference = Mth.degreesDifference(this.getWindLocalRotation(),
+                Mth.wrapDegrees(this.getMainBoomRotation()));
 
         // calculate wind force for lifting scenario
         float windForceAngle = Mth.wrapDegrees(2 * windDifference + this.getYRot());
@@ -804,7 +780,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         }
 
         float windForce = CommonHelper.sailForceMultiplierTable(windDifference);
-        return new float[]{(float) windForceAngle, (float) windForce};
+        return new float[]{windForceAngle, windForce};
     }
 
     public float getMainBoomRotation() {
@@ -816,7 +792,8 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     public void setMainBoomRotation(float rotation) {
         boom_rotation = Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength());
-        this.entityData.set(DATA_ID_MAIN_BOOM_ROTATION, Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength()));
+        this.entityData.set(DATA_ID_MAIN_BOOM_ROTATION,
+                Mth.clamp(rotation, -1 * getMainsheetLength(), getMainsheetLength()));
     }
 
     public float getMainsheetLength() {
@@ -831,11 +808,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.entityData.set(DATA_ID_MAINSHEET_LENGTH, Mth.clamp(length, 0, 45));
     }
 
-    public void setRudderRotation(float rotation) {
-        rudder_rotation = Mth.clamp(rotation, -45, 45);
-        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
-    }
-
     public float getRudderRotation() {
         if (this.isControlledByLocalInstance()) {
             return rudder_rotation;
@@ -843,31 +815,34 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return this.entityData.get(DATA_ID_RUDDER_ROTATION);
     }
 
-    public void setMainsailActive(boolean mainsail) {
-        this.entityData.set(DATA_ID_MAINSAIL_ACTIVE, mainsail);
+    public void setRudderRotation(float rotation) {
+        rudder_rotation = Mth.clamp(rotation, -45, 45);
+        this.entityData.set(DATA_ID_RUDDER_ROTATION, Mth.clamp(rotation, -45, 45));
     }
 
     public boolean getMainsailActive() {
         return this.entityData.get(DATA_ID_MAINSAIL_ACTIVE);
     }
 
-    public void setJibsailActive(boolean jibsail) {
-        this.entityData.set(DATA_ID_JIBSAIL_ACTIVE, jibsail);
+    public void setMainsailActive(boolean mainsail) {
+        this.entityData.set(DATA_ID_MAINSAIL_ACTIVE, mainsail);
     }
 
     public boolean getJibsailActive() {
         return this.entityData.get(DATA_ID_JIBSAIL_ACTIVE);
     }
 
-    public void setTicksNoRiders(int ticks) {
-        this.entityData.set(DATA_ID_TICKS_NO_RIDERS, ticks);
+    public void setJibsailActive(boolean jibsail) {
+        this.entityData.set(DATA_ID_JIBSAIL_ACTIVE, jibsail);
     }
 
     public int getTicksNoRiders() {
         return this.entityData.get(DATA_ID_TICKS_NO_RIDERS);
     }
 
-
+    public void setTicksNoRiders(int ticks) {
+        this.entityData.set(DATA_ID_TICKS_NO_RIDERS, ticks);
+    }
 
     /**
      * @return The color of the mainsail
@@ -899,10 +874,6 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.entityData.set(DATA_ID_JIBSAIL_DYE, DyeColor.WHITE);
     }
 
-    public void setPaintColor(final DyeColor paintColor) {
-        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
-    }
-
     public void setIceBreaker(final boolean icebreaker) {
         this.entityData.set(DATA_ID_ICEBREAKER, icebreaker);
     }
@@ -910,6 +881,10 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
     @Override
     public Optional<DyeColor> getPaintColor() {
         return this.entityData.get(DATA_ID_PAINT_COLOR);
+    }
+
+    public void setPaintColor(final DyeColor paintColor) {
+        this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
     }
 
     public void clearPaint() {

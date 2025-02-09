@@ -14,15 +14,14 @@ import javax.annotation.Nullable;
 // TODO, ensure this works as expected when relying on Leashable
 public class CleatEntity extends AbstractPassthroughHelper implements Leashable {
 
-    @Nullable
-    private Leashable.LeashData leashData;
-
     protected int lerpSteps;
     protected double lerpX;
     protected double lerpY;
     protected double lerpZ;
     protected double lerpYRot;
     protected double lerpXRot;
+    @Nullable
+    private Leashable.LeashData leashData;
 
     public CleatEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

@@ -1,10 +1,12 @@
 package com.alekiponi.alekiships.client.model.entity;// Made with Blockbench 4.8.3
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -34,6 +36,7 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
     private final ModelPart transom;
 
     private final ModelPart cleat;
+    private ModelPart[] allParts = new ModelPart[15];
 
     public RowboatEntityModel(final ModelPart root) {
         this.waterocclusion = root.getChild("waterocclusion");
@@ -53,7 +56,8 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
         this.cleat = root.getChild("cleat");
     }
 
-    public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -200,9 +204,10 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
                 .texOffs(0, 0).addBox(-5.0F, 0.0F, -31.0F, 0.0F, 0.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 256, 256);
-    }
+    }//@formatter:on
 
-    private static void animatePaddle(RowboatEntity pBoat, int pSide, ModelPart pPaddle, float pLimbSwing) {
+    private static void animatePaddle(RowboatEntity pBoat, int pSide, ModelPart
+            pPaddle, float pLimbSwing) {
         float f = pBoat.getRowingTime(pSide, pLimbSwing);
         if (pSide == 0) {
             pPaddle.xRot = -Mth.clampedLerp(-2.0471975512f, -1.2617994F,
@@ -220,7 +225,7 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
 
     }
 
-    public static void animateDestruction(RowboatEntity pEntity, ModelPart[] bones){
+    public static void animateDestruction(RowboatEntity pEntity, ModelPart[] bones) {
         /*
         float damage = pEntity.getDamage();
         float threshold = pEntity.getDamageThreshold();
@@ -265,11 +270,10 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
         return parts;
     }
 
-    private ModelPart[] allParts = new ModelPart[15];
-
     @Override
-    public void setupAnim(RowboatEntity pEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-                          float headPitch) {
+    public void setupAnim(RowboatEntity pEntity, float limbSwing, float limbSwingAmount, float ageInTicks,
+            float netHeadYaw,
+            float headPitch) {
         //animateDestruction(pEntity, allParts);
         animatePaddle(pEntity, 0, this.getOarPort(), limbSwing);
         animatePaddle(pEntity, 1, this.getOarStarboard(), limbSwing);
@@ -289,7 +293,7 @@ public class RowboatEntityModel extends EntityModel<RowboatEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               int color) {
+            int color) {
         hull.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         bow_floor.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         seats.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

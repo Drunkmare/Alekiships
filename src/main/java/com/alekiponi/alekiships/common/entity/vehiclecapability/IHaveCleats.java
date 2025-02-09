@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +48,7 @@ public interface IHaveCleats {
 
 
     default void tickCleatInput() {
-        AbstractVehicle vehicle = (AbstractVehicle)this;
+        AbstractVehicle vehicle = (AbstractVehicle) this;
         for (CleatEntity cleat : this.getCleats()) {
             if (cleat.isLeashed()) {
                 net.minecraft.world.entity.Entity leashHolder = cleat.getLeashHolder();
@@ -57,7 +58,8 @@ public interface IHaveCleats {
                             return;
                         }
                         if (cleat.distanceTo(leashHolder) > 4f) {
-                            Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0)).normalize();
+                            Vec3 vectorToVehicle = leashHolder.getPosition(0).vectorTo(cleat.getPosition(0))
+                                    .normalize();
                             Vec3 movementVector = new Vec3(vectorToVehicle.x * -0.04f, vehicle.getDeltaMovement().y,
                                     vectorToVehicle.z * -0.04f);
 

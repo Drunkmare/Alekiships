@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
@@ -26,38 +28,38 @@ import java.util.List;
 public class MastEntity extends AbstractPassthroughHelper {
 
     public static final String BANNER_KEY = "banner";
+    protected static final EntityDataAccessor<ItemStack> DATA_ID_BANNER = SynchedEntityData.defineId(
+            MastEntity.class, EntityDataSerializers.ITEM_STACK);
+
 
     public MastEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-
-    protected static final EntityDataAccessor<ItemStack> DATA_ID_BANNER = SynchedEntityData.defineId(
-            MastEntity.class, EntityDataSerializers.ITEM_STACK);
-
     @Override
-    public void tick(){
+    public void tick() {
         super.tick();
 
-        if(this.level().isClientSide()){
+        if (this.level().isClientSide()) {
 
             List<Entity> playersToMoveWithMast = new ArrayList<Entity>(this.level()
-                .getEntities(this, this.getBoundingBox().inflate(0, 0, 0).move(0, 0, 0), EntitySelector.NO_SPECTATORS));
+                    .getEntities(this, this.getBoundingBox().inflate(0, 0, 0).move(0, 0, 0),
+                            EntitySelector.NO_SPECTATORS));
 
             for (Entity entity : playersToMoveWithMast) {
                 if ((entity instanceof LocalPlayer player)) {
                     Vec3 vehicleMovement = this.getRootVehicle().getDeltaMovement();
                     player.setPos(new Vec3(this.position().x + 0.3f, player.position().y, this.position().z + 0.3f));
                     if (player.input.jumping) {
-                        player.setDeltaMovement(player.getDeltaMovement().multiply(1,0,1).add(0,0.1,0));
-                    } else if(player.input.shiftKeyDown){
-                        player.setDeltaMovement(player.getDeltaMovement().multiply(1,0,1).add(0,0,0));
+                        player.setDeltaMovement(player.getDeltaMovement().multiply(1, 0, 1).add(0, 0.1, 0));
+                    } else if (player.input.shiftKeyDown) {
+                        player.setDeltaMovement(player.getDeltaMovement().multiply(1, 0, 1).add(0, 0, 0));
                     } else {
-                        player.setDeltaMovement(player.getDeltaMovement().multiply(1,0,1).add(0,-0.1,0));
+                        player.setDeltaMovement(player.getDeltaMovement().multiply(1, 0, 1).add(0, -0.1, 0));
                     }
 
                 }
-                if(entity instanceof Player player){
+                if (entity instanceof Player player) {
                     player.resetFallDistance();
                 }
 
@@ -78,34 +80,31 @@ public class MastEntity extends AbstractPassthroughHelper {
                     this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
         }
-        if (stack.is(Tags.Items.TOOLS_SHEAR))
-        {
+        if (stack.is(Tags.Items.TOOLS_SHEAR)) {
             CommonHelper.giveItemToPlayer(player, this.getBanner());
             this.setBanner(ItemStack.EMPTY);
             this.level().playSound(null, this, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.5F,
                     this.level().getRandom().nextFloat() * 0.1F + 0.9F);
             return InteractionResult.SUCCESS;
         }
-        return super.interact(player,hand);
+        return super.interact(player, hand);
     }
 
-    public void setBanner(ItemStack banner){
-        entityData.set(DATA_ID_BANNER, banner);
-    }
-
-    public ItemStack getBanner(){
+    public ItemStack getBanner() {
         return entityData.get(DATA_ID_BANNER);
     }
 
+    public void setBanner(ItemStack banner) {
+        entityData.set(DATA_ID_BANNER, banner);
+    }
+
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ID_BANNER, ItemStack.EMPTY);
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound)
-    {
+    protected void addAdditionalSaveData(CompoundTag pCompound) {
         pCompound.put(BANNER_KEY, this.getBanner().saveOptional(this.registryAccess()));
     }
 

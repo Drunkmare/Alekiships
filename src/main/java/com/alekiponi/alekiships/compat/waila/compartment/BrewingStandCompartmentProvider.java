@@ -1,19 +1,21 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import snownee.jade.api.EntityAccessor;
 import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElementHelper;
+
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public enum BrewingStandCompartmentProvider implements IEntityComponentProvider, IServerDataProvider<EntityAccessor> {
     INSTANCE;

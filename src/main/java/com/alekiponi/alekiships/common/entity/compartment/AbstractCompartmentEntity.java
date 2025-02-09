@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -64,6 +65,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
      * Replaces this object with the passed in CompartmentEntity
      *
      * @param newCompartment The compartment entity which is replacing this object
+     *
      * @return The compartment passed in
      */
     protected AbstractCompartmentEntity swapCompartments(final AbstractCompartmentEntity newCompartment) {
@@ -84,7 +86,8 @@ public abstract class AbstractCompartmentEntity extends Entity {
         if (ridingThisPart == null && this.isPassenger() && this.getVehicle() instanceof VehiclePart) {
             ridingThisPart = (VehiclePart) this.getVehicle();
         }
-        if (vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
+        if (vehiclePassengerIndex == -1 && this.isPassenger() && this.getRootVehicle() instanceof AbstractVehicle vehicle && vehicle.getPassengers()
+                .size() == vehicle.getMaxPassengers()) {
             vehiclePassengerIndex = vehicle.getPassengers().indexOf(this.getVehicle());
         }
 
@@ -350,7 +353,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         }
     }
 
-    public static enum RidingPose {
+    public enum RidingPose {
         ULTRA_COMPACT,
         COMPACT,
         STANDING,

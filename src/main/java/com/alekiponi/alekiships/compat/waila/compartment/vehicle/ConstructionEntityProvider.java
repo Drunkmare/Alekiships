@@ -1,13 +1,15 @@
 package com.alekiponi.alekiships.compat.waila.compartment.vehicle;
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.EntityAccessor;
 import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public enum ConstructionEntityProvider implements IEntityComponentProvider {
     INSTANCE;

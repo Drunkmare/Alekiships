@@ -1,8 +1,5 @@
 package com.alekiponi.alekiships.common.block;
 
-import java.util.IdentityHashMap;
-import java.util.stream.IntStream;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -15,19 +12,10 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -35,6 +23,10 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
+import java.util.stream.IntStream;
 
 public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
 
@@ -227,8 +219,8 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
 
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
-    {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
+            Player player, InteractionHand hand, BlockHitResult hitResult) {
         final BoatFrame frameBlock = getFrame(stack.getItem());
 
         if (frameBlock == null) return ItemInteractionResult.FAIL;
@@ -242,7 +234,7 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
         final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
 
         level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-            (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
+                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
 
         return ItemInteractionResult.SUCCESS;
     }
@@ -284,8 +276,9 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
             levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
         }
 
-        if (direction.getAxis().isHorizontal())
+        if (direction.getAxis().isHorizontal()) {
             return blockState.setValue(SHAPE, getStairsShape(blockState, levelAccessor, blockPos));
+        }
 
         return super.updateShape(blockState, direction, neighborState, levelAccessor, blockPos, neighborPos);
     }

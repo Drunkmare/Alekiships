@@ -2,9 +2,10 @@ package com.alekiponi.alekiships.client.model.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelPart;
 
-public class SloopConstructionModel extends SloopEntityModel{
+public class SloopConstructionModel extends SloopEntityModel {
 
     public SloopConstructionModel(final ModelPart root) {
         super(root);
@@ -15,7 +16,7 @@ public class SloopConstructionModel extends SloopEntityModel{
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               int color) {
+            int color) {
         //static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         ModelPart non_sided = static_parts.getChild("non_sided");
         ModelPart port = static_parts.getChild("sided").getChild("port");
@@ -26,20 +27,21 @@ public class SloopConstructionModel extends SloopEntityModel{
         port.getChild("hull_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         port.getChild("transom_port").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 
-        starboard.getChild("sidewall_starboard_bow").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        starboard.getChild("sidewall_starboard_bow")
+                .render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         starboard.getChild("sidewall_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         starboard.getChild("cleats_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         starboard.getChild("hull_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         starboard.getChild("transom_starboard").render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
-    private ModelPart getSided(){return this.static_parts.getChild("sided");}
+    private ModelPart getSided() {return this.static_parts.getChild("sided");}
 
-    private ModelPart getNonSided(){return this.static_parts.getChild("non_sided");}
+    private ModelPart getNonSided() {return this.static_parts.getChild("non_sided");}
 
-    private ModelPart getPort(){return this.getSided().getChild("port");}
+    private ModelPart getPort() {return this.getSided().getChild("port");}
 
-    private ModelPart getStarboard(){return this.getSided().getChild("starboard");}
+    private ModelPart getStarboard() {return this.getSided().getChild("starboard");}
 
     public ModelPart getKeel() {
         return this.getNonSided().getChild("keel");
@@ -68,29 +70,28 @@ public class SloopConstructionModel extends SloopEntityModel{
     }
 
     @Override
-    public ModelPart getMainsail(){
+    public ModelPart getMainsail() {
         return this.mainsail_furled.getChild("furled_sail");
     }
 
     @Override
-    public ModelPart getJibsail(){
+    public ModelPart getJibsail() {
         return this.jibsail_furled;
     }
 
-    public ModelPart[] getSternRailing(){
+    public ModelPart[] getSternRailing() {
         ModelPart[] sternrail = new ModelPart[2];
         sternrail[0] = getPort().getChild("stern_railing_port");
         sternrail[1] = getStarboard().getChild("stern_railing_starboard");
         return sternrail;
     }
 
-    public ModelPart[] getBowRailing(){
+    public ModelPart[] getBowRailing() {
         ModelPart[] bowrail = new ModelPart[2];
         bowrail[0] = getPort().getChild("bow_railing_port");
         bowrail[1] = getStarboard().getChild("bow_railing_starboard");
         return bowrail;
     }
-
 
 
 }

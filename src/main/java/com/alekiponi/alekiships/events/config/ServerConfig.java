@@ -10,6 +10,7 @@ public final class ServerConfig {
 
     ServerConfig(final ModConfigSpec.Builder builder) {
         this.windAffectsBoatsWithNoAnchor = builder.comment("When true, boats with no anchor will drift in the wind")
-                .translation(LANG_KEY + ".windAffectsBoatsWithNoAnchor").define("windAffectsBoatsWithNoAnchor", false);
+                .translation(LANG_KEY + ".windAffectsBoatsWithNoAnchor")
+                .define("windAffectsBoatsWithNoAnchor", false);
     }
 }

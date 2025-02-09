@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.client;
 
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;

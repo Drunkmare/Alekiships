@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.util.advancements;
 
 import com.mojang.serialization.Codec;
+
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;

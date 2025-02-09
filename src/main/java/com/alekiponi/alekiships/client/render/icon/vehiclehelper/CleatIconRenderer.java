@@ -5,6 +5,7 @@ import com.alekiponi.alekiships.client.render.icon.IconRendererProvider;
 import com.alekiponi.alekiships.client.render.icon.SingleIconRenderer;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
+
 import net.minecraft.world.item.ItemStack;
 
 public class CleatIconRenderer extends SingleIconRenderer<CleatEntity> {

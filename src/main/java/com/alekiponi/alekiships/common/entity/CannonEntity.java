@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.ItemContents;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.common.util.Lazy;
 
@@ -111,7 +113,8 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         compoundTag.putInt(FUSE_KEY, this.fuse);
         compoundTag.putFloat(DAMAGE_KEY, this.getDamage());
-        this.getInputState().save(compoundTag);
+        this.getInputState()
+                .save(compoundTag);
     }
 
     @Override
@@ -204,7 +207,6 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
      *
      * @param player
      * @param hand
-     * @return
      */
     protected InteractionResult insert(final Player player, final InteractionHand hand) {
         if (this.isLoaded()) return InteractionResult.PASS;
@@ -390,6 +392,7 @@ public class CannonEntity extends Entity implements EntityInput.InputEntity {
 
     /**
      * @return The next required ItemStack to load the cannon.
+     *
      * @apiNote The returned stack must not be modified and is expected to be used only in rendering
      */
     public ItemStack[] getRequiredItems() {

@@ -19,7 +19,9 @@ import com.alekiponi.alekiships.client.render.icon.vehicle.SloopIconRenderer;
 import com.alekiponi.alekiships.client.render.icon.vehiclehelper.*;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.util.VanillaWood;
+
 import net.minecraft.client.renderer.entity.NoopRenderer;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;

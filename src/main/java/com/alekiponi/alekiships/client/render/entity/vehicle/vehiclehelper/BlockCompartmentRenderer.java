@@ -1,9 +1,11 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -24,13 +26,15 @@ public class BlockCompartmentRenderer<Compartment extends AbstractCompartmentEnt
 
     @Override
     protected void renderCompartmentContents(final Compartment compartmentEntity, final float partialTicks,
-                                             final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+            final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
         AbstractVehicle vehicle = compartmentEntity.getTrueVehicle();
         if (LightTexture.block(packedLight) < compartmentEntity.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(compartmentEntity.getCompartmentBlockLight(),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
         if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1),
+                    getSkyLightLevel(compartmentEntity, compartmentEntity.blockPosition()));
         }
 
         //noinspection deprecation

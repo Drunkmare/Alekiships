@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;

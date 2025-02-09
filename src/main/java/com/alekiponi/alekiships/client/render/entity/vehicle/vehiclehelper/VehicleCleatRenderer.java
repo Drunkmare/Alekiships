@@ -1,14 +1,16 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.CleatKnotEntityModel;
 import com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -30,10 +32,11 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
     @Override
     public void render(final CleatEntity cleat, final float entityYaw, final float partialTicks,
-                       final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
+            final PoseStack poseStack, final MultiBufferSource bufferSource, int packedLight) {
         AbstractVehicle vehicle = cleat.getTrueVehicle();
         if (vehicle != null && LightTexture.block(packedLight) < vehicle.getCompartmentBlockLight()) {
-            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1), getSkyLightLevel(cleat, cleat.blockPosition()));
+            packedLight = LightTexture.pack(Math.max(0, vehicle.getCompartmentBlockLight() - 1),
+                    getSkyLightLevel(cleat, cleat.blockPosition()));
         }
 
         final Entity entity = cleat.getLeashHolder();
@@ -41,7 +44,7 @@ public class VehicleCleatRenderer extends EntityRenderer<CleatEntity> {
 
         super.render(cleat, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
         final float rotation;
-        
+
         if (cleat.getRootVehicle() instanceof AbstractVehicle trueVehicle) {
             rotation = trueVehicle.getYRot();
         } else {

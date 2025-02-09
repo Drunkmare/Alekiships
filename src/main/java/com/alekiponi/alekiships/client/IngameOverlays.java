@@ -1,12 +1,14 @@
 package com.alekiponi.alekiships.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.event.IconRenderersEvent;
 import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
-import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -54,8 +57,9 @@ public final class IngameOverlays {
 
         final var player = minecraft.player;
 
-        if (!(minecraft.getCameraEntity() instanceof Player) || !minecraft.options.getCameraType().isFirstPerson())
+        if (!(minecraft.getCameraEntity() instanceof Player) || !minecraft.options.getCameraType().isFirstPerson()) {
             return;
+        }
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
 
@@ -71,7 +75,9 @@ public final class IngameOverlays {
         if (minecraft.gameMode == null) return;
 
         if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR || !minecraft.options.getCameraType()
-                .isFirstPerson()) return;
+                .isFirstPerson()) {
+            return;
+        }
 
         final Entity entity = CommonHelper.getEntity(minecraft.hitResult);
 

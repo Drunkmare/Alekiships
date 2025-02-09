@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
 import com.alekiponi.alekiships.util.AlekiShipsTags;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.common.Tags;
@@ -30,6 +32,7 @@ public interface IPaintable {
      * @param player          The player who's interacting
      * @param hand            The hand used to interact
      * @param paintableEntity The paintable entity
+     *
      * @see InteractionResult#consumesAction()
      */
     static <E extends Entity & IPaintable> InteractionResult interactPaint(final Player player,
@@ -45,6 +48,7 @@ public interface IPaintable {
      * @param level      The level
      * @param position   The position
      * @param iPaintable The paintable
+     *
      * @see InteractionResult#consumesAction()
      */
     static InteractionResult interactPaint(final Player player, final InteractionHand hand, final Level level,

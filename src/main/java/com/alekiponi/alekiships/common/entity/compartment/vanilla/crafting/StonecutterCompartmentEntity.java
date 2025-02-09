@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting;
 
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
@@ -13,6 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.Nullable;
 
 public class StonecutterCompartmentEntity extends SimpleBlockMenuCompartmentEntity {

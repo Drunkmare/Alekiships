@@ -1,7 +1,7 @@
 package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import net.minecraft.tags.TagKey;
+
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -43,6 +43,7 @@ public interface BoatMaterial extends StringRepresentable {
 
     /**
      * @param boatType The entity type that should be returned
+     *
      * @return An optional entity type for the passed in {@link BoatType}
      */
     Optional<EntityType<? extends AbstractVehicle>> getEntityType(final BoatType boatType);

@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.client.icon.Icon;
 import com.alekiponi.alekiships.client.render.icon.IconRenderer;
 import com.alekiponi.alekiships.client.render.icon.IconRendererProvider;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.MastEntity;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.BannerItem;

@@ -1,15 +1,17 @@
 package com.alekiponi.alekiships.wind;
 
+import io.netty.buffer.ByteBuf;
+
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.CommonHelper;
-import io.netty.buffer.ByteBuf;
+
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
-import org.jetbrains.annotations.Contract;
 
 import java.text.MessageFormat;
+import org.jetbrains.annotations.Contract;
 
 /**
  * A simple 2D representation of wind.
@@ -18,6 +20,7 @@ import java.text.MessageFormat;
  *
  * @param speed The wind speed, always a positive value
  * @param angle The wind angle [-180;180)
+ *
  * @see WindModel
  */
 public record Wind(float speed, float angle) {
@@ -57,6 +60,7 @@ public record Wind(float speed, float angle) {
 
     /**
      * @param vec2 A {@link Vec2} representing the wind
+     *
      * @apiNote Delegates to {@link #fromComponents(float, float)}
      */
     @SuppressWarnings("unused")

@@ -1,12 +1,14 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -151,8 +153,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         }
 
         if (this.level().isClientSide()) {
-            if (!this.isRemoved() && CommonHelper.everyNthTickUnique(this.getId(), this.tickCount, 10))
+            if (!this.isRemoved() && CommonHelper.everyNthTickUnique(this.getId(), this.tickCount, 10)) {
                 this.animateTick();
+            }
             return;
         }
 
@@ -446,8 +449,9 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
     private void loadCommonNBTData(final CompoundTag compoundTag) {
         if (compoundTag.contains(BURN_TIME_KEY, Tag.TAG_INT)) this.litTime = compoundTag.getInt(BURN_TIME_KEY);
         if (compoundTag.contains(COOK_TIME_KEY, Tag.TAG_INT)) this.cookingProgress = compoundTag.getInt(COOK_TIME_KEY);
-        if (compoundTag.contains(COOK_TIME_TOTAL_KEY, Tag.TAG_INT))
+        if (compoundTag.contains(COOK_TIME_TOTAL_KEY, Tag.TAG_INT)) {
             this.cookingTotalTime = compoundTag.getInt(COOK_TIME_TOTAL_KEY);
+        }
 
         this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
 

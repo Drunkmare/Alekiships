@@ -11,6 +11,7 @@ public interface LidCompartment {
      * The amount this compartment is open represented as a value from 0 to 1
      *
      * @param partialTicks The partial ticks
+     *
      * @return How open this compartment is
      */
     float getOpenNess(final float partialTicks);

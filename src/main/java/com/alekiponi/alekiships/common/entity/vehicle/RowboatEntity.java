@@ -1,16 +1,14 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import java.util.Optional;
-import java.util.function.IntFunction;
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBoatNoAnchor;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
-import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -28,6 +26,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.function.IntFunction;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
@@ -50,7 +52,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
-                         final BoatMaterial boatMaterial) {
+            final BoatMaterial boatMaterial) {
         super(entityType, level, boatMaterial);
     }
 
@@ -93,16 +95,14 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    public float getCleatMovementMultiplier(){
+    public float getCleatMovementMultiplier() {
         return 10;
     }
 
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
-        if (ridingPoses.length == 0)
-        {
+        if (ridingPoses.length == 0) {
             AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-            for (int i = 1; i < this.getMaxPassengers(); i++)
-            {
+            for (int i = 1; i < this.getMaxPassengers(); i++) {
                 poses[i] = AbstractCompartmentEntity.RidingPose.COMPACT;
             }
             poses[0] = AbstractCompartmentEntity.RidingPose.STANDARD;
@@ -271,8 +271,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
 
         builder.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());

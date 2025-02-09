@@ -6,9 +6,9 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.MastEntity;
 import java.util.ArrayList;
 
 public interface IHaveMasts {
-    public int[] getMastIndices();
+    int[] getMastIndices();
 
-    public default ArrayList<MastEntity> getMasts(AbstractVehicle vehicle) {
+    default ArrayList<MastEntity> getMasts(AbstractVehicle vehicle) {
         ArrayList<MastEntity> list = new ArrayList<MastEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             for (int i : this.getMastIndices()) {
@@ -20,7 +20,7 @@ public interface IHaveMasts {
         return list;
     }
 
-    default ArrayList<MastEntity> getMasts(){
+    default ArrayList<MastEntity> getMasts() {
         return getMasts((AbstractVehicle) this);
     }
 

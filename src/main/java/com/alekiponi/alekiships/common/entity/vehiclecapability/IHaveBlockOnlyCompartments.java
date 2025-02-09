@@ -1,18 +1,19 @@
 package com.alekiponi.alekiships.common.entity.vehiclecapability;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 
 import java.util.ArrayList;
 
 public interface IHaveBlockOnlyCompartments {
-    public int[] getCanAddOnlyBlocksIndices();
+    int[] getCanAddOnlyBlocksIndices();
 
-    default ArrayList<AbstractCompartmentEntity> getCanAddOnlyBlocks(AbstractVehicle vehicle){
+    default ArrayList<AbstractCompartmentEntity> getCanAddOnlyBlocks(AbstractVehicle vehicle) {
         ArrayList<AbstractCompartmentEntity> list = new ArrayList<AbstractCompartmentEntity>();
-        if(vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
+        if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             for (int i : this.getCanAddOnlyBlocksIndices()) {
-                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof AbstractCompartmentEntity compartment) {
+                if (vehicle.getPassengers().get(i)
+                        .getFirstPassenger() instanceof AbstractCompartmentEntity compartment) {
                     list.add(compartment);
                 }
             }
@@ -20,7 +21,7 @@ public interface IHaveBlockOnlyCompartments {
         return list;
     }
 
-    public default ArrayList<AbstractCompartmentEntity> getCanAddOnlyBlocks(){
+    default ArrayList<AbstractCompartmentEntity> getCanAddOnlyBlocks() {
         return getCanAddOnlyBlocks((AbstractVehicle) this);
     }
 

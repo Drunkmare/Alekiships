@@ -2,12 +2,14 @@ package com.alekiponi.alekiships.client.icon;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.render.icon.IconRenderer;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.GuiSpriteManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
@@ -51,6 +53,7 @@ public interface Icon {
 
     /**
      * @param item The item to create an icon of
+     *
      * @see Icon#item(ItemStack)
      */
     static Icon item(final ItemLike item) {
@@ -83,6 +86,7 @@ public interface Icon {
 
     /**
      * @param icons The icons. At least one is required
+     *
      * @return An icon consisting of a row of icons
      */
     static Icon row(final Icon... icons) {
@@ -92,6 +96,7 @@ public interface Icon {
     /**
      * @param padding The padding in pixels between each icon
      * @param icons   The icons. At least one is required
+     *
      * @return An icon consisting of a row of icons
      */
     static Icon row(final @Range(from = 0, to = Integer.MAX_VALUE) int padding, final Icon... icons) {
@@ -108,6 +113,7 @@ public interface Icon {
 
     /**
      * @param icons The icons. At least one is required
+     *
      * @return An icon consisting of a column of icons
      */
     static Icon column(final Icon... icons) {
@@ -117,6 +123,7 @@ public interface Icon {
     /**
      * @param padding The padding in pixels between each icon
      * @param icons   The icons. At least one is required
+     *
      * @return An icon consisting of a column of icons
      */
     static Icon column(final @Range(from = 0, to = Integer.MAX_VALUE) int padding, final Icon... icons) {
@@ -136,7 +143,9 @@ public interface Icon {
      *
      * @param a Icon a
      * @param b Icon b
+     *
      * @return An icon which renders the two parent icons with the width and height of their parents sum
+     *
      * @see Icon#merge(Icon)
      */
     static Icon merge(final Icon a, final Icon b) {
@@ -170,7 +179,9 @@ public interface Icon {
      *
      * @param xOffset The x offset
      * @param yOffset The y offset
+     *
      * @return An icon which renders with the provided offsets
+     *
      * @see Icon#offsetX(int)
      * @see Icon#offsetY(int)
      */
@@ -196,6 +207,7 @@ public interface Icon {
 
     /**
      * @param offset The x offset
+     *
      * @see Icon#offset(int, int)
      * @see Icon#offsetY(int)
      */
@@ -206,6 +218,7 @@ public interface Icon {
 
     /**
      * @param offset The y offset
+     *
      * @see Icon#offset(int, int)
      * @see Icon#offsetX(int)
      */
@@ -218,6 +231,7 @@ public interface Icon {
      * Merge the provided icon "onto" {@code this}
      *
      * @param other The other icon to merge
+     *
      * @see Icon#merge(Icon, Icon)
      */
     default Icon merge(final Icon other) {

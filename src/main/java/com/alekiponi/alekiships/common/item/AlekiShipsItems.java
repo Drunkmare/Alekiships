@@ -3,12 +3,12 @@ package com.alekiponi.alekiships.common.item;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.Objects;
 
 public final class AlekiShipsItems {
 
@@ -22,7 +22,8 @@ public final class AlekiShipsItems {
                     .jukeboxPlayable(AlekiShipsJukeboxSongs.PIRATE_CRAFTING)));
 
     public static final DeferredItem<CannonItem> CANNON = ITEMS.register("cannon", () -> new CannonItem(
-            new Item.Properties().stacksTo(1).component(AlekiShipsComponents.ENTITY_INPUT, CannonItem.DEFAULT_CANNON_INPUT_KEY)));
+            new Item.Properties().stacksTo(1)
+                    .component(AlekiShipsComponents.ENTITY_INPUT, CannonItem.DEFAULT_CANNON_INPUT_KEY)));
 
     public static final DeferredItem<Item> OAR = ITEMS.register("oar",
             () -> new Item(new Item.Properties().stacksTo(1)));

@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.events.config;
 
 import com.alekiponi.alekiships.AlekiShips;
+
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AlekishipsConfig {

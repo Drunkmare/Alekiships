@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.common.item.components;
 
-import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
+
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

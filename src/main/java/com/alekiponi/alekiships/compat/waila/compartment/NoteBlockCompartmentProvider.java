@@ -1,8 +1,15 @@
 package com.alekiponi.alekiships.compat.waila.compartment;
 
+import com.google.common.base.Joiner;
+import org.apache.commons.lang3.StringUtils;
+import snownee.jade.api.EntityAccessor;
+import snownee.jade.api.IEntityComponentProvider;
+import snownee.jade.api.ITooltip;
+import snownee.jade.api.config.IPluginConfig;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.NoteBlockCompartmentEntity;
-import com.google.common.base.Joiner;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -10,11 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import org.apache.commons.lang3.StringUtils;
-import snownee.jade.api.EntityAccessor;
-import snownee.jade.api.IEntityComponentProvider;
-import snownee.jade.api.ITooltip;
-import snownee.jade.api.config.IPluginConfig;
 
 import java.util.stream.Stream;
 

@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.mojang.serialization.Codec;
+
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
 import com.alekiponi.alekiships.util.ItemContents;
-import com.mojang.serialization.Codec;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
 import net.neoforged.neoforge.common.util.Lazy;
 
 import java.util.Arrays;

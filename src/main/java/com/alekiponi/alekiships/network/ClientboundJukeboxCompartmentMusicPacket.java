@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.JukeboxCompartmentMusicManager;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
 import com.alekiponi.alekiships.util.ClientHelper;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 public record ClientboundJukeboxCompartmentMusicPacket(int entityId,
-                                                       Optional<Integer> songId) implements CustomPacketPayload {
+        Optional<Integer> songId) implements CustomPacketPayload {
 
     public static final Type<ClientboundJukeboxCompartmentMusicPacket> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "jukebox_compartment_music"));

@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.item.components;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -16,11 +17,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
+
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 public record ChestCompartmentData(RowCount rowCount, SoundEvent hurtSound, SoundEvent placeSound,
-                                   SoundEvent breakSound, float soundVolume, float soundPitch,
-                                   ResourceLocation chestTexture) {
+        SoundEvent breakSound, float soundVolume, float soundPitch,
+        ResourceLocation chestTexture) {
 
     public static final Codec<ChestCompartmentData> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(RowCount.CODEC.fieldOf("row_count").forGetter(ChestCompartmentData::rowCount),

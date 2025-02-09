@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.icon;
 
 import com.alekiponi.alekiships.client.icon.Icon;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -30,6 +31,7 @@ public abstract class SingleIconRenderer<E extends Entity> extends IconRenderer<
     /**
      * @param entity    The entity
      * @param heldStack The held stack
+     *
      * @return The current {@link Icon}. Return {@link Icon#NONE} if you want to pass
      */
     protected abstract Icon getCurrentIcon(final E entity, final ItemStack heldStack, float partialTick);

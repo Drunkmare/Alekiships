@@ -1,7 +1,5 @@
 package com.alekiponi.alekiships.common.block;
 
-import java.util.IdentityHashMap;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -26,6 +24,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
+import java.util.IdentityHashMap;
 
 public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
 
@@ -62,8 +63,8 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
-    {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
+            Player player, InteractionHand hand, BlockHitResult hitResult) {
         final BoatFrame frameBlock = getFrame(stack.getItem());
 
         if (frameBlock == null) return ItemInteractionResult.FAIL;
@@ -77,7 +78,7 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
         final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
 
         level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-            (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
+                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
 
         return ItemInteractionResult.SUCCESS;
     }

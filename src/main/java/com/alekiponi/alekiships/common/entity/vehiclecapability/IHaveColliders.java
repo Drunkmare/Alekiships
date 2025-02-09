@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public interface IHaveColliders {
 
-    public abstract int[] getColliderIndices();
+    int[] getColliderIndices();
 
     default ArrayList<ColliderEntity> getColliders(AbstractVehicle vehicle) {
         ArrayList<ColliderEntity> list = new ArrayList<ColliderEntity>();
@@ -21,7 +21,7 @@ public interface IHaveColliders {
         return list;
     }
 
-    public default ArrayList<ColliderEntity> getColliders(){
+    default ArrayList<ColliderEntity> getColliders() {
         return getColliders((AbstractVehicle) this);
     }
 

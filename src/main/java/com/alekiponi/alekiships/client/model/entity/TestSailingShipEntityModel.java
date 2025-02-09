@@ -5,6 +5,7 @@ package com.alekiponi.alekiships.client.model.entity;// Made with Blockbench 4.9
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,7 +16,8 @@ import net.minecraft.world.entity.Entity;
 
 public class TestSailingShipEntityModel<T extends Entity> extends EntityModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("modid", "anothershipfortesting"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("modid", "anothershipfortesting"), "main");
     private final ModelPart static_parts;
     private final ModelPart sail1;
     private final ModelPart sail2;
@@ -29,7 +31,8 @@ public class TestSailingShipEntityModel<T extends Entity> extends EntityModel<T>
         this.sail3 = root.getChild("sail3");
     }
 
-    public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -50,15 +53,17 @@ public class TestSailingShipEntityModel<T extends Entity> extends EntityModel<T>
         PartDefinition sail3 = partdefinition.addOrReplaceChild("sail3", CubeListBuilder.create().texOffs(147, 91).addBox(-7.0F, -147.0F, -53.0F, 2.0F, 85.0F, 45.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, -13.0F));
 
         return LayerDefinition.create(meshdefinition, 1024, 1024);
+    }//@formatter:on
+
+    @Override
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+            float headPitch) {
+
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int color) {
         static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         sail1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         sail2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

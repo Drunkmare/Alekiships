@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
+
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.world.item.ItemStack;
 

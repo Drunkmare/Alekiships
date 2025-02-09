@@ -1,8 +1,9 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import com.alekiponi.alekiships.util.ClientHelper;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.util.ClientHelper;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,9 +19,16 @@ public class ColliderEntity extends AbstractPassthroughHelper {
         super(pEntityType, pLevel);
     }
 
+    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
+        if (entity instanceof AbstractVehicle || entity instanceof AbstractCompartmentEntity) {
+            return false;
+        }
+
+        return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
+    }
+
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
     }
 
@@ -30,7 +38,7 @@ public class ColliderEntity extends AbstractPassthroughHelper {
             this.refreshDimensions();
         }
         super.tick();
-        if(this.level().isClientSide()){
+        if (this.level().isClientSide()) {
             ClientHelper.tickHopPlayersOnboard(this);
         }
 
@@ -44,14 +52,6 @@ public class ColliderEntity extends AbstractPassthroughHelper {
     @Override
     public boolean canBeCollidedWith() {
         return true;
-    }
-
-    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
-        if (entity instanceof AbstractVehicle || entity instanceof AbstractCompartmentEntity) {
-            return false;
-        }
-
-        return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
     }
 
     @Override
@@ -72,7 +72,8 @@ public class ColliderEntity extends AbstractPassthroughHelper {
     @Override
     public EntityDimensions getDimensions(Pose pPose) {
         if (this.getRootVehicle() instanceof AbstractVehicle vehicle) {
-            return EntityDimensions.scalable(vehicle.getDefaultColliderDimensions()[0], vehicle.getDefaultColliderDimensions()[1]);
+            return EntityDimensions.scalable(vehicle.getDefaultColliderDimensions()[0],
+                    vehicle.getDefaultColliderDimensions()[1]);
         }
         return super.getDimensions(pPose);
     }

@@ -1,10 +1,12 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import com.alekiponi.alekiships.common.entity.SloopConstructionState;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -25,16 +27,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
-import org.jetbrains.annotations.CheckReturnValue;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A Datapack object representing a collection of construction inputs.
@@ -231,6 +234,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
          *
          * @param stage       The stage
          * @param insertStack The {@link ItemStack} to insert <strong>Do not mutate this</strong>
+         *
          * @return The remainder of the insertion
          */
         ItemStack insert(E stage, ItemStack insertStack);
@@ -239,6 +243,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
          * Gets the current contents in the backing storage for the current stage
          *
          * @param stage The stage
+         *
          * @return How many contents this stage has
          */
         int getContentsCount(E stage);
@@ -264,6 +269,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
     /**
      * @param <E> The backing enum to represent the current {@link ConstructionStage}
      * @param <S> The self type
+     *
      * @apiNote This should typically be implemented on a record similar to {@link SloopConstructionState}.
      * @see ConstructionState#streamCodec(ResourceKey, Class, Function3)
      * @see ConstructionState#codec(ResourceKey, Codec, Enum, Function3)
@@ -280,6 +286,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
          * @param registryKey The registry key
          * @param clazz       The enum class
          * @param factory     The factory for the {@link ConstructionState} object
+         *
          * @see ConstructionState#codec(ResourceKey, Codec, Enum, Function3)
          */
         static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> StreamCodec<FriendlyByteBuf, S> streamCodec(
@@ -297,6 +304,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
          * @param stageCodec    A codec for the construction stage
          * @param startingStage The starting construction stage
          * @param factory       A factory for the {@link ConstructionState} object
+         *
          * @see ConstructionState#streamCodec(ResourceKey, Class, Function3)
          */
         static <E extends Enum<E> & ConstructionStage<E>, S extends ConstructionState<E, S>> Codec<S> codec(
@@ -354,7 +362,7 @@ public final class ConstructionInput<E extends Enum<E> & ConstructionInput.Const
      * @param switchBlockState The switch blockstate
      */
     public record ProgressStage(SizedIngredient ingredient, SoundEvent progressSound, SoundEvent switchSound,
-                                BlockState switchBlockState) {
+            BlockState switchBlockState) {
 
         private static final Codec<ProgressStage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         NeoForgeExtraCodecs.withAlternative(SizedIngredient.FLAT_CODEC, SizedIngredient.NESTED_CODEC)

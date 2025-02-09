@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client;
 
 import com.alekiponi.alekiships.client.render.icon.IconRenderDispatcher;
+
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 

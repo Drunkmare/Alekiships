@@ -1,17 +1,18 @@
 package com.alekiponi.alekiships.compat.waila;
 
-import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
+
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.AbstractFurnaceCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.NoteBlockCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.ConstructionEntity;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
-import snownee.jade.api.IWailaClientRegistration;
-import snownee.jade.api.IWailaCommonRegistration;
-import snownee.jade.api.IWailaPlugin;
-import snownee.jade.api.WailaPlugin;
 
 @WailaPlugin
 public class JadeIntegration implements IWailaPlugin {

@@ -1,9 +1,10 @@
 package com.alekiponi.alekiships.common.block;
 
-import java.util.stream.Stream;
+import com.mojang.serialization.MapCodec;
+
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,18 +22,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
+import java.util.stream.Stream;
+
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.ROWBOAT_COMPLETED;
 
 public class OarlockBlock extends AbstractHullSideBlock {
-    public static final MapCodec<OarlockBlock> CODEC = simpleCodec(OarlockBlock::new);
-
-    public MapCodec<OarlockBlock> codec()
-    {
-        return CODEC;
-    }
-
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final MapCodec<OarlockBlock> CODEC = simpleCodec(OarlockBlock::new);
     private static final VoxelShape SHAPE_NORTH = Stream.of(
                     Block.box(3, 0, 0, 13, 3, 3))
             .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
@@ -45,10 +42,10 @@ public class OarlockBlock extends AbstractHullSideBlock {
     private static final VoxelShape SHAPE_EAST = Stream.of(
                     Block.box(13, 0, 3, 16, 3, 13))
             .reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-
     protected OarlockBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
+        this.registerDefaultState(
+                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     private static Vec3 getSpawnPosition(Level pLevel, BlockPos thispos, BlockState blockState) {
@@ -60,6 +57,9 @@ public class OarlockBlock extends AbstractHullSideBlock {
         return origin;
     }
 
+    public MapCodec<OarlockBlock> codec() {
+        return CODEC;
+    }
 
     @Override
     public VoxelShape getShape(BlockState pstate, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -95,7 +95,8 @@ public class OarlockBlock extends AbstractHullSideBlock {
                         }
                         level.addFreshEntity(rowboat);
 
-                        for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class, rowboat.getBoundingBox().inflate(5.0D))) {
+                        for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class,
+                                rowboat.getBoundingBox().inflate(5.0D))) {
                             ROWBOAT_COMPLETED.trigger(serverplayer);
                         }
 

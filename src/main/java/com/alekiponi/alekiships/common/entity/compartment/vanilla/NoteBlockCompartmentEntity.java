@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -131,7 +132,9 @@ public class NoteBlockCompartmentEntity extends BlockCompartmentEntity {
         final Holder<SoundEvent> soundEvent;
         if (instrument.hasCustomSound() && this.noteBlockSound != null) {
             soundEvent = Holder.direct(SoundEvent.createVariableRangeEvent(this.noteBlockSound));
-        } else soundEvent = instrument.getSoundEvent();
+        } else {
+            soundEvent = instrument.getSoundEvent();
+        }
 
         this.playSound(soundEvent.value(), SoundSource.RECORDS, NoteBlock.NOTE_VOLUME, pitch);
 

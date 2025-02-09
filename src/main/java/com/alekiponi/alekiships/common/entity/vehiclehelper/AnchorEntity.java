@@ -3,7 +3,6 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -23,7 +22,7 @@ public class AnchorEntity extends AbstractHelper {
     }
 
     @Override
-    public void tick(){
+    public void tick() {
         super.tick();
         this.tickLerp();
     }
@@ -71,8 +70,8 @@ public class AnchorEntity extends AbstractHelper {
     @Override
     public AABB getBoundingBoxForCulling() {
         float bbRadius = 0.5f;
-        if(this.getVehicle() instanceof WindlassSwitchEntity windlass){
-            bbRadius = windlass.getAnchorDistance()*2;
+        if (this.getVehicle() instanceof WindlassSwitchEntity windlass) {
+            bbRadius = windlass.getAnchorDistance() * 2;
         }
         Vec3 startingPoint = new Vec3(this.getX() - bbRadius, this.getY() - bbRadius, this.getZ() - bbRadius);
         Vec3 endingPoint = new Vec3(this.getX() + bbRadius, this.getY() + bbRadius, this.getZ() + bbRadius);

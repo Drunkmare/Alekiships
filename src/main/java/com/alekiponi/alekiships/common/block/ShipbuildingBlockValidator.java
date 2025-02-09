@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.util.BoatMaterial;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -21,15 +22,17 @@ public class ShipbuildingBlockValidator {
     private Direction direction = null;
 
     /**
-        Use this constructor for inner/outer angled frames
+     * Use this constructor for inner/outer angled frames
      */
-    ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape, AngledWoodenBoatFrameBlock.ConstantDirection constantDirection) {
+    ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape,
+            AngledWoodenBoatFrameBlock.ConstantDirection constantDirection) {
         this.constantShape = constantShape;
         this.constantDirection = constantDirection;
         this.validatingThisBlock = true;
     }
 
-    ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape, AngledWoodenBoatFrameBlock.ConstantDirection constantDirection, boolean shouldDestroyAbove) {
+    ShipbuildingBlockValidator(AngledWoodenBoatFrameBlock.ConstantShape constantShape,
+            AngledWoodenBoatFrameBlock.ConstantDirection constantDirection, boolean shouldDestroyAbove) {
         this.constantShape = constantShape;
         this.constantDirection = constantDirection;
         this.validatingThisBlock = true;
@@ -37,7 +40,7 @@ public class ShipbuildingBlockValidator {
     }
 
     /**
-        Use this constructor for flat frames or for blocks we don't need to care about (false)
+     * Use this constructor for flat frames or for blocks we don't need to care about (false)
      */
     ShipbuildingBlockValidator(boolean flat) {
         this.flat = flat;
@@ -45,7 +48,7 @@ public class ShipbuildingBlockValidator {
     }
 
     /**
-        Use this constructor for straight angled frames
+     * Use this constructor for straight angled frames
      */
     ShipbuildingBlockValidator(Direction direction) {
         this.constantShape = AngledBoatFrameBlock.ConstantShape.STRAIGHT;
@@ -60,7 +63,7 @@ public class ShipbuildingBlockValidator {
         this.shouldDestroyAbove = shouldDestroyAbove;
     }
 
-    public boolean shouldDestroy(){
+    public boolean shouldDestroy() {
         return validatingThisBlock;
     }
 
@@ -76,7 +79,7 @@ public class ShipbuildingBlockValidator {
 
         if (boatFrame.getBoatMaterial() != boatMaterial) return false;
 
-        if(boatMaterial.withstandsLava()) return false;
+        if (boatMaterial.withstandsLava()) return false;
 
         if (boatFrame instanceof FlatBoatFrameBlock) return ProcessedBoatFrame.isFullyProcessed(blockState);
 
@@ -91,14 +94,17 @@ public class ShipbuildingBlockValidator {
             if (direction == null) return false;
 
             if (AngledBoatFrameBlock.ConstantShape.getConstantShape(
-                    blockState) != AngledBoatFrameBlock.ConstantShape.STRAIGHT) return false;
+                    blockState) != AngledBoatFrameBlock.ConstantShape.STRAIGHT) {
+                return false;
+            }
             final Direction rotatedDirection = switch (structureDirection) {
                 case SOUTH -> this.direction.getOpposite();
                 case EAST -> this.direction.getClockWise();
                 case WEST -> this.direction.getCounterClockWise();
                 default -> this.direction;
             };
-            return blockState.getValue(AngledBoatFrameBlock.FACING) == rotatedDirection && ProcessedBoatFrame.isFullyProcessed(blockState);
+            return blockState.getValue(
+                    AngledBoatFrameBlock.FACING) == rotatedDirection && ProcessedBoatFrame.isFullyProcessed(blockState);
         }
 
         // angled validation

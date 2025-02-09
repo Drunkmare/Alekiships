@@ -3,11 +3,13 @@ package com.alekiponi.alekiships.client.model.entity;// Made with Blockbench 4.8
 // Paste this class into your mod and generate all required imports
 
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -20,7 +22,18 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "sloop_entity"), "main");
-
+    private static final int mainsail_length = 120;
+    private static final int mainsail_height = 120;
+    private static final int mainsail_horizontal_sections = 30;
+    private static final int mainsail_vertical_sections = 5;
+    private static final int mainsail_section_widths = mainsail_length / mainsail_horizontal_sections;
+    private static final int mainsail_section_heights = mainsail_height / mainsail_vertical_sections;
+    private static final int jibsail_length = 52;
+    private static final int jibsail_height = 120;
+    private static final int jibsail_horizontal_sections = 13;
+    private static final int jibsail_vertical_sections = 1;
+    private static final int jibsail_section_widths = jibsail_length / jibsail_horizontal_sections;
+    private static final int jibsail_section_heights = jibsail_height / jibsail_vertical_sections;
     protected final ModelPart mainsail;
     protected final ModelPart mainsail_deployed;
     protected final ModelPart mainsail_furled;
@@ -36,6 +49,9 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     private final ModelPart telltail;
     private final ModelPart nameplate;
     private final ModelPart icebreaker;
+    private ModelPart[][] mainSailParts = new ModelPart[mainsail_horizontal_sections][mainsail_vertical_sections];
+    private ModelPart[][] jibSailParts = new ModelPart[jibsail_horizontal_sections][jibsail_vertical_sections];
+    private ModelPart[] telltailParts = new ModelPart[6];
 
     public SloopEntityModel(final ModelPart root) {
         this.mainsail = root.getChild("mainsail");
@@ -55,7 +71,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         this.icebreaker = root.getChild("icebreaker");
     }
 
-    public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -664,17 +681,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         }
 
         return LayerDefinition.create(meshdefinition, 1024, 1024);
-    }
-
-    private static final int mainsail_length = 120;
-    private static final int mainsail_height = 120;
-    private static final int mainsail_horizontal_sections = 30;
-
-    private static final int mainsail_vertical_sections = 5;
-
-    private static final int mainsail_section_widths = mainsail_length / mainsail_horizontal_sections;
-
-    private static final int mainsail_section_heights = mainsail_height / mainsail_vertical_sections;
+    }//@formatter:on
 
     private static void generateMainsail(PartDefinition mainsail_main) {
 
@@ -707,17 +714,12 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                 int textureOffsetY = (996 - (int) yorigin);
 
                 String name = "mainsail_part_" + zindex + "_" + yindex;
-                mainsail_main.addOrReplaceChild(name, CubeListBuilder.create().texOffs(textureOffsetx, textureOffsetY).addBox(-1F, -yorigin - mainsail_section_heights - 4f, zposition + 0.5f, 2, section_height, mainsail_section_widths, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+                mainsail_main.addOrReplaceChild(name, CubeListBuilder.create().texOffs(textureOffsetx, textureOffsetY)
+                        .addBox(-1F, -yorigin - mainsail_section_heights - 4f, zposition + 0.5f, 2, section_height,
+                                mainsail_section_widths, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
             }
         }
     }
-
-    private static final int jibsail_length = 52;
-    private static final int jibsail_height = 120;
-    private static final int jibsail_horizontal_sections = 13;
-    private static final int jibsail_vertical_sections = 1;
-    private static final int jibsail_section_widths = jibsail_length / jibsail_horizontal_sections;
-    private static final int jibsail_section_heights = jibsail_height / jibsail_vertical_sections;
 
     private static void generateJibsail(PartDefinition jibsail_main) {
 
@@ -742,14 +744,15 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                 String name = "jibsail_part_" + zindex + "_" + yindex;
                 jibsail_main.getChild("jibsail").addOrReplaceChild(name, CubeListBuilder.create()
                                 .texOffs(textureOffsetx, textureOffsetY)
-                                .addBox(-1F, -yorigin, zposition, 2, section_height, jibsail_section_widths, new CubeDeformation(0.0F)),
+                                .addBox(-1F, -yorigin, zposition, 2, section_height, jibsail_section_widths,
+                                        new CubeDeformation(0.0F)),
                         PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0F, 0.0F, 0.0F));
             }
         }
     }
 
-
-    private static void animateMainsail(SloopEntity pBoat, float pPartialTicks, ModelPart mainsail_main, ModelPart mainsail, ModelPart[][] sails, float mastRotation, int animationTick) {
+    private static void animateMainsail(SloopEntity pBoat, float pPartialTicks, ModelPart mainsail_main,
+            ModelPart mainsail, ModelPart[][] sails, float mastRotation, int animationTick) {
 
         if (pBoat.getMainsailActive()) {
             //mainsail_main.yRot  = mastRotation;
@@ -781,7 +784,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                     if (sails[zindex][yindex] == null) {
                         break;
                     }
-                    float luffFunction = (float) (5 * Mth.sin((float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat + yindex * mainsail_section_widths))));
+                    float luffFunction = (float) (5 * Mth.sin(
+                            (float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat + yindex * mainsail_section_widths))));
                     float squaredFunctionComponent = (zindex - 7) * (zindex - 7);
                     float airfoilFunction = (-0.20f * squaredFunctionComponent + 11) * airFoilDirection;
                     if (zindex > 7) {
@@ -821,7 +825,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                     mixFunction = Mth.clamp(mixFunction, 0, 0.92f);
 
                     if (mixFunction >= 0.9f) {
-                        luffFunction = (float) (5 * Mth.sin((float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat)))) * falloff;
+                        luffFunction = (float) (5 * Mth.sin(
+                                (float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat)))) * falloff;
                     }
 
                     float finalfunction = ((airfoilFunction) * mixFunction + (luffFunction * (1.0f - mixFunction))) + ycurve * mixFunction;
@@ -839,7 +844,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     }
 
-    private static void animateJibsail(SloopEntity pBoat, float pPartialTicks, ModelPart jibsail_main, ModelPart jibsheet_transform_checker, ModelPart[][] sails, float mastRotation, int animationTick) {
+    private static void animateJibsail(SloopEntity pBoat, float pPartialTicks, ModelPart jibsail_main,
+            ModelPart jibsheet_transform_checker, ModelPart[][] sails, float mastRotation, int animationTick) {
         ModelPart jibsail = jibsail_main.getChild("jibsail");
         ModelPart jibsheet = jibsail.getChild("jibsheet");
 
@@ -877,7 +883,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
             jibsail.yRot = Mth.rotLerp(pPartialTicks, jibsail.yRot, mastRotation);
         }
 
-        if(pBoat.getJibsailActive()){
+        if (pBoat.getJibsailActive()) {
             for (int zindex = 0; zindex < jibsail_horizontal_sections; zindex++) {
 
                 for (int yindex = 0; yindex < jibsail_vertical_sections; yindex++) {
@@ -887,8 +893,9 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
                     //TODO clean up the math
 
-                    float luffFunction = (float) (5 * Mth.sin((float) (0.1 * ((zindex * jibsail_section_widths) + animationTickFloat + yindex * jibsail_section_widths))));
-                    float squaredFunctionComponent = (float) Math.pow(zindex - 22f,2);
+                    float luffFunction = (float) (5 * Mth.sin(
+                            (float) (0.1 * ((zindex * jibsail_section_widths) + animationTickFloat + yindex * jibsail_section_widths))));
+                    float squaredFunctionComponent = (float) Math.pow(zindex - 22f, 2);
 
                     float falloff = 0.6f * (float) Math.log((zindex + 1.00f)) + 0.1f;
                     falloff = Mth.clamp(falloff, 0.0f, 1.0f);
@@ -909,7 +916,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
                     }
 
                     if (mixFunction >= 0.9f) {
-                        luffFunction = (float) (5 * Mth.sin((float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat)))) * falloff;
+                        luffFunction = (float) (5 * Mth.sin(
+                                (float) (0.1 * ((zindex * mainsail_section_widths) + animationTickFloat)))) * falloff;
                     }
 
                     mixFunction = Mth.clamp(mixFunction, 0, 0.92f);
@@ -994,9 +1002,10 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     }
 
-    private static void animateTelltail(SloopEntity pBoat, float pPartialTicks, ModelPart telltail, ModelPart[] telltailParts, int animationTick) {
+    private static void animateTelltail(SloopEntity pBoat, float pPartialTicks, ModelPart telltail,
+            ModelPart[] telltailParts, int animationTick) {
 
-        float windLocalAngle = Mth.wrapDegrees(pBoat.getWindLocalRotation()-180);
+        float windLocalAngle = Mth.wrapDegrees(pBoat.getWindLocalRotation() - 180);
         float windSpeed = pBoat.getLocalWindSpeed() * 20f;
 
         if (windSpeed < 0.1) {
@@ -1030,7 +1039,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         ;
     }
 
-    private static void animateWindlass(SloopEntity pBoat, float pPartialTicks, ModelPart windlass, float anchorDistance) {
+    private static void animateWindlass(SloopEntity pBoat, float pPartialTicks, ModelPart windlass,
+            float anchorDistance) {
         float degrees = (anchorDistance * 180);
         windlass.getChild("crank_arm").zRot = (float) Math.toRadians(degrees);
         if (degrees % 360 < 90) {
@@ -1045,7 +1055,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     }
 
-    private static void animateMainsheet(SloopEntity pBoat, float pPartialTicks, ModelPart sheet, ModelPart spiral, float boomRotation) {
+    private static void animateMainsheet(SloopEntity pBoat, float pPartialTicks, ModelPart sheet, ModelPart spiral,
+            float boomRotation) {
         //TODO clean up this absolute trashfire
         ModelPart mainsheet = sheet.getChild("mainsheet");
         ModelPart traveller = sheet.getChild("traveller");
@@ -1100,7 +1111,8 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
             //sheet.yScale = ((float)Mth.clamp(Math.abs(thing), 15, 45)/45f)*3.85f;
             mainsheet.x = Mth.rotLerp(pPartialTicks, mainsheet.x, (float) Math.toDegrees(boomRotation) / 3.53f);
             traveller.x = Mth.rotLerp(pPartialTicks, traveller.x, (float) Math.toDegrees(boomRotation) / 3.8f - 12f);
-            connector.xScale = Mth.lerp(pPartialTicks, connector.xScale, (float) (1 + (-Math.toDegrees(boomRotation) / 45) * 0.5));
+            connector.xScale = Mth.lerp(pPartialTicks, connector.xScale,
+                    (float) (1 + (-Math.toDegrees(boomRotation) / 45) * 0.5));
 
             int spiralIndex = Mth.clamp(12 - (int) pBoat.getMainsheetLength() / 4, 2, 11);
             for (int i = 2; i <= 11; i++) {
@@ -1145,8 +1157,10 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         wind_indicator.zScale = pBoat.getLocalWindSpeed() * 5;
     }
 
-    private static void animateSailforceIndicator(SloopEntity pBoat, float pPartialTicks, ModelPart sail_force_indicator) {
-        float sailForceAngle = (float) Math.toRadians(Mth.wrapDegrees(pBoat.getMainsailWindAngleAndForce()[0]) - pBoat.getYRot());
+    private static void animateSailforceIndicator(SloopEntity pBoat, float pPartialTicks,
+            ModelPart sail_force_indicator) {
+        float sailForceAngle = (float) Math.toRadians(
+                Mth.wrapDegrees(pBoat.getMainsailWindAngleAndForce()[0]) - pBoat.getYRot());
         float sailForce = Mth.clamp(pBoat.getMainsailWindAngleAndForce()[1], 0.1f, 10f);
         sail_force_indicator.yRot = (float) (sailForceAngle);
         sail_force_indicator.zScale = 1;
@@ -1154,38 +1168,6 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         sail_force_indicator.zScale = sailForce;
         sail_force_indicator.xScale = sailForce;
     }
-
-
-    @Override
-    public void setupAnim(SloopEntity pEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-                          float headPitch) {
-        if (mainSailParts[0][0] == null) {
-            mainSailParts = getMainsailParts(this);
-        }
-        if (jibSailParts[0][0] == null) {
-            jibSailParts = getJibsailParts(this);
-        }
-        if (telltailParts[0] == null) {
-            telltailParts = getTelltailParts(this);
-        }
-        //(float) Math.toRadians(45f)
-        animateMainsail(pEntity, limbSwing, mainsail_deployed, mainsail, mainSailParts, (float) Math.toRadians(pEntity.getMainBoomRotation()), pEntity.tickCount);
-        animateMainsheet(pEntity, limbSwing, mainsheet_main, rope_spiral, (float) Math.toRadians(pEntity.getMainBoomRotation()));
-        animateJibsail(pEntity, limbSwing, jibsail_deployed, jibsheet_transform_checker, jibSailParts, (float) Math.toRadians(pEntity.getMainBoomRotation()), pEntity.tickCount);
-        animateRudder(pEntity, limbSwing, rudder, (float) Math.toRadians(pEntity.getRudderRotation()));
-        animateTelltail(pEntity, limbSwing, telltail, telltailParts, pEntity.tickCount);
-
-        float distance = 0;
-        for (WindlassSwitchEntity windlassSwitch : pEntity.getWindlasses()) {
-            distance = windlassSwitch.getAnchorDistance();
-        }
-        if(distance > 0){
-            animateWindlass(pEntity, limbSwing, windlass, distance);
-        }
-    }
-
-    private ModelPart[][] mainSailParts = new ModelPart[mainsail_horizontal_sections][mainsail_vertical_sections];
-
 
     public static ModelPart[][] getMainsailParts(SloopEntityModel sloopEntityModel) {
 
@@ -1203,8 +1185,6 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
         return sails;
     }
-
-    private ModelPart[][] jibSailParts = new ModelPart[jibsail_horizontal_sections][jibsail_vertical_sections];
 
     public static ModelPart[][] getJibsailParts(SloopEntityModel sloopEntityModel) {
 
@@ -1225,16 +1205,47 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
         return sails;
     }
 
-    private ModelPart[] telltailParts = new ModelPart[6];
-
     public static ModelPart[] getTelltailParts(SloopEntityModel sloopEntityModel) {
         ModelPart[] telltailParts = new ModelPart[6];
         for (int i = 1; i <= 6; i++) {
             String name = "telltail_part_" + i;
-            telltailParts[i-1] = sloopEntityModel.telltail.getChild(name);
+            telltailParts[i - 1] = sloopEntityModel.telltail.getChild(name);
         }
         return telltailParts;
     }
+
+    @Override
+    public void setupAnim(SloopEntity pEntity, float limbSwing, float limbSwingAmount, float ageInTicks,
+            float netHeadYaw,
+            float headPitch) {
+        if (mainSailParts[0][0] == null) {
+            mainSailParts = getMainsailParts(this);
+        }
+        if (jibSailParts[0][0] == null) {
+            jibSailParts = getJibsailParts(this);
+        }
+        if (telltailParts[0] == null) {
+            telltailParts = getTelltailParts(this);
+        }
+        //(float) Math.toRadians(45f)
+        animateMainsail(pEntity, limbSwing, mainsail_deployed, mainsail, mainSailParts,
+                (float) Math.toRadians(pEntity.getMainBoomRotation()), pEntity.tickCount);
+        animateMainsheet(pEntity, limbSwing, mainsheet_main, rope_spiral,
+                (float) Math.toRadians(pEntity.getMainBoomRotation()));
+        animateJibsail(pEntity, limbSwing, jibsail_deployed, jibsheet_transform_checker, jibSailParts,
+                (float) Math.toRadians(pEntity.getMainBoomRotation()), pEntity.tickCount);
+        animateRudder(pEntity, limbSwing, rudder, (float) Math.toRadians(pEntity.getRudderRotation()));
+        animateTelltail(pEntity, limbSwing, telltail, telltailParts, pEntity.tickCount);
+
+        float distance = 0;
+        for (WindlassSwitchEntity windlassSwitch : pEntity.getWindlasses()) {
+            distance = windlassSwitch.getAnchorDistance();
+        }
+        if (distance > 0) {
+            animateWindlass(pEntity, limbSwing, windlass, distance);
+        }
+    }
+
     public ModelPart getWaterocclusion() {
         return this.waterocclusion;
     }
@@ -1262,6 +1273,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
     public ModelPart getNameplate() {
         return this.nameplate;
     }
+
     public ModelPart getIcebreaker() {
         return this.icebreaker;
     }
@@ -1272,7 +1284,7 @@ public class SloopEntityModel extends EntityModel<SloopEntity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
-                               int color) {
+            int color) {
         static_parts.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         windlass.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         rudder.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

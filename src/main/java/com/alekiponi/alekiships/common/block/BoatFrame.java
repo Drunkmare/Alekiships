@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.common.block;
 
 import com.alekiponi.alekiships.util.BoatMaterial;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,6 +19,7 @@ public interface BoatFrame {
      * Grabs a boat material from a blockstate if possible
      *
      * @param blockState The blockstate
+     *
      * @return The blockstates boat material or null
      */
     @Nullable

@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.client.render.icon;
 
 import com.alekiponi.alekiships.client.icon.Icon;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;

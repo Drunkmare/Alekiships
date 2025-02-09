@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
+import com.google.common.collect.Lists;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
@@ -12,7 +14,7 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
-import com.google.common.collect.Lists;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,11 +37,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 
 public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
@@ -199,7 +202,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
         if (everyNthTickUnique(5)) {
             if (this.isVehicle() && !this.level().isClientSide()) {
-                if (this.getFirstPassenger() != null && this.getTrueVehicle() != null && this.getFirstPassenger().getBbWidth() > this.getTrueVehicle().getPassengerSizeLimit()) {
+                if (this.getFirstPassenger() != null && this.getTrueVehicle() != null && this.getFirstPassenger()
+                        .getBbWidth() > this.getTrueVehicle().getPassengerSizeLimit()) {
                     this.ejectPassengers();
                 }
             }
@@ -272,7 +276,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
     // TODO this should probably not also send packets?
     public void setInput(final boolean inputLeft, final boolean inputRight, final boolean inputUp,
-                         final boolean inputDown) {
+            final boolean inputDown) {
         if (this.getFirstPassenger() instanceof Player) {
             boolean shouldUpdateServer = false;
             if (this.getInputLeft() != inputLeft) {
@@ -311,23 +315,14 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         return this.entityData.get(DATA_ID_INPUT_LEFT);
     }
 
-    public boolean getInputRight() {
-
-        return this.entityData.get(DATA_ID_INPUT_RIGHT);
-    }
-
-    public boolean getInputUp() {
-        return this.entityData.get(DATA_ID_INPUT_UP);
-    }
-
-    public boolean getInputDown() {
-
-        return this.entityData.get(DATA_ID_INPUT_DOWN);
-    }
-
     public void setInputLeft(boolean input) {
 
         this.entityData.set(DATA_ID_INPUT_LEFT, input);
+    }
+
+    public boolean getInputRight() {
+
+        return this.entityData.get(DATA_ID_INPUT_RIGHT);
     }
 
     public void setInputRight(boolean input) {
@@ -335,8 +330,17 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         this.entityData.set(DATA_ID_INPUT_RIGHT, input);
     }
 
+    public boolean getInputUp() {
+        return this.entityData.get(DATA_ID_INPUT_UP);
+    }
+
     public void setInputUp(boolean input) {
         this.entityData.set(DATA_ID_INPUT_UP, input);
+    }
+
+    public boolean getInputDown() {
+
+        return this.entityData.get(DATA_ID_INPUT_DOWN);
     }
 
     public void setInputDown(boolean input) {
@@ -355,7 +359,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
         //TODO make generic for all oar-accepting boats
         if (heldStack.is(AlekiShipsItems.OAR.get())) {
-            if (this.getTrueVehicle() instanceof RowboatEntity rowboat && !rowboat.getOars().equals(RowboatEntity.Oars.TWO)) {
+            if (this.getTrueVehicle() instanceof RowboatEntity rowboat && !rowboat.getOars()
+                    .equals(RowboatEntity.Oars.TWO)) {
                 return rowboat.interact(player, hand);
             }
         }
@@ -423,7 +428,8 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
         final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
 
         if (compartmentType.isPresent()) {
-            if ((this.getRootVehicle() instanceof AbstractVehicle vehicle && !vehicle.pilotCompartmentAcceptsNonPlayers()) && vehicle.getPilotCompartment().is(this)) {
+            if ((this.getRootVehicle() instanceof AbstractVehicle vehicle && !vehicle.pilotCompartmentAcceptsNonPlayers()) && vehicle.getPilotCompartment()
+                    .is(this)) {
                 return InteractionResult.FAIL;
             }
 

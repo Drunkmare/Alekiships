@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractAlekiBoatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.event.EventHooks;
 
 public class CannonballEntity extends Projectile {
@@ -88,7 +90,7 @@ public class CannonballEntity extends Projectile {
     protected void onHit(final HitResult hitResult) {
         super.onHit(hitResult);
         //this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float) Math.min(this.getDeltaMovement().length() * 2,4), true, Level.ExplosionInteraction.MOB);
-        this.explode((float) Math.min(this.getDeltaMovement().length() * 2,4));
+        this.explode((float) Math.min(this.getDeltaMovement().length() * 2, 4));
         this.discard();
     }
 
@@ -141,7 +143,9 @@ public class CannonballEntity extends Projectile {
             }
 
             inertia = 0.8F;
-        } else inertia = 0.98F;
+        } else {
+            inertia = 0.98F;
+        }
 
         this.setDeltaMovement(movement.add(0, -0.1, 0).scale(inertia));
         this.level().addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, nextX, nextY + 0.5, nextZ, 0, 0, 0);
@@ -160,7 +164,7 @@ public class CannonballEntity extends Projectile {
     protected boolean canHitEntity(final Entity target) {
         // stop cannons from being able to hit the boat they're fired from
         if (target.getRootVehicle() instanceof AbstractVehicle && this.getOwner() != null) {
-            if(target.getRootVehicle().is(this.getOwner().getRootVehicle())){
+            if (target.getRootVehicle().is(this.getOwner().getRootVehicle())) {
                 return false;
             }
         }

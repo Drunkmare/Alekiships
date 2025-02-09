@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.wind;
 
 import net.minecraft.util.LinearCongruentialGenerator;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.Random;

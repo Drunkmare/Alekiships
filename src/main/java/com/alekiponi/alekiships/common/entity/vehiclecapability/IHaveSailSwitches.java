@@ -6,7 +6,8 @@ import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import java.util.ArrayList;
 
 public interface IHaveSailSwitches {
-    public abstract int[] getSailSwitchIndices();
+    int[] getSailSwitchIndices();
+
     default ArrayList<SailSwitchEntity> getSailSwitches(AbstractVehicle vehicle) {
         ArrayList<SailSwitchEntity> list = new ArrayList<SailSwitchEntity>();
         if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
@@ -19,7 +20,7 @@ public interface IHaveSailSwitches {
         return list;
     }
 
-    public default ArrayList<SailSwitchEntity> getSailSwitches(){
+    default ArrayList<SailSwitchEntity> getSailSwitches() {
         return getSailSwitches((AbstractVehicle) this);
     }
 

@@ -7,11 +7,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
+
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.Range;
 
 import java.text.MessageFormat;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.Range;
 
 /**
  * A "bucketed" {@link ItemStack} storage (think {@code List<List<ItemStack>>})
@@ -42,7 +43,9 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
     /**
      * @param bucketIndex The bucket to insert into
      * @param insertStack The insert Stack. Unmodified
+     *
      * @return Insertion remainder
+     *
      * @apiNote This behaves like {@link net.neoforged.neoforge.items.IItemHandler#insertItem(int, ItemStack, boolean)}
      */
     public ItemStack insert(final @Range(from = 0, to = Integer.MAX_VALUE) int bucketIndex,
@@ -53,6 +56,7 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
 
     /**
      * @param bucketIndex The bucket index to get the count of
+     *
      * @return The item count in the bucket
      */
     public int getCount(final @Range(from = 0, to = Integer.MAX_VALUE) int bucketIndex) {
@@ -119,8 +123,10 @@ public class ItemContents implements INBTSerializable<CompoundTag> {
     }
 
     private void validateBucketIndex(final int bucketIndex) {
-        if (bucketIndex < 0 || bucketIndex >= this.contents.size()) throw new RuntimeException(
-                MessageFormat.format("Bucket {0} not in valid range - [0,{1})", bucketIndex, this.contents.size()));
+        if (bucketIndex < 0 || bucketIndex >= this.contents.size()) {
+            throw new RuntimeException(
+                    MessageFormat.format("Bucket {0} not in valid range - [0,{1})", bucketIndex, this.contents.size()));
+        }
     }
 
     protected static final class ItemStackBucket implements INBTSerializable<CompoundTag> {

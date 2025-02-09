@@ -5,9 +5,11 @@ package com.alekiponi.alekiships.client.model.entity;
 // Paste this class into your mod and generate all required imports
 
 
-import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import com.alekiponi.alekiships.common.entity.CannonEntity;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -18,7 +20,8 @@ import net.minecraft.world.entity.Entity;
 
 public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("modid", "canon"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("modid", "canon"), "main");
     private final ModelPart barrel;
     private final ModelPart base;
 
@@ -28,7 +31,8 @@ public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
         this.base = root.getChild("base");
     }
 
-    public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -61,20 +65,22 @@ public class CannonEntityModel<T extends Entity> extends EntityModel<T> {
         PartDefinition cube_r4 = base.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(26, 70).addBox(-5.5F, -0.5F, -0.5F, 11.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 0.0F, -9.0F, -1.5708F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
-    }
+    }//@formatter:on
 
-    private static void animateSailforceIndicator(CannonEntity cannon, float pPartialTicks, ModelPart barrel){
+    private static void animateSailforceIndicator(CannonEntity cannon, float pPartialTicks, ModelPart barrel) {
         float barrelAngle = (float) Math.toRadians(cannon.getXRot());
         barrel.xRot = barrelAngle;
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        animateSailforceIndicator((CannonEntity)(entity), limbSwingAmount, barrel);
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+            float headPitch) {
+        animateSailforceIndicator((CannonEntity) (entity), limbSwingAmount, barrel);
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int color) {
         barrel.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         base.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }

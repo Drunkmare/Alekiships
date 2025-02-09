@@ -1,9 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
-import java.util.ArrayList;
-import com.alekiponi.alekiships.client.IngameOverlays;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -12,11 +10,12 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+
 import net.neoforged.neoforge.common.Tags;
 
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.*;
+import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.checkDyeShipBlack;
 
-public class SailSwitchEntity extends AbstractSwitchEntity{
+public class SailSwitchEntity extends AbstractSwitchEntity {
 
     public SailSwitchEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -25,16 +24,17 @@ public class SailSwitchEntity extends AbstractSwitchEntity{
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if((stack.is(Tags.Items.DYES) || stack.is(Items.WATER_BUCKET)) && this.getRootVehicle() instanceof SloopEntity sloop){
+        if ((stack.is(Tags.Items.DYES) || stack.is(
+                Items.WATER_BUCKET)) && this.getRootVehicle() instanceof SloopEntity sloop) {
             int index = 0;
-            for(SailSwitchEntity switchEntity : sloop.getSailSwitches()){
-                if(switchEntity == this){
+            for (SailSwitchEntity switchEntity : sloop.getSailSwitches()) {
+                if (switchEntity == this) {
                     break;
                 }
                 index++;
             }
 
-            if(index == 0){
+            if (index == 0) {
                 //mainsail
                 if (stack.is(Items.WATER_BUCKET)) {
                     sloop.clearMainsailDye();

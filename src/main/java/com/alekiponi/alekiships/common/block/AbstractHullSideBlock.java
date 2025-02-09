@@ -5,11 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,7 +21,8 @@ public abstract class AbstractHullSideBlock extends HorizontalDirectionalBlock i
 
     protected AbstractHullSideBlock(Properties pProperties) {
         super(pProperties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
+        this.registerDefaultState(
+                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     public static boolean isSupportedByWatercraftFrame(LevelReader pLevel, BlockPos thispos) {
@@ -35,8 +32,9 @@ public abstract class AbstractHullSideBlock extends HorizontalDirectionalBlock i
             return false;
         }
         return AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(pLevel.getBlockState(
-                thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
+                thispos.below())) == AngledBoatFrameBlock.ConstantShape.INNER || AngledBoatFrameBlock.ConstantShape.getConstantShape(
+                pLevel.getBlockState(
+                        thispos.below())) == AngledBoatFrameBlock.ConstantShape.STRAIGHT;
     }
 
     @Override
@@ -51,9 +49,12 @@ public abstract class AbstractHullSideBlock extends HorizontalDirectionalBlock i
         final FluidState fluidstate = pContext.getLevel().getFluidState(blockpos);
         LevelAccessor level = pContext.getLevel();
         BlockState blockstate = this.defaultBlockState()
-                .setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+                .setValue(FACING, pContext.getHorizontalDirection().getOpposite())
+                .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
 
-        if (level.getBlockState(blockpos.below()).getBlock() instanceof AngledWoodenBoatFrameBlock || level.getBlockState(blockpos.below()).getBlock() instanceof AngledBoatFrameBlock) {
+        if (level.getBlockState(blockpos.below())
+                .getBlock() instanceof AngledWoodenBoatFrameBlock || level.getBlockState(blockpos.below())
+                .getBlock() instanceof AngledBoatFrameBlock) {
 
             Direction[] directions = AngledBoatFrameBlock.getSolid(level.getBlockState(blockpos.below()));
 
@@ -96,7 +97,9 @@ public abstract class AbstractHullSideBlock extends HorizontalDirectionalBlock i
     }
 
     @Override
-    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
-        return !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
+    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel,
+            BlockPos pCurrentPos, BlockPos pFacingPos) {
+        return !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(pState,
+                pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
     }
 }

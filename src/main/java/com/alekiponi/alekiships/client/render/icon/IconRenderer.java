@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.icon;
 
 import com.alekiponi.alekiships.client.icon.Icon;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;

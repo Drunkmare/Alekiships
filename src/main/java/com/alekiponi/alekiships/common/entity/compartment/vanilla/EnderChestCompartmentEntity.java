@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEnt
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartment;
 import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -31,9 +32,9 @@ import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements SimpleBlockMenuCompartment, LidCompartment {
     public static final byte CONTAINER_OPEN = 1;

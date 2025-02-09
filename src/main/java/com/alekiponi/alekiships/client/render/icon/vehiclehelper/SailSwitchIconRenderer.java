@@ -5,8 +5,10 @@ import com.alekiponi.alekiships.client.render.icon.IconRendererProvider;
 import com.alekiponi.alekiships.client.render.icon.SingleIconRenderer;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
 import net.neoforged.neoforge.common.Tags;
 
 public class SailSwitchIconRenderer extends SingleIconRenderer<SailSwitchEntity> {

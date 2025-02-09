@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.network;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
+
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 
 public record ServerboundPickCompartmentPacket(int entityId, ItemStack itemStack,
-                                               int slotIndex) implements CustomPacketPayload {
+        int slotIndex) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ServerboundPickCompartmentPacket> TYPE = new CustomPacketPayload.Type<>(
             ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "pick_compartment"));

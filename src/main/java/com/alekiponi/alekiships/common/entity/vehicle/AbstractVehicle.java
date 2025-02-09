@@ -1,21 +1,18 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.collect.Lists;
+
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IAllowFallDamage;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCompartments;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.ColliderEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
-import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
 import com.alekiponi.alekiships.network.ServerboundFlagVehicleForUpdatePacket;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.google.common.collect.Lists;
-import javax.annotation.Nullable;
+
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,10 +49,17 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-import static com.alekiponi.alekiships.util.ClientHelper.*;
+import static com.alekiponi.alekiships.util.ClientHelper.tickTakeClientPlayersForARide;
 
 public abstract class AbstractVehicle extends Entity implements IHaveColliders, IHaveCompartments {
     protected static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(
@@ -68,8 +72,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Float> DATA_ID_ACCELERATION = SynchedEntityData.defineId(
             AbstractVehicle.class, EntityDataSerializers.FLOAT);
-    protected AbstractCompartmentEntity.RidingPose ridingPoses[];
     private final LinkedList<Double> speedOverTime;
+    protected AbstractCompartmentEntity.RidingPose[] ridingPoses;
     protected float invFriction;
     protected int lerpSteps;
     protected double lerpX;
@@ -103,14 +107,16 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         ridingPoses = new AbstractCompartmentEntity.RidingPose[0];
     }
 
+    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
+        return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
+    }
+
     public abstract int getMaxPassengers();
 
     public AbstractCompartmentEntity.RidingPose[] getRidingPoses() {
-        if (ridingPoses.length == 0)
-        {
+        if (ridingPoses.length == 0) {
             AbstractCompartmentEntity.RidingPose[] poses = new AbstractCompartmentEntity.RidingPose[this.getMaxPassengers()];
-            for (int i = 0; i < this.getMaxPassengers(); i++)
-            {
+            for (int i = 0; i < this.getMaxPassengers(); i++) {
                 poses[i] = AbstractCompartmentEntity.RidingPose.STANDARD;
             }
             this.ridingPoses = poses;
@@ -136,7 +142,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
     @Override
     public void tick() {
-        if(!this.isFunctional()){
+        if (!this.isFunctional()) {
             hasAllParts = false;
         }
         if (!hasAllParts && this.getPassengers().size() < this.getMaxPassengers() && this.isFunctional()) {
@@ -159,7 +165,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         }
 
 
-
         super.tick();
     }
 
@@ -179,18 +184,18 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
             Player player = this.level().getNearestPlayer(this, 5 * 16);
             if (player != null) {
                 if (this.distanceTo(player) < 4 * 16 && !this.hasAllHelpers()) {
-                    PacketDistributor.sendToServer(new ServerboundFlagVehicleForUpdatePacket(true,this));
+                    PacketDistributor.sendToServer(new ServerboundFlagVehicleForUpdatePacket(true, this));
                 }
             }
         }
     }
 
-    public void setFlaggedForPassengerUpdate(boolean flag) {
-        passengerUpdateFlag = flag;
-    }
-
     public boolean isFlaggedForPassengerUpdate() {
         return passengerUpdateFlag;
+    }
+
+    public void setFlaggedForPassengerUpdate(boolean flag) {
+        passengerUpdateFlag = flag;
     }
 
     public boolean hasAllHelpers() {
@@ -207,15 +212,12 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
     }
 
     @Override
-    protected MovementEmission getMovementEmission()
-    {
+    protected MovementEmission getMovementEmission() {
         return MovementEmission.EVENTS;
     }
 
-
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ID_HURT, 0);
         builder.define(DATA_ID_HURTDIR, 0);
         builder.define(DATA_ID_DAMAGE, 0f);
@@ -226,10 +228,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
     @Override
     public boolean canCollideWith(final Entity other) {
         return canVehicleCollide(this, other);
-    }
-
-    public static boolean canVehicleCollide(final Entity vehicle, final Entity entity) {
-        return (entity.canBeCollidedWith() || entity.isPushable()) && !vehicle.isPassengerOfSameVehicle(entity);
     }
 
     @Override
@@ -243,8 +241,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
     }
 
     @Override
-    public Vec3 getRelativePortalPosition(final Direction.Axis axis, final BlockUtil.FoundRectangle portal)
-    {
+    public Vec3 getRelativePortalPosition(final Direction.Axis axis, final BlockUtil.FoundRectangle portal) {
         return LivingEntity.resetForwardDirectionOfRelativePortalPosition(
                 super.getRelativePortalPosition(axis, portal));
     }
@@ -268,7 +265,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         this.setDamage(this.getDamage() + amount);
         this.markHurt();
         this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
-        final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild && damageSource.is(DamageTypes.PLAYER_ATTACK);
+        final boolean instantKill = damageSource.getEntity() instanceof Player && ((Player) damageSource.getEntity()).getAbilities().instabuild && damageSource.is(
+                DamageTypes.PLAYER_ATTACK);
 
         if (instantKill) {
             this.setDamage(this.getDamage() + this.getDeathDamageThreshold() / 4);
@@ -277,7 +275,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
             for (Entity entity : this.getPassengers()) {
                 entity.kill();
             }
-            if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS) && this.getDamage() > this.getDeathDamageThreshold()) {
+            if (this.level().getGameRules()
+                    .getBoolean(GameRules.RULE_DOENTITYDROPS) && this.getDamage() > this.getDeathDamageThreshold()) {
                 if (this.level() instanceof ServerLevel serverLevel) {
                     this.dropAllDestructionLoot(damageSource, serverLevel);
                 }
@@ -333,11 +332,12 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
             if (!entitiesToTakeWith.isEmpty()) {
                 for (final Entity entity : entitiesToTakeWith) {
-                    if(this.level().isClientSide()){
-                        tickTakeClientPlayersForARide(this,entity);
+                    if (this.level().isClientSide()) {
+                        tickTakeClientPlayersForARide(this, entity);
                     }
                     if (!(entity instanceof AbstractVehicle) && !entity.isPassenger() && !(entity instanceof Player)) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
+                        entity.setDeltaMovement(
+                                entity.getDeltaMovement().add(this.getDeltaMovement().multiply(0.45, 0, 0.45)));
                     }
                 }
             }
@@ -346,11 +346,15 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
     public List<Entity> collectEntitesToTakeWith() {
         List<Entity> entities = this.level()
-                .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0).move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this));
+                .getEntities(this, this.getBoundingBox().inflate(0, -this.getBoundingBox().getYsize() + 2, 0)
+                        .move(0, this.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this));
 
         for (ColliderEntity collider : this.getColliders()) {
             entities.addAll(this.level()
-                    .getEntities(collider, collider.getBoundingBox().inflate(0, -collider.getBoundingBox().getYsize() + 2, 0).move(0, collider.getBoundingBox().getYsize(), 0), EntitySelector.pushableBy(this)));
+                    .getEntities(collider,
+                            collider.getBoundingBox().inflate(0, -collider.getBoundingBox().getYsize() + 2, 0)
+                                    .move(0, collider.getBoundingBox().getYsize(), 0),
+                            EntitySelector.pushableBy(this)));
         }
 
         entities = entities.stream().distinct().collect(Collectors.toList());
@@ -418,7 +422,6 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
         return MediumStatus.IN_AIR;
     }
-
 
 
     public float getWaterLevelAbove() {
@@ -658,8 +661,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
         ArrayList<Player> players = new ArrayList<Player>();
 
-        for (Entity entity : truePassengers){
-            if(entity instanceof Player player){
+        for (Entity entity : truePassengers) {
+            if (entity instanceof Player player) {
                 players.add(player);
             }
         }
@@ -672,8 +675,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
         ArrayList<Player> players = new ArrayList<Player>();
 
-        for (Entity entity : truePassengers){
-            if(entity instanceof Player player){
+        for (Entity entity : truePassengers) {
+            if (entity instanceof Player player) {
                 players.add(player);
             }
         }
@@ -724,8 +727,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
     }
 
     @Override
-    protected void positionRider(final Entity passenger, final MoveFunction moveFunction)
-    {
+    protected void positionRider(final Entity passenger, final MoveFunction moveFunction) {
         if (this.hasPassenger(passenger)) {
             if (!(passenger instanceof VehiclePart)) {
                 passenger.stopRiding();
@@ -778,7 +780,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
     @Override
     protected void checkFallDamage(final double fallDistance, final boolean onGround, final BlockState blockState,
-                                   final BlockPos blockPos) {
+            final BlockPos blockPos) {
         if (this instanceof IAllowFallDamage) {
             this.lastYd = this.getDeltaMovement().y;
             if (this.isPassenger()) return;
@@ -849,20 +851,20 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
 
     public abstract float getDamageRecovery();
 
-    public void setDeltaRotation(float deltaRotation) {
-        this.entityData.set(DATA_ID_DELTA_ROTATION, deltaRotation);
-    }
-
     public float getDeltaRotation() {
         return this.entityData.get(DATA_ID_DELTA_ROTATION);
     }
 
-    public void setAcceleration(float acceleration) {
-        this.entityData.set(DATA_ID_ACCELERATION, Mth.clamp(acceleration, -1, 1));
+    public void setDeltaRotation(float deltaRotation) {
+        this.entityData.set(DATA_ID_DELTA_ROTATION, deltaRotation);
     }
 
     public float getAcceleration() {
         return this.entityData.get(DATA_ID_ACCELERATION);
+    }
+
+    public void setAcceleration(float acceleration) {
+        this.entityData.set(DATA_ID_ACCELERATION, Mth.clamp(acceleration, -1, 1));
     }
 
     @Override
@@ -887,7 +889,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         if (this.getDamage() > this.getDamageThreshold()) {
             return false;
         }
-        return this.getPassengers().size() < this.getMaxPassengers() && !this.isRemoved() && passenger instanceof VehiclePart;
+        return this.getPassengers()
+                .size() < this.getMaxPassengers() && !this.isRemoved() && passenger instanceof VehiclePart;
     }
 
     @Nullable
@@ -998,8 +1001,8 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         final LootParams.Builder lootBuilder = (new LootParams.Builder(serverLevel)).withParameter(
                         LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.ORIGIN, this.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-            .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, damageSource.getEntity())
-            .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, damageSource.getDirectEntity());
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, damageSource.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, damageSource.getDirectEntity());
 
         final LootParams lootparams = lootBuilder.create(LootContextParamSets.ENTITY);
         loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
@@ -1060,8 +1063,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
     /**
      * @return The loot table that should be used
      */
-    public ResourceKey<LootTable> getLootTable()
-    {
+    public ResourceKey<LootTable> getLootTable() {
         return this.getType().getDefaultLootTable();
     }
 
@@ -1072,7 +1074,7 @@ public abstract class AbstractVehicle extends Entity implements IHaveColliders, 
         return 0;
     }
 
-    public static enum MediumStatus {
+    public enum MediumStatus {
         IN_WATER,
         UNDER_WATER,
         UNDER_FLOWING_WATER,

@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerCompartmentEntity;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.block.BrewingStandBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
@@ -109,7 +111,9 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
             } else {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), craftingRemainder);
             }
-        } else ingredientStack.shrink(1);
+        } else {
+            ingredientStack.shrink(1);
+        }
 
         items.set(INGREDIENT_SLOT, ingredientStack);
         level.levelEvent(1035, pos, 0);

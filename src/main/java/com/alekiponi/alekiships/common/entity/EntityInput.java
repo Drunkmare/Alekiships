@@ -1,13 +1,15 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.CannonItem;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.buffer.ByteBuf;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -21,15 +23,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
-import org.jetbrains.annotations.CheckReturnValue;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public final class EntityInput {
 
@@ -98,6 +101,7 @@ public final class EntityInput {
      * @param inputEntity The {@link InputEntity}
      * @param insertStack The stack to insert. Not mutated
      * @param entity      The entity which is trying to insert the stack. {@code null} when not applicable
+     *
      * @return A {@link InteractionResultHolder} with the result of the interaction and remainder
      */
     @CheckReturnValue
@@ -156,6 +160,7 @@ public final class EntityInput {
          *
          * @param stage       The stage
          * @param insertStack The {@link ItemStack} to insert <strong>Do not mutate this</strong>
+         *
          * @return The remainder of the insertion
          */
         ItemStack insert(int stage, ItemStack insertStack);
@@ -164,6 +169,7 @@ public final class EntityInput {
          * Gets the current contents in the backing storage for the current stage
          *
          * @param stage The stage
+         *
          * @return How many contents this stage has
          */
         int getContentsCount(int stage);
@@ -190,8 +196,8 @@ public final class EntityInput {
      * @param remainingInputs The remaining input count for the current inputs ingredient
      */
     public record EntityInputState(ResourceKey<EntityInput> entityInputKey,
-                                   @Range(from = 0, to = Integer.MAX_VALUE) int inputStage,
-                                   @Range(from = 0, to = Integer.MAX_VALUE) int remainingInputs) {
+            @Range(from = 0, to = Integer.MAX_VALUE) int inputStage,
+            @Range(from = 0, to = Integer.MAX_VALUE) int remainingInputs) {
 
         public static final StreamCodec<ByteBuf, EntityInputState> STREAM_CODEC = StreamCodec.composite(
                 ResourceKey.streamCodec(KEY), EntityInputState::entityInputKey, ByteBufCodecs.VAR_INT,

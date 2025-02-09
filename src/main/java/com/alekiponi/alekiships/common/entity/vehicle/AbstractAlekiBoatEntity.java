@@ -8,7 +8,6 @@ import com.alekiponi.alekiships.util.ClientHelper;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
 
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -33,10 +32,13 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     public static final int PADDLE_LEFT = 0;
     public static final int PADDLE_RIGHT = 1;
     public static final double PADDLE_SOUND_TIME = Math.PI / 4;
+    public static final int WIND_UPDATE_TICKS = 40;
     protected static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(
@@ -45,20 +47,14 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             AbstractAlekiBoatEntity.class, AlekiShipsEntityDataSerializers.WIND.get());
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
-
-    public static final int WIND_UPDATE_TICKS = 40;
-
     protected final float[] paddlePositions = new float[2];
-
+    protected final BoatMaterial boatMaterial;
     protected Wind oldWind = Wind.ZERO;
-
     protected int windLerpTicks = 0;
-
     protected WindModel windModel;
 
-    protected final BoatMaterial boatMaterial;
-
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level, BoatMaterial boatMaterial) {
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level,
+            BoatMaterial boatMaterial) {
         super(entityType, level);
         this.windModel = WindModel.get(level);
         this.boatMaterial = boatMaterial;
@@ -130,7 +126,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         this.tickControlBoat();
         if (this.isControlledByLocalInstance()) {
             if (this.level().isClientSide()) {
-                this.level().sendPacketToServer(new ServerboundPaddleBoatPacket(this.getPaddleState(0), this.getPaddleState(1)));
+                this.level().sendPacketToServer(
+                        new ServerboundPaddleBoatPacket(this.getPaddleState(0), this.getPaddleState(1)));
             }
         }
         if (this.everyNthTickUnique(4)) {
@@ -172,7 +169,8 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickWindInput() {
         if (this.status == MediumStatus.IN_WATER || this.status == MediumStatus.IN_AIR) {
-            double windFunction = Mth.clamp(this.getLocalWindSpeed(), 0.001, 0.002 * this.getBoundingBox().getXsize()) * windDriftMultiplier();
+            double windFunction = Mth.clamp(this.getLocalWindSpeed(), 0.001,
+                    0.002 * this.getBoundingBox().getXsize()) * windDriftMultiplier();
 
             // TODO add a config for enabling / disabling wind drift
 
@@ -183,7 +181,9 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
             if (Math.abs(windDifference) < 90) {
                 float angleMultiplier = Math.abs((Math.abs(windDifference) - 90) / 90);
                 this.setDeltaMovement(this.getDeltaMovement()
-                        .add(Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier, 0.0D,
+                        .add(Mth.sin(
+                                        -this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier,
+                                0.0D,
                                 Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier));
             }
 
@@ -274,14 +274,16 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
             Vec3 vec3 = this.getDeltaMovement();
 
-            this.setDeltaMovement(vec3.x * (double) this.invFriction, vec3.y + gravityAccel, vec3.z * (double) this.invFriction);
+            this.setDeltaMovement(vec3.x * (double) this.invFriction, vec3.y + gravityAccel,
+                    vec3.z * (double) this.invFriction);
 
             if (d2 > 0.0D) {
                 Vec3 movement = this.getDeltaMovement();
                 this.setDeltaMovement(movement.x, (movement.y + d2 * 0.06153846016296973D) * 0.75D, movement.z);
             }
 
-            if (status == MediumStatus.UNDER_WATER && this.level().getFluidState(this.blockPosition().above(3)).isEmpty() && this.isFunctional()) {
+            if (status == MediumStatus.UNDER_WATER && this.level().getFluidState(this.blockPosition().above(3))
+                    .isEmpty() && this.isFunctional()) {
                 this.setDeltaMovement(getDeltaMovement().x, 1 / 20.0, getDeltaMovement().z);
             }
 
@@ -532,21 +534,20 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                 side == 0 ? DATA_ID_PADDLE_LEFT : DATA_ID_PADDLE_RIGHT) && this.getControllingPassenger() != null;
     }
 
+    public final Wind getWind() {
+        return this.entityData.get(DATA_ID_WIND_VECTOR);
+    }
 
     public final void setWind(final Wind wind) {
         this.entityData.set(DATA_ID_WIND_VECTOR, wind);
     }
 
-    public final Wind getWind() {
-        return this.entityData.get(DATA_ID_WIND_VECTOR);
+    public boolean getImmobile() {
+        return this.entityData.get(DATA_ID_IMMOBILE);
     }
 
     public void setImmobile(boolean immobile) {
         this.entityData.set(DATA_ID_IMMOBILE, immobile);
-    }
-
-    public boolean getImmobile() {
-        return this.entityData.get(DATA_ID_IMMOBILE);
     }
 
     @Override

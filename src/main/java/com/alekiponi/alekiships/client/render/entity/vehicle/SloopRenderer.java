@@ -1,14 +1,16 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.AlekiShipsRenderTypes;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -168,7 +170,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
             if (name.length() > length) {
                 name = name.substring(0, length);
             }
-            float scale = 0.015625F * 1F;
+            float scale = 0.015625F;
             Vec3 pos = new Vec3(-1.327, 0.885, 2.4).yRot((float) Math.toRadians(-entityYaw));
             if (name.length() > 12) {
                 scale = scale / (name.length() / 13f);

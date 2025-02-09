@@ -2,15 +2,11 @@ package com.alekiponi.alekiships.common.entity.vehiclehelper;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveColliders;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveConstructionEntities;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveMasts;
-import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.alekiponi.alekiships.common.entity.vehiclecapability.*;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -70,7 +66,8 @@ public class VehiclePart extends Entity {
     }
 
     @Override
-    protected void positionRider(final net.minecraft.world.entity.Entity passenger, final net.minecraft.world.entity.Entity.MoveFunction moveFunction) {
+    protected void positionRider(final net.minecraft.world.entity.Entity passenger,
+            final net.minecraft.world.entity.Entity.MoveFunction moveFunction) {
 
         if (!(this.getVehicle() instanceof AbstractVehicle abstractVehicle)) return;
 
@@ -117,13 +114,13 @@ public class VehiclePart extends Entity {
 
         // Try adding a compartment
         if (tickAddCompartment(vehicle)) {
-            return;
         }
     }
 
     protected boolean tickAddCleat(IHaveCleats vehicle) {
         for (int i : vehicle.getCleatIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
                 final CleatEntity cleat = AlekiShipsEntities.VEHICLE_CLEAT_ENTITY.get()
                         .create(this.level());
@@ -144,7 +141,8 @@ public class VehiclePart extends Entity {
 
     protected boolean tickAddCollider(IHaveColliders vehicle) {
         for (int i : vehicle.getColliderIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
                 final ColliderEntity collider = AlekiShipsEntities.VEHICLE_COLLIDER_ENTITY.get()
                         .create(this.level());
 
@@ -189,7 +187,8 @@ public class VehiclePart extends Entity {
 
     protected boolean tickAddSailSwitch(IHaveSailSwitches vehicle) {
         for (int i : vehicle.getSailSwitchIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
                 final AbstractSwitchEntity switchEntity = AlekiShipsEntities.SAIL_SWITCH_ENTITY.get()
                         .create(this.level());
@@ -209,7 +208,8 @@ public class VehiclePart extends Entity {
 
     protected boolean tickAddWindlass(IHaveAnchorWindlass vehicle) {
         for (int i : vehicle.getWindlassIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
                 final WindlassSwitchEntity windlass = AlekiShipsEntities.WINDLASS_SWITCH_ENTITY.get()
                         .create(this.level());
@@ -228,7 +228,8 @@ public class VehiclePart extends Entity {
 
     protected boolean tickAddMast(IHaveMasts vehicle) {
         for (int i : vehicle.getMastIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
                 final MastEntity mast = AlekiShipsEntities.MAST_ENTITY.get()
                         .create(this.level());
@@ -248,7 +249,8 @@ public class VehiclePart extends Entity {
 
     protected boolean tickAddConstruction(IHaveConstructionEntities vehicle) {
         for (int i : vehicle.getConstructionIndices()) {
-            if (((AbstractVehicle) vehicle).getPassengers().get(i).is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
+            if (((AbstractVehicle) vehicle).getPassengers().get(i)
+                    .is(this) && !((AbstractVehicle) vehicle).getPassengers().get(i).isVehicle()) {
 
                 final ConstructionEntity constructionEntity = AlekiShipsEntities.CONSTRUCTION_ENTITY.get()
                         .create(this.level());
@@ -256,7 +258,8 @@ public class VehiclePart extends Entity {
                 constructionEntity.setPos(this.getX(), this.getY(), this.getZ());
                 constructionEntity.setYRot(this.getVehicle().getYRot());
                 if (!constructionEntity.startRiding(this)) {
-                    AlekiShips.LOGGER.error("New Construction Entity: {} unable to ride Vehicle Part: {}", constructionEntity, this);
+                    AlekiShips.LOGGER.error("New Construction Entity: {} unable to ride Vehicle Part: {}",
+                            constructionEntity, this);
                 }
                 this.level().addFreshEntity(constructionEntity);
                 return true;
@@ -267,17 +270,16 @@ public class VehiclePart extends Entity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
-    {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ID_COMPARTMENT_ROTATION, 0f);
-    }
-
-    public void setCompartmentRotation(float rotation) {
-        this.entityData.set(DATA_ID_COMPARTMENT_ROTATION, rotation);
     }
 
     public float getCompartmentRotation() {
         return this.entityData.get(DATA_ID_COMPARTMENT_ROTATION);
+    }
+
+    public void setCompartmentRotation(float rotation) {
+        this.entityData.set(DATA_ID_COMPARTMENT_ROTATION, rotation);
     }
 
     @Override

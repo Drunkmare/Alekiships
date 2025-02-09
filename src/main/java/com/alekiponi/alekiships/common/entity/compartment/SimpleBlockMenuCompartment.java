@@ -4,6 +4,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.level.block.CraftingTableBlock;
+
 import org.jetbrains.annotations.Nullable;
 
 /**

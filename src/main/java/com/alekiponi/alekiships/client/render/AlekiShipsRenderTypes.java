@@ -1,14 +1,16 @@
 package com.alekiponi.alekiships.client.render;
 
-import com.alekiponi.alekiships.client.render.texture.OverlayTexture;
-import com.alekiponi.alekiships.util.CommonHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import org.apache.commons.lang3.function.TriFunction;
+
+import com.alekiponi.alekiships.client.render.texture.OverlayTexture;
+import com.alekiponi.alekiships.util.CommonHelper;
+
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.function.TriFunction;
 
 import java.text.MessageFormat;
 import java.util.Optional;

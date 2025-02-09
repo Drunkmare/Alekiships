@@ -3,7 +3,8 @@ package com.alekiponi.alekiships.client.render.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
+import org.joml.Matrix4f;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,20 +16,15 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-
-import java.util.List;
 
 public class AlekiShipsRenderHelper {
     public static void addVertexPair(VertexConsumer pConsumer, Matrix4f pMatrix, float p_174310_, float p_174311_,
-                                     float p_174312_, int pEntityBlockLightLevel, int pLeashHolderBlockLightLevel,
-                                     int pEntitySkyLightLevel, int pLeashHolderSkyLightLevel, float p_174317_,
-                                     float p_174318_, float p_174319_, float p_174320_, int pIndex,
-                                     boolean p_174322_) {
+            float p_174312_, int pEntityBlockLightLevel, int pLeashHolderBlockLightLevel,
+            int pEntitySkyLightLevel, int pLeashHolderSkyLightLevel, float p_174317_,
+            float p_174318_, float p_174319_, float p_174320_, int pIndex,
+            boolean p_174322_) {
         float f = (float) pIndex / 24.0F;
         int i = (int) Mth.lerp(f, (float) pEntityBlockLightLevel, (float) pLeashHolderBlockLightLevel);
         int j = (int) Mth.lerp(f, (float) pEntitySkyLightLevel, (float) pLeashHolderSkyLightLevel);
@@ -41,13 +37,15 @@ public class AlekiShipsRenderHelper {
         float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
         float f7 = p_174312_ * f;
         // TODO make sure this is right
-        pConsumer.addVertex(pMatrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setUv2(i,j);
-        pConsumer.addVertex(pMatrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F)
-                .setUv2(i,j);
+        pConsumer.addVertex(pMatrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F)
+                .setUv2(i, j);
+        pConsumer.addVertex(pMatrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_)
+                .setColor(f2, f3, f4, 1.0F)
+                .setUv2(i, j);
     }
 
     public static <E extends Entity> void renderRope(Entity pEntity, float pPartialTicks, PoseStack pPoseStack,
-                                                     MultiBufferSource pBuffer, E pLeashHolder, int blockLightLevel) {
+            MultiBufferSource pBuffer, E pLeashHolder, int blockLightLevel) {
         pPoseStack.pushPose();
         Vec3 vec3 = pLeashHolder.getRopeHoldPosition(pPartialTicks);
         double d0 = (double) (Mth.lerp(pPartialTicks, pEntity.getYRot(),
@@ -76,11 +74,13 @@ public class AlekiShipsRenderHelper {
         int l = pEntity.level().getBrightness(LightLayer.SKY, blockpos1);
 
         for (int i1 = 0; i1 <= 24; ++i1) {
-            AlekiShipsRenderHelper.addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+            AlekiShipsRenderHelper.addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5,
+                    f6, i1, false);
         }
 
         for (int j1 = 24; j1 >= 0; --j1) {
-            AlekiShipsRenderHelper.addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+            AlekiShipsRenderHelper.addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6,
+                    j1, true);
         }
 
         pPoseStack.popPose();
@@ -176,7 +176,8 @@ public class AlekiShipsRenderHelper {
         return new double[]{0, 0, 0};
     }
 
-    public static void renderTextLine(Vec3 position, float yaw, float scale, Font font, String pText, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pLineHeight, int pMaxWidth) {
+    public static void renderTextLine(Vec3 position, float yaw, float scale, Font font, String pText,
+            PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pLineHeight, int pMaxWidth) {
         pPoseStack.pushPose();
 
         pPoseStack.translate(position.x, position.y, position.z);
@@ -185,9 +186,9 @@ public class AlekiShipsRenderHelper {
 
         pPoseStack.mulPose(Axis.YP.rotationDegrees(yaw));
         int dyecolor = DyeColor.WHITE.getTextColor();
-        int red = (int) ((double) FastColor.ARGB32.red(dyecolor)*0.7f);
-        int green = (int) ((double) FastColor.ARGB32.green(dyecolor)*0.7f);
-        int blue = (int) ((double) FastColor.ARGB32.blue(dyecolor)*0.7f);
+        int red = (int) ((double) FastColor.ARGB32.red(dyecolor) * 0.7f);
+        int green = (int) ((double) FastColor.ARGB32.green(dyecolor) * 0.7f);
+        int blue = (int) ((double) FastColor.ARGB32.blue(dyecolor) * 0.7f);
         int color = FastColor.ARGB32.color(0, red, green, blue);
         int background = FastColor.ARGB32.color(1, 0, 0, 0);
         //int height = pLineHeight / 4;
@@ -199,10 +200,12 @@ public class AlekiShipsRenderHelper {
         });*/
 
 
-        FormattedCharSequence formattedcharsequence = FormattedCharSequence.forward(pText, Style.EMPTY.withColor(color));
-        float width = (float)(-font.width(formattedcharsequence) / 2);
-        float height = ((float)(-pLineHeight) / 2);
-        font.drawInBatch(formattedcharsequence, width, height, color, false, pPoseStack.last().pose(), pBuffer, Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
+        FormattedCharSequence formattedcharsequence = FormattedCharSequence.forward(pText,
+                Style.EMPTY.withColor(color));
+        float width = (float) (-font.width(formattedcharsequence) / 2);
+        float height = ((float) (-pLineHeight) / 2);
+        font.drawInBatch(formattedcharsequence, width, height, color, false, pPoseStack.last().pose(), pBuffer,
+                Font.DisplayMode.POLYGON_OFFSET, 0, pPackedLight);
         //font.drawInBatch8xOutline(formattedcharsequence, width, height, color, background, pPoseStack.last().pose(), pBuffer, pPackedLight);
         pPoseStack.popPose();
     }

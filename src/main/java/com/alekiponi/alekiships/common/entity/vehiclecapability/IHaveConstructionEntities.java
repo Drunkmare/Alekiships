@@ -9,11 +9,12 @@ public interface IHaveConstructionEntities {
 
     int[] getConstructionIndices();
 
-    default ArrayList<ConstructionEntity> getConstructionEntities(AbstractVehicle vehicle){
+    default ArrayList<ConstructionEntity> getConstructionEntities(AbstractVehicle vehicle) {
         ArrayList<ConstructionEntity> list = new ArrayList<ConstructionEntity>();
-        if(vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
+        if (vehicle.getPassengers().size() == vehicle.getMaxPassengers()) {
             for (int i : this.getConstructionIndices()) {
-                if (vehicle.getPassengers().get(i).getFirstPassenger() instanceof ConstructionEntity constructionEntity) {
+                if (vehicle.getPassengers().get(i)
+                        .getFirstPassenger() instanceof ConstructionEntity constructionEntity) {
                     list.add(constructionEntity);
                 }
             }
@@ -22,7 +23,7 @@ public interface IHaveConstructionEntities {
     }
 
 
-    public default ArrayList<ConstructionEntity> getConstructionEntities() {
+    default ArrayList<ConstructionEntity> getConstructionEntities() {
         return getConstructionEntities((AbstractVehicle) this);
     }
 

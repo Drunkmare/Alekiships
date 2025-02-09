@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.network.ClientboundJukeboxCompartmentMusicPacket;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ContainerSingleItem;
+
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;

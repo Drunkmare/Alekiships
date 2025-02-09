@@ -1,8 +1,10 @@
 package com.alekiponi.alekiships.common.entity;
 
+import com.mojang.serialization.Codec;
+
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
-import com.mojang.serialization.Codec;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,8 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 public record SloopConstructionState(ResourceKey<ConstructionInput<SloopConstructionStage>> constructionInputKey,
-                                     SloopConstructionStage stage,
-                                     int remainingInputs) implements ConstructionInput.ConstructionState<SloopConstructionState.SloopConstructionStage, SloopConstructionState> {
+        SloopConstructionStage stage,
+        int remainingInputs) implements ConstructionInput.ConstructionState<SloopConstructionState.SloopConstructionStage, SloopConstructionState> {
 
     public static final Codec<SloopConstructionState> CODEC = ConstructionInput.ConstructionState.codec(
             SloopConstructionStage.KEY, SloopConstructionStage.CODEC, SloopConstructionStage.KEEL,

@@ -1,16 +1,10 @@
 package com.alekiponi.alekiships.util;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.function.TriFunction;
+import org.apache.commons.lang3.tuple.Triple;
+
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.CraftingTableCompartment;
-import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -33,10 +27,20 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
-import org.apache.commons.lang3.function.TriFunction;
-import org.apache.commons.lang3.tuple.Triple;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class CommonHelper {
@@ -133,13 +137,8 @@ public class CommonHelper {
     }
 
 
-
-
-    public static boolean everyNthTickUnique(int id, int tickCount, int n){
-        if((id + tickCount) % n == 0){
-            return true;
-        }
-        return false;
+    public static boolean everyNthTickUnique(int id, int tickCount, int n) {
+        return (id + tickCount) % n == 0;
     }
 
 
@@ -169,11 +168,14 @@ public class CommonHelper {
             }
 
             if (remainder.isEmpty() || remainder.getCount() != stack.getCount()) {
-                level.playSound((Player)null, player.getX(), player.getY() + 0.5, player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(),
+                        SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F,
+                        ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             }
 
             if (!remainder.isEmpty() && !level.isClientSide) {
-                ItemEntity entityitem = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
+                ItemEntity entityitem = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(),
+                        remainder);
                 entityitem.setPickUpDelay(40);
                 entityitem.setDeltaMovement(entityitem.getDeltaMovement().multiply(0.0, 1.0, 0.0));
                 level.addFreshEntity(entityitem);
@@ -185,7 +187,8 @@ public class CommonHelper {
     /**
      * Copied from Forge to support multiloader
      */
-    public static @NotNull ItemStack insertItemStacked(IItemHandler inventory, @NotNull ItemStack stack, boolean simulate) {
+    public static @NotNull ItemStack insertItemStacked(IItemHandler inventory, @NotNull ItemStack stack,
+            boolean simulate) {
         if (inventory != null && !stack.isEmpty()) {
             if (!stack.isStackable()) {
                 return insertItem(inventory, stack, simulate);
@@ -193,7 +196,7 @@ public class CommonHelper {
                 int sizeInventory = inventory.getSlots();
 
                 int i;
-                for(i = 0; i < sizeInventory; ++i) {
+                for (i = 0; i < sizeInventory; ++i) {
                     ItemStack slot = inventory.getStackInSlot(i);
                     if (ItemStack.isSameItemSameComponents(slot, stack)) {
                         stack = inventory.insertItem(i, stack, simulate);
@@ -204,7 +207,7 @@ public class CommonHelper {
                 }
 
                 if (!stack.isEmpty()) {
-                    for(i = 0; i < sizeInventory; ++i) {
+                    for (i = 0; i < sizeInventory; ++i) {
                         if (inventory.getStackInSlot(i).isEmpty()) {
                             stack = inventory.insertItem(i, stack, simulate);
                             if (stack.isEmpty()) {
@@ -227,7 +230,7 @@ public class CommonHelper {
 
     public static @NotNull ItemStack insertItem(IItemHandler dest, @NotNull ItemStack stack, boolean simulate) {
         if (dest != null && !stack.isEmpty()) {
-            for(int i = 0; i < dest.getSlots(); ++i) {
+            for (int i = 0; i < dest.getSlots(); ++i) {
                 stack = dest.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;
@@ -302,7 +305,7 @@ public class CommonHelper {
     }
 
     public static void dropContents(Level pLevel, double pX, double pY, double pZ, Container pInventory) {
-        for(int i = 0; i < pInventory.getContainerSize(); ++i) {
+        for (int i = 0; i < pInventory.getContainerSize(); ++i) {
             Containers.dropItemStack(pLevel, pX, pY, pZ, pInventory.getItem(i));
         }
 
@@ -310,6 +313,7 @@ public class CommonHelper {
 
     /**
      * @param entity The entity which should be checked for collisions
+     *
      * @return The maximum height of the colliding {@link AABB}s or {@link Entity#getY()}
      */
     public static double maxHeightOfCollidableEntities(final Entity entity) {
@@ -321,6 +325,7 @@ public class CommonHelper {
      * @param level       The level to check for entities
      * @param boundingBox The {@link AABB} to check for collisions
      * @param yPos        The starting Y position
+     *
      * @return The passed in yPos or {@link AABB#maxY} of the highest colliding {@link AABB}
      */
     public static double maxHeightOfCollidableEntities(@Nullable final Entity entity, final Level level,
@@ -337,7 +342,9 @@ public class CommonHelper {
      * from the passed in entity.
      *
      * @param entity The entity the returned {@link ContainerLevelAccess} is bound to
+     *
      * @return {@link ContainerLevelAccess} with valid {@link Level} and {@link BlockPos} objects
+     *
      * @apiNote While this returns a valid {@link ContainerLevelAccess} most vanilla block menus such as {@link CraftingMenu}
      * check for a block in world to see if the menu should close. As such you will likely need to override at the very
      * least {@link AbstractContainerMenu#stillValid(Player)} however this can usually be done anonymously. For example
@@ -373,6 +380,7 @@ public class CommonHelper {
      * Like {@link Container#stillValidBlockEntity(BlockEntity, Player, float)} but for entities
      *
      * @param maxDistance The max distance to the entity
+     *
      * @return If the passed entity is in range for a menu to be open
      */
     public static boolean stillValidEntity(final Entity entity, final Player player, final float maxDistance) {

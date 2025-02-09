@@ -3,10 +3,12 @@ package com.alekiponi.alekiships.client.model.entity;// Made with Blockbench 4.9
 // Paste this class into your mod and generate all required imports
 
 
-import com.alekiponi.alekiships.AlekiShips;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,18 +17,20 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 
 public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> {
-	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "cleat_knot_model"), "main");
-	private final ModelPart sides;
-	private final ModelPart middle;
+    // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, "cleat_knot_model"), "main");
+    private final ModelPart sides;
+    private final ModelPart middle;
 
-	public CleatKnotEntityModel() {
-		ModelPart root = createBodyLayer().bakeRoot();
-		this.sides = root.getChild("sides");
-		this.middle = root.getChild("middle");
-	}
+    public CleatKnotEntityModel() {
+        ModelPart root = createBodyLayer().bakeRoot();
+        this.sides = root.getChild("sides");
+        this.middle = root.getChild("middle");
+    }
 
-	public static LayerDefinition createBodyLayer() {
+    @SuppressWarnings("unused")
+    public static LayerDefinition createBodyLayer() {//@formatter:off
 
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -43,19 +47,21 @@ public class CleatKnotEntityModel<T extends CleatEntity> extends EntityModel<T> 
 		PartDefinition cube_r3 = middle.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 4).addBox(-2.5F, 0.0F, -0.5F, 5.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.25F, 0.0F, 0.0F, 0.7854F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 16, 16);
-	}
+	}//@formatter:on
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    @Override
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+            float headPitch) {
 
-	}
+    }
 
-	public ModelPart getSides() {
-		return this.sides;
-	}
+    public ModelPart getSides() {
+        return this.sides;
+    }
 
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-		middle.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-	}
+    @Override
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
+            int color) {
+        middle.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    }
 }

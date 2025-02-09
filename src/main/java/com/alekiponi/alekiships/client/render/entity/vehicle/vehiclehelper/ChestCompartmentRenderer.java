@@ -1,12 +1,14 @@
 package com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+
 import net.minecraft.Util;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -87,6 +89,7 @@ public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartm
      * See: {@link #xmasTextures} if there's a different texture for Christmas
      *
      * @param compartmentEntity The compartment
+     *
      * @return The material for rendering the chest model
      */
     protected Material getMaterial(final CompartmentEntity compartmentEntity) {

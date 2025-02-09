@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.client.render.icon;
 
 import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
