@@ -1,28 +1,62 @@
 package com.alekiponi.alekiships.util;
 
-import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.StringRepresentable;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+
+import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceLocation;
+
+import lombok.*;
+import lombok.experimental.Accessors;
 
 /**
- * This represents a unique boat material. This may be wood or another material
- *
- * @apiNote Implementing this on an enum is recommended as these objects are compared using identity
- * @deprecated Boat materials will be dynamic via datapack registry
+ * A boat material backing our actual boat variants enabling re-use
  */
-@Deprecated(forRemoval = true)
-public interface BoatMaterial extends StringRepresentable {
+@Getter
+@Builder
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@Accessors(fluent = true)
+public final class BoatMaterial {
+
+    public static final Codec<BoatMaterial> DIRECT_CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(ComponentSerialization.CODEC.fieldOf("name").forGetter(BoatMaterial::name),
+                            Codec.BOOL.optionalFieldOf("withstands_lava", false).forGetter(BoatMaterial::withstandsLava))
+                    .apply(instance, BoatMaterial::new));
+
+    public static final Codec<Holder<BoatMaterial>> CODEC = RegistryFileCodec.create(AlekiShipsRegistries.BOAT_MATERIAL,
+            DIRECT_CODEC);
+
+    @SuppressWarnings("unused")
+    public static final StreamCodec<RegistryFriendlyByteBuf, BoatMaterial> STREAM_CODEC = StreamCodec.composite(
+            ComponentSerialization.STREAM_CODEC, BoatMaterial::name, ByteBufCodecs.BOOL, BoatMaterial::withstandsLava,
+            BoatMaterial::new);
 
     /**
-     * @return Whether this material withstands lava
+     * The material name
      */
-    boolean withstandsLava();
+    private final Component name;
+    /**
+     * If this material withstands lava
+     */
+    @Builder.Default
+    private final boolean withstandsLava = false;
 
-    // TODO temporary helper while we migrate away from static boat materials
-    ResourceKey<RowboatVariant> rowboatKey();
-
-    // TODO temporary helper while we migrate away from static boat materials
-    ResourceKey<ConstructionSloopVariant> sloopConstructionKey();
+    /**
+     * @param registryName The registry name of the boat material
+     *
+     * @return The lang key for the materials name
+     */
+    public static String getDescriptionId(final ResourceLocation registryName) {
+        return registryName.toLanguageKey("boat_material");
+    }
 }

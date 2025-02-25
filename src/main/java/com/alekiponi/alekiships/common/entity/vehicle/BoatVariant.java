@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.RepairMaterials;
 
 import net.minecraft.core.Holder;
@@ -29,10 +29,10 @@ public interface BoatVariant {
     FileToIdConverter TEXTURE_ID_CONVERTER = new FileToIdConverter("textures", ".png");
 
     /**
-     * Simple helper for the {@link DynamicBoatMaterial} codec field
+     * Simple helper for the {@link BoatMaterial} codec field
      */
-    static <T extends BoatVariant> RecordCodecBuilder<T, Holder<DynamicBoatMaterial>> boatMaterialField() {
-        return DynamicBoatMaterial.CODEC.fieldOf("material").forGetter(BoatVariant::getBoatMaterial);
+    static <T extends BoatVariant> RecordCodecBuilder<T, Holder<BoatMaterial>> boatMaterialField() {
+        return BoatMaterial.CODEC.fieldOf("material").forGetter(BoatVariant::getBoatMaterial);
     }
 
     /**
@@ -72,7 +72,7 @@ public interface BoatVariant {
     /**
      * @return A Holder of the boat material this boat is made of
      */
-    Holder<DynamicBoatMaterial> getBoatMaterial();
+    Holder<BoatMaterial> getBoatMaterial();
 
     /**
      * @return The repair material for this

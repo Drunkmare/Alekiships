@@ -10,7 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
-import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
@@ -47,8 +47,8 @@ public final class AlekiShipsBuiltInRegistries {
         event.dataPackRegistry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
-        event.dataPackRegistry(AlekiShipsRegistries.BOAT_MATERIAL, DynamicBoatMaterial.DIRECT_CODEC,
-                DynamicBoatMaterial.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterial.DIRECT_CODEC,
+                BoatMaterial.DIRECT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.FRAME_MATERIAL, FrameMaterial.DIRECT_CODEC,
                 FrameMaterial.DIRECT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariant.DIRECT_CODEC,

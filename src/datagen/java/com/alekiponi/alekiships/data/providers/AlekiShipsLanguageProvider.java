@@ -50,7 +50,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
                 .forEachRemaining(wood -> {
                     final var id = AlekiShips.location(wood.getSerializedName());
                     final var name = DataGenHelper.langify(wood.getSerializedName());
-                    this.add(DynamicBoatMaterial.getDescriptionId(id), name);
+                    this.add(BoatMaterial.getDescriptionId(id), name);
                     this.add(ConstructionSloopVariant.getDescriptionId(id), name);
                     this.add(FrameMaterial.getDescriptionId(id), name);
                 });

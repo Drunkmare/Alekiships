@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
-import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.RepairMaterials;
 
 import net.minecraft.core.Holder;
@@ -53,14 +53,14 @@ public final class SloopVariant implements BoatVariant {
     @EqualsAndHashCode.Exclude
     private final ResourceLocation textureFull;
     @Getter
-    private final Holder<DynamicBoatMaterial> boatMaterial;
+    private final Holder<BoatMaterial> boatMaterial;
     @Getter
     private final RepairMaterials repairMaterials;
     @Getter
     private final ResourceKey<LootTable> lootTable;
 
     @Builder(toBuilder = true)
-    public SloopVariant(final ResourceLocation texture, final Holder<DynamicBoatMaterial> boatMaterial,
+    public SloopVariant(final ResourceLocation texture, final Holder<BoatMaterial> boatMaterial,
             final RepairMaterials repairMaterials, final ResourceKey<LootTable> lootTable) {
         this.texture = texture;
         this.textureFull = TEXTURE_ID_CONVERTER.idToFile(texture);

@@ -4,7 +4,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindl
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.ClientHelper;
-import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.RepairMaterials;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
@@ -563,7 +563,7 @@ public abstract class AbstractAlekiBoatEntity<T extends BoatVariant> extends Abs
         return Mth.wrapDegrees(this.getLocalWindAngle() - Mth.wrapDegrees(this.getYRot()));
     }
 
-    public final DynamicBoatMaterial getBoatMaterial() {
+    public final BoatMaterial getBoatMaterial() {
         return this.getVariant().value().getBoatMaterial().value();
     }
 

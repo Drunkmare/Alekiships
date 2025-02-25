@@ -10,23 +10,23 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public final class BoatMaterials {
-    public static final ResourceKey<DynamicBoatMaterial> OAK = createKey("oak");
-    public static final ResourceKey<DynamicBoatMaterial> SPRUCE = createKey("spruce");
-    public static final ResourceKey<DynamicBoatMaterial> BIRCH = createKey("birch");
-    public static final ResourceKey<DynamicBoatMaterial> ACACIA = createKey("acacia");
-    public static final ResourceKey<DynamicBoatMaterial> CHERRY = createKey("cherry");
-    public static final ResourceKey<DynamicBoatMaterial> JUNGLE = createKey("jungle");
-    public static final ResourceKey<DynamicBoatMaterial> DARK_OAK = createKey("dark_oak");
-    public static final ResourceKey<DynamicBoatMaterial> CRIMSON = createKey("crimson");
-    public static final ResourceKey<DynamicBoatMaterial> WARPED = createKey("warped");
-    public static final ResourceKey<DynamicBoatMaterial> MANGROVE = createKey("mangrove");
-    public static final ResourceKey<DynamicBoatMaterial> BAMBOO = createKey("bamboo");
+    public static final ResourceKey<BoatMaterial> OAK = createKey("oak");
+    public static final ResourceKey<BoatMaterial> SPRUCE = createKey("spruce");
+    public static final ResourceKey<BoatMaterial> BIRCH = createKey("birch");
+    public static final ResourceKey<BoatMaterial> ACACIA = createKey("acacia");
+    public static final ResourceKey<BoatMaterial> CHERRY = createKey("cherry");
+    public static final ResourceKey<BoatMaterial> JUNGLE = createKey("jungle");
+    public static final ResourceKey<BoatMaterial> DARK_OAK = createKey("dark_oak");
+    public static final ResourceKey<BoatMaterial> CRIMSON = createKey("crimson");
+    public static final ResourceKey<BoatMaterial> WARPED = createKey("warped");
+    public static final ResourceKey<BoatMaterial> MANGROVE = createKey("mangrove");
+    public static final ResourceKey<BoatMaterial> BAMBOO = createKey("bamboo");
 
-    private static ResourceKey<DynamicBoatMaterial> createKey(final String name) {
+    private static ResourceKey<BoatMaterial> createKey(final String name) {
         return ResourceKey.create(AlekiShipsRegistries.BOAT_MATERIAL, AlekiShips.location(name));
     }
 
-    public static void bootstrapOverworld(final BootstrapContext<DynamicBoatMaterial> context) {
+    public static void bootstrapOverworld(final BootstrapContext<BoatMaterial> context) {
         context.register(OAK, createWaterMaterial("oak"));
         context.register(SPRUCE, createWaterMaterial("spruce"));
         context.register(BIRCH, createWaterMaterial("birch"));
@@ -38,25 +38,25 @@ public final class BoatMaterials {
         context.register(BAMBOO, createWaterMaterial("bamboo"));
     }
 
-    public static void bootstrapNether(final BootstrapContext<DynamicBoatMaterial> context) {
+    public static void bootstrapNether(final BootstrapContext<BoatMaterial> context) {
         context.register(CRIMSON, createLavaMaterial("crimson"));
         context.register(WARPED, createLavaMaterial("warped"));
     }
 
-    private static DynamicBoatMaterial createWaterMaterial(final String name) {
+    private static BoatMaterial createWaterMaterial(final String name) {
         return material(name(AlekiShips.location(name))).build();
     }
 
-    private static DynamicBoatMaterial createLavaMaterial(final String name) {
+    private static BoatMaterial createLavaMaterial(final String name) {
         return material(name(AlekiShips.location(name))).withstandsLava(true)
                 .build();
     }
 
-    private static DynamicBoatMaterial.DynamicBoatMaterialBuilder material(final Component name) {
-        return DynamicBoatMaterial.builder().name(name);
+    private static BoatMaterial.BoatMaterialBuilder material(final Component name) {
+        return BoatMaterial.builder().name(name);
     }
 
     private static MutableComponent name(final ResourceLocation registryName) {
-        return Component.translatable(DynamicBoatMaterial.getDescriptionId(registryName));
+        return Component.translatable(BoatMaterial.getDescriptionId(registryName));
     }
 }
