@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.*;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.*;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
 public final class AlekiShipsCompartmentTypes {
 
     public static final DeferredRegister<CompartmentType<?>> COMPARTMENT_TYPES = DeferredRegister.create(
-            CompartmentType.REGISTRY_KEY, AlekiShips.MOD_ID);
+            AlekiShipsRegistries.COMPARTMENT_TYPE, AlekiShips.MOD_ID);
 
     public static final DeferredHolder<CompartmentType<?>, CompartmentType<BlockCompartmentEntity>> BLOCK_COMPARTMENT = register(
             "block", () -> CompartmentType.of(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY,

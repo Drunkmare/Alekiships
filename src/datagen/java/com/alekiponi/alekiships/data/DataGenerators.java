@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
@@ -68,14 +69,14 @@ public final class DataGenerators {
 
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
-                .add(EntityInput.KEY, EntityInput::bootstrap)
-                .add(SloopConstructionState.SloopConstructionStage.KEY, DataGenerators::bootstrapSloopConstruction);
+                .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
+                .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, DataGenerators::bootstrapSloopConstruction);
     }
 
     private static void bootstrapSloopConstruction(
             final BootstrapContext<ConstructionInput<SloopConstructionState.SloopConstructionStage>> context) {
         for (final VanillaWood wood : VanillaWood.values()) {
-            context.register(ResourceKey.create(SloopConstructionState.SloopConstructionStage.KEY,
+            context.register(ResourceKey.create(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
                             AlekiShips.location(wood.getSerializedName())),
                     ConstructionInputGenerators.createConstructionSloop(wood));
         }

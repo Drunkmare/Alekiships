@@ -3,17 +3,12 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
-import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -27,10 +22,6 @@ import java.util.function.Supplier;
  * @param <E> The type of compartment
  */
 public class CompartmentType<E extends AbstractCompartmentEntity> {
-
-    public static final ResourceKey<Registry<CompartmentType<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(
-            AlekiShips.location("compartment_type"));
-    public static final Registry<CompartmentType<?>> REGISTRY = new RegistryBuilder<>(REGISTRY_KEY).sync(true).create();
 
     private static final Logger LOGGER = LogUtils.getLogger();
 

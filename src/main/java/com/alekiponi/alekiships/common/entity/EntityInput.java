@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 
-import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.CannonItem;
@@ -12,7 +12,6 @@ import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -46,9 +45,6 @@ public final class EntityInput {
     /// An entity input with no inputs.
     public static final EntityInput EMPTY = new EntityInput(List.of());
 
-    public static final ResourceKey<Registry<EntityInput>> KEY = ResourceKey.createRegistryKey(
-            AlekiShips.location("entity_input"));
-
     public static final Codec<EntityInput> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     NeoForgeExtraCodecs.withAlternative(SizedIngredient.FLAT_CODEC, SizedIngredient.NESTED_CODEC)
                             .sizeLimitedListOf(MAXIMUM_SIZE).fieldOf("inputs").forGetter(entityInput -> entityInput.inputs))
@@ -75,7 +71,7 @@ public final class EntityInput {
      */
     public static EntityInput getEntityInput(final HolderLookup.Provider provider,
             final ResourceKey<EntityInput> entityInputKey) {
-        return provider.lookup(KEY).flatMap(registryLookup -> registryLookup.get(entityInputKey)).map(Holder::value)
+        return provider.lookup(AlekiShipsRegistries.ENTITY_INPUT).flatMap(registryLookup -> registryLookup.get(entityInputKey)).map(Holder::value)
                 .orElse(EMPTY);
     }
 
@@ -200,7 +196,7 @@ public final class EntityInput {
             @Range(from = 0, to = Integer.MAX_VALUE) int remainingInputs) {
 
         public static final StreamCodec<ByteBuf, EntityInputState> STREAM_CODEC = StreamCodec.composite(
-                ResourceKey.streamCodec(KEY), EntityInputState::entityInputKey, ByteBufCodecs.VAR_INT,
+                ResourceKey.streamCodec(AlekiShipsRegistries.ENTITY_INPUT), EntityInputState::entityInputKey, ByteBufCodecs.VAR_INT,
                 EntityInputState::inputStage, ByteBufCodecs.VAR_INT, EntityInputState::remainingInputs,
                 EntityInputState::new);
 
@@ -210,7 +206,7 @@ public final class EntityInput {
         public static final String INPUT_STATE_KEY = "InputState";
 
         public static final Codec<EntityInputState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        ResourceKey.codec(KEY).fieldOf(ENTITY_INPUT_KEY).forGetter(EntityInputState::entityInputKey),
+                        ResourceKey.codec(AlekiShipsRegistries.ENTITY_INPUT).fieldOf(ENTITY_INPUT_KEY).forGetter(EntityInputState::entityInputKey),
                         Codec.INT.optionalFieldOf(CURRENT_INPUT_KEY, 0).forGetter(EntityInputState::inputStage),
                         Codec.INT.optionalFieldOf(REMAINING_COUNT_KEY, 0).forGetter(EntityInputState::remainingInputs))
                 .apply(instance, EntityInputState::new));

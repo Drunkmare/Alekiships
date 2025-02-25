@@ -6,12 +6,10 @@ import org.slf4j.Logger;
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
 import com.alekiponi.alekiships.common.AlekiShipsAttachments;
+import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.EntityInput;
-import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.AlekiShipsCompartmentTypes;
-import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
@@ -49,8 +47,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 import java.util.List;
 
@@ -79,6 +75,8 @@ public final class AlekiShips {
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
         AlekiShipsCompartmentTypes.COMPARTMENT_TYPES.register(modBus);
+        modBus.addListener(AlekiShipsBuiltInRegistries::registerRegistries);
+        modBus.addListener(AlekiShipsBuiltInRegistries::registerDatapackRegistries);
 
         NeoForge.EVENT_BUS.register(ForgeEventHandler.class);
 
@@ -98,19 +96,6 @@ public final class AlekiShips {
     @SubscribeEvent
     private static void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(VanillaWood::registerFrames);
-    }
-
-    @SubscribeEvent
-    public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {
-        event.dataPackRegistry(EntityInput.KEY, EntityInput.CODEC, EntityInput.CODEC);
-        event.dataPackRegistry(SloopConstructionState.SloopConstructionStage.KEY,
-                SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
-                SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
-    }
-
-    @SubscribeEvent
-    private static void registerRegistries(final NewRegistryEvent event) {
-        event.register(CompartmentType.REGISTRY);
     }
 
     @SubscribeEvent

@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.common.item;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.EntityInput;
@@ -28,7 +29,7 @@ import java.util.function.Predicate;
 
 public class CannonItem extends Item {
     public static final ResourceKey<EntityInput> DEFAULT_CANNON_INPUT_KEY = ResourceKey.create(
-            EntityInput.KEY, AlekiShips.location("cannon"));
+            AlekiShipsRegistries.ENTITY_INPUT, AlekiShips.location("cannon"));
 
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
 
