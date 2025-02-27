@@ -140,6 +140,7 @@ public final class DataGenerators {
             @Override
             protected void buildRecipes(final RecipeOutput recipeOutput, final HolderLookup.Provider holderLookup) {
                 createRowboatRecipes(recipeOutput, holderLookup, NetherWood.values());
+                createSloopRecipes(recipeOutput, holderLookup, NetherWood.values());
             }
         });
     }

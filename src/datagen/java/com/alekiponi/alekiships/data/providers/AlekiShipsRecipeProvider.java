@@ -6,6 +6,7 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
+import com.alekiponi.alekiships.common.recipe.entity.ConstructionSloopResult;
 import com.alekiponi.alekiships.common.recipe.entity.RowboatResult;
 import com.alekiponi.alekiships.common.recipe.ingredient.block.matcher.PropertyMatcher;
 import com.alekiponi.alekiships.data.recipes.CraftingRecipeBuilder;
@@ -45,6 +46,26 @@ public class AlekiShipsRecipeProvider extends RecipeProvider {
                                     AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), fullyProcessedMatcher,
                                     frameMaterials.getOrThrow(wood.frameMaterialKey())))
                             .entityResult(RowboatResult.of(rowboatTypes.getOrThrow(wood.rowboatKey())))
+                            .build(), null);
+        }
+    }
+
+    protected static <T extends Wood> void createSloopRecipes(final RecipeOutput recipeOutput,
+            final HolderLookup.Provider holderLookup, final T[] woodType) {
+        final var fullyProcessedMatcher = PropertyMatcher.single(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
+                AngledWoodenBoatFrameBlock.FULLY_PROCESSED);
+
+        final var constructionSloopTypes = holderLookup.lookupOrThrow(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT);
+        final var frameMaterials = holderLookup.lookupOrThrow(AlekiShipsRegistries.FRAME_MATERIAL);
+        for (final var wood : woodType) {
+            recipeOutput.accept(AlekiShips.location("entity_multiblock/construction_sloop/" + wood.getSerializedName()),
+                    EntityMultiblockRecipe.builder()
+                            .pattern(
+                                    EntityMultiblockHelper.sloopPattern(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(),
+                                            AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(), fullyProcessedMatcher,
+                                            frameMaterials.getOrThrow(wood.frameMaterialKey())))
+                            .entityResult(ConstructionSloopResult.of(
+                                    constructionSloopTypes.getOrThrow(wood.sloopConstructionKey())))
                             .build(), null);
         }
     }
@@ -120,5 +141,6 @@ public class AlekiShipsRecipeProvider extends RecipeProvider {
         super.buildRecipes(recipeOutput, holderLookup);
 
         createRowboatRecipes(recipeOutput, holderLookup, OverworldWood.values());
+        createSloopRecipes(recipeOutput, holderLookup, OverworldWood.values());
     }
 }

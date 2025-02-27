@@ -24,6 +24,9 @@ public class AlekiShipsEntityResultSerializers {
     public static final DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<SloopResult>> SLOOP = register(
             "sloop", SloopResult.CODEC, SloopResult.STREAM_CODEC);
 
+    public static final DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<ConstructionSloopResult>> CONSTRUCTION_SLOOP = register(
+            "construction_sloop", ConstructionSloopResult.CODEC, ConstructionSloopResult.STREAM_CODEC);
+
     private static <R extends EntityResult> DeferredHolder<EntityResultSerializer<?>, EntityResultSerializer<R>> register(
             final String name, final MapCodec<R> codec,
             final StreamCodec<? super RegistryFriendlyByteBuf, R> streamCodec) {

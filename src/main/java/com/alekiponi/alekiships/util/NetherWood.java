@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.util;
 
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariants;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariants;
 
@@ -17,14 +19,17 @@ import lombok.experimental.Accessors;
  */
 @AllArgsConstructor
 public enum NetherWood implements Wood {
-    CRIMSON(Items.CRIMSON_PLANKS, FrameMaterial.CRIMSON, RowboatVariants.CRIMSON),
-    WARPED(Items.WARPED_PLANKS, FrameMaterial.WARPED, RowboatVariants.WARPED);
+    CRIMSON(Items.CRIMSON_PLANKS, FrameMaterial.CRIMSON, RowboatVariants.CRIMSON, ConstructionSloopVariants.CRIMSON),
+    WARPED(Items.WARPED_PLANKS, FrameMaterial.WARPED, RowboatVariants.WARPED, ConstructionSloopVariants.WARPED);
 
     private final Item plankItem;
     private final ResourceKey<FrameMaterial> frameMaterial;
     @Getter
     @Accessors(fluent = true)
     private final ResourceKey<RowboatVariant> rowboatKey;
+    @Getter
+    @Accessors(fluent = true)
+    private final ResourceKey<ConstructionSloopVariant> sloopConstructionKey;
 
     @Override
     public String getSerializedName() {
