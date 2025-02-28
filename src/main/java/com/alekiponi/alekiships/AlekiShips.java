@@ -61,7 +61,6 @@ public final class AlekiShips {
         modBus.addListener(PacketHandler::init);
         modBus.register(AlekiShips.class);
 
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modContainer.registerConfig(ModConfig.Type.CLIENT, AlekishipsConfig.CLIENT_SPEC);
         modContainer.registerConfig(ModConfig.Type.SERVER, AlekishipsConfig.SERVER_SPEC);
 
@@ -81,6 +80,7 @@ public final class AlekiShips {
         NeoForge.EVENT_BUS.register(ForgeEventHandler.class);
 
         if (dist == Dist.CLIENT) {
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
             AlekiShipsClientEvents.init(modBus);
             AlekiShipsClientForgeEvents.init(NeoForge.EVENT_BUS);
         }
