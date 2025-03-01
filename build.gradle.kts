@@ -1,8 +1,9 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.slf4j.event.Level
 
 plugins {
     idea
-    id("net.neoforged.moddev") version "2.0.1-beta"
+    id("net.neoforged.moddev") version "1.0.21"
 }
 
 // Mappings
@@ -61,6 +62,12 @@ sourceSets {
             srcDir(generateModMetadata)
         }
     }
+    test {
+        resources {
+            // Pull down our generated data for tests
+            srcDir(datagenOutput)
+        }
+    }
     create("datagen")
 }
 
@@ -73,6 +80,9 @@ configurations {
     // Datagen can reference our code in main
     get("datagenCompileClasspath").extendsFrom(compileClasspath.get())
     get("datagenRuntimeClasspath").extendsFrom(runtimeClasspath.get())
+    // Wtf man why isn't this done for us??
+    get("testCompileClasspath").extendsFrom(compileClasspath.get())
+    get("testCompileClasspath").extendsFrom(runtimeClasspath.get())
 }
 
 neoForge {
@@ -87,9 +97,9 @@ neoForge {
 
     runs {
         configureEach {
-            systemProperty("forge.logging.markers", "REGISTRIES")
+            systemProperty("neoforge.logging.markers", "REGISTRIES")
             logLevel = Level.DEBUG
-            systemProperty("forge.enabledGameTestNamespaces", modID)
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
 
             // Only JBR allows enhanced class redefinition, so ignore the option for any other JDKs
             jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-ea")
@@ -124,14 +134,23 @@ neoForge {
                 file("src/main/resources/").absolutePath
             )
         }
-    }
 
+        register("gameTest") {
+            type = "gameTestServer"
+        }
+    }
 
     mods {
         create(modID) {
             sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets.test.get())
             sourceSet(sourceSets["datagen"])
         }
+    }
+
+    unitTest {
+        enable()
+        testedMod = mods[modID]
     }
 
     ideSyncTask(generateModMetadata)
@@ -181,6 +200,9 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
     compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
     runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.3")
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
@@ -188,11 +210,25 @@ idea {
     module {
         isDownloadSources = true
         isDownloadJavadoc = true
+
+        val elements = arrayOf(
+            "run", ".gradle", ".idea", "gradle", "externals", "src/generated/resources/.cache"
+        ).map { file(it) }
+        excludeDirs.addAll(
+            elements
+        )
     }
 }
 
 tasks {
     named("neoForgeIdeSync") {
         dependsOn(generateModMetadata)
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+        }
     }
 }
