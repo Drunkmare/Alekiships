@@ -17,6 +17,8 @@ public final class AlekiShipsTags {
 
         public static final TagKey<Block> WOODEN_WATERCRAFT_FRAMES = create("wooden_watercraft_frames");
 
+        public static final TagKey<Block> BREAKABLE_ICE = create("breakable_ice");
+
         private static TagKey<Block> create(final String id) {
             return TagKey.create(Registries.BLOCK, new ResourceLocation(AlekiShips.MOD_ID, id));
         }
