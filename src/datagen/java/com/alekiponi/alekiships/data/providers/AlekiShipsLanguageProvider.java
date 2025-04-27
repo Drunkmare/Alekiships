@@ -5,10 +5,12 @@ import snownee.jade.api.IJadeProvider;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.commands.server.EntityMultiblockCommands;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.recipe.AlekiShipsRecipeTypes;
 import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
@@ -46,6 +48,9 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
         this.add(EntityMultiblockRecipe.SUCCESSFULLY_ASSEMBLED, "Successfully assembled %s");
         this.add(EntityMultiblockRecipe.FAILED_TO_ASEMBLE, "Failed to asemble %s");
+        this.add(EntityMultiblockCommands.NOT_ENTITY_MULTIBLOCK_RECIPE,
+                "%s is not a " + AlekiShipsRecipeTypes.ENTITY_MULTIBLOCK_RECIPE.getId());
+        this.add(EntityMultiblockCommands.NO_MATCHING_STATES, "No matching states for %s");
 
         // Our wood types must be named so our entities can reflect their name
         Iterators.<Wood>concat(Iterators.forArray(OverworldWood.values()), Iterators.forArray(NetherWood.values()))

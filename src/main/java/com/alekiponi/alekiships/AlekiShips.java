@@ -6,6 +6,7 @@ import weather2.Weather;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
+import com.alekiponi.alekiships.commands.AlekiShipsCommands;
 import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
@@ -95,6 +96,7 @@ public final class AlekiShips {
         modBus.addListener(AlekiShipsBuiltInRegistries::registerDatapackRegistries);
         modBus.addListener(AlekiShipsDataMaps::registerDataMaps);
 
+        NeoForge.EVENT_BUS.addListener(AlekiShipsCommands::onRegisterCommand);
         NeoForge.EVENT_BUS.register(ForgeEventHandler.class);
 
         if (dist == Dist.CLIENT) {

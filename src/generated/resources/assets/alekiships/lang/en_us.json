@@ -14,6 +14,8 @@
   "alekiships.advancements.sloop_completed.description": "Build a Sloop",
   "alekiships.advancements.sloop_completed.title": "Yesler's Wharf",
   "alekiships.builtin.datapack.netherwood.description": "Nether Wood support for NiftyShips",
+  "alekiships.commands.place_entity_multiblock.no_matching_states": "No matching states for %s",
+  "alekiships.commands.place_entity_multiblock.not_entity_multiblock": "%s is not a alekiships:entity_multiblock_recipe",
   "alekiships.config.client.tillerControlScheme": "Tiller Control Scheme",
   "alekiships.config.server.windAffectsBoatsWithNoAnchor": "Wind Affects Boats With No Anchor",
   "alekiships.entityMultiblock.assembled": "Successfully assembled %s",
