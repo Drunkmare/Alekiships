@@ -22,8 +22,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
 
-import static com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock.*;
-
 public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
@@ -64,9 +62,6 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
-                if (processState + 1 == FULLY_PROCESSED) {
-                    triggerDetection(level, blockPos);
-                }
                 return ItemInteractionResult.SUCCESS;
             }
             return ItemInteractionResult.CONSUME;

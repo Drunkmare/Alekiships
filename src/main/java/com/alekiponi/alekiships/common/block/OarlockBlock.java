@@ -2,31 +2,21 @@ package com.alekiponi.alekiships.common.block;
 
 import com.mojang.serialization.MapCodec;
 
-import com.alekiponi.alekiships.common.AlekiShipsRegistries;
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
-import com.alekiponi.alekiships.util.BoatMaterial;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
-
-import static com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements.ROWBOAT_COMPLETED;
 
 public class OarlockBlock extends AbstractHullSideBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -51,15 +41,6 @@ public class OarlockBlock extends AbstractHullSideBlock {
                 this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
-    private static Vec3 getSpawnPosition(Level pLevel, BlockPos thispos, BlockState blockState) {
-        Direction direction = blockState.getValue(FACING);
-        thispos = thispos.below();
-        BlockPos otherpos = thispos.relative(direction.getOpposite());
-        Vec3 origin = new Vec3(((thispos.getX() + otherpos.getX()) / 2.0f) + 0.5f, thispos.getY() + 0.5f,
-                ((thispos.getZ() + otherpos.getZ()) / 2.0f) + 0.5f);
-        return origin;
-    }
-
     public MapCodec<OarlockBlock> codec() {
         return CODEC;
     }
@@ -74,67 +55,4 @@ public class OarlockBlock extends AbstractHullSideBlock {
             case EAST -> SHAPE_EAST;
         };
     }
-
-    @Override
-    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
-        if (!pOldState.is(pState.getBlock())) {
-            validateMultiblock(pLevel, pPos, pState);
-        }
-        super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
-    }
-
-    public void validateMultiblock(Level level, BlockPos thispos, BlockState blockState) {
-        BlockState frameState = level.getBlockState(thispos.below());
-        if (validateOarlocks(level, thispos, blockState) && validateFrames(level, thispos, blockState)) {
-            Direction direction = blockState.getValue(FACING);
-            Direction.Axis axis = direction.getClockWise().getAxis();
-            if (frameState.getBlock() instanceof AngledBoatFrameBlock && frameState.getBlock() instanceof ProcessedBoatFrame boatFrameBlock) {
-                // TODO remove me when entity multliblock comes around
-                final var rowboatEntity = new RowboatEntity(AlekiShipsEntities.ROWBOAT.get(), level);
-                final var registryAccess = level.registryAccess()
-                        .registry(AlekiShipsRegistries.ROWBOAT_VARIANT)
-                        .orElseThrow();
-                rowboatEntity.setVariant(
-                        registryAccess.getHolder(boatFrameBlock.getBoatMaterial().rowboatKey()).orElseThrow());
-
-                rowboatEntity.setPos(getSpawnPosition(level, thispos, blockState));
-                if (axis == Direction.Axis.X) {
-                    rowboatEntity.setYRot(90F);
-                }
-                level.addFreshEntity(rowboatEntity);
-
-                for (ServerPlayer serverplayer : level.getEntitiesOfClass(ServerPlayer.class,
-                        rowboatEntity.getBoundingBox().inflate(5.0D))) {
-                    ROWBOAT_COMPLETED.trigger(serverplayer);
-                }
-            }
-        }
-    }
-
-    public boolean validateOarlocks(Level level, BlockPos thispos, BlockState blockState) {
-        Direction direction = blockState.getValue(FACING);
-        thispos = thispos.relative(direction.getOpposite());
-        if (level.getBlockState(thispos).is(AlekiShipsBlocks.OARLOCK.get())) {
-            return (level.getBlockState(thispos)).getValue(FACING) == direction.getOpposite();
-        }
-        return false;
-    }
-
-    public boolean validateFrames(Level level, BlockPos thispos, BlockState blockState) {
-        Direction structureDirection = blockState.getValue(FACING).getClockWise();
-        Direction.Axis structureAxis = structureDirection.getAxis();
-        Direction crossDirection = structureDirection.getClockWise();
-
-        thispos = thispos.below();
-        thispos = thispos.relative(structureDirection);
-
-        BlockState frameState = level.getBlockState(thispos);
-
-        final BoatMaterial boatMaterial = BoatFrame.fromBlockstate(frameState);
-        if (boatMaterial == null) return false;
-
-        return ShipbuildingMultiblocks.validateShipHull(level, thispos, structureDirection,
-                ShipbuildingMultiblocks.Multiblock.ROWBOAT, boatMaterial);
-    }
-
 }

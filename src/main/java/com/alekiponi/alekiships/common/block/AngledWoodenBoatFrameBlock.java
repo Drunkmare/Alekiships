@@ -42,21 +42,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
         this.frameMaterial = frameMaterial;
     }
 
-    public static void triggerDetection(Level level, BlockPos blockPos) {
-        BlockPos search = blockPos.above();
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) {
-                BlockPos cur = search.relative(Direction.Axis.X, x).relative(Direction.Axis.Z, z);
-                if (level.getBlockState(cur).getBlock() instanceof CleatBlock cleat) {
-                    cleat.validateMultiblock(level, cur, level.getBlockState(cur));
-                }
-                if (level.getBlockState(cur).getBlock() instanceof OarlockBlock oarlock) {
-                    oarlock.validateMultiblock(level, cur, level.getBlockState(cur));
-                }
-            }
-        }
-    }
-
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder.add(FRAME_PROCESSED));
@@ -80,9 +65,6 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
-                if (processState + 1 == FULLY_PROCESSED) {
-                    triggerDetection(level, blockPos);
-                }
                 return ItemInteractionResult.SUCCESS;
             }
             return ItemInteractionResult.CONSUME;
