@@ -3,7 +3,7 @@ import org.slf4j.event.Level
 
 plugins {
     idea
-    id("net.neoforged.moddev") version "1.0.21"
+    id("net.neoforged.moddev") version "2.0.78"
 }
 
 // Mappings
@@ -86,7 +86,7 @@ configurations {
 }
 
 neoForge {
-    version.set(neoVersion)
+    version = neoVersion
     addModdingDependenciesTo(sourceSets["datagen"])
     validateAccessTransformers = true
 
