@@ -3,8 +3,6 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
-import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
-
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.item.ItemStack;
@@ -56,19 +54,6 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
     public static <E extends AbstractCompartmentEntity> CompartmentType<E> simple(
             final Supplier<? extends EntityType<E>> entityTypeSupplier) {
         return of(entityTypeSupplier, CompartmentFactory.simple());
-    }
-
-    /**
-     * Gets an applicable {@link CompartmentType} for an {@link ItemStack}
-     *
-     * @param itemStack The {@link ItemStack}
-     *
-     * @return An applicable compartment for the given item stack. Returns the first compartment found,
-     * this means registry order can effect which is chosen
-     */
-    public static Optional<CompartmentType<?>> fromStack(final ItemStack itemStack) {
-        final var compartmentPlaceable = itemStack.get(AlekiShipsComponents.COMPARTMENT_PLACEABLE);
-        return compartmentPlaceable == null ? Optional.empty() : Optional.of(compartmentPlaceable.compartmentType());
     }
 
     /**

@@ -12,6 +12,7 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCo
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractPassthroughHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.item.components.CompartmentPlaceable;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 
@@ -425,16 +426,16 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
         if (ridingThisPart == null) return InteractionResult.FAIL;
 
-        final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
+        final var compartmentPlaceable = CompartmentPlaceable.fromStack(heldStack);
 
-        if (compartmentType.isPresent()) {
+        if (compartmentPlaceable.isPresent()) {
             if ((this.getRootVehicle() instanceof AbstractVehicle vehicle && !vehicle.pilotCompartmentAcceptsNonPlayers()) && vehicle.getPilotCompartment()
                     .is(this)) {
                 return InteractionResult.FAIL;
             }
 
-            final Optional<? extends AbstractCompartmentEntity> maybeCompartment = compartmentType.get()
-                    .create(this.level(), heldStack.copy());
+            final Optional<? extends AbstractCompartmentEntity> maybeCompartment = compartmentPlaceable.get()
+                    .createCompartment(this.level(), heldStack.copy());
 
             // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
             if (maybeCompartment.isEmpty()) {
