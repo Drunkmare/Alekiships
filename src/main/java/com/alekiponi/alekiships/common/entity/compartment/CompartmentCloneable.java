@@ -18,10 +18,9 @@ public interface CompartmentCloneable {
      * @param compartment The compartment entity
      * @param itemStack   The {@link ItemStack} used to initialize the compartment
      */
-    static <E extends AbstractCompartmentEntity & CompartmentCloneable> CompartmentType.InitializationResult initialize(
-            final E compartment, final ItemStack itemStack) {
+    static <E extends AbstractCompartmentEntity & CompartmentCloneable> void initialize(final E compartment,
+            final ItemStack itemStack) {
         compartment.applyComponentsFromItemStack(itemStack);
-        return CompartmentType.InitializationResult.success();
     }
 
     /**

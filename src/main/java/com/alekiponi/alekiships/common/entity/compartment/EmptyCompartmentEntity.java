@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.google.common.collect.Lists;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
@@ -12,7 +13,6 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCo
 import com.alekiponi.alekiships.common.entity.vehiclehelper.AbstractPassthroughHelper;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.VehiclePart;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
-import com.alekiponi.alekiships.common.item.components.CompartmentPlaceable;
 import com.alekiponi.alekiships.network.ServerboundCompartmentInputPacket;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 
@@ -42,7 +42,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
@@ -434,8 +433,7 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
                 return InteractionResult.FAIL;
             }
 
-            final Optional<? extends AbstractCompartmentEntity> maybeCompartment = compartmentPlaceable.get()
-                    .createCompartment(this.level(), heldStack.copy());
+            final var maybeCompartment = compartmentPlaceable.get().createCompartment(this.level(), heldStack.copy());
 
             // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
             if (maybeCompartment.isEmpty()) {

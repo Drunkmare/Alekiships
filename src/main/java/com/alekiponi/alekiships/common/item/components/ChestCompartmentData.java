@@ -20,17 +20,20 @@ import net.minecraft.world.inventory.MenuType;
 
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
+import lombok.Builder;
+
+@Builder
 public record ChestCompartmentData(RowCount rowCount, SoundEvent hurtSound, SoundEvent placeSound,
-        SoundEvent breakSound, float soundVolume, float soundPitch,
-        ResourceLocation chestTexture) {
+        SoundEvent breakSound, float soundVolume, float soundPitch, ResourceLocation chestTexture) {
 
     public static final Codec<ChestCompartmentData> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(RowCount.CODEC.fieldOf("row_count").forGetter(ChestCompartmentData::rowCount),
-                            BuiltInRegistries.SOUND_EVENT.byNameCodec().optionalFieldOf("hurt_sound", SoundEvents.WOOD_HIT)
-                                    .forGetter(ChestCompartmentData::hurtSound),
-                            BuiltInRegistries.SOUND_EVENT.byNameCodec().optionalFieldOf("place_sound", SoundEvents.WOOD_PLACE)
-                                    .forGetter(ChestCompartmentData::placeSound),
-                            BuiltInRegistries.SOUND_EVENT.byNameCodec().optionalFieldOf("break_sound", SoundEvents.WOOD_BREAK)
+                            BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                    .optionalFieldOf("hurt_sound", SoundEvents.WOOD_HIT)
+                                    .forGetter(ChestCompartmentData::hurtSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                    .optionalFieldOf("place_sound", SoundEvents.WOOD_PLACE)
+                                    .forGetter(ChestCompartmentData::placeSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
+                                    .optionalFieldOf("break_sound", SoundEvents.WOOD_BREAK)
                                     .forGetter(ChestCompartmentData::breakSound),
                             Codec.FLOAT.optionalFieldOf("sound_volume", 1F).forGetter(ChestCompartmentData::soundVolume),
                             Codec.FLOAT.optionalFieldOf("sound_pitch", 1F).forGetter(ChestCompartmentData::soundPitch),

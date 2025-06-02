@@ -5,7 +5,6 @@ import com.mojang.datafixers.util.Pair;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
-import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 
@@ -31,6 +30,7 @@ import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 
 public class ChestCompartmentEntity extends RandomizableContainerCompartmentEntity.RandomizableContainerMenuCompartmentEntity implements LidCompartment {
@@ -85,10 +85,9 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
     }
 
     public static ChestCompartmentEntity create(final EntityType<ChestCompartmentEntity> entityType, final Level level,
-            final ItemStack itemStack) {
+            final @Nullable ChestCompartmentData chestCompartmentData, final ItemStack itemStack) {
         final var chestCompartment = new ChestCompartmentEntity(entityType, level,
-                itemStack.getOrDefault(AlekiShipsComponents.CHEST_COMPARTMENT_DATA,
-                        ChestCompartmentData.VANILLA_CHEST_NORMAL));
+                Objects.requireNonNullElse(chestCompartmentData, ChestCompartmentData.VANILLA_CHEST_NORMAL));
         CompartmentCloneable.initialize(chestCompartment, itemStack);
         chestCompartment.entityData.set(DATA_ID_DROP_STACK, itemStack);
         return chestCompartment;
@@ -177,8 +176,10 @@ public class ChestCompartmentEntity extends RandomizableContainerCompartmentEnti
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         ChestCompartmentData.CODEC.decode(this.registryAccess().createSerializationContext(NbtOps.INSTANCE),
-                compoundTag.get(CHEST_DATA_KEY)).map(Pair::getFirst).ifSuccess(
-                chestCompartmentData -> this.entityData.set(DATA_ID_CHEST_COMPARTMENT_DATA, chestCompartmentData));
+                        compoundTag.get(CHEST_DATA_KEY))
+                .map(Pair::getFirst)
+                .ifSuccess(chestCompartmentData -> this.entityData.set(DATA_ID_CHEST_COMPARTMENT_DATA,
+                        chestCompartmentData));
         this.entityData.set(DATA_ID_DROP_STACK,
                 ItemStack.parseOptional(this.registryAccess(), compoundTag.getCompound(DROP_STACK_KEY)));
     }

@@ -1,7 +1,10 @@
-package com.alekiponi.alekiships.common.entity.compartment;
+package com.alekiponi.alekiships.common.compartment;
 
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
+
+import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
@@ -19,29 +22,29 @@ import java.util.function.Supplier;
  *
  * @param <E> The type of compartment
  */
-public class CompartmentType<E extends AbstractCompartmentEntity> {
+public class DirectCompartmentType<E extends AbstractCompartmentEntity> {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private final Supplier<? extends EntityType<E>> entityTypeSupplier;
     private final CompartmentFactory<E> compartmentFactory;
 
-    private CompartmentType(final Supplier<? extends EntityType<E>> entityTypeSupplier,
+    private DirectCompartmentType(final Supplier<? extends EntityType<E>> entityTypeSupplier,
             final CompartmentFactory<E> compartmentFactory) {
         this.entityTypeSupplier = entityTypeSupplier;
         this.compartmentFactory = compartmentFactory;
     }
 
     /**
-     * Create a {@link CompartmentType}
+     * Create a {@link DirectCompartmentType}
      *
      * @param entityTypeSupplier A supplier for the {@link EntityType}
-     * @param compartmentFactory A factory for this {@link CompartmentType}
+     * @param compartmentFactory A factory for this {@link DirectCompartmentType}
      */
-    public static <E extends AbstractCompartmentEntity> CompartmentType<E> of(
+    public static <E extends AbstractCompartmentEntity> DirectCompartmentType<E> of(
             final Supplier<? extends EntityType<E>> entityTypeSupplier,
             final CompartmentFactory<E> compartmentFactory) {
-        return new CompartmentType<>(Objects.requireNonNull(entityTypeSupplier),
+        return new DirectCompartmentType<>(Objects.requireNonNull(entityTypeSupplier),
                 Objects.requireNonNull(compartmentFactory));
     }
 
@@ -51,13 +54,13 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
      *
      * @param entityTypeSupplier A supplier for the {@link EntityType}
      */
-    public static <E extends AbstractCompartmentEntity> CompartmentType<E> simple(
+    public static <E extends AbstractCompartmentEntity> DirectCompartmentType<E> simple(
             final Supplier<? extends EntityType<E>> entityTypeSupplier) {
         return of(entityTypeSupplier, CompartmentFactory.simple());
     }
 
     /**
-     * Create a Compartment Entity for this {@link CompartmentType}
+     * Create a Compartment Entity for this {@link DirectCompartmentType}
      */
     public Optional<E> create(final Level level, final ItemStack itemStack) {
         return Optional.ofNullable(this.compartmentFactory.create(this.entityTypeSupplier.get(), level, itemStack));
@@ -70,7 +73,8 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
     /**
      * Like vanillas {@link EntityFactory} but takes an additional {@link ItemStack} parameter to enable
      * the compartments to be constructed with an {@link ItemStack} parameter for easier reasoning of behavior.
-     * You may also wrap a post-initialization step via {@link CompartmentFactory#postInit(CompartmentPostInitialization)} like
+     * You may also wrap a post-initialization step via {@link CompartmentFactory#postInit(CompartmentPostInitialization)}
+     * or {@link CompartmentFactory#failablePostInit(FailableCompartmentPostInitialization)} like
      * {@link CompartmentCloneable#initialize(AbstractCompartmentEntity, ItemStack)}
      *
      * @param <E> The type of compartment
@@ -103,7 +107,8 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
          *
          * @return A factory which invokes the provided post initialization and reports any errors
          */
-        default CompartmentFactory<E> postInit(final CompartmentPostInitialization<E> postInitialization) {
+        default CompartmentFactory<E> failablePostInit(
+                final FailableCompartmentPostInitialization<E> postInitialization) {
             return (entityType, level, itemStack) -> {
                 final var e = this.create(entityType, level, itemStack);
                 if (e == null) return null;
@@ -115,12 +120,24 @@ public class CompartmentType<E extends AbstractCompartmentEntity> {
                 return null;
             };
         }
+
+        default CompartmentFactory<E> postInit(final CompartmentPostInitialization<E> infalliblePostInitialization) {
+            return (entityType, level, itemStack) -> {
+                final var e = this.create(entityType, level, itemStack);
+                infalliblePostInitialization.initialize(e, itemStack);
+                return e;
+            };
+        }
     }
 
     @FunctionalInterface
     public interface CompartmentPostInitialization<E extends AbstractCompartmentEntity> {
+        void initialize(E compartmentEntity, ItemStack itemStack);
+    }
 
-        InitializationResult initialize(final E compartmentEntity, final ItemStack itemStack);
+    @FunctionalInterface
+    public interface FailableCompartmentPostInitialization<E extends AbstractCompartmentEntity> {
+        InitializationResult initialize(E compartmentEntity, ItemStack itemStack);
     }
 
     public static final class InitializationResult {

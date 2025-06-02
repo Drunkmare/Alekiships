@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
-import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
+import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 
@@ -117,7 +117,7 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         this.recipeType = recipeType;
     }
 
-    public static <E extends AbstractFurnaceCompartmentEntity> CompartmentType.CompartmentFactory<E> create(
+    public static <E extends AbstractFurnaceCompartmentEntity> DirectCompartmentType.CompartmentFactory<E> create(
             final BlockCompartment.BlockCompartmentFactory<E> factory) {
         return BlockCompartment.create(factory).postInit(CompartmentCloneable::initialize);
     }

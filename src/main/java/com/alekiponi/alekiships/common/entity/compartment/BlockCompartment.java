@@ -1,13 +1,20 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
@@ -37,12 +44,12 @@ public interface BlockCompartment {
     String HELD_BLOCK_KEY = "heldBlock";
 
     /**
-     * Creates a {@link CompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
+     * Creates a {@link DirectCompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
      *
      * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
      *                                {@link Block}s {@link Block#defaultBlockState()}
      */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentFactory<E> create(
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> create(
             final BlockCompartmentFactory<E> blockCompartmentFactory) {
         return (entityType, level, itemStack) -> {
             final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_DATA);
@@ -132,5 +139,19 @@ public interface BlockCompartment {
     @FunctionalInterface
     interface BlockCompartmentFactory<E extends AbstractCompartmentEntity & BlockCompartment> {
         E create(EntityType<E> entityType, Level level, BlockState blockState);
+    }
+
+    record BlockCompartmentData(BlockState displayState) {
+
+        public static final Codec<BlockCompartmentData> CODEC = AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.xmap(
+                BlockCompartmentData::new, BlockCompartmentData::displayState);
+
+        public static final StreamCodec<ByteBuf, BlockCompartmentData> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY), BlockCompartmentData::displayState,
+                BlockCompartmentData::new);
+
+        public BlockCompartmentData(final Block block) {
+            this(block.defaultBlockState());
+        }
     }
 }

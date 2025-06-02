@@ -30,7 +30,7 @@ public class GrindstoneCompartmentEntity extends SimpleBlockMenuCompartmentEntit
 
     public GrindstoneCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
             final Level level, final BlockState blockState) {
-        super(entityType, level, blockState.setValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
+        super(entityType, level, blockState.trySetValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
     }
 
     @Nullable
