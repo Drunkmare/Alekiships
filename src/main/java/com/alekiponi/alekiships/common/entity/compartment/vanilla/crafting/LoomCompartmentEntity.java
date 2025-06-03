@@ -20,14 +20,15 @@ import org.jetbrains.annotations.Nullable;
 public class LoomCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.loom");
+    private static final Stat<ResourceLocation> STAT = Stats.CUSTOM.get(Stats.INTERACT_WITH_LOOM);
 
     public LoomCompartmentEntity(final EntityType<? extends LoomCompartmentEntity> entityType, final Level level) {
-        super(entityType, level);
+        super(entityType, level, STAT, CONTAINER_TITLE);
     }
 
     public LoomCompartmentEntity(final EntityType<? extends LoomCompartmentEntity> entityType, final Level level,
             final BlockState blockState) {
-        super(entityType, level, blockState);
+        super(entityType, level, blockState, STAT, CONTAINER_TITLE);
     }
 
     @Nullable
@@ -39,15 +40,5 @@ public class LoomCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
                 return CommonHelper.stillValidEntity(LoomCompartmentEntity.this, player);
             }
         };
-    }
-
-    @Override
-    protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_LOOM);
-    }
-
-    @Override
-    protected Component getContainerTitle() {
-        return CONTAINER_TITLE;
     }
 }

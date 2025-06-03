@@ -20,15 +20,16 @@ import org.jetbrains.annotations.Nullable;
 public class CraftingTableCompartment extends SimpleBlockMenuCompartmentEntity {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
+    private static final Stat<ResourceLocation> STAT = Stats.CUSTOM.get(Stats.INTERACT_WITH_CRAFTING_TABLE);
 
     public CraftingTableCompartment(final EntityType<? extends CraftingTableCompartment> entityType,
             final Level level) {
-        super(entityType, level);
+        super(entityType, level, STAT, CONTAINER_TITLE);
     }
 
     public CraftingTableCompartment(final EntityType<? extends CraftingTableCompartment> entityType, final Level level,
             final BlockState blockState) {
-        super(entityType, level, blockState);
+        super(entityType, level, blockState, STAT, CONTAINER_TITLE);
     }
 
     @Nullable
@@ -40,15 +41,5 @@ public class CraftingTableCompartment extends SimpleBlockMenuCompartmentEntity {
                 return CommonHelper.stillValidEntity(CraftingTableCompartment.this, player);
             }
         };
-    }
-
-    @Override
-    protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_CRAFTING_TABLE);
-    }
-
-    @Override
-    protected Component getContainerTitle() {
-        return CONTAINER_TITLE;
     }
 }

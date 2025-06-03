@@ -20,15 +20,16 @@ import org.jetbrains.annotations.Nullable;
 public class SmithingTableCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.upgrade");
+    private static final Stat<ResourceLocation> STAT = getStat(Stats.INTERACT_WITH_SMITHING_TABLE);
 
     public SmithingTableCompartmentEntity(final EntityType<? extends SmithingTableCompartmentEntity> entityType,
             final Level level) {
-        super(entityType, level);
+        super(entityType, level, STAT, CONTAINER_TITLE);
     }
 
     public SmithingTableCompartmentEntity(final EntityType<? extends SmithingTableCompartmentEntity> entityType,
             final Level level, final BlockState blockState) {
-        super(entityType, level, blockState);
+        super(entityType, level, blockState, STAT, CONTAINER_TITLE);
     }
 
     @Nullable
@@ -40,15 +41,5 @@ public class SmithingTableCompartmentEntity extends SimpleBlockMenuCompartmentEn
                 return CommonHelper.stillValidEntity(SmithingTableCompartmentEntity.this, player);
             }
         };
-    }
-
-    @Override
-    protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_SMITHING_TABLE);
-    }
-
-    @Override
-    protected Component getContainerTitle() {
-        return CONTAINER_TITLE;
     }
 }

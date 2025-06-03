@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -15,6 +16,8 @@ import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,14 +25,29 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEntity implements SimpleBlockMenuCompartment, MenuConstructor {
 
+    @Nullable
+    protected final Stat<?> interactionStat;
+    protected final Component title;
+
     protected SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
-            final Level level) {
+            final Level level, @Nullable final Stat<?> interactionStat, final Component title) {
         super(entityType, level);
+        this.interactionStat = interactionStat;
+        this.title = title;
     }
 
     protected SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
-            final Level level, final BlockState blockState) {
+            final Level level, final BlockState blockState, @Nullable final Stat<?> interactionStat,
+            final Component title) {
         super(entityType, level, blockState);
+        this.interactionStat = interactionStat;
+        this.title = title;
+    }
+
+    protected static Stat<ResourceLocation> getStat(final ResourceLocation statName) {
+        return Stats.CUSTOM.get(statName);
+    }
+
     }
 
     @Override
@@ -37,27 +55,15 @@ public abstract class SimpleBlockMenuCompartmentEntity extends BlockCompartmentE
         if (player.level().isClientSide) return InteractionResult.SUCCESS;
 
         player.openMenu(this.getMenuProvider());
-        final Stat<ResourceLocation> interactionStat = this.getInteractionStat();
-        if (interactionStat != null) player.awardStat(interactionStat);
+        if (this.interactionStat != null) player.awardStat(this.interactionStat);
 
         return InteractionResult.CONSUME;
     }
 
     @Override
     public final MenuProvider getMenuProvider() {
-        return new SimpleMenuProvider(this, this.getContainerTitle());
+        return new SimpleMenuProvider(this, this.title);
     }
-
-    /**
-     * @return The stat object for interactions or {@code null} for no stat
-     */
-    @Nullable
-    protected abstract Stat<ResourceLocation> getInteractionStat();
-
-    /**
-     * @return The title of the container
-     */
-    protected abstract Component getContainerTitle();
 
     @Nullable
     @Override

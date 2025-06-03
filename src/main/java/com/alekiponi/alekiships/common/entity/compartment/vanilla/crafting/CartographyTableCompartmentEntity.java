@@ -20,15 +20,16 @@ import org.jetbrains.annotations.Nullable;
 public class CartographyTableCompartmentEntity extends SimpleBlockMenuCompartmentEntity {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.cartography_table");
+    private static final Stat<ResourceLocation> STAT = Stats.CUSTOM.get(Stats.INTERACT_WITH_CARTOGRAPHY_TABLE);
 
     public CartographyTableCompartmentEntity(final EntityType<? extends CartographyTableCompartmentEntity> entityType,
             final Level level) {
-        super(entityType, level);
+        super(entityType, level, STAT, CONTAINER_TITLE);
     }
 
     public CartographyTableCompartmentEntity(final EntityType<? extends CartographyTableCompartmentEntity> entityType,
             final Level level, final BlockState blockState) {
-        super(entityType, level, blockState);
+        super(entityType, level, blockState, STAT, CONTAINER_TITLE);
     }
 
     @Nullable
@@ -40,15 +41,5 @@ public class CartographyTableCompartmentEntity extends SimpleBlockMenuCompartmen
                 return CommonHelper.stillValidEntity(CartographyTableCompartmentEntity.this, player);
             }
         };
-    }
-
-    @Override
-    protected Stat<ResourceLocation> getInteractionStat() {
-        return Stats.CUSTOM.get(Stats.INTERACT_WITH_CARTOGRAPHY_TABLE);
-    }
-
-    @Override
-    protected Component getContainerTitle() {
-        return CONTAINER_TITLE;
     }
 }
