@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -35,7 +36,9 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
         builder.add(Items.BARREL, BarrelCompartmentPlaceable.of(new BlockCompartment.BlockCompartmentData(
                 Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP))));
         builder.add(Items.CHEST, ChestCompartmentPlaceable.of(ChestCompartmentData.VANILLA_CHEST_NORMAL));
-        builder.add(Items.TRAPPED_CHEST, ChestCompartmentPlaceable.of(ChestCompartmentData.VANILLA_CHEST_TRAPPED));
+        builder.add(Items.TRAPPED_CHEST, ChestCompartmentPlaceable.of(ChestCompartmentData.builder()
+                .texture(ResourceLocation.withDefaultNamespace("entity/chest/trapped"))
+                .build()));
         builder.add(Items.ENDER_CHEST,
                 DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.ENDER_CHEST_COMPARTMENT));
 

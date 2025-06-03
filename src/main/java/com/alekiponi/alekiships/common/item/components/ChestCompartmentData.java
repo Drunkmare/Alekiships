@@ -20,43 +20,59 @@ import net.minecraft.world.inventory.MenuType;
 
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
+import org.jetbrains.annotations.NotNull;
 import lombok.Builder;
+import lombok.Value;
+import lombok.experimental.Accessors;
 
-@Builder
-public record ChestCompartmentData(RowCount rowCount, SoundEvent hurtSound, SoundEvent placeSound,
-        SoundEvent breakSound, float soundVolume, float soundPitch, ResourceLocation chestTexture) {
+@Value
+@Accessors(fluent = true)
+@Builder(toBuilder = true)
+public class ChestCompartmentData {
+
+    public static final ChestCompartmentData VANILLA_CHEST_NORMAL = ChestCompartmentData.builder()
+            .texture(ResourceLocation.withDefaultNamespace("entity/chest/normal"))
+            .build();
+
+    private static final Codec<SoundEvent> SOUND_EVENT_CODEC = BuiltInRegistries.SOUND_EVENT.byNameCodec();
 
     public static final Codec<ChestCompartmentData> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(RowCount.CODEC.fieldOf("row_count").forGetter(ChestCompartmentData::rowCount),
-                            BuiltInRegistries.SOUND_EVENT.byNameCodec()
-                                    .optionalFieldOf("hurt_sound", SoundEvents.WOOD_HIT)
-                                    .forGetter(ChestCompartmentData::hurtSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
-                                    .optionalFieldOf("place_sound", SoundEvents.WOOD_PLACE)
-                                    .forGetter(ChestCompartmentData::placeSound), BuiltInRegistries.SOUND_EVENT.byNameCodec()
-                                    .optionalFieldOf("break_sound", SoundEvents.WOOD_BREAK)
+                            SOUND_EVENT_CODEC.optionalFieldOf("hurt_sound", SoundEvents.WOOD_HIT)
+                                    .forGetter(ChestCompartmentData::hurtSound),
+                            SOUND_EVENT_CODEC.optionalFieldOf("place_sound", SoundEvents.WOOD_PLACE)
+                                    .forGetter(ChestCompartmentData::placeSound),
+                            SOUND_EVENT_CODEC.optionalFieldOf("break_sound", SoundEvents.WOOD_BREAK)
                                     .forGetter(ChestCompartmentData::breakSound),
                             Codec.FLOAT.optionalFieldOf("sound_volume", 1F).forGetter(ChestCompartmentData::soundVolume),
                             Codec.FLOAT.optionalFieldOf("sound_pitch", 1F).forGetter(ChestCompartmentData::soundPitch),
-                            ResourceLocation.CODEC.fieldOf("chest_texture").forGetter(ChestCompartmentData::chestTexture))
+                            ResourceLocation.CODEC.fieldOf("texture").forGetter(ChestCompartmentData::texture))
                     .apply(instance, ChestCompartmentData::new));
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, SoundEvent> SOUND_EVENT_STREAM_CODEC = ByteBufCodecs.registry(
+            Registries.SOUND_EVENT);
+
     public static final StreamCodec<RegistryFriendlyByteBuf, ChestCompartmentData> STREAM_CODEC = NeoForgeStreamCodecs.composite(
-            NeoForgeStreamCodecs.enumCodec(RowCount.class), ChestCompartmentData::rowCount,
-            ByteBufCodecs.registry(Registries.SOUND_EVENT), ChestCompartmentData::hurtSound,
-            ByteBufCodecs.registry(Registries.SOUND_EVENT), ChestCompartmentData::placeSound,
-            ByteBufCodecs.registry(Registries.SOUND_EVENT), ChestCompartmentData::breakSound, ByteBufCodecs.FLOAT,
+            NeoForgeStreamCodecs.enumCodec(RowCount.class), ChestCompartmentData::rowCount, SOUND_EVENT_STREAM_CODEC,
+            ChestCompartmentData::hurtSound, SOUND_EVENT_STREAM_CODEC, ChestCompartmentData::placeSound,
+            SOUND_EVENT_STREAM_CODEC, ChestCompartmentData::breakSound, ByteBufCodecs.FLOAT,
             ChestCompartmentData::soundVolume, ByteBufCodecs.FLOAT, ChestCompartmentData::soundPitch,
-            ResourceLocation.STREAM_CODEC, ChestCompartmentData::chestTexture, ChestCompartmentData::new);
-
-    public static final ChestCompartmentData VANILLA_CHEST_NORMAL = new ChestCompartmentData(RowCount.THREE,
-            SoundEvents.WOOD_HIT, SoundEvents.WOOD_PLACE, SoundEvents.WOOD_BREAK, 1, 1,
-            ResourceLocation.withDefaultNamespace("entity/chest/normal"));
-
-    public static final ChestCompartmentData VANILLA_CHEST_TRAPPED = new ChestCompartmentData(RowCount.THREE,
-            SoundEvents.WOOD_HIT, SoundEvents.WOOD_PLACE, SoundEvents.WOOD_BREAK, 1, 1,
-            ResourceLocation.withDefaultNamespace("entity/chest/trapped"));
+            ResourceLocation.STREAM_CODEC, ChestCompartmentData::texture, ChestCompartmentData::new);
 
     private static final int ROW_LENGTH = 9;
+    @Builder.Default
+    RowCount rowCount = RowCount.THREE;
+    @Builder.Default
+    SoundEvent hurtSound = SoundEvents.WOOD_HIT;
+    @Builder.Default
+    SoundEvent placeSound = SoundEvents.WOOD_PLACE;
+    @Builder.Default
+    SoundEvent breakSound = SoundEvents.WOOD_BREAK;
+    @Builder.Default
+    float soundVolume = 1;
+    @Builder.Default
+    float soundPitch = 1;
+    @NotNull ResourceLocation texture;
 
     public int slotCount() {
         return switch (this.rowCount) {

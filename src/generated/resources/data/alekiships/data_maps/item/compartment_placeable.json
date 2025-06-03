@@ -31,8 +31,8 @@
     "minecraft:chest": {
       "type": "alekiships:chest",
       "chest_data": {
-        "chest_texture": "minecraft:entity/chest/normal",
-        "row_count": "three"
+        "row_count": "three",
+        "texture": "minecraft:entity/chest/normal"
       }
     },
     "minecraft:crafting_table": {
@@ -125,8 +125,8 @@
     "minecraft:trapped_chest": {
       "type": "alekiships:chest",
       "chest_data": {
-        "chest_texture": "minecraft:entity/chest/trapped",
-        "row_count": "three"
+        "row_count": "three",
+        "texture": "minecraft:entity/chest/trapped"
       }
     },
     "minecraft:white_shulker_box": {
