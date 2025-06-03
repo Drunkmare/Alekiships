@@ -13,9 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.GrindstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +28,7 @@ public class GrindstoneCompartmentEntity extends SimpleBlockMenuCompartmentEntit
 
     public GrindstoneCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
             final Level level, final BlockState blockState) {
-        super(entityType, level, blockState.trySetValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
+        super(entityType, level, blockState);
     }
 
     @Nullable

@@ -42,7 +42,7 @@ public interface BlockCompartment {
      * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
      *                                {@link Block}s {@link Block#defaultBlockState()}
      */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> create(
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> dynamicFactory(
             final BlockCompartmentFactory<E> blockCompartmentFactory) {
         return (entityType, level, itemStack) -> {
             final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_BLOCK);
@@ -56,6 +56,24 @@ public interface BlockCompartment {
 
             return null;
         };
+    }
+
+    /**
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} to use
+     * @param block                   The block to use for the default state
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> staticFactory(
+            final BlockCompartmentFactory<E> blockCompartmentFactory, final Block block) {
+        return staticFactory(blockCompartmentFactory, block.defaultBlockState());
+    }
+
+    /**
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} to use
+     * @param defaultBlockState       The default state the compartment is constructed with
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> staticFactory(
+            final BlockCompartmentFactory<E> blockCompartmentFactory, final BlockState defaultBlockState) {
+        return (entityType, level, itemStack) -> blockCompartmentFactory.create(entityType, level, defaultBlockState);
     }
 
     /**
