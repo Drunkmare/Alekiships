@@ -4,10 +4,13 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
 import com.alekiponi.alekiships.common.entity.EntityInput;
-import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -29,9 +32,9 @@ public final class AlekiShipsComponents {
                     .networkSynchronized(CompartmentPlaceable.STREAM_CODEC)
                     .cacheEncoding());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockCompartment.BlockCompartmentData>> BLOCK_COMPARTMENT_DATA = register(
-            "block_compartment_data", builder -> builder.persistent(BlockCompartment.BlockCompartmentData.CODEC)
-                    .networkSynchronized(BlockCompartment.BlockCompartmentData.STREAM_CODEC)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockState>> BLOCK_COMPARTMENT_BLOCK = register(
+            "block_compartment_block", builder -> builder.persistent(AlekiShipsExtraCodecs.BLOCK_STATE_CODEC)
+                    .networkSynchronized(ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY))
                     .cacheEncoding());
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(final String name,

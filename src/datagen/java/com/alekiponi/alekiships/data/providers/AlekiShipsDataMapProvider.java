@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.compartment.*;
-import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
 
@@ -33,8 +32,8 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
     protected void gather() {
         final var builder = this.builder(AlekiShipsDataMaps.COMPARTMENT_PLACEABLE);
 
-        builder.add(Items.BARREL, BarrelCompartmentPlaceable.of(new BlockCompartment.BlockCompartmentData(
-                Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP))));
+        builder.add(Items.BARREL, BarrelCompartmentPlaceable.of(
+                Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP)));
         builder.add(Items.CHEST, ChestCompartmentPlaceable.of(ChestCompartmentData.VANILLA_CHEST_NORMAL));
         builder.add(Items.TRAPPED_CHEST, ChestCompartmentPlaceable.of(ChestCompartmentData.builder()
                 .texture(ResourceLocation.withDefaultNamespace("entity/chest/trapped"))
