@@ -25,7 +25,36 @@ public final class AlekiShipsExtraCodecs {
      * A codec for the more common {@link net.minecraft.commands.arguments.blocks.BlockStateParser} blockstate syntax (used in commands)
      * Unnamed properties use the default
      */
-    public static final Codec<BlockState> BLOCK_STATE_CODEC = ExtraCodecs.NON_EMPTY_STRING.comapFlatMap(string -> {
+    public static final Codec<BlockState> BLOCK_STATE_CODEC = ExtraCodecs.NON_EMPTY_STRING.comapFlatMap(
+            AlekiShipsExtraCodecs::parseBlockState, blockState -> {
+                final var block = blockState.getBlock();
+                final var defaultState = block.defaultBlockState();
+                if (blockState == defaultState) return BuiltInRegistries.BLOCK.getKey(block).toString();
+
+                final var stringBuilder = new StringBuilder();
+                stringBuilder.append(BuiltInRegistries.BLOCK.getKey(block));
+                final var values = blockState.getValues();
+                if (!values.isEmpty()) {
+                    stringBuilder.append('[');
+                    stringBuilder.append(values.entrySet()
+                            .stream()
+                            .filter(entry -> {
+                                final var key = entry.getKey();
+                                return blockState.getValue(key) != defaultState.getValue(key);
+                            })
+                            .map(entry -> {
+                                @SuppressWarnings("rawtypes") final Property property = entry.getKey();
+                                @SuppressWarnings("unchecked") final var valueName = property.getName(entry.getValue());
+                                return property.getName() + "=" + valueName;
+                            })
+                            .collect(Collectors.joining(",")));
+                    stringBuilder.append(']');
+                }
+
+                return stringBuilder.toString();
+            });
+
+    public static DataResult<BlockState> parseBlockState(final String string) {
         final var propertiesStart = string.indexOf('[');
         final var propertiesEnd = string.indexOf(']');
         // No encoded properties, use default blockstate
@@ -55,33 +84,7 @@ public final class AlekiShipsExtraCodecs {
             }
             return blockState;
         });
-    }, blockState -> {
-        final var block = blockState.getBlock();
-        final var defaultState = block.defaultBlockState();
-        if (blockState == defaultState) return BuiltInRegistries.BLOCK.getKey(block).toString();
-
-        final var stringBuilder = new StringBuilder();
-        stringBuilder.append(BuiltInRegistries.BLOCK.getKey(block));
-        final var values = blockState.getValues();
-        if (!values.isEmpty()) {
-            stringBuilder.append('[');
-            stringBuilder.append(values.entrySet()
-                    .stream()
-                    .filter(entry -> {
-                        final var key = entry.getKey();
-                        return blockState.getValue(key) != defaultState.getValue(key);
-                    })
-                    .map(entry -> {
-                        @SuppressWarnings("rawtypes") final Property property = entry.getKey();
-                        @SuppressWarnings("unchecked") final var valueName = property.getName(entry.getValue());
-                        return property.getName() + "=" + valueName;
-                    })
-                    .collect(Collectors.joining(",")));
-            stringBuilder.append(']');
-        }
-
-        return stringBuilder.toString();
-    });
+    }
 
     public static DataResult<Block> parseBlock(final String registryName) {
         return ResourceLocation.read(registryName)
