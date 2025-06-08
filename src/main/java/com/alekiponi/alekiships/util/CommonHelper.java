@@ -3,8 +3,6 @@ package com.alekiponi.alekiships.util;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Triple;
 
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.CraftingTableCompartment;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,9 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
@@ -256,8 +252,11 @@ public class CommonHelper {
      */
     public static <E extends Enum<E>, V> EnumMap<E, V> mapOfKeys(final Class<E> enumClass,
             final Predicate<E> keyPredicate, final Function<E, V> valueMapper) {
-        return Arrays.stream(enumClass.getEnumConstants()).filter(keyPredicate).collect(
-                Collectors.toMap(Function.identity(), valueMapper, (v, v2) -> v, () -> new EnumMap<>(enumClass)));
+        return Arrays.stream(enumClass.getEnumConstants())
+                .filter(keyPredicate)
+                .collect(
+                        Collectors.toMap(Function.identity(), valueMapper, (v, v2) -> v,
+                                () -> new EnumMap<>(enumClass)));
     }
 
     /**
@@ -344,19 +343,6 @@ public class CommonHelper {
      * @param entity The entity the returned {@link ContainerLevelAccess} is bound to
      *
      * @return {@link ContainerLevelAccess} with valid {@link Level} and {@link BlockPos} objects
-     *
-     * @apiNote While this returns a valid {@link ContainerLevelAccess} most vanilla block menus such as {@link CraftingMenu}
-     * check for a block in world to see if the menu should close. As such you will likely need to override at the very
-     * least {@link AbstractContainerMenu#stillValid(Player)} however this can usually be done anonymously. For example
-     * {@link CraftingTableCompartment} returns an anonymous {@link CraftingMenu} with {@link AbstractContainerMenu#stillValid(Player)}
-     * overridden like so
-     * <pre>{@code
-     *      return new CraftingMenu(id, playerInventory, CommonHelper.createEntityContainerLevelAccess(this)) {
-     *          @Override
-     *          public boolean stillValid(final Player player) {
-     *              return CraftingTableCompartment.this.stillValid(player);
-     *          }
-     *      };}</pre>
      */
     public static ContainerLevelAccess createEntityContainerLevelAccess(final Entity entity) {
         return new ContainerLevelAccess() {

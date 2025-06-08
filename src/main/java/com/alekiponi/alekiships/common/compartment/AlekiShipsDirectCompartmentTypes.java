@@ -6,8 +6,8 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
+import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.*;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.*;
 
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.GrindstoneBlock;
@@ -45,30 +45,36 @@ public final class AlekiShipsDirectCompartmentTypes {
                     BlockCompartment.staticFactory(BrewingStandCompartmentEntity::new, Blocks.BREWING_STAND),
                     CompartmentCloneable::initialize));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<CraftingTableCompartment>> CRAFTING_TABLE_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> CRAFTING_TABLE_COMPARTMENT = register(
             "crafting_table", () -> DirectCompartmentType.of(AlekiShipsEntities.WORKBENCH_COMPARTMENT_ENTITY,
-                    BlockCompartment.dynamicFactory(CraftingTableCompartment::new)));
+                    BlockCompartment.dynamicFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                            SimpleBlockMenuCompartmentEntity.CRAFTING_TABLE))));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<StonecutterCompartmentEntity>> STONECUTTER_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> STONECUTTER_COMPARTMENT = register(
             "stonecutter", () -> DirectCompartmentType.of(AlekiShipsEntities.STONECUTTER_COMPARTMENT_ENTITY,
-                    BlockCompartment.staticFactory(StonecutterCompartmentEntity::new, Blocks.STONECUTTER)));
+                    BlockCompartment.staticFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                            SimpleBlockMenuCompartmentEntity.STONECUTTER), Blocks.STONECUTTER)));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<CartographyTableCompartmentEntity>> CARTOGRAPHY_TABLE_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> CARTOGRAPHY_TABLE_COMPARTMENT = register(
             "cartography_table", () -> DirectCompartmentType.of(AlekiShipsEntities.CARTOGRAPHY_TABLE_COMPARTMENT_ENTITY,
-                    BlockCompartment.staticFactory(CartographyTableCompartmentEntity::new, Blocks.CARTOGRAPHY_TABLE)));
+                    BlockCompartment.staticFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                            SimpleBlockMenuCompartmentEntity.CARTOGRAPHY_TABLE), Blocks.CARTOGRAPHY_TABLE)));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SmithingTableCompartmentEntity>> SMITHING_TABLE_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> SMITHING_TABLE_COMPARTMENT = register(
             "smithing_table", () -> DirectCompartmentType.of(AlekiShipsEntities.SMITHING_TABLE_COMPARTMENT_ENTITY,
-                    BlockCompartment.staticFactory(SmithingTableCompartmentEntity::new, Blocks.SMITHING_TABLE)));
+                    BlockCompartment.staticFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                            SimpleBlockMenuCompartmentEntity.SMITHING_TABLE), Blocks.SMITHING_TABLE)));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<GrindstoneCompartmentEntity>> GRINDSTONE_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> GRINDSTONE_COMPARTMENT = register(
             "grindstone", () -> DirectCompartmentType.of(AlekiShipsEntities.GRINDSTONE_COMPARTMENT_ENTITY,
-                    BlockCompartment.staticFactory(GrindstoneCompartmentEntity::new,
+                    BlockCompartment.staticFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                                    SimpleBlockMenuCompartmentEntity.GRINDSTONE),
                             Blocks.GRINDSTONE.defaultBlockState().setValue(GrindstoneBlock.FACE, AttachFace.FLOOR))));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<LoomCompartmentEntity>> LOOM_COMPARTMENT = register(
+    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> LOOM_COMPARTMENT = register(
             "loom", () -> DirectCompartmentType.of(AlekiShipsEntities.LOOM_COMPARTMENT_ENTITY,
-                    BlockCompartment.staticFactory(LoomCompartmentEntity::new, Blocks.LOOM)));
+                    BlockCompartment.staticFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
+                            SimpleBlockMenuCompartmentEntity.LOOM), Blocks.LOOM)));
 
     public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<NoteBlockCompartmentEntity>> NOTE_BLOCK_COMPARTMENT = register(
             "note_block", () -> DirectCompartmentType.of(AlekiShipsEntities.NOTE_BLOCK_COMPARTMENT_ENTITY,

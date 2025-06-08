@@ -1,0 +1,182 @@
+package com.alekiponi.alekiships.util.reflect.asm;
+
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartmentEntity;
+import com.alekiponi.alekiships.util.CommonHelper;
+
+import net.minecraft.CrashReport;
+import net.minecraft.ReportedException;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingMenu;
+
+import java.lang.constant.ConstantDescs;
+import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * This is a helper class for generating a menu class at runtime.
+ * <p>
+ * Some menus like {@link CraftingMenu} expect a block in world which our compartments cannot satisfy.
+ * To resolve this we generate an anonymous class of the same type with a compatible override for {@link AbstractContainerMenu#stillValid(Player)}
+ * <p>
+ * IE think something like this
+ * <pre>{@code
+ * new CraftingMenu(...){
+ *      public boolean stillValid(Player player) {
+ *          return CommonHelper.stillValidEntity(SimpleBlockMenuCompartmentEntity.this, player)
+ *      }
+ * }
+ * }</pre>
+ * <p>
+ * There should be little reason to ever use this outside of {@link SimpleBlockMenuCompartmentEntity}
+ */
+@Slf4j
+public final class SyntheticCompartmentMenuClassGenerator {
+
+    private static final Type SIMPLE_BLOCK_MENU_COMPARTMENT = Type.getType(SimpleBlockMenuCompartmentEntity.class);
+    private static final String COMPARTMENT_FIELD = "$compartment";
+
+    private SyntheticCompartmentMenuClassGenerator() {}
+
+    /**
+     * @param menuClass The menu class to "wrap" with a synthetic parent.
+     *                  Must have a constructor with the signature int, {@link Inventory}, {@link ContainerLevelAccess}
+     */
+    public static <M extends AbstractContainerMenu> Class<M> generateMenuClass(final Class<M> menuClass) {
+        return generateMenuClass(MethodHandles.lookup(), menuClass);
+    }
+
+    /**
+     * @param lookup    The lookup to use
+     * @param menuClass The menu class to "wrap" with a synthetic parent
+     *                  Must have a constructor with the signature int, {@link Inventory}, {@link ContainerLevelAccess}
+     */
+    public static <M extends AbstractContainerMenu> Class<M> generateMenuClass(final MethodHandles.Lookup lookup,
+            final Class<M> menuClass) {
+        final byte[] classData = generateMenuClassData(getMenuName(lookup, menuClass), menuClass);
+        final MethodHandles.Lookup menuLookup;
+        try {
+            menuLookup = lookup.defineHiddenClass(classData, false, MethodHandles.Lookup.ClassOption.STRONG);
+        } catch (IllegalAccessException e) {
+            final var crashReport = CrashReport.forThrowable(e, "Generating synthetic compartment menu class");
+            final var parentMenu = crashReport.addCategory("Parent class data");
+            parentMenu.setDetail("Parent name", menuClass.getName());
+            parentMenu.setDetail("Parent constructors", Arrays.toString(menuClass.getConstructors()));
+            final var lookupData = crashReport.addCategory("Lookup data");
+            lookupData.setDetail("Full privilege", lookup.hasFullPrivilegeAccess());
+            throw new ReportedException(crashReport);
+        }
+        @SuppressWarnings("unchecked") final var generatedClass = (Class<M>) menuLookup.lookupClass();
+        log.debug("Generated synthetic class {} for {}", generatedClass.getName(), menuClass.getName());
+        return generatedClass;
+    }
+
+    private static <M extends AbstractContainerMenu> String getMenuName(final MethodHandles.Lookup callerLookup,
+            final Class<M> menuClass) {
+        return callerLookup.lookupClass()
+                .getPackageName()
+                .replace('.', '/') + "/SyntheticAlekiShipsCompartmentMenu$" + menuClass.getSimpleName();
+    }
+
+    private static <M extends AbstractContainerMenu> byte[] generateMenuClassData(final String className,
+            final Class<M> menuClass) {
+        final var writer = new ClassWriter(ClassWriter.COMPUTE_MAXS); // No if jumps means we don't need frames
+        generateMenuClass(writer, className, menuClass);
+        return writer.toByteArray();
+    }
+
+    private static <M extends AbstractContainerMenu> void generateMenuClass(final ClassWriter writer,
+            final String className, final Class<M> menuClass) {
+        writer.visit(Opcodes.V21, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SUPER | Opcodes.ACC_SYNTHETIC,
+                className, null, Type.getInternalName(menuClass), null);
+        writer.visitSource("dynamically generated by AlekiShips", null);
+        generateFields(writer);
+        generateConstructor(writer, className, menuClass);
+        generateStillValidOverride(writer, className);
+
+        writer.visitEnd();
+    }
+
+    private static void generateFields(final ClassWriter writer) {
+        writer.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, COMPARTMENT_FIELD,
+                SIMPLE_BLOCK_MENU_COMPARTMENT.getDescriptor(), null, null);
+    }
+
+    @SneakyThrows(NoSuchMethodException.class)
+    private static void generateStillValidOverride(final ClassWriter writer, final String className) {
+        final var stillValid = AbstractContainerMenu.class.getMethod("stillValid", Player.class);
+        final var methodVisitor = writer.visitMethod(Opcodes.ACC_PUBLIC, stillValid.getName(),
+                Type.getMethodDescriptor(stillValid), null, null);
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+        methodVisitor.visitFieldInsn(Opcodes.GETFIELD, className, COMPARTMENT_FIELD,
+                SIMPLE_BLOCK_MENU_COMPARTMENT.getDescriptor());
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 1);
+        final var stillValidEntity = SyntheticCompartmentMenuClassGenerator.class.getMethod("stillValidEntity",
+                Entity.class, Player.class);
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, Type.getInternalName(stillValidEntity.getDeclaringClass()),
+                stillValidEntity.getName(), Type.getMethodDescriptor(stillValidEntity), false);
+        methodVisitor.visitInsn(Opcodes.IRETURN);
+
+        methodVisitor.visitMaxs(2, 2);
+        methodVisitor.visitEnd();
+    }
+
+    @SneakyThrows(NoSuchMethodException.class)
+    private static <M extends AbstractContainerMenu> void generateConstructor(final ClassWriter classWriter,
+            final String className, final Class<M> menuClass) {
+        final MethodVisitor constructorWriter = classWriter.visitMethod(Opcodes.ACC_PUBLIC, ConstantDescs.INIT_NAME,
+                Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, Type.getType(Inventory.class),
+                        Type.getType(SimpleBlockMenuCompartmentEntity.class)), null, null);
+
+        constructorWriter.visitCode();
+        constructorWriter.visitVarInsn(Opcodes.ALOAD, 0);
+        constructorWriter.visitVarInsn(Opcodes.ILOAD, 1);
+        constructorWriter.visitVarInsn(Opcodes.ALOAD, 2);
+        constructorWriter.visitVarInsn(Opcodes.ALOAD, 3);
+        final var createEntityContainerLevelAccess = SyntheticCompartmentMenuClassGenerator.class.getMethod(
+                "createEntityContainerLevelAccess", Entity.class);
+        constructorWriter.visitMethodInsn(Opcodes.INVOKESTATIC,
+                Type.getInternalName(createEntityContainerLevelAccess.getDeclaringClass()),
+                createEntityContainerLevelAccess.getName(), Type.getMethodDescriptor(createEntityContainerLevelAccess),
+                false);
+        constructorWriter.visitMethodInsn(Opcodes.INVOKESPECIAL, Type.getInternalName(menuClass),
+                ConstantDescs.INIT_NAME,
+                Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, Type.getType(Inventory.class),
+                        Type.getType(ContainerLevelAccess.class)), false);
+
+        constructorWriter.visitVarInsn(Opcodes.ALOAD, 0);
+        constructorWriter.visitVarInsn(Opcodes.ALOAD, 3);
+        constructorWriter.visitFieldInsn(Opcodes.PUTFIELD, className, COMPARTMENT_FIELD,
+                SIMPLE_BLOCK_MENU_COMPARTMENT.getDescriptor());
+
+        constructorWriter.visitInsn(Opcodes.RETURN);
+        constructorWriter.visitMaxs(4, 4);
+        constructorWriter.visitEnd();
+    }
+
+    /**
+     * Bouncer for the helper in {@link CommonHelper} to try to prevent unintentional removals during refactor
+     */
+    @SuppressWarnings("unused")
+    public static boolean stillValidEntity(final Entity entity, final Player player) {
+        return CommonHelper.stillValidEntity(entity, player);
+    }
+
+    /**
+     * Bouncer for the helper in {@link CommonHelper} to try to prevent unintentional removals during refactor
+     */
+    @SuppressWarnings("unused")
+    public static ContainerLevelAccess createEntityContainerLevelAccess(final Entity entity) {
+        return CommonHelper.createEntityContainerLevelAccess(entity);
+    }
+}
