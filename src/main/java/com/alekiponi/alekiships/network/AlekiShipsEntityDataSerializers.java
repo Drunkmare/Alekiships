@@ -3,7 +3,8 @@ package com.alekiponi.alekiships.network;
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
-import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.recipe.util.ItemStackProvider;
 import com.alekiponi.alekiships.wind.Wind;
 
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -37,9 +38,12 @@ public final class AlekiShipsEntityDataSerializers {
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ChestCompartmentData>> CHEST_COMPARTMENT_DATA = register(
             "chest_compartment_data", () -> EntityDataSerializer.forValueType(ChestCompartmentData.STREAM_CODEC));
 
-    public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
             "optional_dye_color",
             () -> EntityDataSerializer.forValueType(ByteBufCodecs.optional(DyeColor.STREAM_CODEC)));
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ItemStackProvider>> ITEM_STACK_PROVIDER = register(
+            "item_stack_provider", () -> EntityDataSerializer.forValueType(ItemStackProvider.STREAM_CODEC));
 
     private static <T extends EntityDataSerializer<?>> DeferredHolder<EntityDataSerializer<?>, T> register(
             final String name, final Supplier<T> dataSerializer) {

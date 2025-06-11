@@ -31,7 +31,6 @@
     "minecraft:chest": {
       "type": "alekiships:chest",
       "chest_data": {
-        "row_count": "three",
         "texture": "minecraft:entity/chest/normal"
       }
     },
@@ -125,7 +124,6 @@
     "minecraft:trapped_chest": {
       "type": "alekiships:chest",
       "chest_data": {
-        "row_count": "three",
         "texture": "minecraft:entity/chest/trapped"
       }
     },

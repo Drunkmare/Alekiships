@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class AlekiShipsExtraCodecs {
@@ -124,5 +126,31 @@ public final class AlekiShipsExtraCodecs {
         }
 
         return DataResult.success(builder.build());
+    }
+
+    /**
+     * @param codec  The codec
+     * @param ops    The ops
+     * @param input  The input
+     * @param setter The setter for the decoding result
+     * @param <T>    The type to decode
+     * @param <I>    The type to decode from
+     */
+    public static <T, I> void load(final Codec<T> codec, final DynamicOps<I> ops, final I input,
+            final Consumer<T> setter) {
+        codec.parse(ops, input).ifSuccess(setter);
+    }
+
+    /**
+     * @param codec  The codec
+     * @param ops    The ops
+     * @param input  The input value
+     * @param setter The setter for the encoding result
+     * @param <T>    The type to encode
+     * @param <I>    The type to encode to
+     */
+    public static <T, I> void save(final Codec<T> codec, final DynamicOps<I> ops, final T input,
+            final Consumer<I> setter) {
+        codec.encodeStart(ops, input).ifSuccess(setter);
     }
 }

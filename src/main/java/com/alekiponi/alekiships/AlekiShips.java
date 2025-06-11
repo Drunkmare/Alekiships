@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.common.AlekiShipsAttachments;
 import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.compartment.AlekiShipsChestCompartmentTypes;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsCompartmentPlaceableSerializers;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsDirectCompartmentTypes;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
@@ -67,6 +68,7 @@ public final class AlekiShips {
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
         AlekiShipsDirectCompartmentTypes.DIRECT_COMPARTMENTS.register(modBus);
         AlekiShipsCompartmentPlaceableSerializers.COMPARTMENT_PLACEABLE_SERIALIZERS.register(modBus);
+        AlekiShipsChestCompartmentTypes.CHEST_TYPES.register(modBus);
         modBus.addListener(AlekiShipsBuiltInRegistries::registerRegistries);
         modBus.addListener(AlekiShipsBuiltInRegistries::registerDatapackRegistries);
         modBus.addListener(AlekiShipsDataMaps::registerDataMaps);

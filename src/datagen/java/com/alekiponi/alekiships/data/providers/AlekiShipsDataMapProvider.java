@@ -2,7 +2,7 @@ package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.compartment.*;
-import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
 
 import net.minecraft.core.Direction;

@@ -3,9 +3,8 @@ package com.alekiponi.alekiships.common.compartment;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentEntity;
-import com.alekiponi.alekiships.common.item.components.ChestCompartmentData;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -38,7 +37,6 @@ public final class ChestCompartmentPlaceable implements CompartmentPlaceable<Che
 
     @Override
     public Optional<ChestCompartmentEntity> createCompartment(final Level level, final ItemStack itemStack) {
-        return Optional.of(ChestCompartmentEntity.create(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY.get(), level,
-                this.chestCompartmentData, itemStack));
+        return Optional.of(ChestCompartmentEntity.create(level, this.chestCompartmentData, itemStack));
     }
 }
