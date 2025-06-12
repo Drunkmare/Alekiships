@@ -16,9 +16,7 @@ val modName: String = "aleki's Nifty Ships"
 val modVersion: String = "1.0.0"
 //# Minecraft stuff
 val minecraftVersion: String = "1.21"
-val minecraftVersionRange: String = "[1.21,1.21.1)"
-val neoVersion: String = "21.0.167"
-val neoVersionRange: String = "[21.0.167,21.0.168 )"
+val neoVersion: String = "21.1.168"
 
 // Dependency versions
 val emiVersion: String = "1.1.10+1.21"
