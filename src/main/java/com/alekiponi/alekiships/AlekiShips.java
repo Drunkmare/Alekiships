@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
-import com.alekiponi.alekiships.common.AlekiShipsAttachments;
 import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
@@ -23,6 +22,7 @@ import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
 import com.alekiponi.alekiships.util.VanillaWood;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
+import com.alekiponi.alekiships.wind.AlekiShipsWindModelSerializers;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -63,12 +63,12 @@ public final class AlekiShips {
         AlekiShipsBlocks.BLOCKS.register(modBus);
         AlekiShipsEntities.ENTITY_TYPES.register(modBus);
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(modBus);
-        AlekiShipsAttachments.ATTACHMENT_TYPES.register(modBus);
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
         AlekiShipsDirectCompartmentTypes.DIRECT_COMPARTMENTS.register(modBus);
         AlekiShipsCompartmentPlaceableSerializers.COMPARTMENT_PLACEABLE_SERIALIZERS.register(modBus);
         AlekiShipsChestCompartmentTypes.CHEST_TYPES.register(modBus);
+        AlekiShipsWindModelSerializers.WIND_MODEL_SERIALIZERS.register(modBus);
         modBus.addListener(AlekiShipsBuiltInRegistries::registerRegistries);
         modBus.addListener(AlekiShipsBuiltInRegistries::registerDatapackRegistries);
         modBus.addListener(AlekiShipsDataMaps::registerDataMaps);

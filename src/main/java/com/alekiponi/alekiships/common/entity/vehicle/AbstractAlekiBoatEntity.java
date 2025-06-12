@@ -213,7 +213,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     protected void tickUpdateWind(boolean waitForWindUpdateTick) {
         if (this.everyNthTickUnique(WIND_UPDATE_TICKS) || !waitForWindUpdateTick) {
-            Wind wind = this.windModel.getWind(this.blockPosition());
+            Wind wind = this.windModel.getWind(this.level(), this.position());
             //windVector = new Vec2(0.05f,0.05f);
             if (wind.speed() == 0) {
                 wind = new Wind(-0.03F, 0F);

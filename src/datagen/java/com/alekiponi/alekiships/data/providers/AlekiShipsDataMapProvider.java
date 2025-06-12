@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.compartment.*;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
+import com.alekiponi.alekiships.wind.SimpleWindModel;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 
 import net.neoforged.neoforge.common.data.DataMapProvider;
 
@@ -31,6 +33,7 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
     @Override
     protected void gather(final HolderLookup.Provider provider) {
         this.gatherCompartmentPlaceable();
+        this.gatherWindModels();
     }
 
     private void gatherCompartmentPlaceable() {
@@ -73,5 +76,10 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
         builder.add(Items.NOTE_BLOCK,
                 DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.NOTE_BLOCK_COMPARTMENT));
         builder.add(Items.JUKEBOX, DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.JUKEBOX_COMPARTMENT));
+    }
+
+    private void gatherWindModels() {
+        final var builder = this.builder(AlekiShipsDataMaps.WIND_MODEL);
+        builder.add(BuiltinDimensionTypes.OVERWORLD, SimpleWindModel.INSTANCE);
     }
 }

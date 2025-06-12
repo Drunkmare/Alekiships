@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data.util;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
 import net.neoforged.neoforge.common.conditions.ICondition;
@@ -11,6 +12,11 @@ public final class DataMapBuilderExtensions {
     public static <T, R> DataMapProvider.Builder<T, R> add(final DataMapProvider.Builder<T, R> builder,
             final Holder<R> object, final T value, final ICondition... conditions) {
         return builder.add(object, value, false, conditions);
+    }
+
+    public static <T, R> DataMapProvider.Builder<T, R> add(final DataMapProvider.Builder<T, R> builder,
+            final ResourceKey<R> resourceKey, final T value, final ICondition... conditions) {
+        return builder.add(resourceKey, value, false, conditions);
     }
 
     @SuppressWarnings("deprecation")

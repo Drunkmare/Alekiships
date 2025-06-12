@@ -1,73 +1,75 @@
 package com.alekiponi.alekiships.wind;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.mojang.serialization.Codec;
 
-import com.alekiponi.alekiships.common.AlekiShipsAttachments;
+import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import org.jetbrains.annotations.Nullable;
-
 public interface WindModel {
 
+    Codec<WindModel> CODEC = AlekiShipsBuiltInRegistries.WIND_MODEL_SERIALIZERS.byNameCodec()
+            .dispatch(WindModel::getSerializer, WindModelSerializer::codec);
+    StreamCodec<RegistryFriendlyByteBuf, WindModel> STREAM_CODEC = ByteBufCodecs.registry(
+                    AlekiShipsRegistries.WIND_MODEL_SERIALIZERS)
+            .dispatch(WindModel::getSerializer, WindModelSerializer::streamCodec);
+
     /**
-     * Grab the attached wind model from the level
+     * Grab the appropriate wind model for the level
      *
      * @param level The level
      *
      * @return The attached wind model
      */
     static WindModel get(final Level level) {
-        return level.getData(AlekiShipsAttachments.WIND_MODEL);
-    }
-
-    /**
-     * Set the attached wind model on the provided level
-     *
-     * @param level     The level
-     * @param windModel The wind model
-     *
-     * @return The old wind model. Potentially {@code null}
-     */
-    @Nullable
-    @CanIgnoreReturnValue
-    static WindModel set(final Level level, final WindModel windModel) {
-        return level.setData(AlekiShipsAttachments.WIND_MODEL, windModel);
+        final var data = level.dimensionTypeRegistration().getData(AlekiShipsDataMaps.WIND_MODEL);
+        if (data == null) return SimpleWindModel.INSTANCE;
+        return data;
     }
 
     /**
      * Gets the {@link Wind} for the given level at the block position.
      *
+     * @param level    The level
      * @param blockPos The block pos at which the wind is being queried
      *
      * @return The wind at the given block position
      */
-    default Wind getWind(final BlockPos blockPos) {
-        return this.getWind(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-    }
-
-    /**
-     * Gets the {@link Wind} for the given level at the position.
-     *
-     * @param pos The position to query the wind
-     *
-     * @return The wind at the given position
-     */
     @SuppressWarnings("unused")
-    default Wind getWind(final Vec3 pos) {
-        return this.getWind(pos.x, pos.y, pos.z);
+    default Wind getWind(final Level level, final BlockPos blockPos) {
+        return this.getWind(level, blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
 
     /**
      * Gets the {@link Wind} for the given level at the position.
      *
-     * @param x The x position to query the wind
-     * @param y The y position to query the wind
-     * @param z The z position to query the wind
+     * @param level The level
+     * @param pos   The position to query the wind
      *
      * @return The wind at the given position
      */
-    Wind getWind(double x, double y, double z);
+    default Wind getWind(final Level level, final Vec3 pos) {
+        return this.getWind(level, pos.x, pos.y, pos.z);
+    }
+
+    /**
+     * Gets the {@link Wind} for the given level at the position.
+     *
+     * @param level The level
+     * @param x     The x position to query the wind
+     * @param y     The y position to query the wind
+     * @param z     The z position to query the wind
+     *
+     * @return The wind at the given position
+     */
+    Wind getWind(final Level level, double x, double y, double z);
+
+    WindModelSerializer<?> getSerializer();
 }
