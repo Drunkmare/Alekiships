@@ -23,6 +23,7 @@ val emiVersion: String = "1.1.10+1.21"
 val jeiVersion: String = "19.5.2.66"
 val topVersion: String = "1.21_neo-12.0.4-6"
 val jadeFileID: String = "5591256"
+val weather2FileId: String = "6634565"
 
 // Dev dependencies
 val lombokVersion: String = "1.18.36"
@@ -190,6 +191,13 @@ dependencies {
 
     implementation("curse.maven:jade-324717:$jadeFileID")
     compileOnly("mcjty.theoneprobe:theoneprobe:$topVersion")
+
+    // Weather 2 mod so we can compile
+    compileOnly("curse.maven:weather-2-237746:$weather2FileId")
+    // Weather 2 mod so we can test at runtime
+//    runtimeOnly("curse.maven:weather-2-237746:$weather2FileId")
+    // Lib mod for weather 2, we don't want to interact with this thing at all
+//    "localRuntime"("curse.maven:coroutil-237749:5622966")
 
     // EMI
     compileOnly("dev.emi:emi-neoforge:${emiVersion}:api")

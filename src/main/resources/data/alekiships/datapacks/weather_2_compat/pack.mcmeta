@@ -1,0 +1,11 @@
+{
+  "features": {
+    "enabled": [
+      "alekiships:weather_2_compat"
+    ]
+  },
+  "pack": {
+    "description": "Weather 2 compat for NiftyShips",
+    "pack_format": 48
+  }
+}
