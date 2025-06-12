@@ -29,7 +29,11 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
     }
 
     @Override
-    protected void gather() {
+    protected void gather(final HolderLookup.Provider provider) {
+        this.gatherCompartmentPlaceable();
+    }
+
+    private void gatherCompartmentPlaceable() {
         final var builder = this.builder(AlekiShipsDataMaps.COMPARTMENT_PLACEABLE);
 
         builder.add(Items.BARREL, BarrelCompartmentPlaceable.of(
