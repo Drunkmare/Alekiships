@@ -183,7 +183,8 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-
+    "datagenCompileOnly"("org.projectlombok:lombok:$lombokVersion")
+    "datagenAnnotationProcessor"("org.projectlombok:lombok:$lombokVersion")
     testCompileOnly("org.projectlombok:lombok:$lombokVersion")
     testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
 

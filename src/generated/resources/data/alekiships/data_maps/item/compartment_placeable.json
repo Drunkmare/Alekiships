@@ -1,0 +1,139 @@
+{
+  "values": {
+    "minecraft:barrel": {
+      "type": "alekiships:barrel",
+      "block": "minecraft:barrel[facing=up]"
+    },
+    "minecraft:black_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "black"
+    },
+    "minecraft:blast_furnace": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:blast_furnace"
+    },
+    "minecraft:blue_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "blue"
+    },
+    "minecraft:brewing_stand": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:brewing_stand"
+    },
+    "minecraft:brown_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "brown"
+    },
+    "minecraft:cartography_table": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:cartography_table"
+    },
+    "minecraft:chest": {
+      "type": "alekiships:chest",
+      "chest_data": {
+        "texture": "minecraft:entity/chest/normal"
+      }
+    },
+    "minecraft:crafting_table": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:crafting_table"
+    },
+    "minecraft:cyan_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "cyan"
+    },
+    "minecraft:ender_chest": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:ender_chest"
+    },
+    "minecraft:furnace": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:furnace"
+    },
+    "minecraft:gray_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "gray"
+    },
+    "minecraft:green_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "green"
+    },
+    "minecraft:grindstone": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:grindstone"
+    },
+    "minecraft:jukebox": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:jukebox"
+    },
+    "minecraft:light_blue_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "light_blue"
+    },
+    "minecraft:light_gray_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "light_gray"
+    },
+    "minecraft:lime_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "lime"
+    },
+    "minecraft:loom": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:loom"
+    },
+    "minecraft:magenta_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "magenta"
+    },
+    "minecraft:note_block": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:note_block"
+    },
+    "minecraft:orange_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "orange"
+    },
+    "minecraft:pink_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "pink"
+    },
+    "minecraft:purple_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "purple"
+    },
+    "minecraft:red_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "red"
+    },
+    "minecraft:shulker_box": {
+      "type": "alekiships:shulker_box"
+    },
+    "minecraft:smithing_table": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:smithing_table"
+    },
+    "minecraft:smoker": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:smoker"
+    },
+    "minecraft:stonecutter": {
+      "type": "alekiships:direct",
+      "compartment_type": "alekiships:stonecutter"
+    },
+    "minecraft:trapped_chest": {
+      "type": "alekiships:chest",
+      "chest_data": {
+        "texture": "minecraft:entity/chest/trapped"
+      }
+    },
+    "minecraft:white_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "white"
+    },
+    "minecraft:yellow_shulker_box": {
+      "type": "alekiships:shulker_box",
+      "color": "yellow"
+    }
+  }
+}

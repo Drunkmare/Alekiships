@@ -3,6 +3,7 @@ package com.alekiponi.alekiships.common.entity.compartment;
 import com.google.common.collect.Lists;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.CannonEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
@@ -41,7 +42,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
@@ -425,16 +425,15 @@ public class EmptyCompartmentEntity extends AbstractCompartmentEntity {
 
         if (ridingThisPart == null) return InteractionResult.FAIL;
 
-        final Optional<CompartmentType<?>> compartmentType = CompartmentType.fromStack(heldStack);
+        final var compartmentPlaceable = CompartmentPlaceable.fromStack(heldStack);
 
-        if (compartmentType.isPresent()) {
+        if (compartmentPlaceable.isPresent()) {
             if ((this.getRootVehicle() instanceof AbstractVehicle vehicle && !vehicle.pilotCompartmentAcceptsNonPlayers()) && vehicle.getPilotCompartment()
                     .is(this)) {
                 return InteractionResult.FAIL;
             }
 
-            final Optional<? extends AbstractCompartmentEntity> maybeCompartment = compartmentType.get()
-                    .create(this.level(), heldStack.copy());
+            final var maybeCompartment = compartmentPlaceable.get().createCompartment(this.level(), heldStack.copy());
 
             // Didn't get back a compartment so creating it failed somehow so try and ride the compartment
             if (maybeCompartment.isEmpty()) {

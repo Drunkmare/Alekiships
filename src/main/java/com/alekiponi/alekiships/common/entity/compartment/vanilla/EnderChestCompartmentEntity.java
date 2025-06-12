@@ -1,14 +1,12 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartment;
 import com.alekiponi.alekiships.util.CommonHelper;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,22 +17,20 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
 import org.jetbrains.annotations.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 
 public class EnderChestCompartmentEntity extends AbstractCompartmentEntity implements SimpleBlockMenuCompartment, LidCompartment {
     public static final byte CONTAINER_OPEN = 1;
@@ -43,20 +39,19 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
-        protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onOpen(final Level level, final Vec3 pos) {
             EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_OPEN, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onClose(final Level level, final Vec3 pos) {
             EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_CLOSE, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                final int count, final int openCount) {
+        protected void openerCountChanged(final Level level, final int count, final int openCount) {
             EnderChestCompartmentEntity.this.signalOpenCount(level, (byte) openCount);
         }
 
@@ -79,12 +74,13 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
         if (!this.isRemoved() && this.level().isClientSide()) {
             for (int i = 0; i < 2; ++i) {
-                this.level().addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D,
-                        this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2, -this.random.nextDouble(),
-                        (this.random.nextDouble() - 0.5D) * 2);
+                this.level()
+                        .addParticle(ParticleTypes.PORTAL, this.getRandomX(0.5D), this.getRandomY() - 0.25D,
+                                this.getRandomZ(0.5D), (this.random.nextDouble() - 0.5D) * 2, -this.random.nextDouble(),
+                                (this.random.nextDouble() - 0.5D) * 2);
             }
 
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.position());
         }
     }
 
@@ -109,15 +105,13 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.incrementOpeners(player, this.level(), this.position());
         }
     }
 
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.decrementOpeners(player, this.level(), this.position());
         }
     }
 
@@ -171,114 +165,28 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     }
 
     private AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player player) {
+        return ChestMenu.threeRows(id, playerInventory,
+                new EnderChestContainerWrapper(player.getEnderChestInventory()));
+    }
 
-        // Container that wraps the Player Ender Chest Container
-        class EnderChestContainerWrapper extends SimpleContainer {
+    @AllArgsConstructor
+    private class EnderChestContainerWrapper implements Container {
+        @Delegate
+        private final PlayerEnderChestContainer enderChestInventory;
 
-            private final PlayerEnderChestContainer enderChestInventory = player.getEnderChestInventory();
-
-            @Override
-            public ItemStack getItem(final int slotIndex) {
-                return this.enderChestInventory.getItem(slotIndex);
-            }
-
-            @Override
-            public List<ItemStack> removeAllItems() {
-                return this.enderChestInventory.removeAllItems();
-            }
-
-            @Override
-            public ItemStack removeItem(final int slotIndex, final int count) {
-                return this.enderChestInventory.removeItem(slotIndex, count);
-            }
-
-            @Override
-            public ItemStack removeItemType(final Item item, final int amount) {
-                return this.enderChestInventory.removeItemType(item, amount);
-            }
-
-            @Override
-            public ItemStack addItem(final ItemStack itemStack) {
-                return this.enderChestInventory.addItem(itemStack);
-            }
-
-            @Override
-            public boolean canAddItem(final ItemStack itemStack) {
-                return this.enderChestInventory.canAddItem(itemStack);
-            }
-
-            @Override
-            public ItemStack removeItemNoUpdate(final int slotIndex) {
-                return this.enderChestInventory.removeItemNoUpdate(slotIndex);
-            }
-
-            @Override
-            public void setItem(final int slotIndex, final ItemStack itemStack) {
-                this.enderChestInventory.setItem(slotIndex, itemStack);
-            }
-
-            @Override
-            public int getContainerSize() {
-                return this.enderChestInventory.getContainerSize();
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return this.enderChestInventory.isEmpty();
-            }
-
-            @Override
-            public void setChanged() {
-                this.enderChestInventory.setChanged();
-            }
-
-            @Override
-            public boolean stillValid(final Player player) {
-                return CommonHelper.stillValidEntity(EnderChestCompartmentEntity.this, player) && super.stillValid(
-                        player);
-            }
-
-            @Override
-            public void clearContent() {
-                this.enderChestInventory.clearContent();
-            }
-
-            @Override
-            public void fillStackedContents(final StackedContents stackedContents) {
-                this.enderChestInventory.fillStackedContents(stackedContents);
-            }
-
-            @Override
-            public String toString() {
-                return this.enderChestInventory.toString();
-            }
-
-
-            @Override
-            public ListTag createTag(final HolderLookup.Provider levelRegistry) {
-                return this.enderChestInventory.createTag(levelRegistry);
-            }
-
-            @Override
-            public void fromTag(final ListTag tag, final HolderLookup.Provider levelRegistry) {
-                this.enderChestInventory.fromTag(tag, levelRegistry);
-            }
-
-            @Override
-            public void startOpen(final Player player) {
-                EnderChestCompartmentEntity.this.startOpen(player);
-
-                super.startOpen(player);
-            }
-
-            @Override
-            public void stopOpen(final Player player) {
-                EnderChestCompartmentEntity.this.stopOpen(player);
-
-                super.stopOpen(player);
-            }
+        @Override
+        public boolean stillValid(final Player player) {
+            return CommonHelper.stillValidEntity(EnderChestCompartmentEntity.this, player);
         }
 
-        return ChestMenu.threeRows(id, playerInventory, new EnderChestContainerWrapper());
+        @Override
+        public void startOpen(final Player player) {
+            EnderChestCompartmentEntity.this.startOpen(player);
+        }
+
+        @Override
+        public void stopOpen(final Player player) {
+            EnderChestCompartmentEntity.this.stopOpen(player);
+        }
     }
 }

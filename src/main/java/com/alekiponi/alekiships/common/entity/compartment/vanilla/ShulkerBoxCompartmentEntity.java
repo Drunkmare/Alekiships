@@ -1,11 +1,12 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
+import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
+import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
 import com.alekiponi.alekiships.mixins.accessors.ShulkerBoxMenuAccessor;
 import com.alekiponi.alekiships.util.CommonHelper;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -22,19 +23,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ShulkerBoxMenu;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
@@ -48,24 +46,24 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     public static final String COLOR_KEY = "Color";
     public static final int SLOT_COUNT = 27;
     private static final int NULL_COLOR = -1;
-    private static final int[] SLOTS = IntStream.range(0, SLOT_COUNT).toArray();
+    private static final int[] SLOTS = IntStream.range(0, SLOT_COUNT)
+            .toArray();
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
-        protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onOpen(final Level level, final Vec3 pos) {
             ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_OPEN, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onClose(final Level level, final Vec3 pos) {
             ShulkerBoxCompartmentEntity.this.playSound(SoundEvents.SHULKER_BOX_CLOSE, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                final int count, final int openCount) {
+        protected void openerCountChanged(final Level level, final int count, final int openCount) {
             ShulkerBoxCompartmentEntity.this.signalOpenCount(level, openCount);
         }
 
@@ -85,16 +83,12 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
         super(entityType, level, SLOT_COUNT);
     }
 
-    public static ShulkerBoxCompartmentEntity create(final EntityType<ShulkerBoxCompartmentEntity> entityType,
-            final Level level, final ItemStack itemStack) {
-        final ShulkerBoxCompartmentEntity shulkerBoxCompartmentEntity = new ShulkerBoxCompartmentEntity(entityType,
-                level);
+    public static ShulkerBoxCompartmentEntity create(final Level level, final ItemStack itemStack,
+            final @Nullable DyeColor color) {
+        final ShulkerBoxCompartmentEntity shulkerBoxCompartmentEntity = new ShulkerBoxCompartmentEntity(
+                AlekiShipsEntities.SHULKER_BOX_COMPARTMENT_ENTITY.get(), level);
         CompartmentCloneable.initialize(shulkerBoxCompartmentEntity, itemStack);
-        if (itemStack.getItem() instanceof BlockItem blockItem) {
-            if (blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock) {
-                shulkerBoxCompartmentEntity.color = shulkerBoxBlock.getColor();
-            }
-        }
+        shulkerBoxCompartmentEntity.color = color;
 
         return shulkerBoxCompartmentEntity;
     }
@@ -111,7 +105,7 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
         this.chestLidController.tickLid();
 
         if (!this.isRemoved() && this.level().isClientSide()) {
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.position());
         }
     }
 
@@ -173,16 +167,14 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Override
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.incrementOpeners(player, this.level(), this.position());
         }
     }
 
     @Override
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.decrementOpeners(player, this.level(), this.position());
         }
     }
 

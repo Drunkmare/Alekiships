@@ -169,6 +169,6 @@ public abstract class RandomizableContainerCompartmentEntity extends ContainerCo
             return this.createMenu(id, playerInventory);
         }
 
-        abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
+        protected abstract AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
     }
 }

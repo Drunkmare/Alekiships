@@ -230,9 +230,7 @@ public abstract class AbstractCompartmentEntity extends Entity {
         this.kill();
         if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             final ItemStack itemStack = this.getDropStack();
-            if (this.hasCustomName()) {
-                itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
-            }
+            itemStack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
 
             Containers.dropItemStack(this.level(), this.getX(), CommonHelper.maxHeightOfCollidableEntities(this),
                     this.getZ(), itemStack);

@@ -98,7 +98,7 @@ public class ChestCompartmentRenderer<CompartmentEntity extends AbstractCompartm
         }
 
         if (compartmentEntity instanceof final ChestCompartmentEntity chestCompartment) {
-            return MATERIAL_FUNCTION.apply(chestCompartment.getChestCompartmentData().chestTexture());
+            return MATERIAL_FUNCTION.apply(chestCompartment.getChestCompartmentData().texture());
         }
 
         return Sheets.CHEST_LOCATION;

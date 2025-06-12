@@ -59,6 +59,7 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(),
                 AlekiShipsAdvancementsProvider.create(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new AlekiShipsDataMapProvider(packOutput, lookupProvider));
 
         generator.addProvider(event.includeClient(), new AlekiShipsLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(), new AlekiShipsItemModelProvider(packOutput, existingFileHelper));

@@ -1,7 +1,6 @@
 package com.alekiponi.alekiships.mixins.minecraft;
 
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartment;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.GrindstoneCompartmentEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -28,9 +27,9 @@ public abstract class PlayerMixin extends LivingEntity {
 
     /**
      * @reason Injection to {@link Player#interactOn(Entity, InteractionHand)} so we can have simple compartments
-     * like {@link GrindstoneCompartmentEntity} that will open in Spectator Mode as {@link MenuProvider} results in
-     * using the entities name which causes us a number of issues. {@link MenuProvider} takes priority over our
-     * interface if both are present and has no effect if the player isn't in Spectator Mode
+     * that will open in Spectator Mode as {@link MenuProvider} results in using the entities name which causes us a
+     * number of issues. {@link MenuProvider} takes priority over our interface if both are present and has no effect
+     * if the player isn't in Spectator Mode
      * @author Traister101
      */
     @Inject(method = "interactOn", at = @At(value = "RETURN", ordinal = 0))

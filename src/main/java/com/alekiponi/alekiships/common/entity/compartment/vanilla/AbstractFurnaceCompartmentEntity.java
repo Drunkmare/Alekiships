@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
-import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
-import com.alekiponi.alekiships.common.entity.compartment.CompartmentType;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 
@@ -115,11 +113,6 @@ public abstract class AbstractFurnaceCompartmentEntity extends ContainerCompartm
         super(entityType, level, SLOT_COUNT);
         this.quickCheck = RecipeManager.createCheck(recipeType);
         this.recipeType = recipeType;
-    }
-
-    public static <E extends AbstractFurnaceCompartmentEntity> CompartmentType.CompartmentFactory<E> create(
-            final BlockCompartment.BlockCompartmentFactory<E> factory) {
-        return BlockCompartment.create(factory).postInit(CompartmentCloneable::initialize);
     }
 
     private static void createExperience(final ServerLevel level, final Vec3 vec3, final int recipeIndex,

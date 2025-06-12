@@ -3,8 +3,8 @@ package com.alekiponi.alekiships.common.entity;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.*;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.crafting.*;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopUnderConstructionEntity;
@@ -86,24 +86,35 @@ public final class AlekiShipsEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<BrewingStandCompartmentEntity>> BREWING_STAND_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_brewing_stand", EntityType.Builder.of(BrewingStandCompartmentEntity::new, MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<CraftingTableCompartment>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_crafting_table", EntityType.Builder.of(CraftingTableCompartment::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> WORKBENCH_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_crafting_table", EntityType.Builder.of(
+                    SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.CRAFTING_TABLE),
+                    MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<StonecutterCompartmentEntity>> STONECUTTER_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_stonecutter", EntityType.Builder.of(StonecutterCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> STONECUTTER_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_stonecutter", EntityType.Builder.of(
+                    SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.STONECUTTER),
+                    MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<CartographyTableCompartmentEntity>> CARTOGRAPHY_TABLE_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_cartography_table",
-            EntityType.Builder.of(CartographyTableCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> CARTOGRAPHY_TABLE_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_cartography_table", EntityType.Builder.of(
+                    SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.CARTOGRAPHY_TABLE),
+                    MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SmithingTableCompartmentEntity>> SMITHING_TABLE_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_smithing_table", EntityType.Builder.of(SmithingTableCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> SMITHING_TABLE_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_smithing_table", EntityType.Builder.of(
+                    SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.SMITHING_TABLE),
+                    MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<GrindstoneCompartmentEntity>> GRINDSTONE_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_grindstone", EntityType.Builder.of(GrindstoneCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> GRINDSTONE_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_grindstone", EntityType.Builder.of(
+                    SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.GRINDSTONE),
+                    MobCategory.MISC));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<LoomCompartmentEntity>> LOOM_COMPARTMENT_ENTITY = registerCompartment(
-            "compartment_loom", EntityType.Builder.of(LoomCompartmentEntity::new, MobCategory.MISC));
+    public static final DeferredHolder<EntityType<?>, EntityType<SimpleBlockMenuCompartmentEntity>> LOOM_COMPARTMENT_ENTITY = registerCompartment(
+            "compartment_loom",
+            EntityType.Builder.of(SimpleBlockMenuCompartmentEntity.entityFactory(SimpleBlockMenuCompartmentEntity.LOOM),
+                    MobCategory.MISC));
 
     public static final DeferredHolder<EntityType<?>, EntityType<NoteBlockCompartmentEntity>> NOTE_BLOCK_COMPARTMENT_ENTITY = registerCompartment(
             "compartment_note_block", EntityType.Builder.of(NoteBlockCompartmentEntity::new, MobCategory.MISC));

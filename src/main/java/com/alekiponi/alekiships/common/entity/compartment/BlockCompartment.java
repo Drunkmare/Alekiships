@@ -1,13 +1,13 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
+import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.CommonHelper;
 
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
@@ -16,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -30,24 +31,23 @@ public interface BlockCompartment {
 
     /**
      * The NBT tag key that should be used for serializing the blockstate.
-     * You should use {@link NbtUtils#readBlockState(HolderGetter, CompoundTag)} and
-     * {@link NbtUtils#writeBlockState(BlockState)} to have user-friendly NBT or delegate to
+     * You should use {@link AlekiShipsExtraCodecs#BLOCK_STATE_CODEC} to have user-friendly NBT or delegate to
      * {@link #readBlockstate(BlockCompartment, CompoundTag)} and {@link #saveBlockstate(BlockCompartment, CompoundTag)}
      */
     String HELD_BLOCK_KEY = "heldBlock";
 
     /**
-     * Creates a {@link CompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
+     * Creates a {@link DirectCompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
      *
      * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
      *                                {@link Block}s {@link Block#defaultBlockState()}
      */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> CompartmentType.CompartmentFactory<E> create(
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> dynamicFactory(
             final BlockCompartmentFactory<E> blockCompartmentFactory) {
         return (entityType, level, itemStack) -> {
-            final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_DATA);
+            final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_BLOCK);
             if (compartmentData != null) {
-                return blockCompartmentFactory.create(entityType, level, compartmentData.displayState());
+                return blockCompartmentFactory.create(entityType, level, compartmentData);
             }
 
             if (itemStack.getItem() instanceof BlockItem blockItem) {
@@ -59,6 +59,24 @@ public interface BlockCompartment {
     }
 
     /**
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} to use
+     * @param block                   The block to use for the default state
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> staticFactory(
+            final BlockCompartmentFactory<E> blockCompartmentFactory, final Block block) {
+        return staticFactory(blockCompartmentFactory, block.defaultBlockState());
+    }
+
+    /**
+     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} to use
+     * @param defaultBlockState       The default state the compartment is constructed with
+     */
+    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> staticFactory(
+            final BlockCompartmentFactory<E> blockCompartmentFactory, final BlockState defaultBlockState) {
+        return (entityType, level, itemStack) -> blockCompartmentFactory.create(entityType, level, defaultBlockState);
+    }
+
+    /**
      * Reads a blockstate and sets it to the block compartment via {@link #setDisplayBlockState(BlockState)}
      *
      * @param blockCompartment The block compartment
@@ -66,8 +84,9 @@ public interface BlockCompartment {
      */
     static void readBlockstate(final BlockCompartment blockCompartment, final CompoundTag compoundTag) {
         blockCompartment.setDisplayBlockState(
-                NbtUtils.readBlockState(blockCompartment.level().holderLookup(Registries.BLOCK),
-                        compoundTag.getCompound(HELD_BLOCK_KEY)));
+                AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.parse(NbtOps.INSTANCE, compoundTag.get(HELD_BLOCK_KEY))
+                        .result()
+                        .orElse(Blocks.AIR.defaultBlockState()));
     }
 
     /**
@@ -77,7 +96,8 @@ public interface BlockCompartment {
      * @param compoundTag      The tag to save to
      */
     static void saveBlockstate(final BlockCompartment blockCompartment, final CompoundTag compoundTag) {
-        compoundTag.put(HELD_BLOCK_KEY, NbtUtils.writeBlockState(blockCompartment.getDisplayBlockState()));
+        compoundTag.put(HELD_BLOCK_KEY, AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.encodeStart(NbtOps.INSTANCE,
+                blockCompartment.getDisplayBlockState()).getOrThrow());
     }
 
     /**
@@ -119,8 +139,6 @@ public interface BlockCompartment {
      * @param blockState The new display blockstate for this block compartment
      */
     void setDisplayBlockState(final BlockState blockState);
-
-    Level level();
 
     void playSound(final SoundEvent soundEvent, final SoundSource soundSource, final float volume, final float pitch);
 
