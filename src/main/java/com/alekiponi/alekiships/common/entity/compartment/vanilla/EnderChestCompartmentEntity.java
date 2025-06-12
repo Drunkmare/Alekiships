@@ -1,11 +1,11 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.LidCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartment;
 import com.alekiponi.alekiships.util.CommonHelper;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -25,9 +25,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 import lombok.AllArgsConstructor;
@@ -40,20 +39,19 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
-        protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onOpen(final Level level, final Vec3 pos) {
             EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_OPEN, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onClose(final Level level, final Vec3 pos) {
             EnderChestCompartmentEntity.this.playSound(SoundEvents.ENDER_CHEST_CLOSE, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         @Override
-        protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                final int count, final int openCount) {
+        protected void openerCountChanged(final Level level, final int count, final int openCount) {
             EnderChestCompartmentEntity.this.signalOpenCount(level, (byte) openCount);
         }
 
@@ -82,7 +80,7 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
                                 (this.random.nextDouble() - 0.5D) * 2);
             }
 
-            this.openersCounter.recheckOpeners(this.level(), this.blockPosition(), Blocks.AIR.defaultBlockState());
+            this.openersCounter.recheckOpeners(this.level(), this.position());
         }
     }
 
@@ -107,15 +105,13 @@ public class EnderChestCompartmentEntity extends AbstractCompartmentEntity imple
 
     public void startOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.incrementOpeners(player, this.level(), this.position());
         }
     }
 
     public void stopOpen(final Player player) {
         if (!this.isRemoved() && !player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    Blocks.AIR.defaultBlockState());
+            this.openersCounter.decrementOpeners(player, this.level(), this.position());
         }
     }
 

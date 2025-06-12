@@ -1,9 +1,9 @@
 package com.alekiponi.alekiships.common.entity.compartment.vanilla;
 
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
+import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,8 +26,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
@@ -39,22 +39,23 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
             BarrelCompartmentEntity.class, EntityDataSerializers.BLOCK_STATE);
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         @Override
-        protected void onOpen(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onOpen(final Level level, final Vec3 pos) {
             BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_OPEN, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
-            BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, true));
+            BarrelCompartmentEntity.this.setDisplayBlockState(
+                    BarrelCompartmentEntity.this.getDisplayBlockState().setValue(BarrelBlock.OPEN, true));
         }
 
         @Override
-        protected void onClose(final Level level, final BlockPos blockPos, final BlockState blockState) {
+        protected void onClose(final Level level, final Vec3 pos) {
             BarrelCompartmentEntity.this.playSound(SoundEvents.BARREL_CLOSE, SoundSource.BLOCKS, 0.5F,
                     level.random.nextFloat() * 0.1F + 0.9F);
-            BarrelCompartmentEntity.this.setDisplayBlockState(blockState.setValue(BarrelBlock.OPEN, false));
+            BarrelCompartmentEntity.this.setDisplayBlockState(
+                    BarrelCompartmentEntity.this.getDisplayBlockState().setValue(BarrelBlock.OPEN, false));
         }
 
         @Override
-        protected void openerCountChanged(final Level level, final BlockPos blockPos, final BlockState blockState,
-                final int count, final int openCount) {
+        protected void openerCountChanged(final Level level, final int count, final int openCount) {
         }
 
         @Override
@@ -111,16 +112,14 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
     @Override
     public void startOpen(final Player player) {
         if (!player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.incrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+            this.openersCounter.incrementOpeners(player, this.level(), this.position());
         }
     }
 
     @Override
     public void stopOpen(final Player player) {
         if (!player.isSpectator() || !this.isPassenger()) {
-            this.openersCounter.decrementOpeners(player, this.level(), this.blockPosition(),
-                    this.getDisplayBlockState());
+            this.openersCounter.decrementOpeners(player, this.level(), this.position());
         }
     }
 
