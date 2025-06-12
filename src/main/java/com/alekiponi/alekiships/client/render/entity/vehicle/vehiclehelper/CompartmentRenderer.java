@@ -60,6 +60,11 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
         poseStack.popPose();
     }
 
+    @Override
+    protected boolean shouldShowName(final CompartmentType entity) {
+        return false;
+    }
+
     /**
      * Render the compartment contents. This is pre-scaled, rotated and translated for ease of use
      */

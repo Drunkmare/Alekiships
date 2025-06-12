@@ -105,7 +105,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
         builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.itemStacks));
         final CompoundTag blockEntityData = new CompoundTag();
         this.saveBlockEntityData(blockEntityData);
-        builder.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(blockEntityData));
         if (blockEntityData.isEmpty()) {
             // Try and remove from the builder just in case
             builder.set(DataComponents.BLOCK_ENTITY_DATA, null);
@@ -297,6 +296,6 @@ public abstract class ContainerCompartmentEntity extends AbstractCompartmentEnti
             return this.createMenu(id, inventory);
         }
 
-        abstract protected AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
+        protected abstract AbstractContainerMenu createMenu(final int id, final Inventory playerInventory);
     }
 }
