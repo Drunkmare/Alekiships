@@ -51,25 +51,6 @@ public class CommonHelper {
         return hit != null && from.distanceTo(hit.getLocation()) < range ? hit.getEntity() : null;
     }
 
-    public static double vec2ToWrappedDegrees(final double x, final double y) {
-        double direction = 0;
-        if (y != 0 && x != 0) {
-            direction = Math.round(Math.toDegrees(Math.atan(y / x)));
-            //quadrant correction because probably I'm bad at math?
-            if (x <= 0 && y <= 0) {
-                direction += 90;
-            } else if (x >= 0 && y >= 0) {
-                direction -= 90;
-            } else if (x <= 0 && y >= 0) {
-                direction += 90;
-            } else if (x >= 0 && y <= 0) {
-                direction -= 90;
-            }
-        }
-
-        return Mth.wrapDegrees(direction);
-    }
-
     public static float sailForceMultiplierTable(float sailForceAngle) {
         sailForceAngle = (Math.abs(Mth.wrapDegrees(sailForceAngle)));
         float multiplier = 0;
