@@ -18,6 +18,9 @@ public final class AlekiShipsWindModelSerializers {
     public static final DeferredHolder<WindModelSerializer<?>, WindModelSerializer<SimpleWindModel>> SIMPLE_WIND_MODEL = register(
             "simple_wind_model", SimpleWindModel.CODEC, SimpleWindModel.STREAM_CODEC);
 
+    public static final DeferredHolder<WindModelSerializer<?>, WindModelSerializer<StaticWindModel>> STATIC_WIND_MODEL = register(
+            "static_wind_model", StaticWindModel.CODEC, StaticWindModel.STREAM_CODEC);
+
     private static <M extends WindModel> DeferredHolder<WindModelSerializer<?>, WindModelSerializer<M>> register(
             final String name, final MapCodec<M> codec,
             final StreamCodec<? super RegistryFriendlyByteBuf, M> streamCodec) {
