@@ -20,6 +20,8 @@
   "alekiships.jade.construction_entity.current_stage": "Current Stage: %s",
   "alekiships.jade.construction_entity.next_stage": "Next Stage: %s",
   "alekiships.jade.construction_entity.remaining_inputs": "Inputs remaining: %s",
+  "alekiships.jei.compartment_info": "Can be placed into compartments",
+  "alekiships.jei.dye_info": "Can be used to dye ships & sails",
   "alekiships.overlay.eject_passengers": "Press %s + %s to eject",
   "block.alekiships.cleat": "Cleat",
   "block.alekiships.oarlock": "Oarlock",

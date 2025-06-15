@@ -8,6 +8,7 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
+import com.alekiponi.alekiships.compat.jei.JeiIntegration;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
@@ -22,7 +23,6 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Locale;
-import java.util.stream.Stream;
 
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
@@ -43,6 +43,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
 
         this.addTranslationsForJade();
+        this.addTranslationsForJei();
 
         AlekiShipsAdvancementsProvider.addTranslations(this::add);
     }
@@ -139,25 +140,34 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.add(ConstructionEntityProvider.NEXT_STAGE_KEY, "Next Stage: %s");
     }
 
+    private void addTranslationsForJei() {
+        this.add(JeiIntegration.CAN_PLACE_INTO_COMPARTMENTS_KEY, "Can be placed into compartments");
+        this.add(JeiIntegration.CAN_BE_USED_TO_DYE_SHIPS_SAILS_KEY, "Can be used to dye ships & sails");
+    }
+
     private void jade(final IJadeProvider provider, final String value) {
         this.add("config.jade.plugin_" + provider.getUid().toLanguageKey(), value);
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        final Stream<Block> objectStream = AlekiShipsBlocks.BLOCKS.getEntries().stream().map(DeferredHolder::get);
-        return objectStream::iterator;
+        return AlekiShipsBlocks.BLOCKS.getEntries()
+                .stream()
+                .<Block>map(DeferredHolder::get)::iterator;
     }
 
     @Override
     protected Iterable<Item> getKnownItems() {
-        final Stream<Item> stream = AlekiShipsItems.ITEMS.getEntries().stream().map(DeferredHolder::get);
-        return stream::iterator;
+        return AlekiShipsItems.ITEMS.getEntries()
+                .stream()
+                .<Item>map(DeferredHolder::get)::iterator;
     }
 
     @Override
     protected Iterable<EntityType<?>> getKnownEntityTypes() {
-        return AlekiShipsEntities.ENTITY_TYPES.getEntries().stream().<EntityType<?>>map(DeferredHolder::get)::iterator;
+        return AlekiShipsEntities.ENTITY_TYPES.getEntries()
+                .stream()
+                .<EntityType<?>>map(DeferredHolder::get)::iterator;
     }
 
     /**
