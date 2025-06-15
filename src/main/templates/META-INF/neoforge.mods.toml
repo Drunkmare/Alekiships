@@ -13,6 +13,7 @@ logoFile = "icon.png"
 authors = "alekiponi"
 credits = "Contributors: alekiponi, Traister101, vexxel. Translations: PL - Freeziu, RU - Windflame, CZ - celdak"
 description = '''A new generation of vanilla-friendly ships. Simulated sailing, placeable containers, walkable decks -- oh, and cannons!'''
+featureFlags = "META-INF/feature_flags.json"
 
 # Dependencies
 [[dependencies.${modId}]]
