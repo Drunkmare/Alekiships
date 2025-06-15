@@ -7,6 +7,7 @@ import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
@@ -20,7 +21,7 @@ import java.util.function.UnaryOperator;
 public final class AlekiShipsComponents {
 
     public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(
-            AlekiShips.MOD_ID);
+            Registries.DATA_COMPONENT_TYPE, AlekiShips.MOD_ID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<EntityInput>>> ENTITY_INPUT = register(
             "entity_input", builder -> builder.persistent(ResourceKey.codec(AlekiShipsRegistries.ENTITY_INPUT))
