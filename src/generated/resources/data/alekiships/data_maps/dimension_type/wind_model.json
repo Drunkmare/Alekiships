@@ -1,0 +1,7 @@
+{
+  "values": {
+    "minecraft:overworld": {
+      "type": "alekiships:simple_wind_model"
+    }
+  }
+}

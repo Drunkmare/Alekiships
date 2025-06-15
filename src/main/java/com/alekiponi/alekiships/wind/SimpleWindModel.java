@@ -1,20 +1,27 @@
 package com.alekiponi.alekiships.wind;
 
+import com.mojang.serialization.MapCodec;
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.LinearCongruentialGenerator;
 import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
-public class OverworldWindModel implements WindModel {
+public enum SimpleWindModel implements WindModel {
+    INSTANCE;
 
-    private final Level level;
+    public static final MapCodec<SimpleWindModel> CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<ByteBuf, SimpleWindModel> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
-    public OverworldWindModel(final Level level) {
-        this.level = level;
+    @Override
+    public WindModelSerializer<?> getSerializer() {
+        return AlekiShipsWindModelSerializers.SIMPLE_WIND_MODEL.get();
     }
 
     @Override
-    public Wind getWind(final double x, final double y, final double z) {
+    public Wind getWind(final Level level, final double x, final double y, final double z) {
         // get the wind based on the total world time of the level and the location
         long time = level.getGameTime();
 
@@ -44,7 +51,7 @@ public class OverworldWindModel implements WindModel {
     }
 
     // based on TFC seeding (again, for now)
-    protected Random seededRandom(long day, long salt) {
+    private Random seededRandom(long day, long salt) {
         long seed = LinearCongruentialGenerator.next(129341623413L, day);
         seed = LinearCongruentialGenerator.next(seed, salt);
         return new Random(seed);

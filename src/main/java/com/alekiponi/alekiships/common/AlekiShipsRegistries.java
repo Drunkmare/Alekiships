@@ -7,6 +7,7 @@ import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionInput;
+import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -21,6 +22,8 @@ public class AlekiShipsRegistries {
             "compartment_type_serializer");
     public static final ResourceKey<Registry<ChestCompartmentData.ChestType>> CHEST_COMPARTMENT_TYPES = createRegistryKey(
             "chest_compartment_type");
+    public static final ResourceKey<Registry<WindModelSerializer<?>>> WIND_MODEL_SERIALIZERS = createRegistryKey(
+            "wind_model_serializers");
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(final String name) {
         return ResourceKey.createRegistryKey(AlekiShips.location(name));
