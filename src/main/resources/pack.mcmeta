@@ -1,0 +1,22 @@
+{
+  "overlays": {
+    "entries": [
+      {
+        "neoforge:conditions": [
+          {
+            "type": "neoforge:mod_loaded",
+            "modid": "weather2"
+          }
+        ],
+        "directory": "weather2",
+        "formats": 48
+      }
+    ]
+  },
+  "pack": {
+    "description": {
+      "text": "Alekis Nifty Ships mod Resources/Data"
+    },
+    "pack_format": -1
+  }
+}

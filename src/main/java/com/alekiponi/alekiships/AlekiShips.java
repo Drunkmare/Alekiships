@@ -26,13 +26,7 @@ import com.alekiponi.alekiships.util.VanillaWood;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import com.alekiponi.alekiships.wind.AlekiShipsWindModelSerializers;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.flag.FeatureFlag;
-import net.minecraft.world.flag.FeatureFlags;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -47,7 +41,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
@@ -56,8 +49,6 @@ import java.util.List;
 @Mod(AlekiShips.MOD_ID)
 public final class AlekiShips {
     public static final String MOD_ID = "alekiships";
-
-    public static final FeatureFlag WEATHER_2_COMPAT = FeatureFlags.REGISTRY.getFlag(location("weather_2_compat"));
 
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -137,13 +128,5 @@ public final class AlekiShips {
                 (containerCompartment, unused) -> new InvWrapper(containerCompartment));
         event.registerEntity(Capabilities.ItemHandler.ENTITY_AUTOMATION,
                 AlekiShipsEntities.SHULKER_BOX_COMPARTMENT_ENTITY.get(), SidedInvWrapper::new);
-    }
-
-    @SubscribeEvent
-    private static void addBuiltInPacks(final AddPackFindersEvent event) {
-        event.addPackFinders(location("data/" + MOD_ID + "/datapacks/weather_2_compat"), PackType.SERVER_DATA,
-                Component.literal("Weather 2 compatibility for NiftyShips"), PackSource.FEATURE,
-                // Set the pack to be always active if Weather 2 is loaded
-                ModList.get().isLoaded(Weather.MODID), Pack.Position.TOP);
     }
 }
