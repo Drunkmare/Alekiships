@@ -29,5 +29,12 @@ versionRange = "${minecraftVersionRange}"
 ordering = "AFTER"
 side = "BOTH"
 
+[[dependencies.${modId}]]
+modId = "jei"
+type = "optional"
+versionRange = "${jeiVersionRange}"
+ordering = "AFTER"
+side = "CLIENT"
+
 [[mixins]]
 config = "${modId}.mixins.json"
