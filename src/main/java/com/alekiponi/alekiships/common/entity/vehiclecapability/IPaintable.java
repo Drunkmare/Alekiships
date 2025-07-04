@@ -76,9 +76,9 @@ public interface IPaintable {
 
         for (int tankIndex = 0; tankIndex < fluidHandler.getTanks(); tankIndex++) {
             if (!fluidHandler.getFluidInTank(tankIndex).is(AlekiShipsTags.Fluids.PAINT_REMOVER)) continue;
-            if (player.getAbilities().instabuild) return InteractionResult.SUCCESS;
+            final IFluidHandler.FluidAction action = player.getAbilities().instabuild ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
 
-            final FluidStack drained = fluidHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+            final FluidStack drained = fluidHandler.drain(FluidType.BUCKET_VOLUME, action);
             final SoundEvent sound = drained.getFluidType().getSound(drained, SoundActions.BUCKET_EMPTY);
             level.playSound(player, position.x, position.y, position.z,
                     sound != null ? sound : SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1, 1);
