@@ -65,12 +65,6 @@ public class RowboatRenderer extends EntityRenderer<RowboatEntity> {
 
         final VertexConsumer baseVertexConsumer = bufferSource.getBuffer(this.getRenderType(rowboatEntity));
 
-        if (rowboatEntity.tickCount < 1) {
-            poseStack.popPose();
-            super.render(rowboatEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
-            return;
-        }
-
         this.rowboatModel.renderToBuffer(poseStack, baseVertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
 
         switch (rowboatEntity.getOars()) {

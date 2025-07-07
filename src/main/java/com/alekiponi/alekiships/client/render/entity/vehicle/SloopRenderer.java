@@ -75,12 +75,6 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
         final VertexConsumer vertexconsumer = bufferSource.getBuffer(this.getRenderType(sloopEntity));
 
-        if (sloopEntity.tickCount < 1) {
-            poseStack.popPose();
-            super.render(sloopEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
-            return;
-        }
-
         //TODO this is setup code for distance sail LODs
 
         //TODO get the player from the minecraft instance instead

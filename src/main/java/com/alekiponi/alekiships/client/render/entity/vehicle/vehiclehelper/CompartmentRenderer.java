@@ -32,10 +32,6 @@ public abstract class CompartmentRenderer<CompartmentType extends AbstractCompar
 
         super.render(compartmentEntity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
 
-        if (compartmentEntity.tickCount < 2) {
-            return;
-        }
-
         final float rotation;
         if (compartmentEntity.getTrueVehicle() != null && compartmentEntity.getVehicle() instanceof VehiclePart vehiclePart && compartmentEntity.tickCount < 2) {
             rotation = compartmentEntity.getTrueVehicle().getYRot() + vehiclePart.getCompartmentRotation();
