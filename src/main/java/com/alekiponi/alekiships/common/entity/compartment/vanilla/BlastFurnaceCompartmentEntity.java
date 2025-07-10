@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +23,7 @@ public class BlastFurnaceCompartmentEntity extends AbstractFurnaceCompartmentEnt
     public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,
             final Level level) {
         super(entityType, level, RecipeType.BLASTING);
+        this.setDisplayBlockState(Blocks.BLAST_FURNACE.defaultBlockState());
     }
 
     public BlastFurnaceCompartmentEntity(final EntityType<? extends BlastFurnaceCompartmentEntity> entityType,

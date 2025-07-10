@@ -4,6 +4,7 @@ import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -80,7 +81,8 @@ public class BarrelCompartmentEntity extends RandomizableContainerCompartmentEnt
     @Override
     protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_ID_DISPLAY_BLOCK, Blocks.AIR.defaultBlockState());
+        builder.define(DATA_ID_DISPLAY_BLOCK,
+                Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.DOWN));
     }
 
     @Override

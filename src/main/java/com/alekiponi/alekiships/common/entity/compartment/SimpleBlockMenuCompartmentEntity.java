@@ -96,15 +96,6 @@ public final class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEnti
     private final SimpleMenuConstructor menuConstructor;
 
     private SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
-            final Level level, @Nullable final ResourceLocation statName, final Component title,
-            final SimpleMenuConstructor menuConstructor) {
-        super(entityType, level);
-        this.menuConstructor = menuConstructor;
-        this.statName = statName;
-        this.title = title;
-    }
-
-    private SimpleBlockMenuCompartmentEntity(final EntityType<? extends SimpleBlockMenuCompartmentEntity> entityType,
             final Level level, final BlockState blockState, @Nullable final ResourceLocation statName,
             final Component title, final SimpleMenuConstructor menuConstructor) {
         super(entityType, level, blockState);
@@ -114,11 +105,12 @@ public final class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEnti
     }
 
     /**
-     * @param settings The {@link FactorySettings} to use
+     * @param settings   The {@link FactorySettings} to use
+     * @param blockState The default BlockState to use
      */
     public static EntityType.EntityFactory<SimpleBlockMenuCompartmentEntity> entityFactory(
-            final FactorySettings settings) {
-        return entityFactory(settings.menuClass, settings.statName, settings.title);
+            final FactorySettings settings, final BlockState blockState) {
+        return entityFactory(settings.menuClass, settings.statName, settings.title, blockState);
     }
 
     /**
@@ -130,17 +122,19 @@ public final class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEnti
     }
 
     /**
-     * @param menuClass The menu class to use. Must have a constructor with the signature int, {@link Inventory}, {@link ContainerLevelAccess}
-     * @param statName  The interaction state name {@code null} to prevent awarding a stat
-     * @param title     The menu title
+     * @param menuClass  The menu class to use. Must have a constructor with the signature int, {@link Inventory}, {@link ContainerLevelAccess}
+     * @param statName   The interaction state name {@code null} to prevent awarding a stat
+     * @param title      The menu title
+     * @param blockState The default BlockState to use
      *
-     * @see #entityFactory(FactorySettings)
+     * @see #entityFactory(FactorySettings, BlockState)
      */
     public static <M extends AbstractContainerMenu> EntityType.EntityFactory<SimpleBlockMenuCompartmentEntity> entityFactory(
-            final Class<M> menuClass, @Nullable final ResourceLocation statName, final Component title) {
+            final Class<M> menuClass, @Nullable final ResourceLocation statName, final Component title,
+            final BlockState blockState) {
         final var menuConstructor = getSimpleMenuConstructor(MENU_GENERATOR.apply(menuClass));
-        return (entityType, level) -> new SimpleBlockMenuCompartmentEntity(entityType, level, statName, title,
-                menuConstructor);
+        return (entityType, level) -> new SimpleBlockMenuCompartmentEntity(entityType, level, blockState, statName,
+                title, menuConstructor);
     }
 
     /**
@@ -206,7 +200,7 @@ public final class SimpleBlockMenuCompartmentEntity extends BlockCompartmentEnti
     }
 
     /**
-     * A type to hold arguments common to {@link #entityFactory(Class, ResourceLocation, Component)} and
+     * A type to hold arguments common to {@link SimpleBlockMenuCompartmentEntity#entityFactory(Class, ResourceLocation, Component, BlockState)} and
      * {@link #directCompartmentFactory(Class, ResourceLocation, Component)}.
      *
      * @param menuClass The menu class to use. Must have a constructor with the signature int, {@link Inventory}, {@link ContainerLevelAccess}

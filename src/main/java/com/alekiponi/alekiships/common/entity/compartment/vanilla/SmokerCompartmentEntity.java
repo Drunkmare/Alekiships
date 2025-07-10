@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +21,7 @@ public class SmokerCompartmentEntity extends AbstractFurnaceCompartmentEntity {
 
     public SmokerCompartmentEntity(final EntityType<? extends SmokerCompartmentEntity> entityType, final Level level) {
         super(entityType, level, RecipeType.SMOKING);
+        this.setDisplayBlockState(Blocks.SMOKER.defaultBlockState());
     }
 
     public SmokerCompartmentEntity(final EntityType<? extends SmokerCompartmentEntity> entityType, final Level level,

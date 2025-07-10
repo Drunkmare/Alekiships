@@ -27,6 +27,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -49,6 +50,7 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
     public JukeboxCompartmentEntity(final EntityType<? extends JukeboxCompartmentEntity> entityType,
             final Level level) {
         super(entityType, level);
+        this.setDisplayBlockState(Blocks.JUKEBOX.defaultBlockState());
     }
 
     public JukeboxCompartmentEntity(final EntityType<? extends JukeboxCompartmentEntity> entityType, final Level level,
@@ -113,8 +115,8 @@ public class JukeboxCompartmentEntity extends BlockCompartmentEntity implements 
         }
 
         if (compoundTag.contains(JukeboxBlockEntity.TICKS_SINCE_SONG_STARTED_TAG_ID, Tag.TAG_LONG)) {
-            JukeboxSong.fromStack(this.registryAccess(), this.itemStack).ifPresent(
-                    songHolder -> this.jukeboxCompartmentSongPlayer.setSongWithoutPlaying(songHolder,
+            JukeboxSong.fromStack(this.registryAccess(), this.itemStack)
+                    .ifPresent(songHolder -> this.jukeboxCompartmentSongPlayer.setSongWithoutPlaying(songHolder,
                             compoundTag.getLong(JukeboxBlockEntity.TICKS_SINCE_SONG_STARTED_TAG_ID)));
         }
     }

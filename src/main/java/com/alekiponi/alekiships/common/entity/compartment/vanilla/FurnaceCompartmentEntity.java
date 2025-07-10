@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.FurnaceMenu;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +22,7 @@ public class FurnaceCompartmentEntity extends AbstractFurnaceCompartmentEntity {
     public FurnaceCompartmentEntity(final EntityType<? extends FurnaceCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, RecipeType.SMELTING);
+        this.setDisplayBlockState(Blocks.FURNACE.defaultBlockState());
     }
 
     public FurnaceCompartmentEntity(final EntityType<? extends FurnaceCompartmentEntity> entityType, final Level level,

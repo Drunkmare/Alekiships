@@ -85,6 +85,7 @@ public class BrewingStandCompartmentEntity extends ContainerCompartmentEntity.Co
     public BrewingStandCompartmentEntity(final EntityType<? extends BrewingStandCompartmentEntity> compartmentType,
             final Level level) {
         super(compartmentType, level, SLOT_COUNT);
+        this.setDisplayBlockState(Blocks.BREWING_STAND.defaultBlockState());
     }
 
     public BrewingStandCompartmentEntity(final EntityType<? extends BrewingStandCompartmentEntity> entityType,
