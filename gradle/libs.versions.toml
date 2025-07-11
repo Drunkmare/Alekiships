@@ -1,0 +1,28 @@
+[versions]
+# Mappings
+parchment = "2024.07.07"
+parchmentMinecraft = "1.21"
+# Mod
+alekiShips = "1.0.0"
+# Dependencies
+minecraft = "1.21.1"
+neforge = "21.1.168"
+emi = "1.1.10+1.21"
+jei = "19.9.1.125"
+top = "1.21_neo-12.0.4-6"
+lombok = "1.18.36"
+# Stupid dependecies
+jadeFileId = "5591256"
+weather2FileId = "6634565"
+
+[libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+jei-common-api = { group = "mezz.jei", name = "jei-1.21.1-common-api", version.ref = "jei" }
+jei-neoforge-api = { group = "mezz.jei", name = "jei-1.21.1-neoforge-api", version.ref = "jei" }
+jei = { group = "mezz.jei", name = "jei-1.21.1-neoforge", version.ref = "jei" }
+top = { group = "mcjty.theoneprobe", name = "theoneprobe", version.ref = "top" }
+jade = { group = "curse.maven", name = "jade-324717", version.ref = "jadeFileId" }
+weather2 = { group = "curse.maven", name = "weather-2-237746", version.ref = "weather2FileId" }
+
+[bundles]
+jei-api = ["jei-common-api", "jei-neoforge-api"]

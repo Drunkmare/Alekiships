@@ -6,27 +6,9 @@ plugins {
     id("net.neoforged.moddev") version "2.0.78"
 }
 
-// Mappings
-val parchmentVersion: String = "2024.07.07"
-val parchmentMinecraftVersion: String = "1.21"
-
-//# Mod stuff
+// Mod stuff
 val modID: String = "alekiships"
 val modName: String = "aleki's Nifty Ships"
-val modVersion: String = "1.0.0"
-//# Minecraft stuff
-val minecraftVersion: String = "1.21"
-val neoVersion: String = "21.1.168"
-
-// Dependency versions
-val emiVersion: String = "1.1.10+1.21"
-val jeiVersion: String = "19.5.2.66"
-val topVersion: String = "1.21_neo-12.0.4-6"
-val jadeFileID: String = "5591256"
-val weather2FileId: String = "6634565"
-
-// Dev dependencies
-val lombokVersion: String = "1.18.36"
 
 val datagenOutput: String = "src/generated/resources"
 
@@ -34,10 +16,10 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
     val modReplacementProperties = mapOf(
         "modId" to modID,
         "modName" to modName,
-        "modVersion" to modVersion,
-        "minecraftVersionRange" to "[$minecraftVersion,)",
-        "neoForgeVersionRange" to "[$neoVersion,)",
-        "jeiVersionRange" to "[$jeiVersion,)"
+        "modVersion" to libs.versions.alekiShips.get(),
+        "minecraftVersionRange" to "[${libs.versions.minecraft.get()},)",
+        "neoForgeVersionRange" to "[${libs.versions.neforge.get()},)",
+        "jeiVersionRange" to "[${libs.versions.jei.get()},)"
     )
     inputs.properties(modReplacementProperties)
     expand(modReplacementProperties)
@@ -46,8 +28,8 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 }
 
 base {
-    archivesName.set("alekiNiftyShips-FORGE-$minecraftVersion")
-    version = modVersion
+    archivesName.set("alekiNiftyShips-FORGE-${libs.versions.minecraft}")
+    version = libs.versions.alekiShips
     group = modID
 }
 
@@ -85,13 +67,13 @@ configurations {
 }
 
 neoForge {
-    version = neoVersion
+    version = libs.versions.neforge.get()
     addModdingDependenciesTo(sourceSets["datagen"])
     validateAccessTransformers = true
 
     parchment {
-        minecraftVersion.set(parchmentMinecraftVersion)
-        mappingsVersion.set(parchmentVersion)
+        minecraftVersion = libs.versions.parchmentMinecraft
+        mappingsVersion = libs.versions.parchment
     }
 
     runs {
@@ -180,33 +162,32 @@ dependencies {
     "datagenImplementation"(sourceSets["main"].output)
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:$lombokVersion")
-    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-    "datagenCompileOnly"("org.projectlombok:lombok:$lombokVersion")
-    "datagenAnnotationProcessor"("org.projectlombok:lombok:$lombokVersion")
-    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
-    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    "datagenCompileOnly"(libs.lombok)
+    "datagenAnnotationProcessor"(libs.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 
     // QOL Dev dependencies should use `localRuntime`. `runtimeOnly` is for stuff we actually want at runtime
 
-    implementation("curse.maven:jade-324717:$jadeFileID")
-    compileOnly("mcjty.theoneprobe:theoneprobe:$topVersion")
+    implementation(libs.jade)
+    compileOnly(libs.top)
 
     // Weather 2 mod so we can compile
-    compileOnly("curse.maven:weather-2-237746:$weather2FileId")
+    compileOnly(libs.weather2)
     // Weather 2 mod so we can test at runtime
-//    runtimeOnly("curse.maven:weather-2-237746:$weather2FileId")
+//    runtimeOnly(libs.weather2)
     // Lib mod for weather 2, we don't want to interact with this thing at all
 //    "localRuntime"("curse.maven:coroutil-237749:5622966")
 
     // EMI
-    compileOnly("dev.emi:emi-neoforge:${emiVersion}:api")
-    //runtimeOnly("dev.emi:emi-neoforge:${emiVersion}")
+    compileOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}:api")
+    //runtimeOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}")
 
     // JEI
-    compileOnly("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
-    compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
-    runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+    compileOnly(libs.bundles.jei.api)
+    runtimeOnly(libs.jei)
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.3")
@@ -219,7 +200,7 @@ idea {
         isDownloadJavadoc = true
 
         val elements = arrayOf(
-            "run", ".gradle", ".idea", "gradle", "externals", "src/generated/resources/.cache"
+            "run", ".gradle", ".idea", "externals", "src/generated/resources/.cache"
         ).map { file(it) }
         excludeDirs.addAll(
             elements
