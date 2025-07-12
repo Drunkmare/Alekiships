@@ -1,9 +1,12 @@
-package com.alekiponi.alekiships.common.compartment;
+package com.alekiponi.alekiships.common.compartment.vanilla;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 
+import com.alekiponi.alekiships.common.compartment.AlekiShipsCompartmentPlaceableSerializers;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceableSerializer;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ShulkerBoxCompartmentEntity;
 import com.alekiponi.alekiships.util.CommonHelper;
 

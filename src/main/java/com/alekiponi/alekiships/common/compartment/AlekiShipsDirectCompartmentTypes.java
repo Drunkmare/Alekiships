@@ -7,7 +7,10 @@ import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEnt
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartment;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.SimpleBlockMenuCompartmentEntity;
-import com.alekiponi.alekiships.common.entity.compartment.vanilla.*;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.EnderChestCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.JukeboxCompartmentEntity;
+import com.alekiponi.alekiships.common.entity.compartment.vanilla.NoteBlockCompartmentEntity;
 
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.GrindstoneBlock;
@@ -27,28 +30,10 @@ public final class AlekiShipsDirectCompartmentTypes {
     public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<EnderChestCompartmentEntity>> ENDER_CHEST_COMPARTMENT = register(
             "ender_chest", () -> DirectCompartmentType.simple(AlekiShipsEntities.ENDER_CHEST_COMPARTMENT_ENTITY));
 
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<FurnaceCompartmentEntity>> FURNACE_COMPARTMENT = register(
-            "furnace", () -> DirectCompartmentType.postInit(AlekiShipsEntities.FURNACE_COMPARTMENT_ENTITY,
-                    BlockCompartment.dynamicFactory(FurnaceCompartmentEntity::new), CompartmentCloneable::initialize));
-
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<BlastFurnaceCompartmentEntity>> BLAST_FURNACE_COMPARTMENT = register(
-            "blast_furnace", () -> DirectCompartmentType.postInit(AlekiShipsEntities.BLAST_FURNACE_COMPARTMENT_ENTITY,
-                    BlockCompartment.dynamicFactory(BlastFurnaceCompartmentEntity::new),
-                    CompartmentCloneable::initialize));
-
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SmokerCompartmentEntity>> SMOKER_COMPARTMENT = register(
-            "smoker", () -> DirectCompartmentType.postInit(AlekiShipsEntities.SMOKER_COMPARTMENT_ENTITY,
-                    BlockCompartment.dynamicFactory(SmokerCompartmentEntity::new), CompartmentCloneable::initialize));
-
     public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<BrewingStandCompartmentEntity>> BREWING_STAND_COMPARTMENT = register(
             "brewing_stand", () -> DirectCompartmentType.postInit(AlekiShipsEntities.BREWING_STAND_COMPARTMENT_ENTITY,
                     BlockCompartment.staticFactory(BrewingStandCompartmentEntity::new, Blocks.BREWING_STAND),
                     CompartmentCloneable::initialize));
-
-    public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> CRAFTING_TABLE_COMPARTMENT = register(
-            "crafting_table", () -> DirectCompartmentType.of(AlekiShipsEntities.WORKBENCH_COMPARTMENT_ENTITY,
-                    BlockCompartment.dynamicFactory(SimpleBlockMenuCompartmentEntity.directCompartmentFactory(
-                            SimpleBlockMenuCompartmentEntity.CRAFTING_TABLE))));
 
     public static final DeferredHolder<DirectCompartmentType<?>, DirectCompartmentType<SimpleBlockMenuCompartmentEntity>> STONECUTTER_COMPARTMENT = register(
             "stonecutter", () -> DirectCompartmentType.of(AlekiShipsEntities.STONECUTTER_COMPARTMENT_ENTITY,

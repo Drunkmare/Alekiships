@@ -1,7 +1,5 @@
 package com.alekiponi.alekiships.common.entity.compartment;
 
-import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,7 +8,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -33,10 +30,6 @@ public class BlockCompartmentEntity extends AbstractCompartmentEntity implements
             final BlockState blockState) {
         super(entityType, level);
         this.setDisplayBlockState(blockState);
-    }
-
-    public static BlockCompartmentEntity create(final Level level, final BlockState blockState) {
-        return new BlockCompartmentEntity(AlekiShipsEntities.BLOCK_COMPARTMENT_ENTITY.get(), level, blockState);
     }
 
     @Override

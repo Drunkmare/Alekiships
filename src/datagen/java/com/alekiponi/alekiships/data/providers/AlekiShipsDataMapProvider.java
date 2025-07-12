@@ -1,7 +1,9 @@
 package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
-import com.alekiponi.alekiships.common.compartment.*;
+import com.alekiponi.alekiships.common.compartment.AlekiShipsDirectCompartmentTypes;
+import com.alekiponi.alekiships.common.compartment.DirectCompartmentPlaceable;
+import com.alekiponi.alekiships.common.compartment.vanilla.*;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
 import com.alekiponi.alekiships.wind.SimpleWindModel;
@@ -53,16 +55,15 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
             builder.add(ShulkerBoxBlock.getBlockByColor(color).asItem(), ShulkerBoxCompartmentPlaceable.of(color));
         }
 
-        builder.add(Items.FURNACE, DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.FURNACE_COMPARTMENT));
-        builder.add(Items.BLAST_FURNACE,
-                DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.BLAST_FURNACE_COMPARTMENT));
-        builder.add(Items.SMOKER, DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.SMOKER_COMPARTMENT));
+        builder.add(Items.FURNACE, FurnaceCompartmentPlaceable.of(Blocks.FURNACE.defaultBlockState()));
+        builder.add(Items.BLAST_FURNACE, BlastFurnaceCompartmentPlaceable.of(Blocks.BLAST_FURNACE.defaultBlockState()));
+        builder.add(Items.SMOKER, SmokerCompartmentPlaceable.of(Blocks.SMOKER.defaultBlockState()));
 
         builder.add(Items.BREWING_STAND,
                 DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.BREWING_STAND_COMPARTMENT));
 
         builder.add(Items.CRAFTING_TABLE,
-                DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.CRAFTING_TABLE_COMPARTMENT));
+                CraftingTableCompartmentPlaceable.of(Blocks.CRAFTING_TABLE.defaultBlockState()));
         builder.add(Items.STONECUTTER,
                 DirectCompartmentPlaceable.of(AlekiShipsDirectCompartmentTypes.STONECUTTER_COMPARTMENT));
         builder.add(Items.CARTOGRAPHY_TABLE,

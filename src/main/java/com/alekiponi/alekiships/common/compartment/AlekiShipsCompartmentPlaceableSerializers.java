@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
-import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
+import com.alekiponi.alekiships.common.compartment.vanilla.*;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,9 +17,8 @@ public final class AlekiShipsCompartmentPlaceableSerializers {
     public static final DeferredRegister<CompartmentPlaceableSerializer<?>> COMPARTMENT_PLACEABLE_SERIALIZERS = DeferredRegister.create(
             AlekiShipsRegistries.COMPARTMENT_PLACEABLE_SERIALIZER, AlekiShips.MOD_ID);
 
-    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<BlockCompartmentPlaceable<BlockCompartmentEntity>>> BLOCK = register(
-            "block", BlockCompartmentPlaceable.codec(BlockCompartmentEntity::create),
-            BlockCompartmentPlaceable.streamCodec(BlockCompartmentEntity::create));
+    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<BlockCompartmentPlaceable>> BLOCK = register(
+            "block", BlockCompartmentPlaceable.CODEC, BlockCompartmentPlaceable.STREAM_CODEC);
 
     public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<BarrelCompartmentPlaceable>> BARREL = register(
             "barrel", BarrelCompartmentPlaceable.CODEC, BarrelCompartmentPlaceable.STREAM_CODEC);
@@ -29,6 +28,18 @@ public final class AlekiShipsCompartmentPlaceableSerializers {
 
     public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<ShulkerBoxCompartmentPlaceable>> SHULKER_BOX = register(
             "shulker_box", ShulkerBoxCompartmentPlaceable.CODEC, ShulkerBoxCompartmentPlaceable.STREAM_CODEC);
+
+    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<FurnaceCompartmentPlaceable>> FURNACE = register(
+            "furnace", FurnaceCompartmentPlaceable.CODEC, FurnaceCompartmentPlaceable.STREAM_CODEC);
+
+    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<BlastFurnaceCompartmentPlaceable>> BLAST_FURNACE = register(
+            "blast_furnace", BlastFurnaceCompartmentPlaceable.CODEC, BlastFurnaceCompartmentPlaceable.STREAM_CODEC);
+
+    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<SmokerCompartmentPlaceable>> SMOKER = register(
+            "smoker", SmokerCompartmentPlaceable.CODEC, SmokerCompartmentPlaceable.STREAM_CODEC);
+
+    public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<CraftingTableCompartmentPlaceable>> CRAFTING_TABLE = register(
+            "crafting_table", CraftingTableCompartmentPlaceable.CODEC, CraftingTableCompartmentPlaceable.STREAM_CODEC);
 
     public static final DeferredHolder<CompartmentPlaceableSerializer<?>, CompartmentPlaceableSerializer<DirectCompartmentPlaceable>> DIRECT = register(
             "direct", DirectCompartmentPlaceable.CODEC, DirectCompartmentPlaceable.STREAM_CODEC);

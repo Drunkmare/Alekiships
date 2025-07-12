@@ -9,8 +9,8 @@
       "color": "black"
     },
     "minecraft:blast_furnace": {
-      "type": "alekiships:direct",
-      "compartment_type": "alekiships:blast_furnace"
+      "type": "alekiships:blast_furnace",
+      "block": "minecraft:blast_furnace"
     },
     "minecraft:blue_shulker_box": {
       "type": "alekiships:shulker_box",
@@ -35,8 +35,8 @@
       }
     },
     "minecraft:crafting_table": {
-      "type": "alekiships:direct",
-      "compartment_type": "alekiships:crafting_table"
+      "type": "alekiships:crafting_table",
+      "block": "minecraft:crafting_table"
     },
     "minecraft:cyan_shulker_box": {
       "type": "alekiships:shulker_box",
@@ -47,8 +47,8 @@
       "compartment_type": "alekiships:ender_chest"
     },
     "minecraft:furnace": {
-      "type": "alekiships:direct",
-      "compartment_type": "alekiships:furnace"
+      "type": "alekiships:furnace",
+      "block": "minecraft:furnace"
     },
     "minecraft:gray_shulker_box": {
       "type": "alekiships:shulker_box",
@@ -114,8 +114,8 @@
       "compartment_type": "alekiships:smithing_table"
     },
     "minecraft:smoker": {
-      "type": "alekiships:direct",
-      "compartment_type": "alekiships:smoker"
+      "type": "alekiships:smoker",
+      "block": "minecraft:smoker"
     },
     "minecraft:stonecutter": {
       "type": "alekiships:direct",

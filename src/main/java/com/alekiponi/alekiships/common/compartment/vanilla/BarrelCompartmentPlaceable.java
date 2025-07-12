@@ -1,19 +1,20 @@
-package com.alekiponi.alekiships.common.compartment;
+package com.alekiponi.alekiships.common.compartment.vanilla;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 
+import com.alekiponi.alekiships.common.compartment.AlekiShipsCompartmentPlaceableSerializers;
+import com.alekiponi.alekiships.common.compartment.BlockCompartmentPlaceable;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceableSerializer;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.BarrelCompartmentEntity;
-import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
@@ -23,16 +24,15 @@ import lombok.*;
 @EqualsAndHashCode
 @Getter(AccessLevel.PRIVATE)
 @AllArgsConstructor(staticName = "of")
-public class BarrelCompartmentPlaceable implements CompartmentPlaceable<BarrelCompartmentEntity> {
+public final class BarrelCompartmentPlaceable implements CompartmentPlaceable<BarrelCompartmentEntity> {
 
-    public static final MapCodec<BarrelCompartmentPlaceable> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(AlekiShipsExtraCodecs.BLOCK_STATE_CODEC.fieldOf("block")
-                            .forGetter(BarrelCompartmentPlaceable::getBlockState))
-                    .apply(instance, BarrelCompartmentPlaceable::new));
+    public static final MapCodec<BarrelCompartmentPlaceable> CODEC = BlockCompartmentPlaceable.codec(
+                    BarrelCompartmentPlaceable::new, BarrelCompartmentPlaceable::getBlockState)
+            .validate(
+                    BlockCompartmentPlaceable.hasProperty(BarrelCompartmentPlaceable::getBlockState, BarrelBlock.OPEN));
 
-    public static final StreamCodec<ByteBuf, BarrelCompartmentPlaceable> STREAM_CODEC = ByteBufCodecs.idMapper(
-                    Block.BLOCK_STATE_REGISTRY)
-            .map(BarrelCompartmentPlaceable::new, BarrelCompartmentPlaceable::getBlockState);
+    public static final StreamCodec<ByteBuf, BarrelCompartmentPlaceable> STREAM_CODEC = BlockCompartmentPlaceable.streamCodec(
+            BarrelCompartmentPlaceable::new, BarrelCompartmentPlaceable::getBlockState);
 
     private final BlockState blockState;
 

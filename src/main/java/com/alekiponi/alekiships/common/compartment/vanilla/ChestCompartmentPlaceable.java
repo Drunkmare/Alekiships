@@ -1,8 +1,11 @@
-package com.alekiponi.alekiships.common.compartment;
+package com.alekiponi.alekiships.common.compartment.vanilla;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import com.alekiponi.alekiships.common.compartment.AlekiShipsCompartmentPlaceableSerializers;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceable;
+import com.alekiponi.alekiships.common.compartment.CompartmentPlaceableSerializer;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentEntity;
 

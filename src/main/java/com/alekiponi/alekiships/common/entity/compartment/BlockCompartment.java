@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.common.entity.compartment;
 
 import com.alekiponi.alekiships.client.render.entity.vehicle.vehiclehelper.BlockCompartmentRenderer;
 import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
-import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.CommonHelper;
 
@@ -13,7 +12,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -35,28 +33,6 @@ public interface BlockCompartment {
      * {@link #readBlockstate(BlockCompartment, CompoundTag)} and {@link #saveBlockstate(BlockCompartment, CompoundTag)}
      */
     String HELD_BLOCK_KEY = "heldBlock";
-
-    /**
-     * Creates a {@link DirectCompartmentType.CompartmentFactory} using a {@link BlockCompartmentFactory}
-     *
-     * @param blockCompartmentFactory A {@link BlockCompartmentFactory} which is invoked with the {@link BlockItem}s
-     *                                {@link Block}s {@link Block#defaultBlockState()}
-     */
-    static <E extends AbstractCompartmentEntity & BlockCompartment> DirectCompartmentType.CompartmentFactory<E> dynamicFactory(
-            final BlockCompartmentFactory<E> blockCompartmentFactory) {
-        return (entityType, level, itemStack) -> {
-            final var compartmentData = itemStack.get(AlekiShipsComponents.BLOCK_COMPARTMENT_BLOCK);
-            if (compartmentData != null) {
-                return blockCompartmentFactory.create(entityType, level, compartmentData);
-            }
-
-            if (itemStack.getItem() instanceof BlockItem blockItem) {
-                return blockCompartmentFactory.create(entityType, level, blockItem.getBlock().defaultBlockState());
-            }
-
-            return null;
-        };
-    }
 
     /**
      * @param blockCompartmentFactory A {@link BlockCompartmentFactory} to use
