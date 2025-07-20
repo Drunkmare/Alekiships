@@ -5,11 +5,13 @@ import com.alekiponi.alekiships.common.entity.compartment.CompartmentCloneable;
 import com.alekiponi.alekiships.common.entity.compartment.ContainerOpenersCounter;
 import com.alekiponi.alekiships.common.entity.compartment.RandomizableContainerCompartmentEntity;
 import com.alekiponi.alekiships.mixins.accessors.ShulkerBoxMenuAccessor;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -134,20 +136,18 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        if (this.color == null) {
-            compoundTag.putInt(COLOR_KEY, NULL_COLOR);
-        } else {
-            compoundTag.putInt(COLOR_KEY, color.getId());
+        if (this.color != null) {
+            AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, this.color,
+                    tag -> compoundTag.put(COLOR_KEY, tag));
         }
     }
 
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        final int colorID = compoundTag.getInt(COLOR_KEY);
-
-        if (NULL_COLOR != colorID) {
-            this.color = DyeColor.byId(colorID);
+        final var color = compoundTag.get(COLOR_KEY);
+        if (color != null) {
+            AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, color, c -> this.color = c);
         }
     }
 
@@ -221,6 +221,7 @@ public class ShulkerBoxCompartmentEntity extends RandomizableContainerCompartmen
         CommonHelper.playBreakSound(this::playSound, SoundType.STONE);
     }
 
+    @Override
     public int[] getSlotsForFace(Direction pSide) {
         return SLOTS;
     }
