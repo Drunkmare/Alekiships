@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.entity.vehicle;
 
+import com.mojang.serialization.Codec;
+
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBoatNoAnchor;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
@@ -7,14 +9,17 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.BoatMaterial;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ByIdMap;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,25 +35,27 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
             RowboatEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
-    public final int PASSENGER_NUMBER = 6;
+    public static final int PASSENGER_NUMBER = 6;
 
-    public final int[] CLEATS = {5};
+    public static final int[] CLEATS = {5};
 
-    public final int[][] COMPARTMENT_ROTATIONS = {{0, 180}};
+    public static final int[][] COMPARTMENT_ROTATIONS = {{0, 180}};
 
-    public final int[] CAN_ADD_ONLY_BLOCKS = {2, 1};
+    public static final int[] CAN_ADD_ONLY_BLOCKS = {2, 1};
 
-    public final int[] COMPARTMENTS = {0, 1, 2, 3, 4};
-    protected final float PASSENGER_SIZE_LIMIT = 1.4F;
+    public static final int[] COMPARTMENTS = {0, 1, 2, 3, 4};
+    protected static final float PASSENGER_SIZE_LIMIT = 1.4F;
 
-    protected final float DAMAGE_THRESHOLD = 128.0f;
-    protected final float DAMAGE_RECOVERY = 5.333f;
+    protected static final float DAMAGE_THRESHOLD = 128.0f;
+    protected static final float DAMAGE_RECOVERY = 5.333f;
 
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
@@ -71,12 +78,12 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
     @Override
     public int getMaxPassengers() {
-        return this.PASSENGER_NUMBER;
+        return PASSENGER_NUMBER;
     }
 
     @Override
     public int[] getCleatIndices() {
-        return this.CLEATS;
+        return CLEATS;
     }
 
     @Override
@@ -86,7 +93,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
     @Override
     public int[] getCompartmentIndices() {
-        return this.COMPARTMENTS;
+        return COMPARTMENTS;
     }
 
     @Override
@@ -283,20 +290,17 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
         return 0.5;
     }
 
-    /**
-     * @return The paint color of the boat. {@code null} for no color
-     */
+    @Override
     public Optional<DyeColor> getPaintColor() {
         return this.entityData.get(DATA_ID_PAINT_COLOR);
     }
 
-    /**
-     * @param paintColor A {@link DyeColor}
-     */
+    @Override
     public void setPaintColor(final DyeColor paintColor) {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
     }
 
+    @Override
     public void clearPaint() {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.empty());
     }
@@ -304,10 +308,17 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     @Override
     protected void readAdditionalSaveData(final CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setOars(Oars.byId(compoundTag.getByte("oars")));
-
-        if (compoundTag.contains("paint", CompoundTag.TAG_BYTE)) {
-            this.setPaintColor(DyeColor.byId(compoundTag.getByte("paint")));
+        {
+            final var oars = compoundTag.get("oars");
+            if (oars != null) {
+                AlekiShipsExtraCodecs.load(Oars.CODEC, NbtOps.INSTANCE, oars, this::setOars);
+            }
+        }
+        {
+            final var paint = compoundTag.get("paint");
+            if (paint != null) {
+                AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, paint, this::setPaintColor);
+            }
         }
     }
 
@@ -316,28 +327,34 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
         super.addAdditionalSaveData(compoundTag);
         compoundTag.putByte("oars", (byte) this.getOars().getId());
 
-        this.getPaintColor().ifPresent(dyeColor -> compoundTag.putByte("paint", (byte) dyeColor.getId()));
+        this.getPaintColor()
+                .ifPresent(dyeColor -> AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, dyeColor,
+                        tag -> compoundTag.put("paint", tag)));
+        AlekiShipsExtraCodecs.save(Oars.CODEC, NbtOps.INSTANCE, this.getOars(), tag -> compoundTag.put("oars", tag));
     }
 
-    public enum Oars {
-        ZERO(0),
-        ONE(1),
-        TWO(2);
+    @AllArgsConstructor
+    public enum Oars implements StringRepresentable {
+        ZERO(0, "zero"),
+        ONE(1, "one"),
+        TWO(2, "two");
 
         private static final IntFunction<Oars> BY_ID = ByIdMap.continuous(Oars::getId, values(),
                 ByIdMap.OutOfBoundsStrategy.ZERO);
-        private final int id;
 
-        Oars(final int id) {
-            this.id = id;
-        }
+        public static final Codec<Oars> CODEC = StringRepresentable.fromEnum(Oars::values);
+
+        @Getter
+        private final int id;
+        private final String name;
 
         public static Oars byId(final int id) {
             return BY_ID.apply(id);
         }
 
-        public int getId() {
-            return id;
+        @Override
+        public String getSerializedName() {
+            return this.name;
         }
     }
 }
