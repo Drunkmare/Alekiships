@@ -8,6 +8,7 @@ import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.events.config.ClientConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.ServerboundSloopControlPacket;
+import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
 import com.alekiponi.alekiships.util.AlekiShipsTags;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
@@ -15,6 +16,7 @@ import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -62,21 +64,21 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
             SloopEntity.class, AlekiShipsEntityDataSerializers.DYE_COLOR.get());
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
             SloopEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
-    public final int PASSENGER_NUMBER = 25;
-    public final int[] CLEATS = {18, 19, 20, 21};
-    public final int[] COLLIDERS = {14, 15, 16};
-    public final int[] SAIL_SWITCHES = {17, 24};
-    public final int[] WINDLASSES = {22};
-    public final int[] MASTS = {23};
-    public final int[] CAN_ADD_CANNONS = {7, 8, 9, 10, 11, 12};
-    public final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
-    public final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-    public final int NO_INPUT_THRESHOLD = 20 * 10;
-    public final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
-    protected final float PASSENGER_SIZE_LIMIT = 1.4F;
-    protected final int SAIL_TOGGLE_TICKS = 20;
-    protected final float DAMAGE_THRESHOLD = 512.0f;
-    protected final float DAMAGE_RECOVERY = 5.333f;
+    public static final int PASSENGER_NUMBER = 25;
+    public static final int[] CLEATS = {18, 19, 20, 21};
+    public static final int[] COLLIDERS = {14, 15, 16};
+    public static final int[] SAIL_SWITCHES = {17, 24};
+    public static final int[] WINDLASSES = {22};
+    public static final int[] MASTS = {23};
+    public static final int[] CAN_ADD_CANNONS = {7, 8, 9, 10, 11, 12};
+    public static final int[] CAN_ADD_ONLY_BLOCKS = {1, 2, 3, 4, 5, 6};
+    public static final int[] COMPARTMENTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    public static final int NO_INPUT_THRESHOLD = 20 * 10;
+    public static final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
+    protected static final float PASSENGER_SIZE_LIMIT = 1.4F;
+    protected static final int SAIL_TOGGLE_TICKS = 20;
+    protected static final float DAMAGE_THRESHOLD = 512.0f;
+    protected static final float DAMAGE_RECOVERY = 5.333f;
     float boom_rotation;
     float mainsheet_length;
     float rudder_rotation;
@@ -97,13 +99,13 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
 
     @Override
     public int getMaxPassengers() {
-        return this.PASSENGER_NUMBER;
+        return PASSENGER_NUMBER;
     }
 
 
     @Override
     public int[] getCleatIndices() {
-        return this.CLEATS;
+        return CLEATS;
     }
 
     @Override
@@ -883,10 +885,12 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         return this.entityData.get(DATA_ID_PAINT_COLOR);
     }
 
+    @Override
     public void setPaintColor(final DyeColor paintColor) {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.of(paintColor));
     }
 
+    @Override
     public void clearPaint() {
         this.entityData.set(DATA_ID_PAINT_COLOR, Optional.empty());
     }
@@ -902,16 +906,23 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         this.setMainsheetLength(pCompound.getFloat("mainSheetLength"));
         this.setIceBreaker(pCompound.getBoolean("icebreaker"));
 
-        if (pCompound.contains("jibsailDye", Tag.TAG_BYTE)) {
-            this.setJibsailDye(DyeColor.byId(pCompound.getByte("jibsailDye")));
+        {
+            final var mainsailDye = pCompound.get("mainsailDye");
+            if (mainsailDye != null) {
+                AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, mainsailDye, this::setMainsailDye);
+            }
         }
-
-        if (pCompound.contains("mainsailDye", Tag.TAG_BYTE)) {
-            this.setMainsailDye(DyeColor.byId(pCompound.getByte("mainsailDye")));
+        {
+            final var jibsailDye = pCompound.get("jibsailDye");
+            if (jibsailDye != null) {
+                AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, jibsailDye, this::setJibsailDye);
+            }
         }
-
-        if (pCompound.contains("paint", Tag.TAG_BYTE)) {
-            this.setPaintColor(DyeColor.byId(pCompound.getByte("paint")));
+        {
+            final var paint = pCompound.get("paint");
+            if (paint != null) {
+                AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, paint, this::setPaintColor);
+            }
         }
     }
 
@@ -927,20 +938,24 @@ public class SloopEntity extends AbstractAlekiBoatEntity implements IBreakIce, I
         pCompound.putBoolean("icebreaker", this.breaksIce());
 
         {
-            final DyeColor paintColor = this.getJibsailDye();
-            if (paintColor != DyeColor.WHITE) {
-                pCompound.putByte("jibsailDye", (byte) paintColor.getId());
+            final DyeColor jibsailDye = this.getJibsailDye();
+            if (jibsailDye != DyeColor.WHITE) {
+                AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, jibsailDye,
+                        tag -> pCompound.put("jibsailDye", tag));
             }
         }
 
         {
-            final DyeColor paintColor = this.getMainsailDye();
-            if (paintColor != DyeColor.WHITE) {
-                pCompound.putByte("mainsailDye", (byte) paintColor.getId());
+            final DyeColor mainsailDye = this.getMainsailDye();
+            if (mainsailDye != DyeColor.WHITE) {
+                AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, mainsailDye,
+                        tag -> pCompound.put("mainsailDye", tag));
             }
         }
 
-        this.getPaintColor().ifPresent(dyeColor -> pCompound.putByte("paint", (byte) dyeColor.getId()));
+        this.getPaintColor()
+                .ifPresent(dyeColor -> AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, dyeColor,
+                        tag -> pCompound.put("paint", tag)));
     }
 
     @Override
