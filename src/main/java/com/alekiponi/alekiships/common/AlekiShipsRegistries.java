@@ -12,6 +12,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
 import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
@@ -23,6 +24,7 @@ public class AlekiShipsRegistries {
     public static final ResourceKey<Registry<EntityInput>> ENTITY_INPUT = createRegistryKey("entity_input");
     public static final ResourceKey<Registry<ConstructionInput<SloopConstructionState.SloopConstructionStage>>> CONSTRUCTION_SLOOP_INPUT = createRegistryKey(
             "construction/sloop");
+    public static final ResourceKey<Registry<FrameMaterial>> FRAME_MATERIAL = createRegistryKey("frame_material");
     public static final ResourceKey<Registry<CompartmentPlaceableSerializer<?>>> COMPARTMENT_PLACEABLE_SERIALIZER = createRegistryKey(
             "compartment_type_serializer");
     public static final ResourceKey<Registry<ChestCompartmentData.ChestType>> CHEST_COMPARTMENT_TYPES = createRegistryKey(

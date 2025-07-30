@@ -19,8 +19,7 @@ public final class AlekiShipsDataMaps {
             .build();
 
     public static final DataMapType<DimensionType, WindModel> WIND_MODEL = DataMapType.builder(
-                    AlekiShips.location("wind_model"), Registries.DIMENSION_TYPE, WindModel.CODEC)
-            .synced(WindModel.CODEC, true)
+                    AlekiShips.location("wind_model"), Registries.DIMENSION_TYPE, WindModel.CODEC).synced(WindModel.CODEC, true)
             .build();
 
     public static void registerDataMaps(final RegisterDataMapTypesEvent event) {

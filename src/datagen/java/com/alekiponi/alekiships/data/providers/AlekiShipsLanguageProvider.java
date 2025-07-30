@@ -15,10 +15,7 @@ import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
-import com.alekiponi.alekiships.util.DynamicBoatMaterial;
-import com.alekiponi.alekiships.util.NetherWood;
-import com.alekiponi.alekiships.util.OverworldWood;
-import com.alekiponi.alekiships.util.Wood;
+import com.alekiponi.alekiships.util.*;
 
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
@@ -55,6 +52,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
                     final var name = DataGenHelper.langify(wood.getSerializedName());
                     this.add(DynamicBoatMaterial.getDescriptionId(id), name);
                     this.add(ConstructionSloopVariant.getDescriptionId(id), name);
+                    this.add(FrameMaterial.getDescriptionId(id), name);
                 });
 
         this.addTranslationsForJade();

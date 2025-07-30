@@ -15,6 +15,7 @@ import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvid
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
 import com.alekiponi.alekiships.util.BoatMaterials;
+import com.alekiponi.alekiships.util.FrameMaterial;
 
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.HolderLookup;
@@ -95,6 +96,7 @@ public final class DataGenerators {
                 .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
                 .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrapOverworld)
                 .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld)
+                .add(AlekiShipsRegistries.FRAME_MATERIAL, FrameMaterial::bootstrapOverworld)
                 .add(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariants::bootstrapOverworld)
                 .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapOverworld)
                 .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT, ConstructionSloopVariants::bootstrapOverworld);

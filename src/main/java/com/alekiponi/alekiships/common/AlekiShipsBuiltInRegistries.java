@@ -11,6 +11,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
 import com.alekiponi.alekiships.util.DynamicBoatMaterial;
+import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
@@ -48,6 +49,8 @@ public final class AlekiShipsBuiltInRegistries {
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.BOAT_MATERIAL, DynamicBoatMaterial.DIRECT_CODEC,
                 DynamicBoatMaterial.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.FRAME_MATERIAL, FrameMaterial.DIRECT_CODEC,
+                FrameMaterial.DIRECT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariant.DIRECT_CODEC,
                 RowboatVariant.DIRECT_CODEC);
         event.dataPackRegistry(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariant.DIRECT_CODEC,
