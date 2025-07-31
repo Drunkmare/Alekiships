@@ -1,5 +1,5 @@
 {
-  "overlays": {
+  "neoforge:overlays": {
     "entries": [
       {
         "neoforge:conditions": [
@@ -14,9 +14,7 @@
     ]
   },
   "pack": {
-    "description": {
-      "text": "Alekis Nifty Ships mod Resources/Data"
-    },
+    "description": "Aleki's Nifty Ships mod Resources/Data",
     "pack_format": -1
   }
 }
