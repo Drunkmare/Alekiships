@@ -14,6 +14,7 @@
     "client.ArmorStandRendererMixin",
     "client.CameraMixin",
     "client.LocalPlayerMixin",
+    "client.accessors.ElementsModelAccessor",
     "minecraft.PlayerModelMixin"
   ],
   "injectors": {
