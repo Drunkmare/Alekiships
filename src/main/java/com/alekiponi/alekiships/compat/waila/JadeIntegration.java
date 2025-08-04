@@ -5,6 +5,8 @@ import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 
+import com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock;
+import com.alekiponi.alekiships.common.block.FlatWoodenBoatFrameBlock;
 import com.alekiponi.alekiships.common.entity.compartment.BlockCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.AbstractFurnaceCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.BrewingStandCompartmentEntity;
@@ -39,5 +41,11 @@ public class JadeIntegration implements IWailaPlugin {
         registry.registerEntityComponent(BlockCompartmentProvider.INSTANCE, BlockCompartmentEntity.class);
         registry.registerEntityComponent(BlockCompartmentProvider.INSTANCE, AbstractFurnaceCompartmentEntity.class);
         registry.registerEntityComponent(BlockCompartmentProvider.INSTANCE, BrewingStandCompartmentEntity.class);
+
+        // Actual blocks
+        registry.registerBlockComponent(FrameBlockProvider.ANGLED, AngledWoodenBoatFrameBlock.class);
+        registry.registerBlockComponent(FrameBlockProvider.FLAT, FlatWoodenBoatFrameBlock.class);
+        registry.registerBlockIcon(FrameBlockProvider.ANGLED, AngledWoodenBoatFrameBlock.class);
+        registry.registerBlockIcon(FrameBlockProvider.FLAT, FlatWoodenBoatFrameBlock.class);
     }
 }

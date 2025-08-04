@@ -11,6 +11,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
+import com.alekiponi.alekiships.compat.waila.FrameBlockProvider;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
@@ -135,11 +136,14 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.jade(BrewingStandCompartmentProvider.INSTANCE, "Brewing Stand Compartment");
         this.jade(BlockCompartmentProvider.INSTANCE, "Block Compartment");
         this.jade(ConstructionEntityProvider.INSTANCE, "Construction Entity");
+        this.jade(FrameBlockProvider.FLAT, "Frame Block");
 
         this.add(BlockCompartmentProvider.COMPARTMENT_BLOCK_KEY, "%s Compartment");
         this.add(ConstructionEntityProvider.INPUTS_REMAINING_KEY, "Inputs remaining: %s");
         this.add(ConstructionEntityProvider.CURRENT_STAGE_KEY, "Current Stage: %s");
         this.add(ConstructionEntityProvider.NEXT_STAGE_KEY, "Next Stage: %s");
+        this.add(FrameBlockProvider.ANGLED.key, "%s Sloped Shipwright's Scaffolding");
+        this.add(FrameBlockProvider.FLAT.key, "%s Flat Shipwright's Scaffolding");
     }
 
     private void addTranslationsForJei() {
