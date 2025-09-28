@@ -28,8 +28,8 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 }
 
 base {
-    archivesName.set("alekiNiftyShips-FORGE-${libs.versions.minecraft}")
-    version = libs.versions.alekiShips
+    archivesName.set("alekiNiftyShips-FORGE-${libs.versions.minecraft.get()}")
+    version = libs.versions.alekiShips.get()
     group = modID
 }
 
