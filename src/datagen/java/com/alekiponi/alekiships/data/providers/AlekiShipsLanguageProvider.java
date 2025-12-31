@@ -17,17 +17,22 @@ import com.alekiponi.alekiships.compat.jei.JeiIntegration;
 import com.alekiponi.alekiships.compat.waila.FrameBlockProvider;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
+import com.alekiponi.alekiships.compat.waila.compartment.vehicle.VehicleEntityDamageProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
 import com.alekiponi.alekiships.util.*;
 
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import net.neoforged.neoforge.registries.DeferredHolder;
+
+import javax.annotation.Nullable;
+import java.util.Locale;
 
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
@@ -143,12 +148,31 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.jade(BrewingStandCompartmentProvider.INSTANCE, "Brewing Stand Compartment");
         this.jade(BlockCompartmentProvider.INSTANCE, "Block Compartment");
         this.jade(ConstructionEntityProvider.INSTANCE, "Construction Entity");
+        this.jade(VehicleEntityDamageProvider.INSTANCE, "Vehicle Entity Damage");
+        this.jadeConfig(VehicleEntityDamageProvider.DECIMAL_PLACES, "Decimal Places");
+        this.jadeConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, "Display Type");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE,
+                "Damage", "Display the damage done to vehicles as a percentage of overall health");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE,
+                VehicleEntityDamageProvider.DisplayType.DAMAGE_ABSOLUTE, "Damage Absolute",
+                "Display the damage done to vehicles as an absolute value including the total damage that can be done");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH,
+                "Health", "Display the health of vehicles as a percentage");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE,
+                VehicleEntityDamageProvider.DisplayType.HEALTH_ABSOLUTE, "Health Absolute",
+                "Display the health of vehicles as an absolute value including the total health");
+
         this.jade(FrameBlockProvider.FLAT, "Frame Block");
 
         this.add(BlockCompartmentProvider.COMPARTMENT_BLOCK_KEY, "%s Compartment");
         this.add(ConstructionEntityProvider.INPUTS_REMAINING_KEY, "Inputs remaining: %s");
         this.add(ConstructionEntityProvider.CURRENT_STAGE_KEY, "Current Stage: %s");
         this.add(ConstructionEntityProvider.NEXT_STAGE_KEY, "Next Stage: %s");
+        this.add(VehicleEntityDamageProvider.DAMAGE_KEY, "Damage: %s%%");
+        this.add(VehicleEntityDamageProvider.DAMAGE_ABSOLUTE_KEY, "Damage: %s Total: %s");
+        this.add(VehicleEntityDamageProvider.HEALTH_KEY, "Health: %s%%");
+        this.add(VehicleEntityDamageProvider.HEALTH_ABSOLUTE_KEY, "Health: %s Total: %s");
+        this.add(VehicleEntityDamageProvider.WRECKED_KEY, "Wrecked!");
         this.add(FrameBlockProvider.ANGLED.key, "%s Sloped Shipwright's Scaffolding");
         this.add(FrameBlockProvider.FLAT.key, "%s Flat Shipwright's Scaffolding");
     }
@@ -160,6 +184,26 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     private void jade(final IJadeProvider provider, final String value) {
         this.add("config.jade.plugin_" + provider.getUid().toLanguageKey(), value);
+    }
+
+    private void jadeConfig(final ResourceLocation configName, final String value) {
+        this.add("config.jade.plugin_" + configName.toLanguageKey(), value);
+    }
+
+    /**
+     * @param configName The config name
+     * @param enumValue  The enum value
+     * @param value      The localization of the enum
+     * @param desc       An optional description
+     */
+    private <E extends Enum<E>> void jadeEnumConfig(final ResourceLocation configName, final E enumValue,
+            final String value, final @Nullable String desc) {
+        final var key = "config.jade.plugin_" + configName.toLanguageKey() + "_" + enumValue.name()
+                .toLowerCase(Locale.ENGLISH);
+        this.add(key, value);
+        if (desc != null) {
+            this.add(key + "_desc", desc);
+        }
     }
 
     @Override
