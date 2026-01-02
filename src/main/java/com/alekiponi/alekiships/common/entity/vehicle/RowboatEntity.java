@@ -59,7 +59,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity<RowboatVariant> imple
     public static final int[] COMPARTMENTS = {0, 1, 2, 3, 4};
     protected static final float PASSENGER_SIZE_LIMIT = 1.4F;
 
-    protected static final float DAMAGE_THRESHOLD = 128.0f;
+    public static final float DAMAGE_THRESHOLD = 128.0f;
     protected static final float DAMAGE_RECOVERY = 5.333f;
 
     public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level) {

@@ -14,6 +14,7 @@ import com.alekiponi.alekiships.common.recipe.AlekiShipsRecipeTypes;
 import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
+import com.alekiponi.alekiships.compat.jei.category.VehicleRepairMaterialCategory;
 import com.alekiponi.alekiships.compat.waila.FrameBlockProvider;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
@@ -48,7 +49,6 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addTranslationsForConfig();
 
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
-        this.add(AlekiShips.NETHER_WOOD_PACK_KEY, "Nether Wood support for NiftyShips");
 
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
         this.add(EntityMultiblockRecipe.SUCCESSFULLY_ASSEMBLED, "Successfully assembled %s");
@@ -151,16 +151,15 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.jade(VehicleEntityDamageProvider.INSTANCE, "Vehicle Entity Damage");
         this.jadeConfig(VehicleEntityDamageProvider.DECIMAL_PLACES, "Decimal Places");
         this.jadeConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, "Display Type");
-        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE,
-                "Damage", "Display the damage done to vehicles as a percentage of overall health");
-        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE,
-                VehicleEntityDamageProvider.DisplayType.DAMAGE_ABSOLUTE, "Damage Absolute",
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE, "Damage",
+                "Display the damage done to vehicles as a percentage of overall health");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE_ABSOLUTE,
+                "Damage Absolute",
                 "Display the damage done to vehicles as an absolute value including the total damage that can be done");
-        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH,
-                "Health", "Display the health of vehicles as a percentage");
-        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE,
-                VehicleEntityDamageProvider.DisplayType.HEALTH_ABSOLUTE, "Health Absolute",
-                "Display the health of vehicles as an absolute value including the total health");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH, "Health",
+                "Display the health of vehicles as a percentage");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH_ABSOLUTE,
+                "Health Absolute", "Display the health of vehicles as an absolute value including the total health");
 
         this.jade(FrameBlockProvider.FLAT, "Frame Block");
 
@@ -180,6 +179,12 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
     private void addTranslationsForJei() {
         this.add(JeiIntegration.CAN_PLACE_INTO_COMPARTMENTS_KEY, "Can be placed into compartments");
         this.add(JeiIntegration.CAN_BE_USED_TO_DYE_SHIPS_SAILS_KEY, "Can be used to dye ships & sails");
+        this.add(VehicleRepairMaterialCategory.REPAIR_AMOUNT_PERCENT_KEY, "Repair Amount: %s%%");
+        this.add(VehicleRepairMaterialCategory.REPAIR_AMOUNT_ABSOLUTE_KEY, "Repair Amount: %s");
+        this.add(VehicleRepairMaterialCategory.MINIMUM_DAMAGE_PERCENT_KEY, "Minimum Damage: %s%%");
+        this.add(VehicleRepairMaterialCategory.MINIMUM_DAMAGE_ABSOLUTE_KEY, "Minimum Damage: %s");
+        this.add(VehicleRepairMaterialCategory.MAXIMUM_DAMAGE_PERCENT_KEY, "Maximum Damage: %s%%");
+        this.add(VehicleRepairMaterialCategory.MAXIMUM_DAMAGE_ABSOLUTE_KEY, "Maximum Damage: %s");
     }
 
     private void jade(final IJadeProvider provider, final String value) {

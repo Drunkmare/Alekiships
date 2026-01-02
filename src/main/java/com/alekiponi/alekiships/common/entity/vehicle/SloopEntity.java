@@ -79,7 +79,7 @@ public class SloopEntity extends AbstractAlekiBoatEntity<SloopVariant> implement
     public static final int[][] COMPARTMENT_ROTATIONS = {{7, 85}, {8, 85}, {9, 85}, {10, -85}, {11, -85}, {12, -85}};
     protected static final float PASSENGER_SIZE_LIMIT = 1.4F;
     protected static final int SAIL_TOGGLE_TICKS = 20;
-    protected static final float DAMAGE_THRESHOLD = 512.0f;
+    public static final float DAMAGE_THRESHOLD = 512.0f;
     protected static final float DAMAGE_RECOVERY = 5.333f;
     float boom_rotation;
     float mainsheet_length;
