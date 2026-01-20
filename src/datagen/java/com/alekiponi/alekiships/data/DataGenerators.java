@@ -74,6 +74,8 @@ public final class DataGenerators {
 
         final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
+        generator.addProvider(event.includeServer(),
+                new AlekiShipsBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         final AlekiShipsBlockTagsProvider blockTags = new AlekiShipsBlockTagsProvider(packOutput, lookupProvider,
                 existingFileHelper);
         generator.addProvider(event.includeServer(), blockTags);

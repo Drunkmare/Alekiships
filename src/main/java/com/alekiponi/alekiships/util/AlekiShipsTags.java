@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
@@ -69,6 +70,15 @@ public final class AlekiShipsTags {
 
         public static TagKey<Structure> create(final String id) {
             return TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
+        }
+    }
+
+    public static final class Biomes {
+        public static final TagKey<Biome> HAS_UNFINISHED_ROWBOAT_STRUCTURE = create("has_structure/unfinished_rowboat");
+        public static final TagKey<Biome> HAS_UNFINISHED_SLOOP_STRUCTURE = create("has_structure/unfinished_sloop");
+
+        private static TagKey<Biome> create(final String id) {
+            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 }
