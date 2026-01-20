@@ -17,6 +17,9 @@ import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvid
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
+import com.alekiponi.alekiships.data.worldgen.AlekiShipsStructureSets;
+import com.alekiponi.alekiships.data.worldgen.AlekiShipsStructures;
+import com.alekiponi.alekiships.data.worldgen.AlekiShipsTemplatePools;
 import com.alekiponi.alekiships.util.BoatFrame;
 import com.alekiponi.alekiships.util.BoatMaterials;
 import com.alekiponi.alekiships.util.FrameMaterial;
@@ -86,8 +89,6 @@ public final class DataGenerators {
                 new AlekiShipsEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(),
                 new AlekiShipsFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(),
-                new AlekiShipsStructureTagProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new AlekiShipsRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), AlekiShipsLootTableProvider.create(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(),
@@ -149,6 +150,9 @@ public final class DataGenerators {
 
     private static RegistrySetBuilder datapackEntries() {
         return new RegistrySetBuilder().add(Registries.JUKEBOX_SONG, AlekiShipsJukeboxSongs::bootstrap)
+                .add(Registries.STRUCTURE, AlekiShipsStructures::bootstrap)
+                .add(Registries.STRUCTURE_SET, AlekiShipsStructureSets::bootstrap)
+                .add(Registries.TEMPLATE_POOL, AlekiShipsTemplatePools::bootstrap)
                 .add(AlekiShipsRegistries.ENTITY_INPUT, EntityInput::bootstrap)
                 .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT, ConstructionSloopInputs::bootstrapOverworld)
                 .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapOverworld)

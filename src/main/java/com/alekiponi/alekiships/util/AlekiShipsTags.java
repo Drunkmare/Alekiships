@@ -9,7 +9,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 
 public final class AlekiShipsTags {
@@ -59,17 +58,6 @@ public final class AlekiShipsTags {
 
         public static TagKey<Fluid> create(final String id) {
             return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
-        }
-    }
-
-    public static final class Structures {
-
-        public static final TagKey<Structure> UNFINISHED_SLOOP = create("unfinished_sloop");
-
-        public static final TagKey<Structure> UNFINISHED_ROWBOAT = create("unfinished_rowboat");
-
-        public static TagKey<Structure> create(final String id) {
-            return TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 

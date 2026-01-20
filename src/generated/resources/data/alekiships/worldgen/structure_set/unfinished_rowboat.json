@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 1642136474,
+    "separation": 10,
+    "spacing": 22
+  },
+  "structures": [
+    {
+      "structure": "alekiships:unfinished_rowboat",
+      "weight": 1
+    }
+  ]
+}
