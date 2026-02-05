@@ -100,11 +100,6 @@ public final class AlekiShips {
     }
 
     @SubscribeEvent
-    private static void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(VanillaWood::registerFrames);
-    }
-
-    @SubscribeEvent
     private static void registerCapabilities(final RegisterCapabilitiesEvent event) {
         final var nonSidedContainerCompartments = List.of(AlekiShipsEntities.CHEST_COMPARTMENT_ENTITY,
                 AlekiShipsEntities.BARREL_COMPARTMENT_ENTITY);

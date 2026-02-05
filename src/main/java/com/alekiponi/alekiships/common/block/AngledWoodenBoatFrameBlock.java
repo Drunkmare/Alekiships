@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.core.BlockPos;
@@ -24,21 +23,19 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
 
-public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements ProcessedBoatFrame {
+public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock {
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
-    @Deprecated
-    private final BoatMaterial boatMaterial;
     private final Supplier<Item> frameMaterial;
 
-    public AngledWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Supplier<Item> frameMaterial,
-            final Properties properties) {
+    public AngledWoodenBoatFrameBlock(final Supplier<Item> frameMaterial, final Properties properties) {
         super(properties);
-        this.registerDefaultState(
-                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHAPE, StairsShape.STRAIGHT)
-                        .setValue(WATERLOGGED, false).setValue(FRAME_PROCESSED, 0));
-        this.boatMaterial = boatMaterial;
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(SHAPE, StairsShape.STRAIGHT)
+                .setValue(WATERLOGGED, false)
+                .setValue(FRAME_PROCESSED, 0));
         this.frameMaterial = frameMaterial;
     }
 
@@ -86,8 +83,7 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
 
         // Set ourselves back to our base
         if (processState == 0) {
-            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState()
-                    .setValue(SHAPE, blockState.getValue(SHAPE)).setValue(FACING, blockState.getValue(FACING));
+            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().withPropertiesOf(blockState);
 
             level.setBlockAndUpdate(blockPos, newState);
             return InteractionResult.SUCCESS;
@@ -101,20 +97,5 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().getCloneItemStack(level, pos, state);
-    }
-
-    @Override
-    public IntegerProperty getProcessingProperty() {
-        return FRAME_PROCESSED;
-    }
-
-    @Override
-    public int getProcessingLimit() {
-        return FULLY_PROCESSED;
-    }
-
-    @Override
-    public BoatMaterial getBoatMaterial() {
-        return this.boatMaterial;
     }
 }

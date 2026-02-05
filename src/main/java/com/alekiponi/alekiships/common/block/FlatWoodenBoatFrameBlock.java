@@ -1,6 +1,5 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.core.BlockPos;
@@ -22,20 +21,16 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
 
-public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements ProcessedBoatFrame {
+public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
-    @Deprecated
-    private final BoatMaterial boatMaterial;
     private final Supplier<Item> frameMaterial;
 
-    public FlatWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Supplier<Item> frameMaterial,
-            final Properties properties) {
+    public FlatWoodenBoatFrameBlock(final Supplier<Item> frameMaterial, final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
-        this.boatMaterial = boatMaterial;
         this.frameMaterial = frameMaterial;
     }
 
@@ -83,7 +78,7 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
 
         // Set ourselves back to our base
         if (processState == 0) {
-            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState();
+            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().withPropertiesOf(blockState);
 
             level.setBlockAndUpdate(blockPos, newState);
             return InteractionResult.SUCCESS;
@@ -98,20 +93,5 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements Proc
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(level, pos, state);
-    }
-
-    @Override
-    public IntegerProperty getProcessingProperty() {
-        return FRAME_PROCESSED;
-    }
-
-    @Override
-    public int getProcessingLimit() {
-        return FULLY_PROCESSED;
-    }
-
-    @Override
-    public BoatMaterial getBoatMaterial() {
-        return this.boatMaterial;
     }
 }

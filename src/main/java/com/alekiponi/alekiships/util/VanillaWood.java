@@ -2,7 +2,6 @@ package com.alekiponi.alekiships.util;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
-import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 
@@ -34,15 +33,6 @@ public enum VanillaWood implements BoatMaterial {
 
     VanillaWood(final Block plankBlock, final Item railingItem, final Item strippedLogItem) {
         this.plankBlock = plankBlock;
-    }
-
-    public static void registerFrames() {
-        for (final VanillaWood wood : values()) {
-            AlekiShipsBlocks.BOAT_FRAME_FLAT.get()
-                    .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(wood).get());
-            AlekiShipsBlocks.BOAT_FRAME_ANGLED.get()
-                    .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(wood).get());
-        }
     }
 
     @Override
