@@ -3,7 +3,9 @@ package com.alekiponi.alekiships.data;
 import weather2.Weather;
 
 import com.alekiponi.alekiships.AlekiShips;
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.ConstructionSloopInputs;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariants;
@@ -14,8 +16,11 @@ import com.alekiponi.alekiships.data.providers.*;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsBlockStateProvider;
 import com.alekiponi.alekiships.data.providers.models.AlekiShipsItemModelProvider;
 import com.alekiponi.alekiships.data.providers.tags.*;
+import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
+import com.alekiponi.alekiships.util.BoatFrame;
 import com.alekiponi.alekiships.util.BoatMaterials;
 import com.alekiponi.alekiships.util.FrameMaterial;
+import com.alekiponi.alekiships.util.NetherWood;
 
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.HolderLookup;
@@ -34,6 +39,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.conditions.WithConditions;
+import net.neoforged.neoforge.common.data.DataMapProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.GeneratingOverlayMetadataSection;
@@ -108,11 +114,27 @@ public final class DataGenerators {
                                 new RegistrySetBuilder().add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
                                                 ConstructionSloopInputs::bootstrapNether)
                                         .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapNether)
+                                        .add(AlekiShipsRegistries.FRAME_MATERIAL, FrameMaterial::bootstrapNether)
                                         .add(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariants::bootstrapNether)
                                         .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapNether)
                                         .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT,
                                                 ConstructionSloopVariants::bootstrapNether), Set.of(AlekiShips.MOD_ID)))
                 .getRegistryProvider();
+        netherWoodsPack.addProvider(output -> new DataMapProvider(output, netherRegistries) {
+            @Override
+            protected void gather(final HolderLookup.Provider provider) {
+                final var angledFrame = this.builder(AlekiShipsDataMaps.ANGLED_BOAT_FRAME);
+                final var flatFrame = this.builder(AlekiShipsDataMaps.FLAT_BOAT_FRAME);
+                final var frameMaterials = provider.lookupOrThrow(AlekiShipsRegistries.FRAME_MATERIAL);
+                for (final var wood : NetherWood.values()) {
+                    final var material = frameMaterials.getOrThrow(wood.frameMaterialKey());
+                    DataMapBuilderExtensions.add(angledFrame, wood.getPlankItem(),
+                            new BoatFrame(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), material));
+                    DataMapBuilderExtensions.add(flatFrame, wood.getPlankItem(),
+                            new BoatFrame(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(), material));
+                }
+            }
+        });
     }
 
     private static RegistrySetBuilder datapackEntries() {

@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
+public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBlock, FrameBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;
@@ -193,20 +195,18 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
-        // TODO dynamic frames
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState blockState, final Level level,
+            final BlockPos blockPos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        return FrameBlock.tryPlaceFilledFrame(stack, blockState, level, blockPos, player,
+                AlekiShipsDataMaps.ANGLED_BOAT_FRAME);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean useShapeForLightOcclusion(final BlockState blockState) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos,
             final CollisionContext context) {
         return SHAPES[SHAPE_BY_STATE[this.getShapeIndex(blockState)]];
@@ -227,7 +227,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState updateShape(final BlockState blockState, final Direction direction,
             final BlockState neighborState, final LevelAccessor levelAccessor, final BlockPos blockPos,
             final BlockPos neighborPos) {
@@ -295,7 +294,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState blockState) {
         return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
     }

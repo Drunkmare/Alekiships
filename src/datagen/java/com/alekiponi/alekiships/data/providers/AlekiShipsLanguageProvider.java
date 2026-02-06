@@ -25,8 +25,6 @@ import net.minecraft.world.level.block.Block;
 
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.util.Locale;
-
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     public AlekiShipsLanguageProvider(final PackOutput output) {
@@ -63,14 +61,8 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
     }
 
     private void addTranslationsForBlocks() {
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.forEach((wood, registryObject) -> this.addBlock(registryObject,
-                String.format(Locale.ROOT, "%s Flat Shipwright's Scaffolding",
-                        DataGenHelper.langify(wood.getSerializedName()))));
-
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.forEach((wood, registryObject) -> this.addBlock(registryObject,
-                String.format(Locale.ROOT, "%s Sloped Shipwright's Scaffolding",
-                        DataGenHelper.langify(wood.getSerializedName()))));
-
+        this.addBlock(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED, "Wooden Sloped Shipwright's Scaffolding");
+        this.addBlock(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT, "Wooden Flat Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_ANGLED, "Sloped Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_FLAT, "Flat Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.OARLOCK, "Oarlock");

@@ -1,37 +1,40 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.CommonHelper;
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+import com.alekiponi.alekiships.common.block.entity.FrameBlockEntity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
-public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
+public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock implements EntityBlock {
 
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
-    private final Supplier<Item> frameMaterial;
+    private final Supplier<FlatBoatFrameBlock> emptyFrame;
 
-    public FlatWoodenBoatFrameBlock(final Supplier<Item> frameMaterial, final Properties properties) {
+    public FlatWoodenBoatFrameBlock(final Supplier<FlatBoatFrameBlock> emptyFrame, final Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
-        this.frameMaterial = frameMaterial;
+        this.emptyFrame = emptyFrame;
     }
 
     @Override
@@ -40,58 +43,40 @@ public class FlatWoodenBoatFrameBlock extends FlatBoatFrameBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
-
-        final ItemStack heldStack = player.getItemInHand(hand);
-
-        int processState = blockState.getValue(FRAME_PROCESSED);
-
-        // Should we do plank stuff
-        if (heldStack.is(this.frameMaterial.get())) {
-            // Must be [0,3)
-            if (processState < FULLY_PROCESSED) {
-                if (!player.getAbilities().instabuild) {
-                    heldStack.shrink(1);
-                }
-                level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
-                level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F);
-                return ItemInteractionResult.SUCCESS;
-            }
-            return ItemInteractionResult.CONSUME;
-        }
-
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected ItemInteractionResult useItemOn(final ItemStack heldStack, final BlockState blockState, final Level level,
+            final BlockPos blockPos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        return FrameBlock.tryContinueFillFrame(heldStack, blockState, level, blockPos, player,
+                AlekiShipsDataMaps.FLAT_BOAT_FRAME, FRAME_PROCESSED, FULLY_PROCESSED);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
-            BlockHitResult hitResult) {
-
-        int processState = blockState.getValue(FRAME_PROCESSED);
-
-        // Try extract
-        if (processState <= FULLY_PROCESSED) {
-            CommonHelper.giveItemToPlayer(player, new ItemStack(this.frameMaterial.get()));
-        }
-
-        // Set ourselves back to our base
-        if (processState == 0) {
-            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().withPropertiesOf(blockState);
-
-            level.setBlockAndUpdate(blockPos, newState);
-            return InteractionResult.SUCCESS;
-        }
-
-        level.setBlockAndUpdate(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1));
-
-        return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(final BlockState blockState, final Level level, final BlockPos blockPos,
+            final Player player, final BlockHitResult hitResult) {
+        return FrameBlock.tryExtractFrame(blockState, level, blockPos, player, this.emptyFrame.get(), FRAME_PROCESSED,
+                FULLY_PROCESSED);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return AlekiShipsBlocks.BOAT_FRAME_FLAT.get().getCloneItemStack(level, pos, state);
+    public boolean onDestroyedByPlayer(final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final boolean willHarvest, final FluidState fluid) {
+        return FrameBlock.onDestroy(state, level, pos, player, fluid);
+    }
+
+    @Override
+    protected void onRemove(final BlockState prevState, final Level level, final BlockPos pos,
+            final BlockState newState, final boolean movedByPiston) {
+        FrameBlock.dropContents(prevState, level, pos, newState);
+        super.onRemove(prevState, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(final BlockState state, final HitResult target, final LevelReader level,
+            final BlockPos pos, final Player player) {
+        return FrameBlock.getCloneStack(state, target, level, pos, player, this.emptyFrame.get());
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
+        return new FrameBlockEntity(pos, state);
     }
 }

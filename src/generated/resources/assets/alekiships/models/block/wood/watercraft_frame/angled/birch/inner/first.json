@@ -1,6 +1,0 @@
-{
-  "parent": "alekiships:block/watercraft_frame/angled/template/inner/first",
-  "textures": {
-    "plank": "minecraft:block/birch_planks"
-  }
-}

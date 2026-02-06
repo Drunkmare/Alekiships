@@ -1,5 +1,6 @@
 {
   "values": [
-    "#alekiships:wooden_watercraft_frames"
+    "alekiships:watercraft_frame/wooden/angled",
+    "alekiships:watercraft_frame/wooden/flat"
   ]
 }

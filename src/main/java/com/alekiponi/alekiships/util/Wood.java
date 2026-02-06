@@ -1,8 +1,8 @@
 package com.alekiponi.alekiships.util;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
 /**
  * Helper interface to consolidate {@link OverworldWood} and {@link NetherWood}
@@ -17,7 +17,7 @@ public interface Wood extends StringRepresentable {
     Item getPlankItem();
 
     /**
-     * The plank block for this wood
+     * @return The resource key for the frame material
      */
-    Block getPlankBlock();
+    ResourceKey<FrameMaterial> frameMaterialKey();
 }

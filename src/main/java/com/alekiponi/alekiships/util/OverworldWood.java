@@ -1,9 +1,8 @@
 package com.alekiponi.alekiships.util;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.Locale;
 import lombok.AllArgsConstructor;
@@ -13,18 +12,18 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum OverworldWood implements Wood {
-    OAK(Items.OAK_PLANKS, Blocks.OAK_PLANKS),
-    SPRUCE(Items.SPRUCE_PLANKS, Blocks.SPRUCE_PLANKS),
-    BIRCH(Items.BIRCH_PLANKS, Blocks.BIRCH_PLANKS),
-    ACACIA(Items.ACACIA_PLANKS, Blocks.ACACIA_PLANKS),
-    CHERRY(Items.CHERRY_PLANKS, Blocks.CHERRY_PLANKS),
-    JUNGLE(Items.JUNGLE_PLANKS, Blocks.JUNGLE_PLANKS),
-    DARK_OAK(Items.DARK_OAK_PLANKS, Blocks.DARK_OAK_PLANKS),
-    MANGROVE(Items.MANGROVE_PLANKS, Blocks.MANGROVE_PLANKS),
-    BAMBOO(Items.BAMBOO_PLANKS, Blocks.BAMBOO_PLANKS);
+    OAK(Items.OAK_PLANKS, FrameMaterial.OAK),
+    SPRUCE(Items.SPRUCE_PLANKS, FrameMaterial.SPRUCE),
+    BIRCH(Items.BIRCH_PLANKS, FrameMaterial.BIRCH),
+    ACACIA(Items.ACACIA_PLANKS, FrameMaterial.ACACIA),
+    CHERRY(Items.CHERRY_PLANKS, FrameMaterial.CHERRY),
+    JUNGLE(Items.JUNGLE_PLANKS, FrameMaterial.JUNGLE),
+    DARK_OAK(Items.DARK_OAK_PLANKS, FrameMaterial.DARK_OAK),
+    MANGROVE(Items.MANGROVE_PLANKS, FrameMaterial.MANGROVE),
+    BAMBOO(Items.BAMBOO_PLANKS, FrameMaterial.BAMBOO);
 
     private final Item plankItem;
-    private final Block plankBlock;
+    private final ResourceKey<FrameMaterial> frameMaterial;
 
     @Override
     public String getSerializedName() {
@@ -37,7 +36,7 @@ public enum OverworldWood implements Wood {
     }
 
     @Override
-    public Block getPlankBlock() {
-        return this.plankBlock;
+    public ResourceKey<FrameMaterial> frameMaterialKey() {
+        return this.frameMaterial;
     }
 }

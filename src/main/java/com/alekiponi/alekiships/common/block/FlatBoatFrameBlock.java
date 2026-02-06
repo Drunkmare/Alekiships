@@ -1,5 +1,7 @@
 package com.alekiponi.alekiships.common.block;
 
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
+public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock, FrameBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected static final VoxelShape HALF_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
@@ -40,14 +42,13 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
-        // TODO dynamic frames
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState blockState, final Level level,
+            final BlockPos blockPos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        return FrameBlock.tryPlaceFilledFrame(stack, blockState, level, blockPos, player,
+                AlekiShipsDataMaps.FLAT_BOAT_FRAME);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState updateShape(final BlockState blockState, final Direction direction,
             final BlockState neighborState, final LevelAccessor levelAccessor, final BlockPos blockPos,
             final BlockPos neighborPos) {
@@ -60,20 +61,17 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean useShapeForLightOcclusion(final BlockState pState) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos,
             final CollisionContext collisionContext) {
         return HALF_SHAPE;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState blockState) {
         return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
     }
@@ -84,5 +82,4 @@ public class FlatBoatFrameBlock extends Block implements SimpleWaterloggedBlock 
         final FluidState fluidState = placeContext.getLevel().getFluidState(placeContext.getClickedPos());
         return this.defaultBlockState().setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
-
 }

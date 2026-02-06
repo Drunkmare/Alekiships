@@ -1,9 +1,8 @@
 package com.alekiponi.alekiships.util;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.Locale;
 import lombok.AllArgsConstructor;
@@ -13,11 +12,11 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum NetherWood implements Wood {
-    CRIMSON(Items.CRIMSON_PLANKS, Blocks.CRIMSON_PLANKS),
-    WARPED(Items.WARPED_PLANKS, Blocks.WARPED_PLANKS);
+    CRIMSON(Items.CRIMSON_PLANKS, FrameMaterial.CRIMSON),
+    WARPED(Items.WARPED_PLANKS, FrameMaterial.WARPED);
 
     private final Item plankItem;
-    private final Block plankBlock;
+    private final ResourceKey<FrameMaterial> frameMaterial;
 
     @Override
     public String getSerializedName() {
@@ -30,7 +29,7 @@ public enum NetherWood implements Wood {
     }
 
     @Override
-    public Block getPlankBlock() {
-        return this.plankBlock;
+    public ResourceKey<FrameMaterial> frameMaterialKey() {
+        return this.frameMaterial;
     }
 }
