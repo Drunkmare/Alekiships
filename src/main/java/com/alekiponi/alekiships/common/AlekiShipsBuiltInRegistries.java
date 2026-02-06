@@ -10,6 +10,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.entity.BlockEntityIngredientSerializer;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
@@ -33,6 +34,8 @@ public final class AlekiShipsBuiltInRegistries {
             AlekiShipsRegistries.WIND_MODEL_SERIALIZERS).sync(true).create();
     public static final Registry<EntityResultSerializer<?>> ENTITY_RESULT_SERIALIZERS = new RegistryBuilder<>(
             AlekiShipsRegistries.ENTITY_RESULT_SERIALIZER).sync(true).create();
+    public static final Registry<BlockEntityIngredientSerializer<?>> BLOCK_ENTITY_RESULT_SERIALIZERS = new RegistryBuilder<>(
+            AlekiShipsRegistries.BLOCK_ENTITY_RESULT_SERIALIZER).sync(true).create();
 
     public static void registerRegistries(final NewRegistryEvent event) {
         event.register(DIRECT_COMPARTMENT_TYPES);
@@ -40,6 +43,7 @@ public final class AlekiShipsBuiltInRegistries {
         event.register(CHEST_COMPARTMENT_TYPES);
         event.register(WIND_MODEL_SERIALIZERS);
         event.register(ENTITY_RESULT_SERIALIZERS);
+        event.register(BLOCK_ENTITY_RESULT_SERIALIZERS);
     }
 
     public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {

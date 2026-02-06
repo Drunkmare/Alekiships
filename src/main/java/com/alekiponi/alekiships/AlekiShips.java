@@ -18,6 +18,7 @@ import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
 import com.alekiponi.alekiships.common.recipe.entity.AlekiShipsEntityResultSerializers;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.entity.AlekiShipsBlockEntityIngredientSerializers;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.compat.weather2.Weather2WindModelSerializers;
 import com.alekiponi.alekiships.events.ForgeEventHandler;
@@ -79,6 +80,7 @@ public final class AlekiShips {
         AlekiShipsCompartmentPlaceableSerializers.COMPARTMENT_PLACEABLE_SERIALIZERS.register(modBus);
         AlekiShipsChestCompartmentTypes.CHEST_TYPES.register(modBus);
         AlekiShipsWindModelSerializers.WIND_MODEL_SERIALIZERS.register(modBus);
+        AlekiShipsBlockEntityIngredientSerializers.BLOCK_ENTITY_INGREDIENT_SERIALIZERS.register(modBus);
         AlekishipsBlockEntities.BLOCK_ENTITIES.register(modBus);
 
         if (ModList.get().isLoaded(Weather.MODID)) {

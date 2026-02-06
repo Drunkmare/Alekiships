@@ -11,6 +11,7 @@ import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.entity.BlockEntityIngredientSerializer;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
@@ -34,6 +35,8 @@ public class AlekiShipsRegistries {
     public static final ResourceKey<Registry<BoatMaterial>> BOAT_MATERIAL = createRegistryKey("boat_material");
     public static final ResourceKey<Registry<EntityResultSerializer<?>>> ENTITY_RESULT_SERIALIZER = createRegistryKey(
             "entity_result_serializer");
+    public static final ResourceKey<Registry<BlockEntityIngredientSerializer<?>>> BLOCK_ENTITY_RESULT_SERIALIZER = createRegistryKey(
+            "block_entity_result_serializer");
     public static final ResourceKey<Registry<RowboatVariant>> ROWBOAT_VARIANT = createRegistryKey(
             "boat_variant/rowboat");
     public static final ResourceKey<Registry<SloopVariant>> SLOOP_VARIANT = createRegistryKey("boat_variant/sloop");
