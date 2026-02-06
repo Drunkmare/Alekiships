@@ -3,23 +3,34 @@ import org.slf4j.event.Level
 
 plugins {
     idea
-    id("net.neoforged.moddev") version "2.0.78"
+    alias(libs.plugins.modDevGradle)
 }
 
 // Mod stuff
-val modID: String = "alekiships"
-val modName: String = "aleki's Nifty Ships"
+val modId: String by project
+val modName: String by project
+val modLicense: String by project
+val modVersion: String by project
+val modGroupId: String by project
+val modAuthors: String by project
+val modDescription: String by project
+val modIssueTracker: String by project
 
 val datagenOutput: String = "src/generated/resources"
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     val modReplacementProperties = mapOf(
-        "modId" to modID,
-        "modName" to modName,
-        "modVersion" to libs.versions.alekiShips.get(),
-        "minecraftVersionRange" to "[${libs.versions.minecraft.get()},)",
-        "neoForgeVersionRange" to "[${libs.versions.neforge.get()},)",
-        "jeiVersionRange" to "[${libs.versions.jei.get()},)"
+        "mod_id" to modId,
+        "mod_name" to modName,
+        "mod_version" to modVersion,
+        "mod_license" to modLicense,
+        "mod_authors" to modAuthors,
+        "mod_description" to modDescription,
+        "mod_issue_tracker" to modIssueTracker,
+        "minecraft_version_range" to "[${libs.versions.minecraft.get()}]",
+        "loader_version_range" to "[1,)",
+        "neo_version_range" to "[${libs.versions.neoforge.get()},)",
+        "jei_version_range" to "[${libs.versions.jei.get()},)"
     )
     inputs.properties(modReplacementProperties)
     expand(modReplacementProperties)
@@ -28,12 +39,11 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 }
 
 base {
-    archivesName.set("alekiNiftyShips-FORGE-${libs.versions.minecraft.get()}")
-    version = libs.versions.alekiShips.get()
-    group = modID
+    archivesName.set("$modName-mc${libs.versions.minecraft.get()}")
+    version = modVersion
+    group = modGroupId
 }
 
-// Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 sourceSets {
@@ -49,26 +59,33 @@ sourceSets {
             srcDir(datagenOutput)
         }
     }
-    create("datagen")
+}
+
+val datagen: SourceSet by sourceSets.creating
+
+/**
+ * Sets up a dependency configuration called 'localRuntime'.
+ * This configuration should be used instead of 'runtimeOnly' to declare
+ * a dependency that will be present for runtime testing but that is
+ * "optional", meaning it will not be pulled by dependents of this mod.
+ */
+val localRuntime: Configuration by configurations.creating
+
+val datagenImplementation: Configuration = configurations.getByName(datagen.implementationConfigurationName)
+
+configurations.runtimeClasspath.configure {
+    extendsFrom(localRuntime, datagenImplementation)
 }
 
 configurations {
-    // Sets up a dependency configuration called 'localRuntime'.
-    // This configuration should be used instead of 'runtimeOnly' to declare
-    // a dependency that will be present for runtime testing but that is
-    // "optional", meaning it will not be pulled by dependents of this mod.
-    get("runtimeClasspath").extendsFrom(create("localRuntime"))
-    // Datagen can reference our code in main
-    get("datagenCompileClasspath").extendsFrom(compileClasspath.get())
-    get("datagenRuntimeClasspath").extendsFrom(runtimeClasspath.get())
-    // Wtf man why isn't this done for us??
-    get("testCompileClasspath").extendsFrom(compileClasspath.get())
-    get("testCompileClasspath").extendsFrom(runtimeClasspath.get())
+    getByName(datagen.compileClasspathConfigurationName).extendsFrom(compileClasspath.get())
+    getByName(datagen.runtimeClasspathConfigurationName).extendsFrom(runtimeClasspath.get())
+    getByName(datagen.annotationProcessorConfigurationName).extendsFrom(annotationProcessor.get())
 }
 
 neoForge {
-    version = libs.versions.neforge.get()
-    addModdingDependenciesTo(sourceSets["datagen"])
+    version = libs.versions.neoforge.get()
+    addModdingDependenciesTo(datagen)
     validateAccessTransformers = true
 
     parchment {
@@ -80,7 +97,7 @@ neoForge {
         configureEach {
             systemProperty("neoforge.logging.markers", "REGISTRIES")
             logLevel = Level.DEBUG
-            systemProperty("neoforge.enabledGameTestNamespaces", modID)
+            systemProperty("neoforge.enabledGameTestNamespaces", modId)
 
             // Only JBR allows enhanced class redefinition, so ignore the option for any other JDKs
             jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-ea")
@@ -88,50 +105,48 @@ neoForge {
 
         register("client") {
             client()
-        }
-
-        // Second client run for dev 2 player testing
-        register("client2") {
-            client()
-            programArguments.addAll("--username", "Dev2")
+            gameDirectory = file("run/client")
         }
 
         register("server") {
             server()
+            gameDirectory = file("run/server")
             programArgument("--nogui")
         }
 
         register("datagen") {
             data()
+            gameDirectory = file("run/datagen")
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll(
                 "--mod",
-                modID,
+                modId,
                 "--all",
                 "--output",
-                file(datagenOutput).absolutePath,
+                file(datagenOutput).path,
                 "--existing",
-                file("src/main/resources/").absolutePath
+                file("src/main/resources/").path
             )
         }
 
         register("gameTest") {
             type = "gameTestServer"
+            gameDirectory = file("run/game_test")
         }
     }
 
     mods {
-        create(modID) {
+        create(modId) {
             sourceSet(sourceSets.main.get())
             sourceSet(sourceSets.test.get())
-            sourceSet(sourceSets["datagen"])
+            sourceSet(datagen)
         }
     }
 
     unitTest {
         enable()
-        testedMod = mods[modID]
+        testedMod = mods[modId]
     }
 
     ideSyncTask(generateModMetadata)
@@ -159,13 +174,12 @@ repositories {
 }
 
 dependencies {
-    "datagenImplementation"(sourceSets["main"].output)
+    // datagen can use mod code
+    datagenImplementation(sourceSets.main.get().output)
 
     // Lombok
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
-    "datagenCompileOnly"(libs.lombok)
-    "datagenAnnotationProcessor"(libs.lombok)
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 
@@ -179,18 +193,19 @@ dependencies {
     // Weather 2 mod so we can test at runtime
 //    runtimeOnly(libs.weather2)
     // Lib mod for weather 2, we don't want to interact with this thing at all
-//    "localRuntime"("curse.maven:coroutil-237749:5622966")
+//    localRuntime("curse.maven:coroutil-237749:5622966")
 
     // EMI
-    compileOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}:api")
-    //runtimeOnly("dev.emi:emi-neoforge:${libs.versions.emi.get()}")
+    compileOnly(libs.emi) { artifact { classifier = "api" } }
+//    runtimeOnly(libs.emi)
 
     // JEI
     compileOnly(libs.bundles.jei.api)
     runtimeOnly(libs.jei)
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.3")
+    testImplementation(datagen.output)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform)
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
@@ -199,12 +214,10 @@ idea {
         isDownloadSources = true
         isDownloadJavadoc = true
 
-        val elements = arrayOf(
-            "run", ".gradle", ".idea", "externals", "src/generated/resources/.cache"
-        ).map { file(it) }
         excludeDirs.addAll(
-            elements
-        )
+            arrayOf(
+                "run", ".gradle", ".idea", "externals", "src/generated/resources/.cache"
+            ).map { file(it) })
     }
 }
 

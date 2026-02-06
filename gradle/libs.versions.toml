@@ -2,11 +2,11 @@
 # Mappings
 parchment = "2024.07.07"
 parchmentMinecraft = "1.21"
-# Mod
-alekiShips = "1.0.0"
+# Plugins
+modDevGradle = "2.0.78"
 # Dependencies
 minecraft = "1.21.1"
-neforge = "21.1.168"
+neoforge = "21.1.168"
 emi = "1.1.10+1.21"
 jei = "19.9.1.125"
 top = "1.21_neo-12.0.4-6"
@@ -14,15 +14,25 @@ lombok = "1.18.36"
 # Stupid dependecies
 jadeFileId = "5591256"
 weather2FileId = "6634565"
+# Test libs
+junit-jupiter = "5.10.3"
+junit-platform-launcher = "1.10.3"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 jei-common-api = { group = "mezz.jei", name = "jei-1.21.1-common-api", version.ref = "jei" }
 jei-neoforge-api = { group = "mezz.jei", name = "jei-1.21.1-neoforge-api", version.ref = "jei" }
 jei = { group = "mezz.jei", name = "jei-1.21.1-neoforge", version.ref = "jei" }
+emi = { group = "dev.emi", name = "emi-neoforge", version.ref = "emi" }
 top = { group = "mcjty.theoneprobe", name = "theoneprobe", version.ref = "top" }
 jade = { group = "curse.maven", name = "jade-324717", version.ref = "jadeFileId" }
 weather2 = { group = "curse.maven", name = "weather-2-237746", version.ref = "weather2FileId" }
+
+junit-platform = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
+
+[plugins]
+modDevGradle = { id = "net.neoforged.moddev", version.ref = "modDevGradle" }
 
 [bundles]
 jei-api = ["jei-common-api", "jei-neoforge-api"]
