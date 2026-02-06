@@ -9,6 +9,7 @@ import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
 import com.alekiponi.alekiships.compat.waila.FrameBlockProvider;
@@ -40,10 +41,11 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addTranslationsForConfig();
 
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
-        this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
         this.add(AlekiShips.NETHER_WOOD_PACK_KEY, "Nether Wood support for NiftyShips");
 
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
+        this.add(EntityMultiblockRecipe.SUCCESSFULLY_ASSEMBLED, "Successfully assembled %s");
+        this.add(EntityMultiblockRecipe.FAILED_TO_ASEMBLE, "Failed to asemble %s");
 
         // Our wood types must be named so our entities can reflect their name
         Iterators.<Wood>concat(Iterators.forArray(OverworldWood.values()), Iterators.forArray(NetherWood.values()))

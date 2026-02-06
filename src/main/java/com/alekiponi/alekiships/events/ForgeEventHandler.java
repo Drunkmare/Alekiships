@@ -8,29 +8,27 @@ import com.alekiponi.alekiships.common.entity.compartment.EmptyCompartmentEntity
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveSailSwitches;
-import com.alekiponi.alekiships.common.entity.vehiclehelper.CleatEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.SailSwitchEntity;
 import com.alekiponi.alekiships.common.entity.vehiclehelper.WindlassSwitchEntity;
+import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
+import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.AABB;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 import java.util.List;
 
@@ -42,7 +40,8 @@ public final class ForgeEventHandler {
     private static void onPlayerLeave(final PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
 
-        if (player.level().getServer().isSingleplayer() && player.level().getServer()
+        if (player.level().getServer().isSingleplayer() && player.level()
+                .getServer()
                 .isSingleplayerOwner(player.getGameProfile())) {
             // do singleplayer behavior
             if (player.getVehicle() instanceof EmptyCompartmentEntity compartment) {
@@ -158,47 +157,32 @@ public final class ForgeEventHandler {
     }
 
     /**
-     * Try leash our cleats to the clicked fence
+     * Attempt to assemble an entity multiblock
      */
     @SubscribeEvent
     private static void onBlockClick(final PlayerInteractEvent.RightClickBlock event) {
-        // TODO vanilla appears to handle this for us now
-        if (true) return;
+        final Player player = event.getEntity();
+
+        if (!player.isShiftKeyDown() || event.getHand() != InteractionHand.MAIN_HAND || !event.getItemStack()
+                .isEmpty()) {
+            return;
+        }
+
+        final BlockPos blockPos = event.getPos();
 
         final Level level = event.getLevel();
 
-        // Only do server logic
-        if (level.isClientSide()) return;
+        EntityMultiblockRecipe.tryAssembleMultiblock(level, blockPos, player, true);
+        event.setCanceled(true);
+    }
 
-        final BlockPos blockPos = event.getPos();
-        final BlockState blockState = level.getBlockState(blockPos);
-
-        // Must click on a fence
-        if (!blockState.is(BlockTags.FENCES)) return;
-
-        final Player player = event.getEntity();
-
-        LeashFenceKnotEntity knotEntity = null;
-        boolean leashedSomething = false;
-
-        for (final CleatEntity cleat : level.getEntitiesOfClass(CleatEntity.class,
-                new AABB(blockPos.getX() - 7, blockPos.getY() - 7, blockPos.getZ() - 7, blockPos.getX() + 7,
-                        blockPos.getY() + 7, blockPos.getZ() + 7))) {
-            if (cleat.getLeashHolder() == player) {
-                if (knotEntity == null) {
-                    knotEntity = LeashFenceKnotEntity.getOrCreateKnot(level, blockPos);
-                    knotEntity.playPlacementSound();
-                }
-
-                cleat.setLeashedTo(knotEntity, true);
-                leashedSomething = true;
+    @SubscribeEvent
+    private static void onVanillaGameEvent(final BlockEvent.EntityPlaceEvent event) {
+        if (AlekishipsConfig.SERVER.eagerEntityMultiblockValidation.getAsBoolean()) {
+            if (event.getLevel() instanceof final Level level) {
+                EntityMultiblockRecipe.tryAssembleMultiblock(level, event.getPos(),
+                        event.getEntity() instanceof final Player player ? player : null, false);
             }
         }
-
-        if (leashedSomething) {
-            level.gameEvent(GameEvent.BLOCK_ATTACH, blockPos, GameEvent.Context.of(player));
-        }
-
-        event.setCancellationResult(InteractionResult.SUCCESS);
     }
 }

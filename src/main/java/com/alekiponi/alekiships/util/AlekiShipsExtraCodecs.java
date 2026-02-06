@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.chars.CharSet;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -57,6 +58,18 @@ public final class AlekiShipsExtraCodecs {
 
                 return stringBuilder.toString();
             });
+
+    /**
+     * A codec for the typical any character key: some value like vanilla shaped recipes or our Multiblock Patterns
+     */
+    public static final Codec<Character> SYMBOL_CODEC = ExtraCodecs.NON_EMPTY_STRING.comapFlatMap(symbol -> {
+        if (symbol.length() != 1) {
+            return DataResult.error(() -> MessageFormat.format(
+                    "Invalid key entry: ''{0}'' is an invalid symbol (must be 1 character only).", symbol));
+        }
+
+        return DataResult.success(symbol.charAt(0));
+    }, String::valueOf);
 
     public static DataResult<BlockState> parseBlockState(final String string) {
         final var propertiesStart = string.indexOf('[');
@@ -128,6 +141,18 @@ public final class AlekiShipsExtraCodecs {
         }
 
         return DataResult.success(builder.build());
+    }
+
+    /**
+     * A {@link #SYMBOL_CODEC} which reserves some symbols. Vanilla for example reserves ' ' to use as an empty slot
+     *
+     * @param reservedSymbols The symbols to reserve
+     */
+    public static Codec<Character> reservedSymbols(final char... reservedSymbols) {
+        final CharSet set = CharSet.of(reservedSymbols);
+        return SYMBOL_CODEC.validate(symbol -> set.contains(symbol.charValue()) ? DataResult.error(
+                () -> MessageFormat.format("Invalid key entry: {0} is a reserved symbol.",
+                        symbol)) : DataResult.success(symbol));
     }
 
     /**
