@@ -23,11 +23,14 @@ import com.alekiponi.alekiships.events.ForgeEventHandler;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.util.VanillaWood;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import com.alekiponi.alekiships.wind.AlekiShipsWindModelSerializers;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -36,12 +39,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
@@ -50,6 +53,7 @@ import java.util.List;
 @Mod(AlekiShips.MOD_ID)
 public final class AlekiShips {
     public static final String MOD_ID = "alekiships";
+    public static final String NETHER_WOOD_PACK_KEY = MOD_ID + ".builtin.datapack.netherwood.description";
 
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -125,5 +129,11 @@ public final class AlekiShips {
                 (containerCompartment, unused) -> new InvWrapper(containerCompartment));
         event.registerEntity(Capabilities.ItemHandler.ENTITY_AUTOMATION,
                 AlekiShipsEntities.SHULKER_BOX_COMPARTMENT_ENTITY.get(), SidedInvWrapper::new);
+    }
+
+    @SubscribeEvent
+    private static void addBuiltInPacks(final AddPackFindersEvent event) {
+        event.addPackFinders(location("data/" + MOD_ID + "/datapacks/nether_woods"), PackType.SERVER_DATA,
+                Component.translatable(NETHER_WOOD_PACK_KEY), PackSource.SERVER, false, Pack.Position.TOP);
     }
 }

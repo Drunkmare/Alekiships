@@ -40,6 +40,7 @@ import net.neoforged.neoforge.common.data.GeneratingOverlayMetadataSection;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -89,6 +90,29 @@ public final class DataGenerators {
         generator.addProvider(event.includeClient(), new AlekiShipsBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(),
                 new AlekiShipsSoundDefinitionsProvider(packOutput, existingFileHelper));
+
+        final var netherWoodsPack = generator.getBuiltinDatapack(event.includeServer(), AlekiShips.MOD_ID,
+                "nether_woods");
+        gatherNetherData(netherWoodsPack, lookupProvider);
+    }
+
+    private static void gatherNetherData(final DataGenerator.PackGenerator netherWoodsPack,
+            final CompletableFuture<HolderLookup.Provider> builtInRegistries) {
+        netherWoodsPack.addProvider(PackMetadataGenerator::new)
+                .add(PackMetadataSection.TYPE,
+                        new PackMetadataSection(Component.translatable(AlekiShips.NETHER_WOOD_PACK_KEY),
+                                DetectedVersion.BUILT_IN.getPackVersion(PackType.SERVER_DATA), Optional.empty()));
+
+        final var netherRegistries = netherWoodsPack.addProvider(
+                        output -> new DatapackBuiltinEntriesProvider(output, builtInRegistries,
+                                new RegistrySetBuilder().add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
+                                                ConstructionSloopInputs::bootstrapNether)
+                                        .add(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterials::bootstrapNether)
+                                        .add(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariants::bootstrapNether)
+                                        .add(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariants::bootstrapNether)
+                                        .add(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT,
+                                                ConstructionSloopVariants::bootstrapNether), Set.of(AlekiShips.MOD_ID)))
+                .getRegistryProvider();
     }
 
     private static RegistrySetBuilder datapackEntries() {

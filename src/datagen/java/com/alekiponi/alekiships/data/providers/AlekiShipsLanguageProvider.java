@@ -42,6 +42,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
         this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
+        this.add(AlekiShips.NETHER_WOOD_PACK_KEY, "Nether Wood support for NiftyShips");
 
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
 

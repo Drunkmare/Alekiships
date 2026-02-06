@@ -1,0 +1,14 @@
+{
+  "loot_table": "alekiships:entities/rowboat/warped",
+  "material": "alekiships:warped",
+  "repair_material": [
+    {
+      "repair_amount": 8.0,
+      "repair_ingredient": {
+        "item": "minecraft:warped_planks"
+      },
+      "repair_sound": "minecraft:block.nether_wood.place"
+    }
+  ],
+  "texture": "alekiships:entity/watercraft/rowboat/warped"
+}

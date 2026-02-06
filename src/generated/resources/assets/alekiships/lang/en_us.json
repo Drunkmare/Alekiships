@@ -13,6 +13,7 @@
   "alekiships.advancements.rowboat_completed.title": "The Montlake Cut",
   "alekiships.advancements.sloop_completed.description": "Build a Sloop",
   "alekiships.advancements.sloop_completed.title": "Yesler's Wharf",
+  "alekiships.builtin.datapack.netherwood.description": "Nether Wood support for NiftyShips",
   "alekiships.config.client.tillerControlScheme": "Tiller Control Scheme",
   "alekiships.config.server.windAffectsBoatsWithNoAnchor": "Wind Affects Boats With No Anchor",
   "alekiships.failed_multiblock_detection": "No Valid Hull Structure Found",
@@ -121,9 +122,11 @@
   "sloop_construction_variant.alekiships.bamboo": "Bamboo",
   "sloop_construction_variant.alekiships.birch": "Birch",
   "sloop_construction_variant.alekiships.cherry": "Cherry",
+  "sloop_construction_variant.alekiships.crimson": "Crimson",
   "sloop_construction_variant.alekiships.dark_oak": "Dark Oak",
   "sloop_construction_variant.alekiships.jungle": "Jungle",
   "sloop_construction_variant.alekiships.mangrove": "Mangrove",
   "sloop_construction_variant.alekiships.oak": "Oak",
-  "sloop_construction_variant.alekiships.spruce": "Spruce"
+  "sloop_construction_variant.alekiships.spruce": "Spruce",
+  "sloop_construction_variant.alekiships.warped": "Warped"
 }
