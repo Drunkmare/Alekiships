@@ -1,6 +1,0 @@
-{
-  "parent": "alekiships:block/watercraft_frame/angled/template/outer/second",
-  "textures": {
-    "plank": "minecraft:block/warped_planks"
-  }
-}

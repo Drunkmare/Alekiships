@@ -2,14 +2,10 @@ package com.alekiponi.alekiships.data.providers.models;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.block.*;
-import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.VanillaWood;
+import com.alekiponi.alekiships.data.util.FrameBlockHelper;
 
-import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -20,10 +16,8 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-import java.util.Locale;
-import java.util.function.BiConsumer;
+import java.text.MessageFormat;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class AlekiShipsBlockStateProvider extends BlockStateProvider {
@@ -34,116 +28,21 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
         super(output, AlekiShips.MOD_ID, existingFileHelper);
     }
 
-    /**
-     * @return The state mapper for our simple angled boat frames
-     */
-    public static Function<BlockState, ConfiguredModel[]> angledBoatFrame(final ModelFile straight,
-            final ModelFile inner, final ModelFile outer) {
-        return blockState -> {
-            final StairsShape shape = blockState.getValue(StairBlock.SHAPE);
-            final int yRot = angledBoatFrameYRot(shape, blockState.getValue(StairBlock.FACING));
-
-            return ConfiguredModel.builder().modelFile(
-                            shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
-                    .rotationY(yRot)/*.uvLock(yRot != 0)*/.build();
-        };
-    }
-
-    /**
-     * @return A consumer that generates the models and blockstate for the passed in boat material and flat frame block
-     */
-    public static BiConsumer<BoatMaterial, Supplier<? extends Block>> woodenBoatFrameFlat(
-            final BlockStateProvider blockStateProvider, final ModelFile.ExistingModelFile frameFlat) {
-        return (wood, registryObject) -> {
-            final var plankTexture = blockStateProvider.blockTexture(wood.getDeckBlock().getBlock());
-            final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get()).part()
-                    .modelFile(frameFlat).addModel().end();
-
-            IntStream.range(0, 4).forEach(progress -> {
-                final var plankModel = blockStateProvider.models().withExistingParent(
-                        String.format(Locale.ROOT, "block/wood/watercraft_frame/flat/%s/%s", wood.getSerializedName(),
-                                PROGRESS_STRINGS[progress]), ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                String.format(Locale.ROOT, "block/watercraft_frame/flat/template/%s",
-                                        PROGRESS_STRINGS[progress]))).texture("plank", plankTexture);
-
-                multipartBuilder.part().modelFile(plankModel).addModel()
-                        .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED,
-                                IntStream.range(progress, 4).boxed().toArray(Integer[]::new));
-            });
-        };
-    }
-
-    /**
-     * @return A consumer that generates the models and blockstate for the passed in boat material and angled frame block
-     */
-    public static BiConsumer<VanillaWood, Supplier<? extends Block>> woodenBoatFrameAngled(
-            final BlockStateProvider blockStateProvider, final ModelFile.ExistingModelFile straight,
-            final ModelFile.ExistingModelFile inner, final ModelFile.ExistingModelFile outer) {
-        return (wood, registryObject) -> {
-            final var plankTexture = blockStateProvider.blockTexture(wood.getDeckBlock().getBlock());
-
-            AngledWoodenBoatFrameBlock.FACING.getPossibleValues().forEach(facing -> {
-                AngledWoodenBoatFrameBlock.SHAPE.getPossibleValues().forEach(shape -> {
-                    final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get());
-
-                    final int yRot = angledBoatFrameYRot(shape, facing);
-
-                    multipartBuilder.part().modelFile(
-                                    shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
-                            .rotationY(yRot)/*.uvLock(yRot != 0)*/.addModel()
-                            .condition(AngledWoodenBoatFrameBlock.FACING, facing)
-                            .condition(AngledWoodenBoatFrameBlock.SHAPE, shape);
-
-                    IntStream.range(0, 4).forEach(progress -> {
-                        final String modelShape = shape == StairsShape.STRAIGHT ? "straight" : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? "inner" : "outer";
-                        final var plankModel = blockStateProvider.models().withExistingParent(
-                                        String.format(Locale.ROOT, "block/wood/watercraft_frame/angled/%s/%s/%s",
-                                                wood.getSerializedName(), modelShape, PROGRESS_STRINGS[progress]),
-                                        ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                                String.format(Locale.ROOT, "block/watercraft_frame/angled/template/%s/%s",
-                                                        modelShape, PROGRESS_STRINGS[progress])))
-                                .texture("plank", plankTexture);
-
-                        multipartBuilder.part().modelFile(plankModel).rotationY(yRot).uvLock(yRot != 0).addModel()
-                                .condition(AngledWoodenBoatFrameBlock.FACING, facing)
-                                .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
-                                .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
-                                        IntStream.range(progress, 4).boxed().toArray(Integer[]::new));
-                    });
-                });
-            });
-        };
-    }
-
-    /**
-     * Helper to get a models Y rotation for angled boat frames.
-     */
-    public static int angledBoatFrameYRot(final StairsShape shape, final Direction facing) {
-        return switch (shape) {
-            case INNER_RIGHT, STRAIGHT -> ((int) facing.toYRot());
-            case OUTER_LEFT -> (int) facing.toYRot() + 90;
-            case OUTER_RIGHT -> (int) facing.toYRot() + 180;
-            case INNER_LEFT -> (int) facing.toYRot() + 270;
-        } % 360;
-    }
-
     @Override
     protected void registerStatesAndModels() {
-        final var frameFlat = this.models().getExistingFile(this.modLoc("block/watercraft_frame/flat/frame"));
+        final var frameFlat = this.models().getExistingFile(FrameBlockHelper.FLAT_FRAME);
 
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.forEach(
-                AlekiShipsBlockStateProvider.woodenBoatFrameFlat(this, frameFlat));
+        this.woodenBoatFrameFlat(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(), frameFlat);
 
         final ModelFile.ExistingModelFile angledFrameStraight = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/straight"));
+                .getExistingFile(FrameBlockHelper.ANGLED_FRAME_STRAIGHT);
         final ModelFile.ExistingModelFile angledFrameInner = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/inner"));
+                .getExistingFile(FrameBlockHelper.ANGLED_FRAME_INNER);
         final ModelFile.ExistingModelFile angledFrameOuter = this.models()
-                .getExistingFile(this.modLoc("block/watercraft_frame/angled/outer"));
+                .getExistingFile(FrameBlockHelper.ANGLED_FRAME_OUTER);
 
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.forEach(
-                woodenBoatFrameAngled(this, angledFrameStraight, angledFrameInner, angledFrameOuter));
-
+        this.woodenBoatFrameAngled(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), angledFrameStraight,
+                angledFrameInner, angledFrameOuter);
         this.angledBoatFrame(AlekiShipsBlocks.BOAT_FRAME_ANGLED.get(), angledFrameStraight, angledFrameInner,
                 angledFrameOuter);
         this.simpleBlockItem(AlekiShipsBlocks.BOAT_FRAME_ANGLED.get(), angledFrameStraight);
@@ -161,10 +60,11 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
         this.itemModels().basicItem(AlekiShipsBlocks.CLEAT.get().asItem());
     }
 
-    public void angledBoatFrame(final Block block, final ModelFile.ExistingModelFile straight,
-            final ModelFile.ExistingModelFile inner, final ModelFile.ExistingModelFile outer) {
+    public void angledBoatFrame(final Block block, final ModelFile straight, final ModelFile inner,
+            final ModelFile outer) {
         this.getVariantBuilder(block)
-                .forAllStatesExcept(angledBoatFrame(straight, inner, outer), AngledBoatFrameBlock.WATERLOGGED);
+                .forAllStatesExcept(FrameBlockHelper.angledBoatFrameStateMapper(straight, inner, outer),
+                        AngledBoatFrameBlock.WATERLOGGED);
     }
 
     public void horizontalBlock(final Block block, final ModelFile model, final int angleOffset,
@@ -177,8 +77,63 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
         this.getVariantBuilder(block).forAllStatesExcept(blockState -> {
             final int yRot = ((int) blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
                     .toYRot() + angleOffset) % 360;
-            return ConfiguredModel.builder().modelFile(modelFunc.apply(blockState)).rotationY(yRot).uvLock(yRot != 0)
+            return ConfiguredModel.builder()
+                    .modelFile(modelFunc.apply(blockState))
+                    .rotationY(yRot)
+                    .uvLock(yRot != 0)
                     .build();
         }, ignoredProperties);
+    }
+
+    private void woodenBoatFrameFlat(final FlatWoodenBoatFrameBlock boatFrame, final ModelFile frameFlat) {
+        final var multipartBuilder = this.getMultipartBuilder(boatFrame).part().modelFile(frameFlat).addModel().end();
+        IntStream.rangeClosed(0, FlatWoodenBoatFrameBlock.FULLY_PROCESSED)
+                .forEach(progress -> multipartBuilder.part()
+                        .modelFile(this.models()
+                                .getExistingFile(AlekiShips.location(
+                                        MessageFormat.format("block/watercraft_frame/wooden/flat/{0}",
+                                                PROGRESS_STRINGS[progress]))))
+                        .addModel()
+                        .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                IntStream.rangeClosed(progress, FlatWoodenBoatFrameBlock.FULLY_PROCESSED).boxed()
+                                        .toArray(Integer[]::new)));
+    }
+
+    private void woodenBoatFrameAngled(final AngledWoodenBoatFrameBlock boatFrame, final ModelFile straight,
+            final ModelFile inner, final ModelFile outer) {
+        AngledWoodenBoatFrameBlock.FACING.getPossibleValues()
+                .forEach(facing -> AngledWoodenBoatFrameBlock.SHAPE.getPossibleValues()
+                        .forEach(shape -> {
+                            final var multipartBuilder = this.getMultipartBuilder(boatFrame);
+
+                            final int yRot = FrameBlockHelper.angledBoatFrameYRot(shape, facing);
+
+                            multipartBuilder.part()
+                                    .modelFile(
+                                            shape == StairsShape.STRAIGHT ? straight : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? inner : outer)
+                                    .rotationY(yRot)/*.uvLock(yRot != 0)*/.addModel()
+                                    .condition(AngledWoodenBoatFrameBlock.FACING, facing)
+                                    .condition(AngledWoodenBoatFrameBlock.SHAPE, shape);
+
+                            IntStream.rangeClosed(0, AngledWoodenBoatFrameBlock.FULLY_PROCESSED)
+                                    .forEach(progress -> {
+                                        final String modelShape = shape == StairsShape.STRAIGHT ? "straight" : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? "inner" : "outer";
+
+                                        multipartBuilder.part()
+                                                .modelFile(this.models()
+                                                        .getExistingFile(AlekiShips.location(MessageFormat.format(
+                                                                "block/watercraft_frame/wooden/angled/{0}/{1}",
+                                                                modelShape, PROGRESS_STRINGS[progress]))))
+                                                .rotationY(yRot)
+                                                .uvLock(yRot != 0)
+                                                .addModel()
+                                                .condition(AngledWoodenBoatFrameBlock.FACING, facing)
+                                                .condition(AngledWoodenBoatFrameBlock.SHAPE, shape)
+                                                .condition(AngledWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                                        IntStream.rangeClosed(progress,
+                                                                        AngledWoodenBoatFrameBlock.FULLY_PROCESSED).boxed()
+                                                                .toArray(Integer[]::new));
+                                    });
+                        }));
     }
 }

@@ -6,9 +6,11 @@ import weather2.Weather;
 
 import com.alekiponi.alekiships.client.AlekiShipsClientEvents;
 import com.alekiponi.alekiships.client.AlekiShipsClientForgeEvents;
+import com.alekiponi.alekiships.commands.AlekiShipsCommands;
 import com.alekiponi.alekiships.common.AlekiShipsBuiltInRegistries;
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
+import com.alekiponi.alekiships.common.block.entity.AlekishipsBlockEntities;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsChestCompartmentTypes;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsCompartmentPlaceableSerializers;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsDirectCompartmentTypes;
@@ -16,17 +18,24 @@ import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.common.item.AlekiShipsTabs;
 import com.alekiponi.alekiships.common.item.components.AlekiShipsComponents;
+import com.alekiponi.alekiships.common.recipe.AlekiShipsRecipeSerializers;
+import com.alekiponi.alekiships.common.recipe.AlekiShipsRecipeTypes;
+import com.alekiponi.alekiships.common.recipe.entity.AlekiShipsEntityResultSerializers;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.entity.AlekiShipsBlockEntityIngredientSerializers;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsSounds;
 import com.alekiponi.alekiships.compat.weather2.Weather2WindModelSerializers;
 import com.alekiponi.alekiships.events.ForgeEventHandler;
 import com.alekiponi.alekiships.events.config.AlekishipsConfig;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.network.PacketHandler;
-import com.alekiponi.alekiships.util.VanillaWood;
 import com.alekiponi.alekiships.util.advancements.AlekiShipsAdvancements;
 import com.alekiponi.alekiships.wind.AlekiShipsWindModelSerializers;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -35,12 +44,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
@@ -49,6 +58,7 @@ import java.util.List;
 @Mod(AlekiShips.MOD_ID)
 public final class AlekiShips {
     public static final String MOD_ID = "alekiships";
+    public static final String NETHER_WOOD_PACK_KEY = MOD_ID + ".builtin.datapack.netherwood.description";
 
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -66,12 +76,17 @@ public final class AlekiShips {
         AlekiShipsBlocks.BLOCKS.register(modBus);
         AlekiShipsEntities.ENTITY_TYPES.register(modBus);
         AlekiShipsEntityDataSerializers.ENTITY_DATA_SERIALIZERS.register(modBus);
+        AlekiShipsEntityResultSerializers.ENTITY_RESULT_SERIALIZERS.register(modBus);
         AlekiShipsSounds.SOUNDS.register(modBus);
         AlekiShipsAdvancements.TRIGGERS.register(modBus);
         AlekiShipsDirectCompartmentTypes.DIRECT_COMPARTMENTS.register(modBus);
         AlekiShipsCompartmentPlaceableSerializers.COMPARTMENT_PLACEABLE_SERIALIZERS.register(modBus);
         AlekiShipsChestCompartmentTypes.CHEST_TYPES.register(modBus);
         AlekiShipsWindModelSerializers.WIND_MODEL_SERIALIZERS.register(modBus);
+        AlekiShipsRecipeTypes.RECIPE_TYPES.register(modBus);
+        AlekiShipsRecipeSerializers.RECIPE_SERIALIZERS.register(modBus);
+        AlekiShipsBlockEntityIngredientSerializers.BLOCK_ENTITY_INGREDIENT_SERIALIZERS.register(modBus);
+        AlekishipsBlockEntities.BLOCK_ENTITIES.register(modBus);
 
         if (ModList.get().isLoaded(Weather.MODID)) {
             Weather2WindModelSerializers.WIND_MODEL_SERIALIZERS.register(modBus);
@@ -81,6 +96,7 @@ public final class AlekiShips {
         modBus.addListener(AlekiShipsBuiltInRegistries::registerDatapackRegistries);
         modBus.addListener(AlekiShipsDataMaps::registerDataMaps);
 
+        NeoForge.EVENT_BUS.addListener(AlekiShipsCommands::onRegisterCommand);
         NeoForge.EVENT_BUS.register(ForgeEventHandler.class);
 
         if (dist == Dist.CLIENT) {
@@ -95,11 +111,6 @@ public final class AlekiShips {
      */
     public static ResourceLocation location(final String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-    }
-
-    @SubscribeEvent
-    private static void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(VanillaWood::registerFrames);
     }
 
     @SubscribeEvent
@@ -128,5 +139,11 @@ public final class AlekiShips {
                 (containerCompartment, unused) -> new InvWrapper(containerCompartment));
         event.registerEntity(Capabilities.ItemHandler.ENTITY_AUTOMATION,
                 AlekiShipsEntities.SHULKER_BOX_COMPARTMENT_ENTITY.get(), SidedInvWrapper::new);
+    }
+
+    @SubscribeEvent
+    private static void addBuiltInPacks(final AddPackFindersEvent event) {
+        event.addPackFinders(location("data/" + MOD_ID + "/datapacks/nether_woods"), PackType.SERVER_DATA,
+                Component.translatable(NETHER_WOOD_PACK_KEY), PackSource.SERVER, false, Pack.Position.TOP);
     }
 }

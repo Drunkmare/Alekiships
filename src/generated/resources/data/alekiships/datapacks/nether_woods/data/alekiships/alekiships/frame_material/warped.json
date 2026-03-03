@@ -1,0 +1,9 @@
+{
+  "name": {
+    "translate": "frame_material.alekiships.warped"
+  },
+  "sound": {
+    "sound_id": "minecraft:block.nether_wood.place"
+  },
+  "texture": "minecraft:block/warped_planks"
+}

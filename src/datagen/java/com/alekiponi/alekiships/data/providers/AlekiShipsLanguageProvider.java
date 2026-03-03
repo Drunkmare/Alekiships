@@ -1,27 +1,38 @@
 package com.alekiponi.alekiships.data.providers;
 
+import com.google.common.collect.Iterators;
 import snownee.jade.api.IJadeProvider;
 
 import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.IngameOverlays;
+import com.alekiponi.alekiships.commands.server.EntityMultiblockCommands;
 import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.entity.AlekiShipsEntities;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
+import com.alekiponi.alekiships.common.recipe.AlekiShipsRecipeTypes;
+import com.alekiponi.alekiships.common.recipe.EntityMultiblockRecipe;
 import com.alekiponi.alekiships.common.sounds.AlekiShipsJukeboxSongs;
 import com.alekiponi.alekiships.compat.jei.JeiIntegration;
+import com.alekiponi.alekiships.compat.jei.category.VehicleRepairMaterialCategory;
+import com.alekiponi.alekiships.compat.waila.FrameBlockProvider;
 import com.alekiponi.alekiships.compat.waila.compartment.*;
 import com.alekiponi.alekiships.compat.waila.compartment.vehicle.ConstructionEntityProvider;
+import com.alekiponi.alekiships.compat.waila.compartment.vehicle.VehicleEntityDamageProvider;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.data.SmartLanguageProvider;
+import com.alekiponi.alekiships.util.*;
 
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import net.neoforged.neoforge.registries.DeferredHolder;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
@@ -38,9 +49,23 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addTranslationsForConfig();
 
         this.add("creativetab.alekiships_tab", "aleki's Nifty Ships");
-        this.add("alekiships.failed_multiblock_detection", "No Valid Hull Structure Found");
 
         this.add(IngameOverlays.EJECT_PASSENGERS_KEY, "Press %s + %s to eject");
+        this.add(EntityMultiblockRecipe.SUCCESSFULLY_ASSEMBLED, "Successfully assembled %s");
+        this.add(EntityMultiblockRecipe.FAILED_TO_ASEMBLE, "Failed to asemble %s");
+        this.add(EntityMultiblockCommands.NOT_ENTITY_MULTIBLOCK_RECIPE,
+                "%s is not a " + AlekiShipsRecipeTypes.ENTITY_MULTIBLOCK_RECIPE.getId());
+        this.add(EntityMultiblockCommands.NO_MATCHING_STATES, "No matching states for %s");
+
+        // Our wood types must be named so our entities can reflect their name
+        Iterators.<Wood>concat(Iterators.forArray(OverworldWood.values()), Iterators.forArray(NetherWood.values()))
+                .forEachRemaining(wood -> {
+                    final var id = AlekiShips.location(wood.getSerializedName());
+                    final var name = DataGenHelper.langify(wood.getSerializedName());
+                    this.add(BoatMaterial.getDescriptionId(id), name);
+                    this.add(ConstructionSloopVariant.getDescriptionId(id), name);
+                    this.add(FrameMaterial.getDescriptionId(id), name);
+                });
 
         this.addTranslationsForJade();
         this.addTranslationsForJei();
@@ -49,14 +74,8 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
     }
 
     private void addTranslationsForBlocks() {
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.forEach((wood, registryObject) -> this.addBlock(registryObject,
-                String.format(Locale.ROOT, "%s Flat Shipwright's Scaffolding",
-                        DataGenHelper.langify(wood.getSerializedName()))));
-
-        AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.forEach((wood, registryObject) -> this.addBlock(registryObject,
-                String.format(Locale.ROOT, "%s Sloped Shipwright's Scaffolding",
-                        DataGenHelper.langify(wood.getSerializedName()))));
-
+        this.addBlock(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED, "Wooden Sloped Shipwright's Scaffolding");
+        this.addBlock(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT, "Wooden Flat Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_ANGLED, "Sloped Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_FLAT, "Flat Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.OARLOCK, "Oarlock");
@@ -78,13 +97,9 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
 
     private void addTranslationsForEntities() {
         // Vehicles
-        AlekiShipsEntities.ROWBOATS.forEach((wood, registryObject) -> this.addEntityType(registryObject,
-                String.format(Locale.ROOT, "%s Rowboat", DataGenHelper.langify(wood.getSerializedName()))));
-        AlekiShipsEntities.SLOOPS.forEach((wood, registryObject) -> this.addEntityType(registryObject,
-                String.format(Locale.ROOT, "%s Sloop", DataGenHelper.langify(wood.getSerializedName()))));
-        AlekiShipsEntities.SLOOPS_UNDER_CONSTRUCTION.forEach(
-                (wood, registryObject) -> this.addEntityType(registryObject,
-                        String.format(Locale.ROOT, "%s Sloop", DataGenHelper.langify(wood.getSerializedName()))));
+        this.addEntityType(AlekiShipsEntities.ROWBOAT, "%s Rowboat");
+        this.addEntityType(AlekiShipsEntities.SLOOP, "%s Sloop");
+        this.addEntityType(AlekiShipsEntities.CONSTRUCTION_SLOOP, "%s Construction Sloop");
 
         // Misc
         this.addEntityType(AlekiShipsEntities.VEHICLE_PART, "Vehicle Part");
@@ -133,20 +148,67 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.jade(BrewingStandCompartmentProvider.INSTANCE, "Brewing Stand Compartment");
         this.jade(BlockCompartmentProvider.INSTANCE, "Block Compartment");
         this.jade(ConstructionEntityProvider.INSTANCE, "Construction Entity");
+        this.jade(VehicleEntityDamageProvider.INSTANCE, "Vehicle Entity Damage");
+        this.jadeConfig(VehicleEntityDamageProvider.DECIMAL_PLACES, "Decimal Places");
+        this.jadeConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, "Display Type");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE, "Damage",
+                "Display the damage done to vehicles as a percentage of overall health");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.DAMAGE_ABSOLUTE,
+                "Damage Absolute",
+                "Display the damage done to vehicles as an absolute value including the total damage that can be done");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH, "Health",
+                "Display the health of vehicles as a percentage");
+        this.jadeEnumConfig(VehicleEntityDamageProvider.DISPLAY_TYPE, VehicleEntityDamageProvider.DisplayType.HEALTH_ABSOLUTE,
+                "Health Absolute", "Display the health of vehicles as an absolute value including the total health");
+
+        this.jade(FrameBlockProvider.FLAT, "Frame Block");
 
         this.add(BlockCompartmentProvider.COMPARTMENT_BLOCK_KEY, "%s Compartment");
         this.add(ConstructionEntityProvider.INPUTS_REMAINING_KEY, "Inputs remaining: %s");
         this.add(ConstructionEntityProvider.CURRENT_STAGE_KEY, "Current Stage: %s");
         this.add(ConstructionEntityProvider.NEXT_STAGE_KEY, "Next Stage: %s");
+        this.add(VehicleEntityDamageProvider.DAMAGE_KEY, "Damage: %s%%");
+        this.add(VehicleEntityDamageProvider.DAMAGE_ABSOLUTE_KEY, "Damage: %s Total: %s");
+        this.add(VehicleEntityDamageProvider.HEALTH_KEY, "Health: %s%%");
+        this.add(VehicleEntityDamageProvider.HEALTH_ABSOLUTE_KEY, "Health: %s Total: %s");
+        this.add(VehicleEntityDamageProvider.WRECKED_KEY, "Wrecked!");
+        this.add(FrameBlockProvider.ANGLED.key, "%s Sloped Shipwright's Scaffolding");
+        this.add(FrameBlockProvider.FLAT.key, "%s Flat Shipwright's Scaffolding");
     }
 
     private void addTranslationsForJei() {
         this.add(JeiIntegration.CAN_PLACE_INTO_COMPARTMENTS_KEY, "Can be placed into compartments");
         this.add(JeiIntegration.CAN_BE_USED_TO_DYE_SHIPS_SAILS_KEY, "Can be used to dye ships & sails");
+        this.add(VehicleRepairMaterialCategory.REPAIR_AMOUNT_PERCENT_KEY, "Repair Amount: %s%%");
+        this.add(VehicleRepairMaterialCategory.REPAIR_AMOUNT_ABSOLUTE_KEY, "Repair Amount: %s");
+        this.add(VehicleRepairMaterialCategory.MINIMUM_DAMAGE_PERCENT_KEY, "Minimum Damage: %s%%");
+        this.add(VehicleRepairMaterialCategory.MINIMUM_DAMAGE_ABSOLUTE_KEY, "Minimum Damage: %s");
+        this.add(VehicleRepairMaterialCategory.MAXIMUM_DAMAGE_PERCENT_KEY, "Maximum Damage: %s%%");
+        this.add(VehicleRepairMaterialCategory.MAXIMUM_DAMAGE_ABSOLUTE_KEY, "Maximum Damage: %s");
     }
 
     private void jade(final IJadeProvider provider, final String value) {
         this.add("config.jade.plugin_" + provider.getUid().toLanguageKey(), value);
+    }
+
+    private void jadeConfig(final ResourceLocation configName, final String value) {
+        this.add("config.jade.plugin_" + configName.toLanguageKey(), value);
+    }
+
+    /**
+     * @param configName The config name
+     * @param enumValue  The enum value
+     * @param value      The localization of the enum
+     * @param desc       An optional description
+     */
+    private <E extends Enum<E>> void jadeEnumConfig(final ResourceLocation configName, final E enumValue,
+            final String value, final @Nullable String desc) {
+        final var key = "config.jade.plugin_" + configName.toLanguageKey() + "_" + enumValue.name()
+                .toLowerCase(Locale.ENGLISH);
+        this.add(key, value);
+        if (desc != null) {
+            this.add(key + "_desc", desc);
+        }
     }
 
     @Override

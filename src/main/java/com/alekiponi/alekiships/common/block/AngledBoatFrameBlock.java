@@ -1,12 +1,12 @@
 package com.alekiponi.alekiships.common.block;
 
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -25,10 +25,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
-import java.util.IdentityHashMap;
 import java.util.stream.IntStream;
 
-public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBlock {
+public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBlock, FrameBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;
@@ -44,8 +43,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
         final VoxelShape southEast = Block.box(8, 8, 8, 16, 16, 16);
         SHAPES = makeShapes(bottom, northWest, northEast, southWest, southEast);
     }
-
-    private final IdentityHashMap<Item, BoatFrame> boatFrames = new IdentityHashMap<>();
 
     public AngledBoatFrameBlock(final Properties properties) {
         super(properties);
@@ -197,56 +194,19 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
         return blockState.getBlock() instanceof AngledBoatFrameBlock;
     }
 
-    /**
-     * Registers a mapping of the passed in {@link Item} instance and the passed in {@link BoatFrame}
-     * A given {@link Item} instance may only map to one {@link BoatFrame} instance but multiple
-     * {@link Item}s can map to the same {@link BoatFrame}.
-     *
-     * @apiNote This is for the particular frame instance
-     */
-    public final void registerFrame(final Item item, final BoatFrame boatFrame) {
-        assert boatFrame instanceof Block : "Registered Frames must be implemented on a Block";
-        boatFrames.put(item, boatFrame);
-    }
-
-    /**
-     * Gets the registered {@link BoatFrame} for the given item. If {@code null} then there is no valid mapping
-     */
-    @Nullable
-    protected BoatFrame getFrame(final Item item) {
-        return boatFrames.get(item);
-    }
-
-
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
-        final BoatFrame frameBlock = getFrame(stack.getItem());
-
-        if (frameBlock == null) return ItemInteractionResult.FAIL;
-
-        final BlockState frameBlockstate = frameBlock.withPropertiesOf(blockState);
-
-        level.setBlockAndUpdate(blockPos, frameBlockstate);
-
-        if (!player.getAbilities().instabuild) stack.shrink(1);
-
-        final SoundType soundType = frameBlockstate.getSoundType(level, blockPos, player);
-
-        level.playSound(player, blockPos, soundType.getPlaceSound(), SoundSource.BLOCKS,
-                (soundType.getVolume() + 1) / 2, soundType.getPitch() * 0.8F);
-
-        return ItemInteractionResult.SUCCESS;
+    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState blockState, final Level level,
+            final BlockPos blockPos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        return FrameBlock.tryPlaceFilledFrame(stack, blockState, level, blockPos, player,
+                AlekiShipsDataMaps.ANGLED_BOAT_FRAME);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean useShapeForLightOcclusion(final BlockState blockState) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public VoxelShape getShape(final BlockState blockState, final BlockGetter blockGetter, final BlockPos blockPos,
             final CollisionContext context) {
         return SHAPES[SHAPE_BY_STATE[this.getShapeIndex(blockState)]];
@@ -267,7 +227,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState updateShape(final BlockState blockState, final Direction direction,
             final BlockState neighborState, final LevelAccessor levelAccessor, final BlockPos blockPos,
             final BlockPos neighborPos) {
@@ -335,7 +294,6 @@ public class AngledBoatFrameBlock extends Block implements SimpleWaterloggedBloc
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState blockState) {
         return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
     }

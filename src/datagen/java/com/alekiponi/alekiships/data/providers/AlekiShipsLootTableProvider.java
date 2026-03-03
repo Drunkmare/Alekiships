@@ -1,6 +1,7 @@
 package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.data.loot.AlekiShipsBlockLootTables;
+import com.alekiponi.alekiships.data.loot.AlekiShipsBoatVariantLootTables;
 import com.alekiponi.alekiships.data.loot.AlekiShipsEntityLootTables;
 import com.alekiponi.alekiships.data.loot.AlekiShipsStructureLoot;
 
@@ -23,6 +24,8 @@ public final class AlekiShipsLootTableProvider {
                         new LootTableProvider.SubProviderEntry(AlekiShipsBlockLootTables::new,
                                 LootContextParamSets.BLOCK),
                         new LootTableProvider.SubProviderEntry(AlekiShipsStructureLoot::new,
-                                LootContextParamSets.CHEST)), lookupProvider);
+                                LootContextParamSets.CHEST),
+                        new LootTableProvider.SubProviderEntry(AlekiShipsBoatVariantLootTables::new,
+                                LootContextParamSets.ENTITY)), lookupProvider);
     }
 }

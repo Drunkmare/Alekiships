@@ -4,6 +4,7 @@
   "package": "com.alekiponi.alekiships.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "accessors.RecipeManagerAccessor",
     "accessors.ShulkerBoxMenuAccessor",
     "minecraft.FurnaceResultSlotMixin",
     "minecraft.LivingEntityMixin",
@@ -14,6 +15,7 @@
     "client.ArmorStandRendererMixin",
     "client.CameraMixin",
     "client.LocalPlayerMixin",
+    "client.accessors.ElementsModelAccessor",
     "minecraft.PlayerModelMixin"
   ],
   "injectors": {

@@ -1,7 +1,10 @@
 {
   "assemble_blockstate": "minecraft:bamboo_planks",
   "assemble_sound": "minecraft:block.wood.break",
-  "constructed_entity": "alekiships:sloop/bamboo",
+  "constructed_entity": {
+    "type": "alekiships:sloop",
+    "variant": "alekiships:bamboo"
+  },
   "stages": {
     "anchor": {
       "input": {

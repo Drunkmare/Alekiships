@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 
 public final class AlekiShipsTags {
@@ -37,14 +37,6 @@ public final class AlekiShipsTags {
 
     public static final class Entities {
         /**
-         * All sloops
-         */
-        public static final TagKey<EntityType<?>> SLOOPS = create("sloops");
-        /**
-         * All rowboats
-         */
-        public static final TagKey<EntityType<?>> ROWBOATS = create("rowboats");
-        /**
          * Vehicle helpers such as our collision entities
          */
         public static final TagKey<EntityType<?>> VEHICLE_HELPERS = create("vehicle_helpers");
@@ -69,14 +61,12 @@ public final class AlekiShipsTags {
         }
     }
 
-    public static final class Structures {
+    public static final class Biomes {
+        public static final TagKey<Biome> HAS_UNFINISHED_ROWBOAT_STRUCTURE = create("has_structure/unfinished_rowboat");
+        public static final TagKey<Biome> HAS_UNFINISHED_SLOOP_STRUCTURE = create("has_structure/unfinished_sloop");
 
-        public static final TagKey<Structure> UNFINISHED_SLOOP = create("unfinished_sloop");
-
-        public static final TagKey<Structure> UNFINISHED_ROWBOAT = create("unfinished_rowboat");
-
-        public static TagKey<Structure> create(final String id) {
-            return TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
+        private static TagKey<Biome> create(final String id) {
+            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID, id));
         }
     }
 }

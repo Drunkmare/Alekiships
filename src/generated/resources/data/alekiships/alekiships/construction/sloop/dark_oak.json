@@ -1,7 +1,10 @@
 {
   "assemble_blockstate": "minecraft:dark_oak_planks",
   "assemble_sound": "minecraft:block.wood.break",
-  "constructed_entity": "alekiships:sloop/dark_oak",
+  "constructed_entity": {
+    "type": "alekiships:sloop",
+    "variant": "alekiships:dark_oak"
+  },
   "stages": {
     "anchor": {
       "input": {

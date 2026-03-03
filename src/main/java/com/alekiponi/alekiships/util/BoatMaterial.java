@@ -1,56 +1,62 @@
 package com.alekiponi.alekiships.util;
 
-import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.state.BlockState;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 
-import java.util.Optional;
+import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceLocation;
+
+import lombok.*;
+import lombok.experimental.Accessors;
 
 /**
- * This represents a unique boat material. This may be wood or another material
- *
- * @apiNote Implementing this on an enum is recommended as these objects are compared using identity
+ * A boat material backing our actual boat variants enabling re-use
  */
-public interface BoatMaterial extends StringRepresentable {
+@Getter
+@Builder
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@Accessors(fluent = true)
+public final class BoatMaterial {
+
+    public static final Codec<BoatMaterial> DIRECT_CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(ComponentSerialization.CODEC.fieldOf("name").forGetter(BoatMaterial::name),
+                            Codec.BOOL.optionalFieldOf("withstands_lava", false).forGetter(BoatMaterial::withstandsLava))
+                    .apply(instance, BoatMaterial::new));
+
+    public static final Codec<Holder<BoatMaterial>> CODEC = RegistryFileCodec.create(AlekiShipsRegistries.BOAT_MATERIAL,
+            DIRECT_CODEC);
+
+    @SuppressWarnings("unused")
+    public static final StreamCodec<RegistryFriendlyByteBuf, BoatMaterial> STREAM_CODEC = StreamCodec.composite(
+            ComponentSerialization.STREAM_CODEC, BoatMaterial::name, ByteBufCodecs.BOOL, BoatMaterial::withstandsLava,
+            BoatMaterial::new);
 
     /**
-     * @return The Item instance that is used for building the deck of a sloop. This should also be the same instance
-     * that maps to the frame blocks
+     * The material name
      */
-    default Item getDeckItem() {
-        return this.getDeckBlock().getBlock().asItem();
-    }
-
+    private final Component name;
     /**
-     * @return The Item instance that's used for the railing of sloops
+     * If this material withstands lava
      */
-    Item getRailing();
+    @Builder.Default
+    private final boolean withstandsLava = false;
 
     /**
-     * @return The Item instance that's used for the log parts of sloop construction
-     */
-    Item getStrippedLog();
-
-    /**
-     * @return Whether this material withstands lava
-     */
-    boolean withstandsLava();
-
-    BlockState getDeckBlock();
-
-    /**
-     * @param boatType The entity type that should be returned
+     * @param registryName The registry name of the boat material
      *
-     * @return An optional entity type for the passed in {@link BoatType}
+     * @return The lang key for the materials name
      */
-    Optional<EntityType<? extends AbstractVehicle>> getEntityType(final BoatType boatType);
-
-    enum BoatType {
-        ROWBOAT,
-        SLOOP,
-        CONSTRUCTION_SLOOP
+    public static String getDescriptionId(final ResourceLocation registryName) {
+        return registryName.toLanguageKey("boat_material");
     }
 }

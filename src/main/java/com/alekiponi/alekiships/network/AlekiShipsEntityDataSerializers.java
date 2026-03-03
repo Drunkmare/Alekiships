@@ -4,9 +4,13 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
 import com.alekiponi.alekiships.common.recipe.util.ItemStackProvider;
 import com.alekiponi.alekiships.wind.Wind;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.item.DyeColor;
@@ -38,7 +42,17 @@ public final class AlekiShipsEntityDataSerializers {
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ChestCompartmentData>> CHEST_COMPARTMENT_DATA = register(
             "chest_compartment_data", () -> EntityDataSerializer.forValueType(ChestCompartmentData.STREAM_CODEC));
 
-    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Holder<SloopVariant>>> SLOOP_VARIANT = register(
+            "sloop_variant", () -> EntityDataSerializer.forValueType(SloopVariant.STREAM_CODEC));
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Holder<RowboatVariant>>> ROWBOAT_VARIANT = register(
+            "rowboat_variant", () -> EntityDataSerializer.forValueType(RowboatVariant.STREAM_CODEC));
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Holder<ConstructionSloopVariant>>> SLOOP_CONSTRUCTION_VARIANT = register(
+            "sloop_construction_variant",
+            () -> EntityDataSerializer.forValueType(ConstructionSloopVariant.STREAM_CODEC));
+
+    public static final Supplier<EntityDataSerializer<Optional<DyeColor>>> OPTIONAL_DYE_COLOR = register(
             "optional_dye_color",
             () -> EntityDataSerializer.forValueType(ByteBufCodecs.optional(DyeColor.STREAM_CODEC)));
 

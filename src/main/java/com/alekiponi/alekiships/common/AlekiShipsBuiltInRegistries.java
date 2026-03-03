@@ -6,6 +6,13 @@ import com.alekiponi.alekiships.common.compartment.DirectCompartmentType;
 import com.alekiponi.alekiships.common.entity.EntityInput;
 import com.alekiponi.alekiships.common.entity.SloopConstructionState;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
+import com.alekiponi.alekiships.common.entity.vehicle.ConstructionSloopVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.RowboatVariant;
+import com.alekiponi.alekiships.common.entity.vehicle.SloopVariant;
+import com.alekiponi.alekiships.common.recipe.entity.EntityResultSerializer;
+import com.alekiponi.alekiships.common.recipe.ingredient.block.entity.BlockEntityIngredientSerializer;
+import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.FrameMaterial;
 import com.alekiponi.alekiships.wind.WindModelSerializer;
 
 import net.minecraft.core.Registry;
@@ -25,12 +32,18 @@ public final class AlekiShipsBuiltInRegistries {
             .create();
     public static final Registry<WindModelSerializer<?>> WIND_MODEL_SERIALIZERS = new RegistryBuilder<>(
             AlekiShipsRegistries.WIND_MODEL_SERIALIZERS).sync(true).create();
+    public static final Registry<EntityResultSerializer<?>> ENTITY_RESULT_SERIALIZERS = new RegistryBuilder<>(
+            AlekiShipsRegistries.ENTITY_RESULT_SERIALIZER).sync(true).create();
+    public static final Registry<BlockEntityIngredientSerializer<?>> BLOCK_ENTITY_RESULT_SERIALIZERS = new RegistryBuilder<>(
+            AlekiShipsRegistries.BLOCK_ENTITY_RESULT_SERIALIZER).sync(true).create();
 
     public static void registerRegistries(final NewRegistryEvent event) {
         event.register(DIRECT_COMPARTMENT_TYPES);
         event.register(COMPARTMENT_TYPE_SERIALIZERS);
         event.register(CHEST_COMPARTMENT_TYPES);
         event.register(WIND_MODEL_SERIALIZERS);
+        event.register(ENTITY_RESULT_SERIALIZERS);
+        event.register(BLOCK_ENTITY_RESULT_SERIALIZERS);
     }
 
     public static void registerDatapackRegistries(final DataPackRegistryEvent.NewRegistry event) {
@@ -38,5 +51,15 @@ public final class AlekiShipsBuiltInRegistries {
         event.dataPackRegistry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_INPUT,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC,
                 SloopConstructionState.SloopConstructionStage.INPUT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.BOAT_MATERIAL, BoatMaterial.DIRECT_CODEC,
+                BoatMaterial.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.FRAME_MATERIAL, FrameMaterial.DIRECT_CODEC,
+                FrameMaterial.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.ROWBOAT_VARIANT, RowboatVariant.DIRECT_CODEC,
+                RowboatVariant.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.SLOOP_VARIANT, SloopVariant.DIRECT_CODEC,
+                SloopVariant.DIRECT_CODEC);
+        event.dataPackRegistry(AlekiShipsRegistries.CONSTRUCTION_SLOOP_VARIANT, ConstructionSloopVariant.DIRECT_CODEC,
+                ConstructionSloopVariant.DIRECT_CODEC);
     }
 }

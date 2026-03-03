@@ -2,6 +2,7 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 
 import com.mojang.serialization.Codec;
 
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
 import com.alekiponi.alekiships.common.entity.compartment.AbstractCompartmentEntity;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IBoatNoAnchor;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveBlockOnlyCompartments;
@@ -10,13 +11,16 @@ import com.alekiponi.alekiships.common.entity.vehiclecapability.IPaintable;
 import com.alekiponi.alekiships.common.item.AlekiShipsItems;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
 import com.alekiponi.alekiships.util.AlekiShipsExtraCodecs;
-import com.alekiponi.alekiships.util.BoatMaterial;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
@@ -27,22 +31,23 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
+public class RowboatEntity extends AbstractAlekiBoatEntity<RowboatVariant> implements IPaintable, IHaveBlockOnlyCompartments, IHaveCleats, IBoatNoAnchor {
     private static final EntityDataAccessor<Byte> DATA_ID_OARS = SynchedEntityData.defineId(RowboatEntity.class,
             EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<DyeColor>> DATA_ID_PAINT_COLOR = SynchedEntityData.defineId(
             RowboatEntity.class, AlekiShipsEntityDataSerializers.OPTIONAL_DYE_COLOR.get());
+    private static final EntityDataAccessor<Holder<RowboatVariant>> DATA_ID_ROWBOAT_TYPE = SynchedEntityData.defineId(
+            RowboatEntity.class, AlekiShipsEntityDataSerializers.ROWBOAT_VARIANT.get());
+
     public static final int PASSENGER_NUMBER = 6;
 
     public static final int[] CLEATS = {5};
@@ -54,13 +59,11 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     public static final int[] COMPARTMENTS = {0, 1, 2, 3, 4};
     protected static final float PASSENGER_SIZE_LIMIT = 1.4F;
 
-    protected static final float DAMAGE_THRESHOLD = 128.0f;
+    public static final float DAMAGE_THRESHOLD = 128.0f;
     protected static final float DAMAGE_RECOVERY = 5.333f;
 
-
-    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level,
-            final BoatMaterial boatMaterial) {
-        super(entityType, level, boatMaterial);
+    public RowboatEntity(final EntityType<? extends RowboatEntity> entityType, final Level level) {
+        super(entityType, level);
     }
 
     @Override
@@ -212,11 +215,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
     }
 
     @Override
-    public Item getDropItem() {
-        return this.boatMaterial.getDeckItem();
-    }
-
-    @Override
     protected void dropCustomDestructionLoot(final DamageSource damageSource) {
         super.dropCustomDestructionLoot(damageSource);
         switch (this.getOars()) {
@@ -283,6 +281,9 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
 
         builder.define(DATA_ID_OARS, (byte) Oars.ZERO.getId());
         builder.define(DATA_ID_PAINT_COLOR, Optional.empty());
+        final var registry = this.registryAccess().registryOrThrow(AlekiShipsRegistries.ROWBOAT_VARIANT);
+        builder.define(DATA_ID_ROWBOAT_TYPE,
+                registry.getHolder(RowboatVariants.DEFAULT).or(registry::getAny).orElseThrow());
     }
 
     @Override
@@ -320,6 +321,7 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
                 AlekiShipsExtraCodecs.load(DyeColor.CODEC, NbtOps.INSTANCE, paint, this::setPaintColor);
             }
         }
+        RowboatVariant.load(compoundTag, this.registryAccess(), this::setVariant);
     }
 
     @Override
@@ -331,6 +333,21 @@ public class RowboatEntity extends AbstractAlekiBoatEntity implements IPaintable
                 .ifPresent(dyeColor -> AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, dyeColor,
                         tag -> compoundTag.put("paint", tag)));
         AlekiShipsExtraCodecs.save(Oars.CODEC, NbtOps.INSTANCE, this.getOars(), tag -> compoundTag.put("oars", tag));
+        RowboatVariant.save(compoundTag, this.getVariant());
+    }
+
+    @Override
+    public Holder<RowboatVariant> getVariant() {
+        return this.entityData.get(DATA_ID_ROWBOAT_TYPE);
+    }
+
+    @Override
+    public void setVariant(final Holder<RowboatVariant> boatVariant) {
+        this.entityData.set(DATA_ID_ROWBOAT_TYPE, boatVariant);
+    }
+
+    public ResourceLocation getTexture() {
+        return this.getVariant().value().texture();
     }
 
     @AllArgsConstructor

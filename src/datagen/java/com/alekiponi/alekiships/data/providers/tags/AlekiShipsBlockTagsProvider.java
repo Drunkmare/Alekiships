@@ -13,7 +13,6 @@ import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 public class AlekiShipsBlockTagsProvider extends BlockTagsProvider {
@@ -25,16 +24,11 @@ public class AlekiShipsBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(final HolderLookup.Provider provider) {
-        {
-            final var tag = this.tag(AlekiShipsTags.Blocks.WOODEN_WATERCRAFT_FRAMES);
-            AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.values().stream().map(Supplier::get).forEach(tag::add);
-            AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.values().stream().map(Supplier::get).forEach(tag::add);
-        }
-
         this.tag(AlekiShipsTags.Blocks.PLANTS_THAT_GET_MOWED).add(Blocks.KELP);
 
         // Vanilla mining tags
-        this.tag(BlockTags.MINEABLE_WITH_AXE).addTag(AlekiShipsTags.Blocks.WOODEN_WATERCRAFT_FRAMES);
+        this.tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get());
 
         this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AlekiShipsBlocks.OARLOCK.get(), AlekiShipsBlocks.CLEAT.get());
     }

@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.chars.CharSet;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class AlekiShipsExtraCodecs {
@@ -55,6 +58,18 @@ public final class AlekiShipsExtraCodecs {
 
                 return stringBuilder.toString();
             });
+
+    /**
+     * A codec for the typical any character key: some value like vanilla shaped recipes or our Multiblock Patterns
+     */
+    public static final Codec<Character> SYMBOL_CODEC = ExtraCodecs.NON_EMPTY_STRING.comapFlatMap(symbol -> {
+        if (symbol.length() != 1) {
+            return DataResult.error(() -> MessageFormat.format(
+                    "Invalid key entry: ''{0}'' is an invalid symbol (must be 1 character only).", symbol));
+        }
+
+        return DataResult.success(symbol.charAt(0));
+    }, String::valueOf);
 
     public static DataResult<BlockState> parseBlockState(final String string) {
         final var propertiesStart = string.indexOf('[');
@@ -129,6 +144,18 @@ public final class AlekiShipsExtraCodecs {
     }
 
     /**
+     * A {@link #SYMBOL_CODEC} which reserves some symbols. Vanilla for example reserves ' ' to use as an empty slot
+     *
+     * @param reservedSymbols The symbols to reserve
+     */
+    public static Codec<Character> reservedSymbols(final char... reservedSymbols) {
+        final CharSet set = CharSet.of(reservedSymbols);
+        return SYMBOL_CODEC.validate(symbol -> set.contains(symbol.charValue()) ? DataResult.error(
+                () -> MessageFormat.format("Invalid key entry: {0} is a reserved symbol.",
+                        symbol)) : DataResult.success(symbol));
+    }
+
+    /**
      * @param codec  The codec
      * @param ops    The ops
      * @param input  The input
@@ -152,5 +179,19 @@ public final class AlekiShipsExtraCodecs {
     public static <T, I> void save(final Codec<T> codec, final DynamicOps<I> ops, final T input,
             final Consumer<I> setter) {
         codec.encodeStart(ops, input).ifSuccess(setter);
+    }
+
+    /**
+     * Helper allowing easier map codec mapping as vanilla doesn't provide these helpers
+     *
+     * @param codec The map codec
+     * @param to    The function to transform to {@code <S>}
+     * @param from  The function to transform to {@code <A>}
+     * @param <S>   The output codec type
+     * @param <A>   The input codec type
+     */
+    public static <S, A> MapCodec<S> flatComapMap(final MapCodec<A> codec, final Function<? super A, ? extends S> to,
+            final Function<? super S, ? extends DataResult<? extends A>> from) {
+        return MapCodec.of(codec.flatComap(from), codec.map(to), () -> codec + "[flatComapMapped]");
     }
 }

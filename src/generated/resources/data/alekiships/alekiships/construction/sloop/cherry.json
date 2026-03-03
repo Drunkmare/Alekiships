@@ -1,7 +1,10 @@
 {
   "assemble_blockstate": "minecraft:cherry_planks",
   "assemble_sound": "minecraft:block.wood.break",
-  "constructed_entity": "alekiships:sloop/cherry",
+  "constructed_entity": {
+    "type": "alekiships:sloop",
+    "variant": "alekiships:cherry"
+  },
   "stages": {
     "anchor": {
       "input": {

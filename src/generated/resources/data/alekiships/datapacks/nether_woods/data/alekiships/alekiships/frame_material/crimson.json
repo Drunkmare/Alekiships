@@ -1,0 +1,9 @@
+{
+  "name": {
+    "translate": "frame_material.alekiships.crimson"
+  },
+  "sound": {
+    "sound_id": "minecraft:block.nether_wood.place"
+  },
+  "texture": "minecraft:block/crimson_planks"
+}

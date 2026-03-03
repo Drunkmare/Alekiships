@@ -3,18 +3,22 @@ package com.alekiponi.alekiships.common.entity.vehicle;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveAnchorWindlass;
 import com.alekiponi.alekiships.common.entity.vehiclecapability.IHaveCleats;
 import com.alekiponi.alekiships.network.AlekiShipsEntityDataSerializers;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.ClientHelper;
+import com.alekiponi.alekiships.util.BoatMaterial;
+import com.alekiponi.alekiships.util.RepairMaterials;
 import com.alekiponi.alekiships.wind.Wind;
 import com.alekiponi.alekiships.wind.WindModel;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,17 +28,20 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.VariantHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
-public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
+public abstract class AbstractAlekiBoatEntity<T extends BoatVariant> extends AbstractVehicle implements VariantHolder<Holder<T>> {
     public static final int PADDLE_LEFT = 0;
     public static final int PADDLE_RIGHT = 1;
     public static final double PADDLE_SOUND_TIME = Math.PI / 4;
@@ -48,16 +55,13 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
     protected static final EntityDataAccessor<Boolean> DATA_ID_IMMOBILE = SynchedEntityData.defineId(
             AbstractAlekiBoatEntity.class, EntityDataSerializers.BOOLEAN);
     protected final float[] paddlePositions = new float[2];
-    protected final BoatMaterial boatMaterial;
     protected Wind oldWind = Wind.ZERO;
     protected int windLerpTicks = 0;
     protected WindModel windModel;
 
-    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level,
-            BoatMaterial boatMaterial) {
+    public AbstractAlekiBoatEntity(final EntityType<? extends AbstractAlekiBoatEntity> entityType, final Level level) {
         super(entityType, level);
         this.windModel = WindModel.get(level);
-        this.boatMaterial = boatMaterial;
     }
 
     @Override
@@ -174,17 +178,14 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
             // TODO add a config for enabling / disabling wind drift
 
-            float windDifference = Mth.degreesDifference(
-                    this.getLocalWindAngle(), Mth.wrapDegrees(this.getYRot()));
+            float windDifference = Mth.degreesDifference(this.getLocalWindAngle(), Mth.wrapDegrees(this.getYRot()));
 
 
             if (Math.abs(windDifference) < 90) {
                 float angleMultiplier = Math.abs((Math.abs(windDifference) - 90) / 90);
-                this.setDeltaMovement(this.getDeltaMovement()
-                        .add(Mth.sin(
-                                        -this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier,
-                                0.0D,
-                                Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier));
+                this.setDeltaMovement(this.getDeltaMovement().add(Mth.sin(
+                                -this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier, 0.0D,
+                        Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * windFunction * 0.45 * angleMultiplier));
             }
 
 
@@ -295,8 +296,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         if (this.getPilotCompartment() != null) {
             double turnSpeedFactor = this.getDeltaMovement().length() * 12.0F;
 
-            if (this.getPilotCompartment().getInputLeft() || this.getPilotCompartment()
-                    .getInputRight()) {
+            if (this.getPilotCompartment().getInputLeft() || this.getPilotCompartment().getInputRight()) {
                 this.setDeltaRotation(((this.invFriction / 3.0F)) * this.getDeltaRotation());
                 this.setDeltaRotation((float) (turnSpeedFactor * this.getDeltaRotation()));
 
@@ -357,8 +357,7 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
                     .add(Mth.sin(-this.getYRot() * ((float) Math.PI / 180F)) * acceleration, 0.0D,
                             Mth.cos(this.getYRot() * ((float) Math.PI / 180F)) * acceleration));
 
-            this.setPaddleState(
-                    inputRight && !inputLeft || inputUp, inputLeft && !inputRight || inputUp);
+            this.setPaddleState(inputRight && !inputLeft || inputUp, inputLeft && !inputRight || inputUp);
 
         }
     }
@@ -378,27 +377,11 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
 
     @Override
     public InteractionResult interact(final Player player, final InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(this.getDropItem())) {
-            if (player.getAbilities().instabuild) {
-                this.setDamage(0);
-                return InteractionResult.SUCCESS;
-            }
-            if (this.getDamage() > 0.0F) {
-                this.setDamage(this.getDamage() - getDamageRecovery());
-                stack.split(1);
-                player.swing(hand);
-                this.level().playSound(null, this, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                        this.level().getRandom().nextFloat() * 0.1F + 0.9F);
-
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return InteractionResult.PASS;
+        return this.getRepairMaterials().tryRepair(this, player, hand);
     }
 
     public boolean fireImmune() {
-        return this.boatMaterial.withstandsLava();
+        return this.getBoatMaterial().withstandsLava();
     }
 
     protected abstract float getMomentumSubtractor();
@@ -546,8 +529,19 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         return this.entityData.get(DATA_ID_IMMOBILE);
     }
 
-    public void setImmobile(boolean immobile) {
+    public void setImmobile(final boolean immobile) {
         this.entityData.set(DATA_ID_IMMOBILE, immobile);
+    }
+
+    @Override
+    protected Component getTypeName() {
+        // Dynamic name of <Boat material name> Entity Name
+        return Component.translatable(this.getType().getDescriptionId(), this.getBoatMaterial().name());
+    }
+
+    @Override
+    public ResourceKey<LootTable> getLootTable() {
+        return this.getVariant().value().getLootTable();
     }
 
     @Override
@@ -569,11 +563,19 @@ public abstract class AbstractAlekiBoatEntity extends AbstractVehicle {
         return Mth.wrapDegrees(this.getLocalWindAngle() - Mth.wrapDegrees(this.getYRot()));
     }
 
+    public final BoatMaterial getBoatMaterial() {
+        return this.getVariant().value().getBoatMaterial().value();
+    }
+
+    public final RepairMaterials getRepairMaterials() {
+        return this.getVariant().value().getRepairMaterials();
+    }
+
     @Nullable
     @Override
     public Entity changeDimension(final DimensionTransition transition) {
         final Entity entity = super.changeDimension(transition);
-        if (entity instanceof AbstractAlekiBoatEntity alekiBoat) {
+        if (entity instanceof AbstractAlekiBoatEntity<?> alekiBoat) {
             // Update our wind model when the dimension changes
             alekiBoat.windModel = WindModel.get(transition.newLevel());
         }

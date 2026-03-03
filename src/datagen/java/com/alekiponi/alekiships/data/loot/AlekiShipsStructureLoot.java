@@ -10,7 +10,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -90,16 +89,14 @@ public class AlekiShipsStructureLoot implements LootTableSubProvider {
     public void generate(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         for (final VanillaWood wood : VanillaWood.values()) {
             output.accept(ResourceKey.create(Registries.LOOT_TABLE,
-                            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                    "structures/rowboat/" + wood.getSerializedName())),
-                    rowboatStructureLoot(wood.getDeckItem()));
+                            AlekiShips.location("structures/rowboat/" + wood.getSerializedName())),
+                    rowboatStructureLoot(wood.getPlankItem()));
             output.accept(ResourceKey.create(Registries.LOOT_TABLE,
-                    ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                            "structures/sloop/" + wood.getSerializedName())), sloopStructureLoot(wood.getDeckItem()));
+                            AlekiShips.location("structures/sloop/" + wood.getSerializedName())),
+                    sloopStructureLoot(wood.getPlankItem()));
             output.accept(ResourceKey.create(Registries.LOOT_TABLE,
-                            ResourceLocation.fromNamespaceAndPath(AlekiShips.MOD_ID,
-                                    "structures/sloop_hut/" + wood.getSerializedName())),
-                    sloopHutStructureLoot(wood.getDeckItem()));
+                            AlekiShips.location("structures/sloop_hut/" + wood.getSerializedName())),
+                    sloopHutStructureLoot(wood.getPlankItem()));
         }
     }
 }

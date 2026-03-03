@@ -8,7 +8,6 @@ import com.alekiponi.alekiships.AlekiShips;
 import com.alekiponi.alekiships.client.model.entity.SloopEntityModel;
 import com.alekiponi.alekiships.client.render.AlekiShipsRenderTypes;
 import com.alekiponi.alekiships.common.entity.vehicle.SloopEntity;
-import com.alekiponi.alekiships.util.BoatMaterial;
 import com.alekiponi.alekiships.util.CommonHelper;
 
 import net.minecraft.client.gui.Font;
@@ -26,7 +25,6 @@ import net.minecraft.world.phys.Vec3;
 
 import java.text.MessageFormat;
 import java.util.EnumMap;
-import java.util.function.Function;
 
 import static com.alekiponi.alekiships.client.render.util.AlekiShipsRenderHelper.renderTextLine;
 
@@ -43,25 +41,14 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
             dyeColor -> AlekiShips.location(MessageFormat.format("textures/entity/watercraft/sloop/paint/{0}.png",
                     dyeColor.getSerializedName())));
 
-    protected final ResourceLocation sloopTexture;
     protected final SloopEntityModel sloopModel;
     private final Font font;
 
-    /**
-     * @param sloopTexture The texture location
-     */
-    public SloopRenderer(final EntityRendererProvider.Context context, final ResourceLocation sloopTexture) {
+    public SloopRenderer(final EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.8F;
-        this.sloopTexture = sloopTexture;
         this.sloopModel = new SloopEntityModel(context.bakeLayer(SloopEntityModel.LAYER_LOCATION));
         this.font = context.getFont();
-    }
-
-    public static EntityRendererProvider<SloopEntity> provider(final Function<String, ResourceLocation> modLocation,
-            final BoatMaterial boatMaterial) {
-        return context -> new SloopRenderer(context,
-                modLocation.apply("textures/entity/watercraft/sloop/" + boatMaterial.getSerializedName() + ".png"));
     }
 
     @Override
@@ -86,9 +73,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
         this.sloopModel.setupAnim(sloopEntity, partialTicks, 0, -0.1F, 0, 0);
 
-        final VertexConsumer vertexconsumer = bufferSource.getBuffer(
-                this.sloopModel.renderType(this.getTextureLocation(sloopEntity)));
-
+        final VertexConsumer vertexconsumer = bufferSource.getBuffer(this.getRenderType(sloopEntity));
 
         if (sloopEntity.tickCount < 1) {
             poseStack.popPose();
@@ -192,7 +177,7 @@ public class SloopRenderer extends EntityRenderer<SloopEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(final SloopEntity sloopEntity) {
-        return this.sloopTexture;
+        return sloopEntity.getTexture();
     }
 
     public ResourceLocation getMainsailTexture(final SloopEntity sloopEntity) {

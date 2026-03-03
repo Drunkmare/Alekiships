@@ -1,0 +1,9 @@
+{
+  "name": {
+    "translate": "frame_material.alekiships.bamboo"
+  },
+  "sound": {
+    "sound_id": "minecraft:block.bamboo.place"
+  },
+  "texture": "minecraft:block/bamboo_planks"
+}

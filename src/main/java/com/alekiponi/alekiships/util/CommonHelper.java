@@ -4,6 +4,7 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,6 +18,8 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -37,6 +40,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class CommonHelper {
@@ -352,6 +356,77 @@ public class CommonHelper {
      */
     public static boolean stillValidEntity(final Entity entity, final Player player, final float maxDistance) {
         return !entity.isRemoved() && player.canInteractWithEntity(entity, maxDistance);
+    }
+
+    /**
+     * Helper for rotating {@link Vec3i}s
+     *
+     * @param vec3i    The {@link Vec3i} instance
+     * @param rotation The rotation to apply
+     */
+    @Contract(pure = true)
+    public static Vec3i rotate(final Vec3i vec3i, final Rotation rotation) {
+        return rotateWithPivot(vec3i, rotation, Vec3i.ZERO);
+    }
+
+    /**
+     * Helper for rotating {@link Vec3i}s around a pivot
+     *
+     * @param input    The input {@link Vec3i}
+     * @param rotation The rotation to apply
+     * @param pivot    The pivot point
+     */
+    @Contract(pure = true)
+    public static Vec3i rotateWithPivot(final Vec3i input, final Rotation rotation, final Vec3i pivot) {
+        return transform(input, Mirror.NONE, rotation, pivot);
+    }
+
+    /**
+     * Helper for transforming {@link Vec3i}s
+     *
+     * @param input    The input {@link Vec3i}
+     * @param mirror   The mirror to apply
+     * @param rotation The rotation to apply
+     */
+    public static Vec3i transform(final Vec3i input, final Mirror mirror, final Rotation rotation) {
+        return transform(input, mirror, rotation, Vec3i.ZERO);
+    }
+
+    /**
+     * Helper for transforming {@link Vec3i}s
+     *
+     * @param input    The input {@link Vec3i}
+     * @param mirror   The mirror to apply
+     * @param rotation The rotation to apply
+     * @param pivot    The pivot point
+     */
+    @Contract(pure = true)
+    public static Vec3i transform(final Vec3i input, final Mirror mirror, final Rotation rotation, final Vec3i pivot) {
+        int x = input.getX();
+        final int y = input.getY();
+        int z = input.getZ();
+
+        final boolean mirrored = switch (mirror) {
+            case LEFT_RIGHT -> {
+                z = -z;
+                yield true;
+            }
+            case FRONT_BACK -> {
+                x = -x;
+                yield true;
+            }
+            default -> false;
+        };
+
+        final int pivotX = pivot.getX();
+        final int pivotZ = pivot.getZ();
+
+        return switch (rotation) {
+            case COUNTERCLOCKWISE_90 -> new Vec3i(pivotX - pivotZ + z, y, pivotX + pivotZ - x);
+            case CLOCKWISE_90 -> new Vec3i(pivotX + pivotZ - z, y, pivotZ - pivotX + x);
+            case CLOCKWISE_180 -> new Vec3i(pivotX + pivotX - x, y, pivotZ + pivotZ - z);
+            default -> mirrored ? new Vec3i(x, y, z) : input;
+        };
     }
 
     /**

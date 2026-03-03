@@ -1,0 +1,221 @@
+{
+  "type": "alekiships:entity_multiblock_recipe",
+  "entity": {
+    "type": "alekiships:construction_sloop",
+    "variant": "alekiships:oak"
+  },
+  "key": {
+    "1": {
+      "block": {
+        "states": [
+          {
+            "facing": "west",
+            "frame_processed": "3",
+            "shape": "inner_right"
+          },
+          {
+            "facing": "north",
+            "frame_processed": "3",
+            "shape": "inner_left"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "2": {
+      "block": {
+        "states": [
+          {
+            "facing": "west",
+            "frame_processed": "3",
+            "shape": "inner_left"
+          },
+          {
+            "facing": "south",
+            "frame_processed": "3",
+            "shape": "inner_right"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "3": {
+      "block": {
+        "state": {
+          "facing": "north",
+          "frame_processed": "3",
+          "shape": "straight"
+        },
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "4": {
+      "block": {
+        "state": {
+          "facing": "south",
+          "frame_processed": "3",
+          "shape": "straight"
+        },
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "5": {
+      "block": {
+        "states": [
+          {
+            "facing": "west",
+            "frame_processed": "3",
+            "shape": "outer_right"
+          },
+          {
+            "facing": "north",
+            "frame_processed": "3",
+            "shape": "outer_left"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "6": {
+      "block": {
+        "states": [
+          {
+            "facing": "west",
+            "frame_processed": "3",
+            "shape": "outer_left"
+          },
+          {
+            "facing": "south",
+            "frame_processed": "3",
+            "shape": "outer_right"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "7": {
+      "block": {
+        "states": [
+          {
+            "facing": "east",
+            "frame_processed": "3",
+            "shape": "inner_left"
+          },
+          {
+            "facing": "north",
+            "frame_processed": "3",
+            "shape": "inner_right"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "8": {
+      "block": {
+        "state": {
+          "facing": "east",
+          "frame_processed": "3",
+          "shape": "straight"
+        },
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "9": {
+      "block": {
+        "states": [
+          {
+            "facing": "east",
+            "frame_processed": "3",
+            "shape": "inner_right"
+          },
+          {
+            "facing": "south",
+            "frame_processed": "3",
+            "shape": "inner_left"
+          }
+        ],
+        "values": "alekiships:watercraft_frame/wooden/angled"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "F": {
+      "block": {
+        "state": {
+          "frame_processed": "3"
+        },
+        "values": "alekiships:watercraft_frame/wooden/flat"
+      },
+      "entity": {
+        "type": "alekiships:frame",
+        "material": "alekiships:oak"
+      }
+    },
+    "L": {
+      "state": {
+        "facing": "north"
+      },
+      "values": "alekiships:cleat"
+    },
+    "R": {
+      "state": {
+        "facing": "south"
+      },
+      "values": "alekiships:cleat"
+    }
+  },
+  "pattern": [
+    [
+      "    ",
+      "    ",
+      "L  R",
+      "    ",
+      "    ",
+      "    ",
+      "L  R"
+    ],
+    [
+      " 12 ",
+      " 34 ",
+      "1562",
+      "3FF4",
+      "3FF4",
+      "3FF4",
+      "7889"
+    ]
+  ]
+}

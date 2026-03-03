@@ -1,11 +1,15 @@
 package com.alekiponi.alekiships.data.providers;
 
 import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+import com.alekiponi.alekiships.common.AlekiShipsRegistries;
+import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
 import com.alekiponi.alekiships.common.compartment.AlekiShipsDirectCompartmentTypes;
 import com.alekiponi.alekiships.common.compartment.DirectCompartmentPlaceable;
 import com.alekiponi.alekiships.common.compartment.vanilla.*;
 import com.alekiponi.alekiships.common.entity.compartment.vanilla.ChestCompartmentData;
 import com.alekiponi.alekiships.data.util.DataMapBuilderExtensions;
+import com.alekiponi.alekiships.util.BoatFrame;
+import com.alekiponi.alekiships.util.OverworldWood;
 import com.alekiponi.alekiships.wind.SimpleWindModel;
 
 import net.minecraft.core.Direction;
@@ -36,6 +40,18 @@ public class AlekiShipsDataMapProvider extends DataMapProvider {
     protected void gather(final HolderLookup.Provider provider) {
         this.gatherCompartmentPlaceable();
         this.gatherWindModels();
+        {
+            final var angledFrame = this.builder(AlekiShipsDataMaps.ANGLED_BOAT_FRAME);
+            final var flatFrame = this.builder(AlekiShipsDataMaps.FLAT_BOAT_FRAME);
+            final var frameMaterials = provider.lookupOrThrow(AlekiShipsRegistries.FRAME_MATERIAL);
+            for (final var wood : OverworldWood.values()) {
+                final var frameMaterial = frameMaterials.getOrThrow(wood.frameMaterialKey());
+                angledFrame.add(wood.getPlankItem(),
+                        new BoatFrame(AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(), frameMaterial));
+                flatFrame.add(wood.getPlankItem(),
+                        new BoatFrame(AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(), frameMaterial));
+            }
+        }
     }
 
     private void gatherCompartmentPlaceable() {

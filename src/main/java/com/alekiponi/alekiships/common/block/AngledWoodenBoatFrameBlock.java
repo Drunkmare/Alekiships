@@ -1,12 +1,10 @@
 package com.alekiponi.alekiships.common.block;
 
-import com.alekiponi.alekiships.util.BoatMaterial;
-import com.alekiponi.alekiships.util.CommonHelper;
+import com.alekiponi.alekiships.common.AlekiShipsDataMaps;
+import com.alekiponi.alekiships.common.block.entity.FrameBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -15,39 +13,32 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
-public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements ProcessedBoatFrame {
+import java.util.function.Supplier;
+
+public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements EntityBlock {
     public static final IntegerProperty FRAME_PROCESSED = AlekiShipsBlockStateProperties.FRAME_PROCESSED;
     public static final int FULLY_PROCESSED = 3;
 
-    public final BoatMaterial boatMaterial;
+    private final Supplier<AngledBoatFrameBlock> emptyFrame;
 
-    public AngledWoodenBoatFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
+    public AngledWoodenBoatFrameBlock(final Supplier<AngledBoatFrameBlock> emptyFrame, final Properties properties) {
         super(properties);
-        this.registerDefaultState(
-                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHAPE, StairsShape.STRAIGHT)
-                        .setValue(WATERLOGGED, false).setValue(FRAME_PROCESSED, 0));
-        this.boatMaterial = boatMaterial;
-    }
-
-    public static void triggerDetection(Level level, BlockPos blockPos) {
-        BlockPos search = blockPos.above();
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) {
-                BlockPos cur = search.relative(Direction.Axis.X, x).relative(Direction.Axis.Z, z);
-                if (level.getBlockState(cur).getBlock() instanceof CleatBlock cleat) {
-                    cleat.validateMultiblock(level, cur, level.getBlockState(cur));
-                }
-                if (level.getBlockState(cur).getBlock() instanceof OarlockBlock oarlock) {
-                    oarlock.validateMultiblock(level, cur, level.getBlockState(cur));
-                }
-            }
-        }
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(SHAPE, StairsShape.STRAIGHT)
+                .setValue(WATERLOGGED, false)
+                .setValue(FRAME_PROCESSED, 0));
+        this.emptyFrame = emptyFrame;
     }
 
     @Override
@@ -56,76 +47,40 @@ public class AngledWoodenBoatFrameBlock extends AngledBoatFrameBlock implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState blockState, Level level, BlockPos blockPos,
-            Player player, InteractionHand hand, BlockHitResult hitResult) {
-
-        final ItemStack heldStack = player.getItemInHand(hand);
-
-        int processState = blockState.getValue(FRAME_PROCESSED);
-
-        // Should we do plank stuff
-        if (heldStack.is(this.boatMaterial.getDeckItem())) {
-            // Must be [0,3)
-            if (processState < FULLY_PROCESSED) {
-                if (!player.getAbilities().instabuild) {
-                    heldStack.shrink(1);
-                }
-                level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
-                level.playSound(null, blockPos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F);
-                if (processState + 1 == FULLY_PROCESSED) {
-                    triggerDetection(level, blockPos);
-                }
-                return ItemInteractionResult.SUCCESS;
-            }
-            return ItemInteractionResult.CONSUME;
-        }
-
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected ItemInteractionResult useItemOn(final ItemStack heldStack, final BlockState blockState, final Level level,
+            final BlockPos blockPos, final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
+        return FrameBlock.tryContinueFillFrame(heldStack, blockState, level, blockPos, player,
+                AlekiShipsDataMaps.ANGLED_BOAT_FRAME, FRAME_PROCESSED, FULLY_PROCESSED);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
-            BlockHitResult hitResult) {
-
-        int processState = blockState.getValue(FRAME_PROCESSED);
-
-        // Try extract
-        if (processState <= FULLY_PROCESSED) {
-            CommonHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
-        }
-
-        // Set ourselves back to our base
-        if (processState == 0) {
-            final BlockState newState = AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().defaultBlockState()
-                    .setValue(SHAPE, blockState.getValue(SHAPE)).setValue(FACING, blockState.getValue(FACING));
-
-            level.setBlockAndUpdate(blockPos, newState);
-            return InteractionResult.SUCCESS;
-        }
-
-        level.setBlockAndUpdate(blockPos, blockState.setValue(FRAME_PROCESSED, processState - 1));
-
-        return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(final BlockState blockState, final Level level, final BlockPos blockPos,
+            final Player player, final BlockHitResult hitResult) {
+        return FrameBlock.tryExtractFrame(blockState, level, blockPos, player, this.emptyFrame.get(), FRAME_PROCESSED,
+                FULLY_PROCESSED);
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return AlekiShipsBlocks.BOAT_FRAME_ANGLED.get().getCloneItemStack(level, pos, state);
+    public boolean onDestroyedByPlayer(final BlockState state, final Level level, final BlockPos pos,
+            final Player player, final boolean willHarvest, final FluidState fluid) {
+        return FrameBlock.onDestroy(state, level, pos, player, fluid);
     }
 
     @Override
-    public IntegerProperty getProcessingProperty() {
-        return FRAME_PROCESSED;
+    protected void onRemove(final BlockState state, final Level level, final BlockPos pos, final BlockState newState,
+            final boolean movedByPiston) {
+        FrameBlock.dropContents(state, level, pos, newState);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
-    public int getProcessingLimit() {
-        return FULLY_PROCESSED;
+    public ItemStack getCloneItemStack(final BlockState state, final HitResult target, final LevelReader level,
+            final BlockPos pos, final Player player) {
+        return FrameBlock.getCloneStack(state, target, level, pos, player, this.emptyFrame.get());
     }
 
     @Override
-    public BoatMaterial getBoatMaterial() {
-        return this.boatMaterial;
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
+        return new FrameBlockEntity(pos, state);
     }
 }
