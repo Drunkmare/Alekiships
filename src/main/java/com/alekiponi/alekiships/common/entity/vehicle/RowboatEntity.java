@@ -327,7 +327,6 @@ public class RowboatEntity extends AbstractAlekiBoatEntity<RowboatVariant> imple
     @Override
     protected void addAdditionalSaveData(final CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.putByte("oars", (byte) this.getOars().getId());
 
         this.getPaintColor()
                 .ifPresent(dyeColor -> AlekiShipsExtraCodecs.save(DyeColor.CODEC, NbtOps.INSTANCE, dyeColor,
