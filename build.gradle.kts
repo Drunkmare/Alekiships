@@ -38,11 +38,10 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
     into(layout.buildDirectory.dir("generated/sources/modMetadata"))
 }
 
-base {
-    archivesName.set("$modName-mc${libs.versions.minecraft.get()}")
-    version = modVersion
-    group = modGroupId
-}
+version = modVersion
+group = modGroupId
+
+base.archivesName.set("$modName-mc${libs.versions.minecraft.get()}")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -154,7 +153,6 @@ neoForge {
 
 repositories {
     mavenCentral()
-    mavenLocal()
     exclusiveContent {
         forRepository { maven { url = uri("https://maven.terraformersmc.com/") } }
         filter { includeGroup("dev.emi") }
@@ -175,7 +173,7 @@ repositories {
 
 dependencies {
     // datagen can use mod code
-    datagenImplementation(sourceSets.main.get().output)
+    datagenImplementation(project(":"))
 
     // Lombok
     compileOnly(libs.lombok)
