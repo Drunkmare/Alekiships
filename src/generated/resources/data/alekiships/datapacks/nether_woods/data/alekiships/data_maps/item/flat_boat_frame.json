@@ -1,11 +1,11 @@
 {
   "values": {
     "minecraft:crimson_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/angled",
+      "frame": "alekiships:watercraft_frame/wooden/flat",
       "material": "alekiships:crimson"
     },
     "minecraft:warped_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/angled",
+      "frame": "alekiships:watercraft_frame/wooden/flat",
       "material": "alekiships:warped"
     }
   }

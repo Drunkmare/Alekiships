@@ -27,14 +27,14 @@ public final class AlekiShipsDataMaps {
      * The data map for angled frames
      */
     public static final DataMapType<Item, BoatFrame> ANGLED_BOAT_FRAME = DataMapType.builder(
-                    AlekiShips.location("flat_boat_frame"), Registries.ITEM, BoatFrame.CODEC).synced(BoatFrame.CODEC, true)
+                    AlekiShips.location("angled_boat_frame"), Registries.ITEM, BoatFrame.CODEC).synced(BoatFrame.CODEC, true)
             .build();
 
     /**
      * The data map for flat frames
      */
     public static final DataMapType<Item, BoatFrame> FLAT_BOAT_FRAME = DataMapType.builder(
-                    AlekiShips.location("angled_boat_frame"), Registries.ITEM, BoatFrame.CODEC).synced(BoatFrame.CODEC, true)
+                    AlekiShips.location("flat_boat_frame"), Registries.ITEM, BoatFrame.CODEC).synced(BoatFrame.CODEC, true)
             .build();
 
     public static void registerDataMaps(final RegisterDataMapTypesEvent event) {

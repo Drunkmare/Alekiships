@@ -1,39 +1,39 @@
 {
   "values": {
     "minecraft:acacia_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:acacia"
     },
     "minecraft:bamboo_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:bamboo"
     },
     "minecraft:birch_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:birch"
     },
     "minecraft:cherry_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:cherry"
     },
     "minecraft:dark_oak_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:dark_oak"
     },
     "minecraft:jungle_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:jungle"
     },
     "minecraft:mangrove_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:mangrove"
     },
     "minecraft:oak_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:oak"
     },
     "minecraft:spruce_planks": {
-      "frame": "alekiships:watercraft_frame/wooden/flat",
+      "frame": "alekiships:watercraft_frame/wooden/angled",
       "material": "alekiships:spruce"
     }
   }
