@@ -24,6 +24,7 @@ public class AlekiShipsItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         //this.heldItem(AlekiShipsItems.CANNON.get());
         this.basicItem(AlekiShipsItems.CANNONBALL.get());
+        this.basicItem(AlekiShipsItems.COPPER_BOLT.get());
         //this.heldItem(AlekiShipsItems.ANCHOR.get());
         this.basicItem(AlekiShipsItems.SLOOP_ICON_ONLY.get());
         this.basicItem(AlekiShipsItems.ROWBOAT_ICON_ONLY.get());

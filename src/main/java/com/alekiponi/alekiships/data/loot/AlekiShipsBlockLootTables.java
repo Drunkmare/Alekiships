@@ -1,9 +1,6 @@
 package com.alekiponi.alekiships.data.loot;
 
-import com.alekiponi.alekiships.common.block.AlekiShipsBlocks;
-import com.alekiponi.alekiships.common.block.AngledWoodenBoatFrameBlock;
-import com.alekiponi.alekiships.common.block.FlatWoodenBoatFrameBlock;
-import com.alekiponi.alekiships.common.block.ProcessedBoatFrame;
+import com.alekiponi.alekiships.common.block.*;
 import com.alekiponi.alekiships.data.DataGenHelper;
 import com.alekiponi.alekiships.util.BoatMaterial;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -47,7 +44,13 @@ public class AlekiShipsBlockLootTables extends BlockLootSubProvider {
         AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.forEach(this::dropAngledWoodenFrame);
         AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.forEach(this::dropFlatWoodenFrame);
 
+        AlekiShipsBlocks.WOODEN_WATERWHEEL_FRAME.forEach(this::dropFullWoodenWaterwheelFrame);
+        AlekiShipsBlocks.PROCESSED_MILLSTONE_FRAME.forEach(this::dropFullProcessedMillstoneFrame);
+
         this.dropSelf(AlekiShipsBlocks.BOAT_FRAME_FLAT.get());
+
+        this.dropSelf(AlekiShipsBlocks.WATERWHEEL_FRAME.get());
+        this.dropSelf(AlekiShipsBlocks.MILLSTONE_FRAME.get());
 
         this.dropSelf(AlekiShipsBlocks.OARLOCK.get());
         this.dropSelf(AlekiShipsBlocks.CLEAT.get());
@@ -64,6 +67,22 @@ public class AlekiShipsBlockLootTables extends BlockLootSubProvider {
     private void dropFlatWoodenFrame(final BoatMaterial material,
             RegistryObject<FlatWoodenBoatFrameBlock> registryObject) {
         this.add(registryObject.get(), this.createSingleItemTable(AlekiShipsBlocks.BOAT_FRAME_FLAT.get()).withPool(
+                this.applyExplosionCondition(material.getDeckItem(),
+                        createProcessedFrameTable(registryObject.get(), material.getDeckItem(),
+                                FlatWoodenBoatFrameBlock.FULLY_PROCESSED + 1))));
+    }
+
+    private void dropFullWoodenWaterwheelFrame(final BoatMaterial material,
+                                               RegistryObject<WaterwheelWoodenFrameBlock> registryObject) {
+        this.add(registryObject.get(), this.createSingleItemTable(AlekiShipsBlocks.WATERWHEEL_FRAME.get()).withPool(
+                this.applyExplosionCondition(material.getDeckItem(),
+                        createProcessedFrameTable(registryObject.get(), material.getDeckItem(),
+                                FlatWoodenBoatFrameBlock.FULLY_PROCESSED + 1))));
+    }
+
+    private void dropFullProcessedMillstoneFrame(final BoatMaterial material,
+                                               RegistryObject<MillstoneProcessedFrameBlock> registryObject) {
+        this.add(registryObject.get(), this.createSingleItemTable(AlekiShipsBlocks.MILLSTONE_FRAME.get()).withPool(
                 this.applyExplosionCondition(material.getDeckItem(),
                         createProcessedFrameTable(registryObject.get(), material.getDeckItem(),
                                 FlatWoodenBoatFrameBlock.FULLY_PROCESSED + 1))));

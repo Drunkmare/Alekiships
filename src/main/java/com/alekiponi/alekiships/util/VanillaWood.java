@@ -45,6 +45,10 @@ public enum VanillaWood implements BoatMaterial {
                     .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.get(wood).get());
             AlekiShipsBlocks.BOAT_FRAME_ANGLED.get()
                     .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.get(wood).get());
+            AlekiShipsBlocks.WATERWHEEL_FRAME.get()
+                    .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.WOODEN_WATERWHEEL_FRAME.get(wood).get());
+            AlekiShipsBlocks.MILLSTONE_FRAME.get()
+                    .registerFrame(wood.plankBlock.asItem(), AlekiShipsBlocks.PROCESSED_MILLSTONE_FRAME.get(wood).get());
         }
     }
 

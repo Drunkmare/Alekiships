@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
 
 public class AlekiShipsBlockStateProvider extends BlockStateProvider {
 
-    private static final String[] PROGRESS_STRINGS = {"first", "second", "third", "fourth"};
+    private static final String[] PROGRESS_STRINGS = {"first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"};
 
     public AlekiShipsBlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
         super(output, AlekiShips.MOD_ID, existingFileHelper);
@@ -70,6 +70,67 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
             });
         };
     }
+
+    /**
+     * @return A consumer that generates the models and blockstate for the passed in boat material and flat frame block
+     */
+    public static BiConsumer<BoatMaterial, Supplier<? extends Block>> waterwheelFrameFull(
+            final BlockStateProvider blockStateProvider, final ModelFile.ExistingModelFile frameFull) {
+        return (wood, registryObject) -> {
+            final var plankTexture = blockStateProvider.blockTexture(wood.getDeckBlock().getBlock());
+            final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get()).part()
+                    .modelFile(frameFull).addModel().end();
+
+            IntStream.range(0, 4).forEach(progress -> {
+                final var plankModel = blockStateProvider.models().withExistingParent(
+                        String.format(Locale.ROOT, "block/wood/waterwheel_frame/full/%s/%s", wood.getSerializedName(),
+                                PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
+                                String.format(Locale.ROOT, "block/waterwheel_frame/full/template/%s",
+                                        PROGRESS_STRINGS[progress]))).texture("plank", plankTexture);
+
+                multipartBuilder.part().modelFile(plankModel).addModel()
+                        .condition(FlatWoodenBoatFrameBlock.FRAME_PROCESSED,
+                                IntStream.range(progress, 4).boxed().toArray(Integer[]::new));
+            });
+        };
+    }
+
+    public static BiConsumer<BoatMaterial, Supplier<? extends Block>> millstoneFrameFull(
+            final BlockStateProvider blockStateProvider, final ModelFile.ExistingModelFile frameFull) {
+        return (wood, registryObject) -> {
+            final var plankTexture = blockStateProvider.blockTexture(wood.getDeckBlock().getBlock());
+            final var multipartBuilder = blockStateProvider.getMultipartBuilder(registryObject.get()).part()
+                    .modelFile(frameFull).addModel().end();
+
+            IntStream.range(0, 8).forEach(progress -> {
+                final var plankModel = blockStateProvider.models().withExistingParent(
+                        String.format(Locale.ROOT, "block/wood/millstone_frame/full/%s/%s", wood.getSerializedName(),
+                                PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
+                                String.format(Locale.ROOT, "block/millstone_frame/full/template/%s",
+                                        PROGRESS_STRINGS[progress])))
+                        .texture("plank", plankTexture)
+                        .texture("stone", new ResourceLocation(AlekiShips.MOD_ID, "block/millstone"));
+
+                if (progress < 2) {
+                    // First and second are additive — show at this stage and all higher stages
+                    multipartBuilder.part().modelFile(plankModel).addModel()
+                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED,
+                                    IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                } else if (progress >= 5) {
+                    // Fifth and higher is additive — show at this stage and all higher stages
+                    multipartBuilder.part().modelFile(plankModel).addModel()
+                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED,
+                                    IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
+                } else {
+                    // Cogwheel stages are exclusive — only show at exact state
+                    multipartBuilder.part().modelFile(plankModel).addModel()
+                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED, progress);
+            }
+            });
+        };
+    }
+
+
 
     /**
      * @return A consumer that generates the models and blockstate for the passed in boat material and angled frame block
@@ -128,9 +189,18 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         final var frameFlat = this.models().getExistingFile(this.modLoc("block/watercraft_frame/flat/frame"));
+        final var frameWaterwheelFull = this.models().getExistingFile(this.modLoc("block/waterwheel_frame/full/frame"));
+        final var frameMillstoneFull = this.models().getExistingFile(this.modLoc("block/millstone_frame/full/frame"));
 
         AlekiShipsBlocks.WOODEN_BOAT_FRAME_FLAT.forEach(
                 AlekiShipsBlockStateProvider.woodenBoatFrameFlat(this, frameFlat));
+
+        AlekiShipsBlocks.WOODEN_WATERWHEEL_FRAME.forEach(
+                AlekiShipsBlockStateProvider.waterwheelFrameFull(this, frameWaterwheelFull));
+
+        AlekiShipsBlocks.PROCESSED_MILLSTONE_FRAME.forEach(
+                AlekiShipsBlockStateProvider.millstoneFrameFull(this, frameMillstoneFull));
+
 
         final ModelFile.ExistingModelFile angledFrameStraight = this.models()
                 .getExistingFile(this.modLoc("block/watercraft_frame/angled/straight"));
@@ -147,6 +217,10 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
         this.simpleBlockItem(AlekiShipsBlocks.BOAT_FRAME_ANGLED.get(), angledFrameStraight);
 
         this.simpleBlockWithItem(AlekiShipsBlocks.BOAT_FRAME_FLAT.get(), frameFlat);
+
+        this.simpleBlockWithItem(AlekiShipsBlocks.WATERWHEEL_FRAME.get(), frameWaterwheelFull);
+
+        this.simpleBlockWithItem(AlekiShipsBlocks.MILLSTONE_FRAME.get(), frameMillstoneFull);
 
         this.horizontalBlock(AlekiShipsBlocks.OARLOCK.get(),
                 this.models().getExistingFile(this.modLoc("block/oarlock")), 180, OarlockBlock.WATERLOGGED);

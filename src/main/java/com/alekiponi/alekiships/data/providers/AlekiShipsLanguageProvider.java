@@ -43,12 +43,22 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
                 String.format(Locale.ROOT, "%s Flat Shipwright's Scaffolding",
                         DataGenHelper.langify(wood.getSerializedName()))));
 
+        AlekiShipsBlocks.WOODEN_WATERWHEEL_FRAME.forEach((wood, registryObject) -> this.addBlock(registryObject,
+                String.format(Locale.ROOT, "%s Flat Waterwheel Scaffolding",
+                        DataGenHelper.langify(wood.getSerializedName()))));
+
+        AlekiShipsBlocks.PROCESSED_MILLSTONE_FRAME.forEach((wood, registryObject) -> this.addBlock(registryObject,
+                String.format(Locale.ROOT, "%s Flat Millstone Scaffolding",
+                        DataGenHelper.langify(wood.getSerializedName()))));
+
         AlekiShipsBlocks.WOODEN_BOAT_FRAME_ANGLED.forEach((wood, registryObject) -> this.addBlock(registryObject,
                 String.format(Locale.ROOT, "%s Sloped Shipwright's Scaffolding",
                         DataGenHelper.langify(wood.getSerializedName()))));
 
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_ANGLED, "Sloped Shipwright's Scaffolding");
         this.addBlock(AlekiShipsBlocks.BOAT_FRAME_FLAT, "Flat Shipwright's Scaffolding");
+        this.addBlock(AlekiShipsBlocks.WATERWHEEL_FRAME, "Flat Waterwheel Scaffolding");
+        this.addBlock(AlekiShipsBlocks.MILLSTONE_FRAME, "Millstone Scaffolding");
         this.addBlock(AlekiShipsBlocks.OARLOCK, "Oarlock");
         this.addBlock(AlekiShipsBlocks.CLEAT, "Cleat");
     }
@@ -60,6 +70,7 @@ public class AlekiShipsLanguageProvider extends SmartLanguageProvider {
         this.addItem(AlekiShipsItems.SLOOP_ICON_ONLY, "Sloop (ICON ONLY)");
         this.addItem(AlekiShipsItems.ROWBOAT_ICON_ONLY, "Rowboat (ICON ONLY)");
         this.addItem(AlekiShipsItems.OAR, "Oar");
+        this.addItem(AlekiShipsItems.COPPER_BOLT, "Copper Bolt");
 
         this.add("item.alekiships.music_disc_pirate_crafting.desc", "Captain Thrack - Pirate Crafting");
         this.addItem(AlekiShipsItems.MUSIC_DISC_PIRATE_CRAFTING, "Music Disc");

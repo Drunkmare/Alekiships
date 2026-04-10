@@ -164,6 +164,12 @@ dependencies {
     // Mixin
     annotationProcessor "org.spongepowered:mixin:$mixinVersion:processor"
 
+    // TFC
+    implementation fg.deobf("curse.maven:terrafirmacraft-302973:$tfcFileID")
+
+    // CREATE
+    implementation fg.deobf("curse.maven:create-328085:$createFileID")
+
     // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion")
 

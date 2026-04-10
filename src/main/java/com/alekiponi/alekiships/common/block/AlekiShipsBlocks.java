@@ -45,6 +45,26 @@ public final class AlekiShipsBlocks {
                     () -> new FlatWoodenBoatFrameBlock(vanillaWood,
                             BlockBehaviour.Properties.copy(BOAT_FRAME_FLAT.get()).sound(BOAT_FRAME_SOUND))));
 
+    public static final RegistryObject<WaterwheelFrameBlock> WATERWHEEL_FRAME = registerBlockWithItem(
+            "waterwheel_frame_full",
+            () -> new WaterwheelFrameBlock(BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get())));
+
+    public static final EnumMap<VanillaWood, RegistryObject<WaterwheelWoodenFrameBlock>> WOODEN_WATERWHEEL_FRAME = CommonHelper.mapOfKeys(
+            VanillaWood.class,
+            vanillaWood -> registerBlock("wood/waterwheel_frame/full/" + vanillaWood.getSerializedName(),
+                    () -> new WaterwheelWoodenFrameBlock(vanillaWood,
+                            BlockBehaviour.Properties.copy(WATERWHEEL_FRAME.get()).sound(BOAT_FRAME_SOUND))));
+
+    public static final RegistryObject<MillstoneFrameBlock> MILLSTONE_FRAME = registerBlockWithItem(
+            "millstone_frame_full",
+            () -> new MillstoneFrameBlock(BlockBehaviour.Properties.copy(BOAT_FRAME_ANGLED.get())));
+
+    public static final EnumMap<VanillaWood, RegistryObject<MillstoneProcessedFrameBlock>> PROCESSED_MILLSTONE_FRAME = CommonHelper.mapOfKeys(
+            VanillaWood.class,
+            vanillaWood -> registerBlock("wood/millstone_frame/full/" + vanillaWood.getSerializedName(),
+                    () -> new MillstoneProcessedFrameBlock(vanillaWood,
+                            BlockBehaviour.Properties.copy(MILLSTONE_FRAME.get()).sound(BOAT_FRAME_SOUND))));
+
     public static final RegistryObject<OarlockBlock> OARLOCK = registerBlockWithItem("oarlock",
             () -> new OarlockBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
 

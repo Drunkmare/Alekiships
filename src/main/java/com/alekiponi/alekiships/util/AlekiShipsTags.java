@@ -43,6 +43,10 @@ public final class AlekiShipsTags {
         public static TagKey<Item> create(final String id) {
             return TagKey.create(Registries.ITEM, new ResourceLocation(AlekiShips.MOD_ID, id));
         }
+
+        public static TagKey<Item> getFromTFC(String id) {
+            return TagKey.create(Registries.ITEM, new ResourceLocation("tfc", id));
+        }
     }
 
     public static final class Entities {
