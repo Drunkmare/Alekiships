@@ -103,32 +103,51 @@ public class AlekiShipsBlockStateProvider extends BlockStateProvider {
                     .modelFile(frameFull).addModel().end();
 
             IntStream.range(0, 8).forEach(progress -> {
-                final var plankModel = blockStateProvider.models().withExistingParent(
-                        String.format(Locale.ROOT, "block/wood/millstone_frame/full/%s/%s", wood.getSerializedName(),
-                                PROGRESS_STRINGS[progress]), new ResourceLocation(AlekiShips.MOD_ID,
-                                String.format(Locale.ROOT, "block/millstone_frame/full/template/%s",
-                                        PROGRESS_STRINGS[progress])))
-                        .texture("plank", plankTexture)
-                        .texture("stone", new ResourceLocation(AlekiShips.MOD_ID, "block/millstone"));
+                // Exclusive stages only show at their exact FRAME_PROCESSED value (cogwheel/hammer steps)
+                // Additive stages show at their value and all higher (they persist once placed)
+                boolean isExclusive = progress >= 2 && progress < 5;
+                // Stages 1-6 have _offset template variants for the 22.5° cogwheel alignment
+                boolean hasOffsetVariant = progress >= 1 && progress <= 6;
 
-                if (progress < 2) {
-                    // First and second are additive — show at this stage and all higher stages
-                    multipartBuilder.part().modelFile(plankModel).addModel()
-                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED,
-                                    IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
-                } else if (progress >= 5) {
-                    // Fifth and higher is additive — show at this stage and all higher stages
-                    multipartBuilder.part().modelFile(plankModel).addModel()
-                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED,
-                                    IntStream.range(progress, 8).boxed().toArray(Integer[]::new));
-                } else {
-                    // Cogwheel stages are exclusive — only show at exact state
-                    multipartBuilder.part().modelFile(plankModel).addModel()
-                            .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED, progress);
-            }
+                Integer[] frameValues = isExclusive
+                        ? new Integer[]{progress}
+                        : IntStream.range(progress, 8).boxed().toArray(Integer[]::new);
+
+                for (int offsetVariant = 0; offsetVariant < (hasOffsetVariant ? 2 : 1); offsetVariant++) {
+                    boolean withOffset = offsetVariant == 1;
+                    String modelName = String.format(Locale.ROOT,
+                            "block/wood/millstone_frame/full/%s/%s%s",
+                            wood.getSerializedName(),
+                            PROGRESS_STRINGS[progress],
+                            withOffset ? "_offset" : "");
+                    String templateName = String.format(Locale.ROOT,
+                            "block/millstone_frame/full/template/%s%s",
+                            PROGRESS_STRINGS[progress],
+                            withOffset ? "_offset" : "");
+
+                    final var plankModel = blockStateProvider.models().withExistingParent(
+                                    modelName,
+                                    new ResourceLocation(AlekiShips.MOD_ID, templateName))
+                            .texture("plank", plankTexture)
+                            .texture("stone", new ResourceLocation(AlekiShips.MOD_ID, "block/millstone"));
+
+                    var part = multipartBuilder.part().modelFile(plankModel);
+
+                    if (hasOffsetVariant) {
+                        // Stages with offset variants need COGWHEEL_OFFSET condition to pick the right variant
+                        part.addModel()
+                                .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED, frameValues)
+                                .condition(MillstoneProcessedFrameBlock.COGWHEEL_OFFSET, withOffset);
+                    } else {
+                        // Stage 0 (first) has no offset variant, no COGWHEEL_OFFSET condition needed
+                        part.addModel()
+                                .condition(MillstoneProcessedFrameBlock.FRAME_PROCESSED, frameValues);
+                    }
+                }
             });
         };
     }
+
 
 
 

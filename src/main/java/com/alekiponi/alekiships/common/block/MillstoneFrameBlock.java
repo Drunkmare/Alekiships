@@ -114,9 +114,12 @@ public class MillstoneFrameBlock extends Block implements SimpleWaterloggedBlock
 
         if (!heldStack.is(TFCBlocks.QUERN.get().asItem())) return InteractionResult.PASS;
 
+        final boolean cogwheelOffset = (Math.floorMod(blockPos.getX() + blockPos.getZ(), 2)) == 0;
         final BlockState newState = AlekiShipsBlocks.PROCESSED_MILLSTONE_FRAME.get(VanillaWood.OAK).get()
                 .defaultBlockState()
-                .setValue(WATERLOGGED, blockState.getValue(WATERLOGGED));
+                .setValue(WATERLOGGED, blockState.getValue(WATERLOGGED))
+                .setValue(MillstoneProcessedFrameBlock.COGWHEEL_OFFSET, cogwheelOffset);
+
 
         level.setBlockAndUpdate(blockPos, newState);
 

@@ -20,15 +20,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Objects;
 
 public class MillstoneProcessedFrameBlock extends MillstoneFrameBlock implements ProcessedBoatFrame {
 
@@ -44,7 +48,9 @@ public class MillstoneProcessedFrameBlock extends MillstoneFrameBlock implements
 
     public MillstoneProcessedFrameBlock(final BoatMaterial boatMaterial, final Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(FRAME_PROCESSED, 0));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(FRAME_PROCESSED, 0)
+                .setValue(COGWHEEL_OFFSET, false));
         this.boatMaterial = boatMaterial;
     }
 
@@ -52,16 +58,25 @@ public class MillstoneProcessedFrameBlock extends MillstoneFrameBlock implements
 
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(FRAME_PROCESSED));
+        super.createBlockStateDefinition(builder.add(FRAME_PROCESSED, COGWHEEL_OFFSET));
     }
 
+    public static final BooleanProperty COGWHEEL_OFFSET = BooleanProperty.create("cogwheel_offset");
 
+    @Override
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+        final BlockPos pos = context.getClickedPos();
+        final boolean offset = (Math.floorMod(pos.getX() + pos.getZ(), 2)) == 0;
+        return super.getStateForPlacement(context).setValue(COGWHEEL_OFFSET, offset);
+    }
 
     @Override
     public InteractionResult use(final BlockState blockState, final Level level, final BlockPos blockPos,
                                  final Player player, final InteractionHand hand, final BlockHitResult hitResult) {
 
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+
+
 
         final ItemStack heldStack = player.getItemInHand(hand);
 
@@ -70,13 +85,23 @@ public class MillstoneProcessedFrameBlock extends MillstoneFrameBlock implements
         // Try extract
         if (heldStack.isEmpty() && !level.isClientSide) {
             // Extract an item
-            if (processState <= FULLY_PROCESSED) {
-                CommonHelper.giveItemToPlayer(player, new ItemStack(this.boatMaterial.getDeckItem()));
+            if (processState == 1) {
+                CommonHelper.giveItemToPlayer(player, new ItemStack(TFCItems.HANDSTONE.get()));
+            }
+
+            if (processState == 2) {
+                CommonHelper.giveItemToPlayer(player, new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS
+                        .getValue(new ResourceLocation("create", "cogwheel")))));
+            }
+
+            if (processState == 6) {
+                CommonHelper.giveItemToPlayer(player, new ItemStack(TFCItems.HANDSTONE.get()));
             }
 
             // Set ourselves back to our base
             if (processState == 0) {
                 level.setBlockAndUpdate(blockPos, AlekiShipsBlocks.MILLSTONE_FRAME.get().defaultBlockState());
+                CommonHelper.giveItemToPlayer(player, new ItemStack(TFCBlocks.QUERN.get().asItem()));
                 return InteractionResult.SUCCESS;
             }
 
@@ -125,9 +150,6 @@ public class MillstoneProcessedFrameBlock extends MillstoneFrameBlock implements
         // Should we do hammer stuff
         if (heldStack.is(TFCTags.Items.HAMMERS)) {
             if (COGWHEEL_STEP <= processState && processState < FULLY_HAMMERED) {
-                if (!player.getAbilities().instabuild) {
-                    heldStack.shrink(1);
-                }
                 level.setBlockAndUpdate(blockPos, blockState.cycle(FRAME_PROCESSED));
                 level.playSound(null, blockPos, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.5F,
                         level.getRandom().nextFloat() * 0.1F + 0.9F);
