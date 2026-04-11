@@ -1,0 +1,133 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "de_re_metallica:block/millstone_frame/full/frame"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/first"
+      },
+      "when": {
+        "frame_processed": "0|1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/second"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/second_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/third"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/third_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/fourth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/fourth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/fifth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/fifth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/sixth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/sixth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/seventh"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/seventh_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/bamboo/eighth"
+      },
+      "when": {
+        "frame_processed": "7"
+      }
+    }
+  ]
+}

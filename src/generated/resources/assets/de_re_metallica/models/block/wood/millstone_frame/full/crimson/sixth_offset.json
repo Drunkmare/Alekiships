@@ -1,0 +1,7 @@
+{
+  "parent": "de_re_metallica:block/millstone_frame/full/template/sixth_offset",
+  "textures": {
+    "plank": "minecraft:block/crimson_planks",
+    "stone": "de_re_metallica:block/millstone"
+  }
+}

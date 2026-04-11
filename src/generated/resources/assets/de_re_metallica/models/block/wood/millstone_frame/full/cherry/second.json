@@ -1,0 +1,7 @@
+{
+  "parent": "de_re_metallica:block/millstone_frame/full/template/second",
+  "textures": {
+    "plank": "minecraft:block/cherry_planks",
+    "stone": "de_re_metallica:block/millstone"
+  }
+}

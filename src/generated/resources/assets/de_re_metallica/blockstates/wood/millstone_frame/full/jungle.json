@@ -1,0 +1,133 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "de_re_metallica:block/millstone_frame/full/frame"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/first"
+      },
+      "when": {
+        "frame_processed": "0|1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/second"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/second_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/third"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/third_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/fourth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/fourth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/fifth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/fifth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/sixth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/sixth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/seventh"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/seventh_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/jungle/eighth"
+      },
+      "when": {
+        "frame_processed": "7"
+      }
+    }
+  ]
+}

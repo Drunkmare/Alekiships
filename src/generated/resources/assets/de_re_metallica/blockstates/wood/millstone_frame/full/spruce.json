@@ -1,0 +1,133 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "de_re_metallica:block/millstone_frame/full/frame"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/first"
+      },
+      "when": {
+        "frame_processed": "0|1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/second"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/second_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/third"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/third_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/fourth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/fourth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/fifth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/fifth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/sixth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/sixth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/seventh"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/seventh_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/spruce/eighth"
+      },
+      "when": {
+        "frame_processed": "7"
+      }
+    }
+  ]
+}

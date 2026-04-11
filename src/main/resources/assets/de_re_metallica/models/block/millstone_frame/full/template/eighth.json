@@ -1,0 +1,22 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"5": "de_re_metallica:block/millstone"
+	},
+	"elements": [
+		{
+			"from": [2, 12, 2],
+			"to": [14, 16, 14],
+			"faces": {
+				"north": {"uv": [10, 8, 16, 10], "texture": "#5"},
+				"east": {"uv": [10, 8, 16, 10], "texture": "#5"},
+				"south": {"uv": [10, 8, 16, 10], "texture": "#5"},
+				"west": {"uv": [10, 8, 16, 10], "texture": "#5"},
+				"up": {"uv": [16, 2, 10, 8], "texture": "#5"},
+				"down": {"uv": [16, 2, 10, 8], "texture": "#5"}
+			}
+		}
+	]
+}

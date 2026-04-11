@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "de_re_metallica:millstone_frame_full"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "de_re_metallica:blocks/millstone_frame_full"
+}

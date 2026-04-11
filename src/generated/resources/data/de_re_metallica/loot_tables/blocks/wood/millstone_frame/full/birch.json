@@ -1,0 +1,192 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "de_re_metallica:millstone_frame_full"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "0"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 0.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "1"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "2"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "3"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "4"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 4.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "5"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 5.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "6"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 6.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "de_re_metallica:wood/millstone_frame/full/birch",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "frame_processed": "7"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": true,
+              "count": 7.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:birch_planks"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "de_re_metallica:blocks/wood/millstone_frame/full/birch"
+}

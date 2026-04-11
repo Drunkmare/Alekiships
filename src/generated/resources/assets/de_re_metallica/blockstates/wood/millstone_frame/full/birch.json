@@ -1,0 +1,133 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "de_re_metallica:block/millstone_frame/full/frame"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/first"
+      },
+      "when": {
+        "frame_processed": "0|1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/second"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/second_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "1|2|3|4|5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/third"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/third_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/fourth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/fourth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/fifth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/fifth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/sixth"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/sixth_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "5|6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/seventh"
+      },
+      "when": {
+        "cogwheel_offset": "false",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/seventh_offset"
+      },
+      "when": {
+        "cogwheel_offset": "true",
+        "frame_processed": "6|7"
+      }
+    },
+    {
+      "apply": {
+        "model": "de_re_metallica:block/wood/millstone_frame/full/birch/eighth"
+      },
+      "when": {
+        "frame_processed": "7"
+      }
+    }
+  ]
+}

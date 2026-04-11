@@ -1,0 +1,7 @@
+{
+  "parent": "de_re_metallica:block/millstone_frame/full/template/sixth",
+  "textures": {
+    "plank": "minecraft:block/spruce_planks",
+    "stone": "de_re_metallica:block/millstone"
+  }
+}
