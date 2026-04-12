@@ -15,12 +15,20 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
 
+// Generates loot tables for all DE RE METALLICA blocks.
 public class DeReMetallicaBlockLootTables extends BlockLootSubProvider {
 
     public DeReMetallicaBlockLootTables() {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags());
     }
 
+    /**
+     * Builds a loot pool for a processed frame block that drops a variable number of
+     * plank items depending on how far through the build sequence the frame is.
+     *
+     * Each processing stage (0 through plankStates-1) gets its own loot condition so
+     * the player recovers more planks the further along the frame is built.
+     */
     public static <B extends Block & ProcessedBoatFrame> LootPool.Builder createProcessedFrameTable(final B block,
             final Item plankItem, final int plankStates) {
         final var contentsPool = LootPool.lootPool();
@@ -34,7 +42,11 @@ public class DeReMetallicaBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        // Unprocessed frame just drops itself.
         this.dropSelf(DeReMetallicaBlocks.MILLSTONE_FRAME.get());
+
+        // Each wood variant of the processed frame drops the unprocessed frame item
+        // plus a number of planks equal to the current build stage.
         DeReMetallicaBlocks.PROCESSED_MILLSTONE_FRAME.forEach(this::dropFullProcessedMillstoneFrame);
     }
 

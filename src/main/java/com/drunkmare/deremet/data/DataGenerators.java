@@ -12,6 +12,8 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+// Entry point for runData. Registers all data providers with the Forge data generator.
+// Run via: ./gradlew runData
 @Mod.EventBusSubscriber(modid = DeReMetallica.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class DataGenerators {
 
@@ -21,8 +23,10 @@ public final class DataGenerators {
         final PackOutput packOutput = generator.getPackOutput();
         final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
+        // Server-side data (loot tables).
         generator.addProvider(event.includeServer(), DeReMetallicaLootTableProvider.create(packOutput));
 
+        // Client-side data (lang file, blockstates + models).
         generator.addProvider(event.includeClient(), new DeReMetallicaLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(),
                 new DeReMetallicaBlockStateProvider(packOutput, existingFileHelper));

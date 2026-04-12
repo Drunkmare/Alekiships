@@ -2,7 +2,6 @@ package com.drunkmare.deremet.util;
 
 import com.alekiponi.alekiships.common.entity.vehicle.AbstractVehicle;
 import com.alekiponi.alekiships.util.BoatMaterial;
-import com.drunkmare.deremet.common.block.DeReMetallicaBlocks;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +11,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Locale;
 import java.util.Optional;
 
+/**
+ * The eleven vanilla wood types supported by the mod.
+ *
+ * Implements {@link BoatMaterial} so AlekiShips' data-gen helpers can drive
+ * per-wood blockstate and model generation. The boat-specific methods
+ * (railing, stripped log, entity type) return stubs — we only care about
+ * {@link #getDeckBlock()} which supplies the plank texture used in datagen
+ * and the plank item used in loot tables.
+ */
 public enum VanillaWood implements BoatMaterial {
     OAK(Blocks.OAK_PLANKS),
     SPRUCE(Blocks.SPRUCE_PLANKS),
@@ -31,17 +39,13 @@ public enum VanillaWood implements BoatMaterial {
         this.plankBlock = plankBlock;
     }
 
-    public static void registerFrames() {
-        for (final VanillaWood wood : values()) {
-            DeReMetallicaBlocks.MILLSTONE_FRAME.get()
-                    .registerFrame(wood.plankBlock.asItem(), DeReMetallicaBlocks.PROCESSED_MILLSTONE_FRAME.get(wood).get());
-        }
-    }
-
+    // Used as the registry path suffix, e.g. "wood/millstone_frame/full/oak".
     @Override
     public String getSerializedName() {
         return this.name().toLowerCase(Locale.ROOT);
     }
+
+    // --- BoatMaterial stubs (not used by this mod) ---
 
     @Override
     public Item getRailing() {
@@ -58,6 +62,7 @@ public enum VanillaWood implements BoatMaterial {
         return false;
     }
 
+    // Returns the plank block state. AlekiShips uses this for the deck texture in datagen.
     @Override
     public BlockState getDeckBlock() {
         return this.plankBlock.defaultBlockState();

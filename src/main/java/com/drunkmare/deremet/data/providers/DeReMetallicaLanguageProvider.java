@@ -13,6 +13,8 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.Collections;
 import java.util.Locale;
 
+// Generates the en_us lang file. Add entries here whenever a new block, item, or
+// translatable component is added to the mod.
 public class DeReMetallicaLanguageProvider extends SmartLanguageProvider {
 
     public DeReMetallicaLanguageProvider(final PackOutput output) {
@@ -21,6 +23,7 @@ public class DeReMetallicaLanguageProvider extends SmartLanguageProvider {
 
     @Override
     protected void addTranslations() {
+        // One entry per wood variant, e.g. "Oak Flat Millstone Scaffolding".
         DeReMetallicaBlocks.PROCESSED_MILLSTONE_FRAME.forEach((wood, registryObject) -> this.addBlock(registryObject,
                 String.format(Locale.ROOT, "%s Flat Millstone Scaffolding",
                         DataGenHelper.langify(wood.getSerializedName()))));
